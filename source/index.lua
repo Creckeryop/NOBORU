@@ -2,26 +2,23 @@ DEBUG_INFO = true
 dofile 'app0:assets/libs/globals.lua'
 dofile 'app0:assets/libs/console.lua'
 dofile 'app0:assets/libs/net.lua'
+dofile 'app0:assets/libs/parser.lua'
+dofile 'app0:assets/libs/manga.lua'
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
 Network.init ()
-Photos = {}
-Net.downloadImageAsync('https://cs7.pikabu.ru/post_img/big/2018/09/11/0/1536615685128564974.png', Photos, 1)
-Net.downloadImageAsync('https://avatanplus.com/files/resources/mid/5ba90158746581660c2d419d.png', Photos, 2)
-Net.downloadImageAsync('httasdasddasdasdasd', Photos, 3)
-Save = {string = nil}
-Net.downloadStringAsync('https://raw.githubusercontent.com/Creckeryop/vsKoob/master/text.txt?token=AGEIYKFLM5KUOCBMUFS376S6BBRQI', Save, "string")
+Mangas = Parser:getManga(0)
+for i = 1, #Mangas do
+    Net.downloadImageAsync(Mangas[i].img_link, Mangas[i], "image")
+end
 local function draw ()
     Graphics.initBlend ()
     Screen.clear ()
-    for i = 1, 3 do
-        if Photos[i]~=nil then
-            Graphics.drawScaleImage ((i - 1) * 500, 0, Photos[i], 0.25*i, 0.25*i)
+    for i = 1, #Mangas do
+        if not (Mangas[i].image == nil) then
+            Graphics.drawImage(0+i*30,0,Mangas[i].image)
         end
-    end
-    if Save.string ~= nil then
-        Graphics.debugPrint(0,20,Save.string,LUA_COLOR_RED)
     end
     if DEBUG_INFO then
         Graphics.debugPrint (0, 0, 'FPS: '.. (60 / delta), LUA_COLOR_WHITE)

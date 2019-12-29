@@ -19,7 +19,7 @@ Net = {
             end
             Console.addLine ('NET: #'..(4 - task.retry)..' '..task.link, LUA_COLOR_BLUE)
         else
-            Console.addLine ('NET: '..task.link, LUA_COLOR_GREEN)
+            Console.addLine ('NET: '..task.link, LUA_COLOR_GREEN) 
             local f_save = function ()
                 if task.type == 'String' then
                     task.table[task.index] = System.getAsyncResult ()
@@ -46,9 +46,9 @@ Net = {
     end,
     isDownloadRunning = function ()
         return System.getAsyncState () == 0 or order_count ~= 0 and task ~= nil
-    end
-    ,
+    end,
     downloadString = function (link, mode)
+        mode = mode or NET_MODE_NOW
         if mode == NET_MODE_IFCAN then
             if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
                 return nil
@@ -59,6 +59,7 @@ Net = {
         return Network.requestString (link)
     end,
     downloadImage = function (link, mode)
+        mode = mode or NET_MODE_NOW
         if mode == NET_MODE_IFCAN then
             if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
                 return nil
