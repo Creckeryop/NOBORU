@@ -9,3 +9,10 @@ LUA_COLOR_BLUE  = Color.new (  0,   0, 255, 255)
 if not System.doesDirExist(LUA_APPDATA_DIR) then
     System.createDirectory(LUA_APPDATA_DIR)
 end
+
+ReadAllText = function (path)
+    local handle = System.openFile (path, FREAD)
+    local content = System.readFile (handle, System.sizeFile (handle))
+    System.closeFile (handle)
+    return content
+end

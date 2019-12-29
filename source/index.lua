@@ -4,22 +4,15 @@ dofile 'app0:assets/libs/console.lua'
 dofile 'app0:assets/libs/net.lua'
 dofile 'app0:assets/libs/parser.lua'
 dofile 'app0:assets/libs/manga.lua'
+Network.init ()
+Net.downloadFile('https://raw.githubusercontent.com/Creckeryop/vsKoob-parsers/master/parsers.lua', LUA_APPDATA_DIR..'parsers.lua')
+load (ReadAllText(LUA_APPDATA_DIR..'parsers.lua')) ()
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
-Network.init ()
-Mangas = Parser:getManga(0)
-for i = 1, #Mangas do
-    Net.downloadImageAsync(Mangas[i].img_link, Mangas[i], "image")
-end
 local function draw ()
     Graphics.initBlend ()
     Screen.clear ()
-    for i = 1, #Mangas do
-        if not (Mangas[i].image == nil) then
-            Graphics.drawImage(0+i*30,0,Mangas[i].image)
-        end
-    end
     if DEBUG_INFO then
         Graphics.debugPrint (0, 0, 'FPS: '.. (60 / delta), LUA_COLOR_WHITE)
         Console.draw ()

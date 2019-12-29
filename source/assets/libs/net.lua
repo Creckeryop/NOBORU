@@ -58,6 +58,17 @@ Net = {
         end
         return Network.requestString (link)
     end,
+    downloadFile = function (link, path, mode)
+        mode = mode or NET_MODE_NOW
+        if mode == NET_MODE_IFCAN then
+            if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
+                return nil
+            end
+        elseif mode == NET_MODE_NOW then
+            repeat until System.getAsyncState () == 1
+        end
+        Network.downloadFile (link, path)
+    end,
     downloadImage = function (link, mode)
         mode = mode or NET_MODE_NOW
         if mode == NET_MODE_IFCAN then
