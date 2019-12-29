@@ -10,3 +10,14 @@ function ReadManga:getManga (i)
 	end
 	return list
 end
+
+function ReadManga:getChapters (manga)
+	local file = Net.downloadString("http://readmanga.me"..manga.link)
+	local list = {}
+	for link, name in file:gmatch("<td class%=.-<a href%=\""..manga.link.."(/vol%S-)\".->(.-)</a>") do
+		local chapter = {name = name:gsub("%s+"," "), link = link, pages = {}, manga = manga}
+		list[#list + 1] = chapter
+		Console.addLine("Parser: Got chapter \""..chapter.name.."\" ("..chapter.link..")", LUA_COLOR_GREEN)
+	end
+	return list
+end

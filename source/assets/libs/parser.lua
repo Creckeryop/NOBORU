@@ -2,6 +2,8 @@ Parsers = {}
 Parser = {
     downloadCover = nil,
     getManga = nil,
+    getChapters = nil,
+    getPages = nil,
     new = function (self, name, link, lang)
         local p = {name = name, link = link, lang = lang}
         setmetatable (p, self)

@@ -1,12 +1,8 @@
-Manga = {}
-
-function Manga:new (name, link, img_link, parser)
-    local p = {name = name, link = link, parser = parser, img_link = img_link}
-    setmetatable (p, self)
-    self.__index = self
-    return p
-end
-
-function Manga:updateCover()
-    
-end
+Manga = {
+    new = function (self, name, link, img_link, parser)
+        local p = {name = name, link = link, parser = parser, img_link = img_link}
+        setmetatable (p, self)
+        self.__index = self
+        return p
+    end
+}

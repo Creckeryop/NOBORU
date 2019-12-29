@@ -5,8 +5,9 @@ dofile 'app0:assets/libs/net.lua'
 dofile 'app0:assets/libs/parser.lua'
 dofile 'app0:assets/libs/manga.lua'
 Network.init ()
-Net.downloadFile('https://raw.githubusercontent.com/Creckeryop/vsKoob-parsers/master/parsers.lua', LUA_APPDATA_DIR..'parsers.lua')
-load (ReadAllText(LUA_APPDATA_DIR..'parsers.lua')) ()
+Net.downloadFile ('https://raw.githubusercontent.com/Creckeryop/vsKoob-parsers/master/parsers.lua', LUA_APPDATA_DIR..'parsers.lua')
+load (ReadAllText (LUA_APPDATA_DIR..'parsers.lua')) ()
+Parsers[2]:getChapters(Parsers[2]:getManga(0)[1])
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
@@ -14,7 +15,7 @@ local function draw ()
     Graphics.initBlend ()
     Screen.clear ()
     if DEBUG_INFO then
-        Graphics.debugPrint (0, 0, 'FPS: '.. (60 / delta), LUA_COLOR_WHITE)
+        Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta), LUA_COLOR_WHITE)
         Console.draw ()
     end
     Graphics.termBlend ()
