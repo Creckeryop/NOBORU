@@ -16,3 +16,12 @@ ReadAllText = function (path)
     System.closeFile (handle)
     return content
 end
+
+TableReverse = function (table)
+    local new_table, j = {}, 1
+    for i = #table, 1, -1 do
+        new_table[i] = table[j]
+        j = j + 1
+    end
+    return new_table
+end

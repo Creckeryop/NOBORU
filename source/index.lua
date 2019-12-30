@@ -6,8 +6,9 @@ dofile 'app0:assets/libs/parser.lua'
 dofile 'app0:assets/libs/manga.lua'
 Network.init ()
 Net.downloadFile ('https://raw.githubusercontent.com/Creckeryop/vsKoob-parsers/master/parsers.lua', LUA_APPDATA_DIR..'parsers.lua')
-load (ReadAllText (LUA_APPDATA_DIR..'parsers.lua')) ()
-Parsers[2]:getChapters(Parsers[2]:getManga(0)[1])
+dofile (LUA_APPDATA_DIR..'parsers.lua')
+count = Parsers[2]:getPagesCount(Parsers[2]:getChapters(Parsers[2]:getManga(0)[1])[1])
+Console.addLine(count)
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
