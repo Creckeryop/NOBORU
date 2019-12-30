@@ -19,7 +19,7 @@ Net = {
             end
             Console.addLine ('NET: #'..(4 - task.retry)..' '..task.link, LUA_COLOR_BLUE)
         else
-            Console.addLine ('NET: '..task.link, LUA_COLOR_GREEN) 
+            Console.addLine ('NET: '..task.link, LUA_COLOR_GREEN)
             local f_save = function ()
                 if task.type == 'String' then
                     task.table[task.index] = System.getAsyncResult ()
