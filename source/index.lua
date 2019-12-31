@@ -11,7 +11,7 @@ dofile (LUA_APPDATA_DIR..'parsers.lua')
 local manga = ReadManga:getManga(0)[2]
 local chapter = ReadManga:getChapters(manga)[2]
 local pages = ReadManga:getPagesCount(chapter)
-local now_page = 1
+local now_page = 0
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
@@ -20,7 +20,7 @@ local function draw ()
     Screen.clear ()
     Reader.draw ()
     if DEBUG_INFO then
-        Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta), LUA_COLOR_WHITE)
+        Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta).." "..now_page, LUA_COLOR_WHITE)
         Console.draw ()
     end
     Graphics.termBlend ()
@@ -28,7 +28,7 @@ local function draw ()
     Screen.waitVblankStart ()
 end
 local function update (delta)
-    if chapter.pages[now_page].image ~= Reader.image then
+    if now_page > 0 and chapter.pages[now_page].image ~= Reader.image then
         Reader.setImage(chapter.pages[now_page].image)
     end
 end
@@ -41,7 +41,9 @@ local function input ()
                 Net.downloadImageAsync(chapter.pages[now_page][2]..chapter.pages[now_page][3],chapter.pages[now_page],"image")
             end
             if now_page + 1 <= pages then
-                Net.downloadImageAsync(chapter.pages[now_page+1][2]..chapter.pages[now_page+1][3],chapter.pages[now_page+1],"image")
+                if chapter.pages[now_page + 1].image == nil then
+                    Net.downloadImageAsync(chapter.pages[now_page+1][2]..chapter.pages[now_page+1][3],chapter.pages[now_page+1],"image")
+                end
             end
         end
     elseif Controls.check (pad, SCE_CTRL_LEFT) and not Controls.check (oldpad, SCE_CTRL_LEFT) then

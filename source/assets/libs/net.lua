@@ -24,9 +24,15 @@ Net = {
                 if task.type == 'String' then
                     task.table[task.index] = System.getAsyncResult ()
                 elseif task.type == 'Image' then
-                    task.table[task.index] = Graphics.loadImage (LUA_APPDATA_DIR..'cacheA.img')
+                    task.table[task.index] = 0
+                    Graphics.loadImageAsync (LUA_APPDATA_DIR..'cacheA.img')
+                    task.type = 'ImageLoad'
+                    return
+                elseif task.type == 'ImageLoad' then
+                    task.table[task.index] = System.getAsyncResult ()
                     System.deleteFile (LUA_APPDATA_DIR..'cacheA.img')
                 end
+                task = nil
             end
             local success, err = pcall(f_save)
             if not success then
@@ -36,8 +42,8 @@ Net = {
                     table.insert(order, task)
                     order_count = order_count + 1
                 end
+                task = nil
             end
-            task = nil
         end
     end,
     clear = function ()
@@ -84,10 +90,20 @@ Net = {
         return image
     end,
     downloadStringAsync = function (link, table, index)
+        for _, v in pairs(order) do
+            if v.type == "String" and v.link == link and v.table == table and v.index == index then
+                return
+            end
+        end
         order_count = order_count + 1
         order[#order + 1] = {type = "String", link = link, table = table, index = index, retry = 3}
     end,
     downloadImageAsync = function (link, table, index)
+        for _, v in pairs(order) do
+            if v.type == "Image" and v.link == link and v.table == table and v.index == index then
+                return
+            end
+        end
         order_count = order_count + 1
         order[#order + 1] = {type = "Image", link = link, table = table, index = index, retry = 3}
     end

@@ -1,17 +1,17 @@
-local rotation, x, y, image, zoom,min_zoom, width, height, mode = 0, 0, 0, nil, 1, 1, 0, 0
+local rotation, x, y, zoom,min_zoom, width, height, mode = 0, 0, 0, 1, 1, 0, 0
 Reader = {
     image = nil,
     draw = function ()
-        if Reader.image ~= nil then
+        if Reader.image ~= nil and Reader.image ~= 0 then
             Graphics.drawImageExtended(x, y, Reader.image, 0, 0, width, height, rotation, zoom, zoom)
         end
     end,
     setImage = function (new_image)
         Reader.image = new_image
-        if Reader.image == nil then
+        if Reader.image == nil or Reader.image == 0 then
             return
         end
-        width, height, x, y = Graphics.getImageWidth(Reader.image), Graphics.getImageHeight(Reader.image), 480, 272
+        width, height, x, y = Graphics.getImageWidth(Reader.image), Graphics.getImageHeight(Reader.image), 480, 272+1010101010
         
         if width > height then
             mode = "Horizontal"
