@@ -23,6 +23,17 @@ Reader = {
             min_zoom = zoom
         end
     end,
+    update = function ()
+        if Touch.y == nil then
+            y = y + (velY or 0)
+            velY = (velY or 0) * 0.9
+        end
+        if y - height / 2 * zoom > 0 then
+            y = height / 2 * zoom
+        elseif y + height / 2 * zoom < 544 then
+            y = 544 - height / 2 * zoom
+        end
+    end,
     input = function (pad, oldpad)
         if Controls.check(pad, SCE_CTRL_RTRIGGER) then
             local old_zoom = zoom
@@ -38,6 +49,16 @@ Reader = {
             y = 272+((y-272)/old_zoom)*zoom
             x = 480+((x-480)/old_zoom)*zoom
         end
+        if Touch.y ~= nil then
+            if oldY == nil then
+                oldY = y - Touch.y
+            else
+                velY = Touch.y + oldY - y
+                y = Touch.y + oldY
+            end
+        else
+            oldY = nil
+        end
         --[[
         if Controls.check(pad, SCE_CTRL_LEFT) then
             x = x + 5*zoom
@@ -48,11 +69,6 @@ Reader = {
             y = y + 5*zoom
         elseif Controls.check(pad, SCE_CTRL_DOWN) then
             y = y - 5*zoom
-        end
-        if y - height / 2 * zoom > 0 then
-            y = height / 2 * zoom
-        elseif y + height / 2 * zoom < 544 then
-            y = 544 - height / 2 * zoom
         end
     end
 }

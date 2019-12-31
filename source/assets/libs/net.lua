@@ -99,8 +99,11 @@ Net = {
         order[#order + 1] = {type = "String", link = link, table = table, index = index, retry = 3}
     end,
     downloadImageAsync = function (link, table, index)
+        if task~=nil and (task.type == "Image" or task.type == "ImageLoad") and task.link == link and task.table == table and task.index == index then
+            return
+        end
         for _, v in pairs(order) do
-            if v.type == "Image" and v.link == link and v.table == table and v.index == index then
+            if (v.type == "Image" or v.type == "ImageLoad") and v.link == link and v.table == table and v.index == index then
                 return
             end
         end
