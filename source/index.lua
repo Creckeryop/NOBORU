@@ -5,7 +5,6 @@ dofile 'app0:assets/libs/net.lua'
 dofile 'app0:assets/libs/parser.lua'
 dofile 'app0:assets/libs/manga.lua'
 dofile 'app0:assets/libs/reader.lua'
-Network.init ()
 Net.downloadFile ('https://raw.githubusercontent.com/Creckeryop/vsKoob-parsers/master/parsers.lua', LUA_APPDATA_DIR..'parsers.lua')
 dofile (LUA_APPDATA_DIR..'parsers.lua')
 local manga = ReadManga:getManga(0)[3]
@@ -17,13 +16,14 @@ local now_chapter = 1
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
+Screen.clear (LUA_COLOR_WHITE)
 local function draw ()
     Graphics.initBlend ()
     Screen.clear ()
     Reader.draw ()
     if DEBUG_INFO then
         Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta).." "..now_page, LUA_COLOR_WHITE)
-        --Console.draw ()
+        Console.draw ()
     end
     Graphics.termBlend ()
     Screen.flip ()
@@ -48,10 +48,10 @@ local function input ()
                     Net.downloadImageAsync(chapter.pages[now_page+1][2]..chapter.pages[now_page+1][3],chapter.pages[now_page+1],"image")
                 end
             end
-            if now_page - 2 > 0 then
-                if chapter.pages[now_page - 2].image ~= nil and chapter.pages[now_page - 2].image ~= 0 then
-                    Graphics.freeImage(chapter.pages[now_page - 2].image)
-                    chapter.pages[now_page - 2].image = nil
+            if now_page - 3 > 0 then
+                if chapter.pages[now_page - 3].image ~= nil then
+                    Graphics.freeImage(chapter.pages[now_page - 3].image)
+                    chapter.pages[now_page - 3].image = nil
                 end
             end
         end
@@ -66,20 +66,21 @@ local function input ()
                     Net.downloadImageAsync(chapter.pages[now_page-1][2]..chapter.pages[now_page-1][3],chapter.pages[now_page-1],"image")
                 end
             end
-            if now_page + 2 <= pages then
-                if chapter.pages[now_page + 2].image ~= nil and chapter.pages[now_page + 2].image ~= 0 then
-                    Graphics.freeImage(chapter.pages[now_page + 2].image)
-                    chapter.pages[now_page + 2].image = nil
+            if now_page + 3 <= pages then
+                if chapter.pages[now_page + 3].image ~= nil then
+                    Graphics.freeImage(chapter.pages[now_page + 3].image)
+                    chapter.pages[now_page + 3].image = nil
                 end
             end
         end
     end
     if Controls.check (pad, SCE_CTRL_TRIANGLE) and not Controls.check (oldpad, SCE_CTRL_TRIANGLE) then
         if now_chapter < #chapters then
+            Net.clear()
             now_chapter = now_chapter + 1
             now_page = 0
             for i = 1, #chapter.pages do
-                if chapter.pages[i].image ~= nil and chapter.pages[i].image ~= 0 then
+                if chapter.pages[i].image ~= nil then
                     Graphics.freeImage(chapter.pages[i].image)
                     chapter.pages[i].image = nil
                 end
@@ -89,20 +90,22 @@ local function input ()
             Reader.setImage(nil)
         end
     end
-    if Controls.check (pad, SCE_CTRL_RTRIGGER) and not Controls.check (oldpad, SCE_CTRL_RTRIGGER) then
+    if Controls.check (pad, SCE_CTRL_SQUARE) and not Controls.check (oldpad, SCE_CTRL_SQUARE) then
         DEBUG_INFO = not DEBUG_INFO
     end
     if Controls.check (pad, SCE_CTRL_START) then
-        Network.term ()
+        Net.shutDown ()
         System.exit ()
     end
 end
 Touch = {}
 OldTouch = {}
+Touch2 = {}
+OldTouch2 = {}
 while true do
     local timer = Timer.new ()
     oldpad, pad = pad, Controls.read ()
-    OldTouch.x, OldTouch.y, Touch.x, Touch.y = Touch.x, Touch.y, Controls.readTouch ()
+    OldTouch.x, OldTouch.y,OldTouch2.x,OldTouch2.y, Touch.x, Touch.y,Touch2.x, Touch2.y = Touch.x, Touch.y,Touch2.x, Touch2.y, Controls.readTouch ()
     input ()
     update (delta)
     draw ()

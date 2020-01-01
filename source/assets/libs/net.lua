@@ -1,10 +1,18 @@
 local order = {}
 local order_count = 0
 local task = nil
-NET_MODE_NOW = 1
-NET_MODE_IFCAN = 2
+local trash = { type = nil, garbadge = nil }
+local net_inited = false
 Net = {
     update = function ()
+        if net_inited and task == nil and order_count == 0 then
+            Network.term()
+            net_inited = false
+        end
+        if not net_inited and (order_count ~= 0 or task ~= nil) then
+            Network.init()
+            net_inited = true
+        end
         if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
             return
         end
@@ -16,21 +24,29 @@ Net = {
                 Network.requestStringAsync (task.link)
             elseif task.type == 'Image' then
                 Network.downloadFileAsync (task.link, LUA_APPDATA_DIR..'cacheA.img')
+            elseif task.type == 'File' then
+                Network.downloadFileAsync (task.link, task.path)
+            elseif task.type == 'Skip' then
+                task = nil
             end
             Console.addLine ('NET: #'..(4 - task.retry)..' '..task.link, LUA_COLOR_BLUE)
         else
             Console.addLine ('NET: '..task.link, LUA_COLOR_GREEN)
             local f_save = function ()
+                trash.type = task.type
+                trash.link = task.link
                 if task.type == 'String' then
                     task.table[task.index] = System.getAsyncResult ()
                 elseif task.type == 'Image' then
-                    task.table[task.index] = 0
                     Graphics.loadImageAsync (LUA_APPDATA_DIR..'cacheA.img')
                     task.type = 'ImageLoad'
                     return
                 elseif task.type == 'ImageLoad' then
                     task.table[task.index] = System.getAsyncResult ()
                     System.deleteFile (LUA_APPDATA_DIR..'cacheA.img')
+                elseif task.type == 'File' then
+                elseif task.type == 'Skip' then
+                    Console.addLine ('WOW HOW THAT HAPPENED?',LUA_COLOR_RED)
                 end
                 task = nil
             end
@@ -45,69 +61,104 @@ Net = {
                 task = nil
             end
         end
+        if trash.garbadge ~= nil then
+            if trash.type == 'ImageLoad' then
+                Graphics.freeImage(trash.garbadge)
+                Console.addLine ('NET:(Freeing image)'..trash.link, LUA_COLOR_PURPLE)
+            end
+            trash.garbadge = nil
+        end
     end,
     clear = function ()
         order_count = 0
         order = {}
+        task.table, task.index = trash, 'garbadge'
     end,
     isDownloadRunning = function ()
-        return System.getAsyncState () == 0 or order_count ~= 0 and task ~= nil
+        return System.getAsyncState () == 0 or order_count ~= 0 or task ~= nil
     end,
-    downloadString = function (link, mode)
-        mode = mode or NET_MODE_NOW
-        if mode == NET_MODE_IFCAN then
-            if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
-                return nil
-            end
-        elseif mode == NET_MODE_NOW then
-            repeat until System.getAsyncState () == 1
+    downloadString = function (link)
+        repeat until System.getAsyncState () ~= 0
+        local content
+        if not net_inited then
+            Network.init()
+            content = Network.requestString (link)
+            Network.term()
+        else
+            content = Network.requestString (link)
         end
-        return Network.requestString (link)
+        return content
     end,
-    downloadFile = function (link, path, mode)
-        mode = mode or NET_MODE_NOW
-        if mode == NET_MODE_IFCAN then
-            if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
-                return nil
-            end
-        elseif mode == NET_MODE_NOW then
-            repeat until System.getAsyncState () == 1
+    downloadFile = function (link, path)
+        repeat until System.getAsyncState () ~= 0
+        if not net_inited then
+            Network.init()
+            Network.downloadFile (link, path)
+            Network.term()
+        else
+            Network.downloadFile (link, path)
         end
-        Network.downloadFile (link, path)
     end,
-    downloadImage = function (link, mode)
-        mode = mode or NET_MODE_NOW
-        if mode == NET_MODE_IFCAN then
-            if (order_count == 0 and task == nil) or System.getAsyncState () == 0 then
-                return nil
-            end
-        elseif mode == NET_MODE_NOW then
-            repeat until System.getAsyncState () == 1
+    downloadImage = function (link)
+        repeat until System.getAsyncState () ~= 0
+        local image
+        if not net_inited then
+            Network.init()
+            Network.downloadFile (link, LUA_APPDATA_DIR..'cache.img')
+            image = Graphics.loadImage (LUA_APPDATA_DIR..'cache.img')
+            System.deleteFile (LUA_APPDATA_DIR..'cache.img')
+            Network.term()
+        else
+            Network.downloadFile (link, LUA_APPDATA_DIR..'cache.img')
+            image = Graphics.loadImage (LUA_APPDATA_DIR..'cache.img')
+            System.deleteFile (LUA_APPDATA_DIR..'cache.img')
         end
-        Network.downloadFile (link, LUA_APPDATA_DIR..'cache.img')
-        local image = Graphics.loadImage (LUA_APPDATA_DIR..'cache.img')
-        System.deleteFile (LUA_APPDATA_DIR..'cache.img')
         return image
     end,
     downloadStringAsync = function (link, table, index)
         for _, v in pairs(order) do
-            if v.type == "String" and v.link == link and v.table == table and v.index == index then
+            if v.table == table and v.index == index then
                 return
             end
         end
         order_count = order_count + 1
-        order[#order + 1] = {type = "String", link = link, table = table, index = index, retry = 3}
+        order[#order + 1] = {type = 'String', link = link, table = table, index = index, retry = 3}
     end,
     downloadImageAsync = function (link, table, index)
-        if task~=nil and (task.type == "Image" or task.type == "ImageLoad") and task.link == link and task.table == table and task.index == index then
+        if task~=nil and task.table == table and task.index == index then
             return
         end
         for _, v in pairs(order) do
-            if (v.type == "Image" or v.type == "ImageLoad") and v.link == link and v.table == table and v.index == index then
+            if v.table == table and v.index == index then
                 return
             end
         end
         order_count = order_count + 1
-        order[#order + 1] = {type = "Image", link = link, table = table, index = index, retry = 3}
+        order[#order + 1] = {type = 'Image', link = link, table = table, index = index, retry = 3}
+    end,
+    downloadFileAsync = function (link, path)
+        for _, v in pairs(order) do
+            if v.path == path then
+                return
+            end
+        end
+        order_count = order_count + 1
+        order[#order + 1] = {type = 'File', link = link, path = path, retry = 3}
+    end,
+    shutDown = function ()
+        if net_inited then
+            Network.term ()
+            net_inited = false
+        end
+    end,
+    remove = function (table, index)
+        if task~=nil and task.table == table and task.index == index then
+            task.table, task.index = trash, 'garbadge'
+        end
+        for _, v in pairs(order) do
+            if v.table == table and v.index == index then
+                v.type = 'Skip'
+            end
+        end
     end
 }
