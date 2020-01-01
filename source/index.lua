@@ -11,18 +11,21 @@ local manga = ReadManga:getManga(0)[3]
 local chapters = ReadManga:getChapters(manga)
 local chapter = chapters[1]
 local pages = ReadManga:getPagesCount(chapter)
-local now_page = 0
-local now_chapter = 1
+local links = {}
+for i = 1, pages do
+    links[i] = chapter.pages[i][2]..chapter.pages[i][3]
+end 
+Reader.load(links)
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
-Screen.clear (LUA_COLOR_WHITE)
 local function draw ()
     Graphics.initBlend ()
     Screen.clear ()
     Reader.draw ()
     if DEBUG_INFO then
-        Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta).." "..now_page, LUA_COLOR_WHITE)
+        Graphics.fillRect(0, 0, 960, 20,Color.new(0,0,0,100))
+        Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta), LUA_COLOR_WHITE)
         Console.draw ()
     end
     Graphics.termBlend ()
@@ -30,66 +33,10 @@ local function draw ()
     Screen.waitVblankStart ()
 end
 local function update (delta)
-    if now_page > 0 and chapter.pages[now_page].image ~= Reader.image then
-        Reader.setImage(chapter.pages[now_page].image)
-    end
     Reader.update()
 end
 local function input ()
     Reader.input (pad, oldpad)
-    if Controls.check (pad, SCE_CTRL_RIGHT) and not Controls.check (oldpad, SCE_CTRL_RIGHT) then
-        if now_page < pages then
-            now_page = now_page + 1
-            if chapter.pages[now_page].image == nil then
-                Net.downloadImageAsync(chapter.pages[now_page][2]..chapter.pages[now_page][3],chapter.pages[now_page],"image")
-            end
-            if now_page + 1 <= pages then
-                if chapter.pages[now_page + 1].image == nil then
-                    Net.downloadImageAsync(chapter.pages[now_page+1][2]..chapter.pages[now_page+1][3],chapter.pages[now_page+1],"image")
-                end
-            end
-            if now_page - 3 > 0 then
-                if chapter.pages[now_page - 3].image ~= nil then
-                    Graphics.freeImage(chapter.pages[now_page - 3].image)
-                    chapter.pages[now_page - 3].image = nil
-                end
-            end
-        end
-    elseif Controls.check (pad, SCE_CTRL_LEFT) and not Controls.check (oldpad, SCE_CTRL_LEFT) then
-        if now_page > 1 then
-            now_page = now_page - 1
-            if chapter.pages[now_page].image == nil then
-                Net.downloadImageAsync(chapter.pages[now_page][2]..chapter.pages[now_page][3],chapter.pages[now_page],"image")
-            end
-            if now_page - 1 > 0 then
-                if chapter.pages[now_page - 1].image == nil then
-                    Net.downloadImageAsync(chapter.pages[now_page-1][2]..chapter.pages[now_page-1][3],chapter.pages[now_page-1],"image")
-                end
-            end
-            if now_page + 3 <= pages then
-                if chapter.pages[now_page + 3].image ~= nil then
-                    Graphics.freeImage(chapter.pages[now_page + 3].image)
-                    chapter.pages[now_page + 3].image = nil
-                end
-            end
-        end
-    end
-    if Controls.check (pad, SCE_CTRL_TRIANGLE) and not Controls.check (oldpad, SCE_CTRL_TRIANGLE) then
-        if now_chapter < #chapters then
-            Net.clear()
-            now_chapter = now_chapter + 1
-            now_page = 0
-            for i = 1, #chapter.pages do
-                if chapter.pages[i].image ~= nil then
-                    Graphics.freeImage(chapter.pages[i].image)
-                    chapter.pages[i].image = nil
-                end
-            end
-            chapter = chapters[now_chapter]
-            pages = ReadManga:getPagesCount(chapter)
-            Reader.setImage(nil)
-        end
-    end
     if Controls.check (pad, SCE_CTRL_SQUARE) and not Controls.check (oldpad, SCE_CTRL_SQUARE) then
         DEBUG_INFO = not DEBUG_INFO
     end

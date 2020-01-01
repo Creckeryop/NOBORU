@@ -152,7 +152,7 @@ Net = {
         end
     end,
     remove = function (table, index)
-        if task~=nil and task.table == table and task.index == index then
+        if task ~=nil and task.table == table and task.index == index then
             task.table, task.index = trash, 'garbadge'
         end
         for _, v in pairs(order) do
