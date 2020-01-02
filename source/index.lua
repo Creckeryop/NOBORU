@@ -24,7 +24,7 @@ local function draw ()
     Screen.clear ()
     Reader.draw ()
     if DEBUG_INFO then
-        Graphics.fillRect(0, 0, 960, 20,Color.new(0,0,0,100))
+        Graphics.fillRect(0, 960, 0, 20,Color.new(0,0,0,100))
         Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta), LUA_COLOR_WHITE)
         Console.draw ()
     end

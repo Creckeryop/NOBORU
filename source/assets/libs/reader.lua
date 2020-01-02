@@ -58,17 +58,23 @@ local ChangePage = function (page)
     end
     return true
 end
-
+local font = Font.load("app0:roboto.ttf")
 Reader = {
     draw = function ()
         for i = -1, 1 do
             local page = Pages[Pages.page + i]
             if page~= nil and page.image ~= nil then
-                Graphics.drawImageExtended(offset.x + page.x, offset.y + page.y, page.image, 0, 0, page.width, page.height, 0, page.zoom, page.zoom)
+                Graphics.drawImageExtended(math.ceil((offset.x + page.x)*4)/4, math.ceil((offset.y + page.y)*4)/4, page.image, 0, 0, page.width, page.height, 0, page.zoom, page.zoom)
             elseif page~= nil then
-                Graphics.debugPrint (offset.x + 0, 524, "Loading "..string.sub("...",1,(Timer.getTime(GlobalTimer)/400)%3+1), LUA_COLOR_PURPLE)
+                local loading = "Loading"..string.sub("...",1,(Timer.getTime(GlobalTimer)/400)%3+1)
+                local width = Font.getTextWidth(font, loading)
+                Font.print(font, offset.x + 960 * i+480-width/2, 272-10, loading, LUA_COLOR_WHITE)
             end
         end
+        local width = Font.getTextWidth(font, Pages.page.."/"..#Pages) + 20
+        local height = Font.getTextHeight(font, Pages.page.."/"..#Pages)
+        Graphics.fillRect(960 - width, 960, 0, height + 5, Color.new(0, 0, 0, 128))
+        Font.print(font, 960 - width + 10, 0, Pages.page.."/"..#Pages, LUA_COLOR_WHITE)
     end,
     update = function ()
         if Pages[Pages.page] == nil then
@@ -84,27 +90,25 @@ Reader = {
                     page.mode = "Horizontal"
                     page.zoom = 544 / page.height
                     page.min_zoom = page.zoom
-                    if page.width*page.zoom >= 960 then
-                        page.x = 480+i*(480+page.width*page.zoom/2)
+                    if page.width * page.zoom >= 960 then
+                        page.x = 480 + i * (480+page.width*page.zoom/2)
                     else
-                        page.x = 480+i*960
+                        page.x = 480 + i * 960
                     end
                 else
                     page.mode = "Vertical"
                     page.zoom = 960 / page.width
                     page.min_zoom = page.zoom
-                    page.x = 480+i*960
+                    page.x = 480 + i * 960
                 end
-                page.y = page.zoom*page.height/2
+                page.y = page.zoom * page.height / 2
             end
         end
         if touchMode == TOUCH_READ then
             local len = math.sqrt((touchTemp.x-Touch.x)*(touchTemp.x-Touch.x) + (touchTemp.y-Touch.y)*(touchTemp.y-Touch.y))
-            if  len > 10 then
+            if len > 10 then
                 if math.abs(Touch.x - touchTemp.x) > math.abs(Touch.y - touchTemp.y)*3  and ((bit32.band(pageMode,PAGE_RIGHT)~=0 and touchTemp.x > Touch.x) or (bit32.band(pageMode,PAGE_LEFT)~=0 and touchTemp.x < Touch.x)) then
                     touchMode = TOUCH_SWIPE
-                    velY = 0
-                    velX = 0
                 else
                     touchMode = TOUCH_MOVE
                 end
@@ -124,7 +128,10 @@ Reader = {
             offset.x = offset.x + velX
         end
         if touchMode ~= TOUCH_SWIPE then
-            offset.x = offset.x / 1.2
+            offset.x = offset.x / 1.12
+            if math.abs(offset.x) < 1 then
+                offset.x = 0
+            end
         end
         if Pages[Pages.page].zoom ~= nil then
             if Pages[Pages.page].y - Pages[Pages.page].height / 2 * Pages[Pages.page].zoom > 0 then
@@ -132,8 +139,8 @@ Reader = {
             elseif Pages[Pages.page].y + Pages[Pages.page].height / 2 * Pages[Pages.page].zoom < 544 then
                 Pages[Pages.page].y = 544 - Pages[Pages.page].height / 2 * Pages[Pages.page].zoom
             end
-            if Pages[Pages.page].mode ~= "Horizontal" or Pages[Pages.page].zoom*Pages[Pages.page].width > 960 then
-                if Pages[Pages.page].zoom*Pages[Pages.page].width<=960 or Pages[Pages.page].zoom == Pages[Pages.page].min_zoom and Pages[Pages.page].mode ~= "Horizontal" then
+            if Pages[Pages.page].mode ~= 'Horizontal' or Pages[Pages.page].zoom*Pages[Pages.page].width > 960 then
+                if Pages[Pages.page].zoom*Pages[Pages.page].width<=960 or Pages[Pages.page].zoom == Pages[Pages.page].min_zoom and Pages[Pages.page].mode ~= 'Horizontal' then
                     pageMode = bit32.bor(PAGE_LEFT,PAGE_RIGHT)
                 end
                 if Pages[Pages.page].x - Pages[Pages.page].width / 2 * Pages[Pages.page].zoom >= 0 then
@@ -149,6 +156,8 @@ Reader = {
                 Pages[Pages.page].x = 480
                 pageMode = bit32.bor(PAGE_LEFT,PAGE_RIGHT)
             end
+        else
+            pageMode = bit32.bor(PAGE_LEFT,PAGE_RIGHT)
         end
     end,
     input = function (pad, oldpad)
@@ -179,17 +188,28 @@ Reader = {
             end
         else
             if touchMode == TOUCH_SWIPE then
-                if offset.x > 100 and ChangePage(Pages.page - 1) then
-                    offset.x = -960+offset.x
+                if offset.x > 90 and ChangePage(Pages.page - 1) then
+                    offset.x = -960 + offset.x
                     if Pages[Pages.page + 1] ~= nil and Pages[Pages.page + 1].zoom~=nil then
-                        Pages[Pages.page + 1].x = 960+Pages[Pages.page + 1].width*Pages[Pages.page + 1].zoom/2
+                        if Pages[Pages.page + 1].mode ~= 'Horizontal' or Pages[Pages.page + 1].zoom*Pages[Pages.page + 1].width>=960 then
+                            Pages[Pages.page + 1].x = 960+Pages[Pages.page + 1].width*Pages[Pages.page + 1].zoom/2
+                        else
+                            Pages[Pages.page + 1].x = 960+480
+                        end
                     end
-                elseif offset.x < -100 and ChangePage(Pages.page + 1) then
-                    offset.x = 960+offset.x
+                elseif offset.x < -90 and ChangePage(Pages.page + 1) then
+                    offset.x = 960 + offset.x
                     if Pages[Pages.page - 1] ~= nil and Pages[Pages.page - 1].zoom~=nil then
-                        Pages[Pages.page - 1].x = -Pages[Pages.page - 1].width*Pages[Pages.page - 1].zoom/2
+                        if Pages[Pages.page - 1].mode ~= 'Horizontal' or Pages[Pages.page - 1].zoom*Pages[Pages.page - 1].width>=960 then
+                            Pages[Pages.page - 1].x = -Pages[Pages.page - 1].width*Pages[Pages.page - 1].zoom/2
+                        else
+                            Pages[Pages.page - 1].x = -480
+                        end
                     end
                 end
+                velX = 0
+                velY = 0
+                pageMode = PAGE_NONE
             end
             touchMode = TOUCH_IDLE
         end

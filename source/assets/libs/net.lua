@@ -29,7 +29,9 @@ Net = {
             elseif task.type == 'Skip' then
                 task = nil
             end
-            Console.addLine ('NET: #'..(4 - task.retry)..' '..task.link, LUA_COLOR_BLUE)
+            if task ~= nil then
+                Console.addLine ('NET: #'..(4 - task.retry)..' '..task.link, LUA_COLOR_BLUE)
+            end
         else
             Console.addLine ('NET: '..task.link, LUA_COLOR_GREEN)
             local f_save = function ()
@@ -160,5 +162,16 @@ Net = {
                 v.type = 'Skip'
             end
         end
+    end,
+    check = function (table, index)
+        if task ~=nil and task.table == table and task.index == index then
+            return true
+        end
+        for _, v in pairs(order) do
+            if v.table == table and v.index == index then
+                return true
+            end
+        end
+        return false
     end
 }
