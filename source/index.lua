@@ -8,26 +8,6 @@ dofile 'app0:assets/libs/reader.lua'
 dofile 'app0:assets/libs/parsermanager.lua'
 dofile 'app0:assets/libs/string.lua'
 dofile 'app0:assets/libs/browser.lua'
-local img, last_img
-for i=1, 1000 do
-    Graphics.loadImageAsync (LUA_APPDATA_DIR..'cacheA.jpg')
-    while System.getAsyncState() == 0 do
-        Graphics.initBlend ()
-        Screen.clear ()
-        Graphics.debugPrint(0,0,i,LUA_COLOR_WHITE)
-        if last_img then
-            Graphics.drawImage(0,20,last_img)
-        end
-        Graphics.termBlend ()
-        Screen.flip ()
-        Screen.waitVblankStart ()
-    end
-    img = System.getAsyncResult()
-    if last_img then
-        Graphics.freeImage(last_img)
-    end
-    last_img = img
-end
 ParserManager.updateParserList()
 while #ParserManager.getParserList()==0 do
     Net.update ()
