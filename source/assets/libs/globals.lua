@@ -7,6 +7,8 @@ LUA_COLOR_GREEN = Color.new (  0, 255,   0, 255)
 LUA_COLOR_BLUE  = Color.new (  0,   0, 255, 255)
 LUA_COLOR_PURPLE= Color.new (255,   0, 255, 255)
 
+LUA_FONT = Font.load("app0:roboto.ttf")
+
 GlobalTimer = Timer.new()
 
 if not System.doesDirExist(LUA_APPDATA_DIR) then

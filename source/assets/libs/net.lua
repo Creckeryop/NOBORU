@@ -164,11 +164,11 @@ Net = {
         end
     end,
     check = function (table, index)
-        if task ~=nil and task.table == table and task.index == index then
+        if task ~=nil and (task.table == table or task.link == table) and (task.index == index or task.path == index) then
             return true
         end
         for _, v in pairs(order) do
-            if v.table == table and v.index == index then
+            if (v.table == table or v.link == table) and (v.index == index or v.path == index) then
                 return true
             end
         end

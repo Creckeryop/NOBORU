@@ -58,7 +58,6 @@ local ChangePage = function (page)
     end
     return true
 end
-local font = Font.load("app0:roboto.ttf")
 Reader = {
     draw = function ()
         for i = -1, 1 do
@@ -67,14 +66,14 @@ Reader = {
                 Graphics.drawImageExtended(math.ceil((offset.x + page.x)*4)/4, math.ceil((offset.y + page.y)*4)/4, page.image, 0, 0, page.width, page.height, 0, page.zoom, page.zoom)
             elseif page~= nil then
                 local loading = "Loading"..string.sub("...",1,(Timer.getTime(GlobalTimer)/400)%3+1)
-                local width = Font.getTextWidth(font, loading)
-                Font.print(font, offset.x + 960 * i+480-width/2, 272-10, loading, LUA_COLOR_WHITE)
+                local width = Font.getTextWidth(LUA_FONT, loading)
+                Font.print(LUA_FONT, offset.x + 960 * i+480-width/2, 272-10, loading, LUA_COLOR_WHITE)
             end
         end
-        local width = Font.getTextWidth(font, Pages.page.."/"..#Pages) + 20
-        local height = Font.getTextHeight(font, Pages.page.."/"..#Pages)
+        local width = Font.getTextWidth(LUA_FONT, Pages.page.."/"..#Pages) + 20
+        local height = Font.getTextHeight(LUA_FONT, Pages.page.."/"..#Pages)
         Graphics.fillRect(960 - width, 960, 0, height + 5, Color.new(0, 0, 0, 128))
-        Font.print(font, 960 - width + 10, 0, Pages.page.."/"..#Pages, LUA_COLOR_WHITE)
+        Font.print(LUA_FONT, 960 - width + 10, 0, Pages.page.."/"..#Pages, LUA_COLOR_WHITE)
     end,
     update = function ()
         if Pages[Pages.page] == nil then
