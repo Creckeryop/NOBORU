@@ -22,8 +22,8 @@ ParserManager = {
             end
         else
             if coroutine.status(task.update) == 'dead' then
-                if task.type ~= 'Update' and task.type ~= 'Chapters' then
-                    task.table[task.index][#task.table[task.index] + 1] = 'dead'
+                if task.type~='Update' then
+                    task.table[task.index].done = true
                 end
                 task = nil
             else
@@ -90,5 +90,8 @@ ParserManager = {
         end}
         order_count = order_count + 1
         order[order_count] = new_task
+    end,
+    getActiveParser = function ()
+        return parser
     end
 }

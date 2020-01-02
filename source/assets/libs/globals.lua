@@ -1,6 +1,7 @@
 LUA_APP_NAME    = 'vsKoob'
 LUA_APP_DIR     = 'app0:'
 LUA_APPDATA_DIR = 'ux0:data/'..LUA_APP_NAME..'/'
+LUA_APPIMG_DIR = LUA_APP_DIR..'assets/images/'
 LUA_COLOR_WHITE = Color.new (255, 255, 255, 255)
 LUA_COLOR_RED   = Color.new (255,   0,   0, 255)
 LUA_COLOR_GREEN = Color.new (  0, 255,   0, 255)
@@ -8,6 +9,12 @@ LUA_COLOR_BLUE  = Color.new (  0,   0, 255, 255)
 LUA_COLOR_PURPLE= Color.new (255,   0, 255, 255)
 
 LUA_FONT = Font.load("app0:roboto.ttf")
+LUA_FONT32 = Font.load("app0:roboto.ttf")
+
+Font.setPixelSizes(LUA_FONT32,32)
+
+MANGA_WIDTH = 200
+MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
 
 GlobalTimer = Timer.new()
 

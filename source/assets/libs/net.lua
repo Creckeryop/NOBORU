@@ -40,12 +40,18 @@ Net = {
                 if task.type == 'String' then
                     task.table[task.index] = System.getAsyncResult ()
                 elseif task.type == 'Image' then
-                    Graphics.loadImageAsync (LUA_APPDATA_DIR..'cacheA.img')
+                    if System.doesFileExist(LUA_APPDATA_DIR..'cacheA.img') then
+                        Graphics.loadImageAsync (LUA_APPDATA_DIR..'cacheA.img')
+                    else
+                        error("File doesn't exists")
+                    end
                     task.type = 'ImageLoad'
                     return
                 elseif task.type == 'ImageLoad' then
                     task.table[task.index] = System.getAsyncResult ()
-                    System.deleteFile (LUA_APPDATA_DIR..'cacheA.img')
+                    if System.doesFileExist(LUA_APPDATA_DIR..'cacheA.img') then
+                        System.deleteFile (LUA_APPDATA_DIR..'cacheA.img')
+                    end
                 elseif task.type == 'File' then
                 elseif task.type == 'Skip' then
                     Console.addLine ('WOW HOW THAT HAPPENED?',LUA_COLOR_RED)
@@ -118,34 +124,43 @@ Net = {
         return image
     end,
     downloadStringAsync = function (link, table, index)
+        if task~=nil and task.table == table and task.index == index then
+            return false
+        end
         for _, v in pairs(order) do
             if v.table == table and v.index == index then
-                return
+                return false
             end
         end
         order_count = order_count + 1
         order[#order + 1] = {type = 'String', link = link, table = table, index = index, retry = 3}
+        return true
     end,
     downloadImageAsync = function (link, table, index)
         if task~=nil and task.table == table and task.index == index then
-            return
+            return false
         end
         for _, v in pairs(order) do
             if v.table == table and v.index == index then
-                return
+                return false
             end
         end
         order_count = order_count + 1
         order[#order + 1] = {type = 'Image', link = link, table = table, index = index, retry = 3}
+        return true
     end,
     downloadFileAsync = function (link, path)
+        if task~=nil and task.path == path then
+            return false
+        end
         for _, v in pairs(order) do
             if v.path == path then
-                return
+                return false
             end
         end
         order_count = order_count + 1
         order[#order + 1] = {type = 'File', link = link, path = path, retry = 3}
+        return true
     end,
     shutDown = function ()
         if net_inited then
@@ -165,11 +180,11 @@ Net = {
     end,
     check = function (table, index)
         if task ~=nil and (task.table == table or task.link == table) and (task.index == index or task.path == index) then
-            return true
+            return task.type ~= 'Skip'
         end
         for _, v in pairs(order) do
             if (v.table == table or v.link == table) and (v.index == index or v.path == index) then
-                return true
+                return v.type ~= 'Skip'
             end
         end
         return false

@@ -6,48 +6,50 @@ dofile 'app0:assets/libs/parser.lua'
 dofile 'app0:assets/libs/manga.lua'
 dofile 'app0:assets/libs/reader.lua'
 dofile 'app0:assets/libs/parsermanager.lua'
+dofile 'app0:assets/libs/string.lua'
+dofile 'app0:assets/libs/browser.lua'
+local img, last_img
+for i=1, 1000 do
+    Graphics.loadImageAsync (LUA_APPDATA_DIR..'cacheA.jpg')
+    while System.getAsyncState() == 0 do
+        Graphics.initBlend ()
+        Screen.clear ()
+        Graphics.debugPrint(0,0,i,LUA_COLOR_WHITE)
+        if last_img then
+            Graphics.drawImage(0,20,last_img)
+        end
+        Graphics.termBlend ()
+        Screen.flip ()
+        Screen.waitVblankStart ()
+    end
+    img = System.getAsyncResult()
+    if last_img then
+        Graphics.freeImage(last_img)
+    end
+    last_img = img
+end
 ParserManager.updateParserList()
 while #ParserManager.getParserList()==0 do
     Net.update ()
     ParserManager.update ()
 end
 ParserManager.setParser(ParserManager.getParserList()[1])
-Mangas = {}
-ParserManager.getMangaListAsync(1, Mangas, 'manga')
-local BROWSING_MODE = 1
-local READING_MODE  = 2
-local MODE          = 0
+Browser.setPage(1)
+BROWSING_MODE = 1
+READING_MODE  = 2
+MODE          = BROWSING_MODE
 local pad = Controls.read ()
 local oldpad = pad
 local delta = 1
+
 local function draw ()
     Graphics.initBlend ()
     Screen.clear ()
-    if Mangas.manga[#Mangas.manga] ~= "dead" then
-        local loading = "Loading"..string.sub("...",1,(Timer.getTime(GlobalTimer)/400)%3+1)
-        local width = Font.getTextWidth(LUA_FONT, loading)
-        Font.print(LUA_FONT, 480 - width / 2, 272 - 10, loading, LUA_COLOR_WHITE)
-    elseif Mangas.manga[3].chapters == nil then
-        ParserManager.getChaptersAsync(Mangas.manga[3])
-        while #Mangas.manga[3].chapters == 0 do
-            Net.update()
-            ParserManager.update()
-        end
-    elseif t == nil then
-        ParserManager.getChapterInfoAsync(Mangas.manga[3].chapters[1])
-        t = 1
-    elseif Mangas.manga[3].chapters[1].pages[#Mangas.manga[3].chapters[1].pages] ~= 'dead' then
-        local loading = "Loading"..string.sub("...",1,(Timer.getTime(GlobalTimer)/400)%3+1)
-        local width = Font.getTextWidth(LUA_FONT, loading)
-        Font.print(LUA_FONT, 480 - width / 2, 272 - 10, loading, LUA_COLOR_WHITE)
-        Font.print(LUA_FONT, 0, 0, #Mangas.manga[3].chapters[1].pages, LUA_COLOR_WHITE)
-    elseif Reader.p == nil then
-        Reader.load(Mangas.manga[3].chapters[1].pages)
-        Reader.p = 1
-    else
+    if MODE == BROWSING_MODE then
+        Browser.draw ()
+    elseif MODE == READING_MODE then
         Reader.draw ()
     end
-    Font.print(LUA_FONT, 0, 0, #Mangas.manga, LUA_COLOR_WHITE)
     if DEBUG_INFO then
         Graphics.fillRect(0, 960, 0, 20,Color.new(0,0,0,100))
         Graphics.debugPrint (0, 0, 'FPS: '..math.floor (60 / delta), LUA_COLOR_WHITE)
@@ -58,10 +60,18 @@ local function draw ()
     Screen.waitVblankStart ()
 end
 local function update (delta)
-    Reader.update()
+    if MODE == BROWSING_MODE then
+        Browser.update ()
+    elseif MODE == READING_MODE then
+        Reader.update ()
+    end
 end
 local function input ()
-    Reader.input (pad, oldpad)
+    if MODE == BROWSING_MODE then
+        
+    elseif MODE == READING_MODE then
+        Reader.input (pad, oldpad)
+    end
     if Controls.check (pad, SCE_CTRL_SQUARE) and not Controls.check (oldpad, SCE_CTRL_SQUARE) then
         DEBUG_INFO = not DEBUG_INFO
     end
