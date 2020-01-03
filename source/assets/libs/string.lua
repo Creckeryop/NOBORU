@@ -1,5 +1,4 @@
-utf8L =
-{
+utf8L = {
 	["а"] = "А",
 	["б"] = "Б",
 	["в"] = "В",
@@ -34,8 +33,7 @@ utf8L =
 	["ю"] = "Ю",
 	["я"] = "Я"
 }
-utf8U =
-{
+utf8U = {
 	["А"] = "а",
 	["Б"] = "б",
 	["В"] = "в",
@@ -77,7 +75,7 @@ local old_lower = string.lower
 function string:lower()
 	local str = ""
 	for c in it_utf8(self) do
-		if utf8U[c]==nil then
+		if utf8U[c] == nil then
 			str = str .. old_lower(c)
 		else
 			str = str .. utf8U[c]
@@ -89,21 +87,21 @@ local old_upper = string.upper
 function string:upper()
 	local str = ""
 	for c in it_utf8(self) do
-		if utf8L[c]==nil then
+		if utf8L[c] == nil then
 			str = str .. old_upper(c)
 		else
-			str = str..utf8L[c]
+			str = str .. utf8L[c]
 		end
 	end
 	return str
 end
-function string:sub(i,k)
+function string:sub(i, k)
 	k = k or -1
 	local text = ""
 	for c in it_utf8(self) do
-		if i==1 then
-			if k~=0 then
-				text = text..c
+		if i == 1 then
+			if k ~= 0 then
+				text = text .. c
 				k = k - 1
 			else
 				break
@@ -115,5 +113,5 @@ function string:sub(i,k)
 	return text
 end
 function string:len()
-	return select(2,string.gsub(self, "[^\128-\193]", ""))
+	return select(2, string.gsub(self, "[^\128-\193]", ""))
 end

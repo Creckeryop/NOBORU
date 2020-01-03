@@ -5,11 +5,11 @@ Parser = {
     getChapters = nil,
     getChapterInfo = nil,
     getPage = nil,
-    new = function (self, name, link, lang)
+    new = function(self, name, link, lang)
         local p = {name = name, link = link, lang = lang}
-        setmetatable (p, self)
+        setmetatable(p, self)
         self.__index = self
-        for k, v in ipairs (Parsers) do
+        for k, v in ipairs(Parsers) do
             if p.name == v.name then
                 Parsers[k].name = p.name
                 Parsers[k].link = p.link
