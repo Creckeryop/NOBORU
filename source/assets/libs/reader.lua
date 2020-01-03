@@ -13,7 +13,7 @@ local PAGE_LEFT = 1
 local PAGE_RIGHT = 2
 local pageMode = PAGE_NONE
 
-local max_zoom = 2
+local max_zoom = 3
 
 local offset = {x = 0, y = 0}
 local touchTemp = {x = 0, y = 0}
@@ -165,6 +165,18 @@ Reader = {
         elseif Controls.check(pad, SCE_CTRL_LTRIGGER) then
             Scale(5 / 6, Pages[Pages.page])
         end
+        if Controls.check(pad, SCE_CTRL_CIRCLE) then
+            for i = 1, #Pages do
+                if Pages[i] ~= nil then
+                    Net.remove(Pages[i], "image")
+                    if Pages[i].image ~= nil then
+                        Graphics.freeImage(Pages[i].image)
+                        Pages[i].image = nil
+                    end
+                end
+            end
+            MODE = BROWSING_MODE
+        end
         if Touch.y ~= nil and OldTouch.y ~= nil then
             if touchMode ~= TOUCH_MULTI then
                 if touchMode == TOUCH_IDLE then
@@ -224,6 +236,7 @@ Reader = {
                 Net.remove(Pages[i], "image")
                 if Pages[i].image ~= nil then
                     Graphics.freeImage(Pages[i].image)
+                    Pages[i].image = nil
                 end
             end
         end

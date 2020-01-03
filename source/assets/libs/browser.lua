@@ -118,7 +118,7 @@ Browser = {
             end
         end
         if Mangas.manga ~= nil then
-            if Touch.x ~= nil and OldTouch.x == nil and Touch.y > 282 - MANGA_HEIGHT / 2 and Touch.y < 282 + MANGA_HEIGHT / 2 then
+            if touchMode == TOUCH_NONE and Touch.x ~= nil and OldTouch.x ~= nil and Touch.y > 282 - MANGA_HEIGHT / 2 and Touch.y < 282 + MANGA_HEIGHT / 2 then
                 touchTemp = {x = Touch.x, y = Touch.y}
                 touchMode = TOUCH_READ
             elseif Touch.x == nil then
@@ -137,7 +137,7 @@ Browser = {
             end
             if touchMode == TOUCH_READ then
                 local len = math.sqrt((touchTemp.x - Touch.x) * (touchTemp.x - Touch.x) + (touchTemp.y - Touch.y) * (touchTemp.y - Touch.y))
-                if len > 10 then
+                if len > 10 or math.abs(slider_vel) > 1 then
                     touchMode = TOUCH_SLIDE
                 end
             end
@@ -146,7 +146,7 @@ Browser = {
             else
                 slider_vel = slider_vel / 1.12
                 offset.x = offset.x / 1.12
-                if math.abs(slider_vel) < 0.05 then
+                if math.abs(slider_vel) < 1 then
                     slider_vel = 0
                 end
                 if math.abs(offset.x) < 1 then
@@ -170,6 +170,22 @@ Browser = {
         end
     end,
     input = function(pad, oldpad)
+        if Controls.check(pad, SCE_CTRL_LTRIGGER) then
+            if manga then
+                ParserManager.getChaptersAsync(manga)
+                while not manga.chapters.done do
+                    ParserManager.update()
+                    Net.update()
+                end
+                ParserManager.getChapterInfoAsync(manga.chapters[1])
+                while not manga.chapters[1].pages.done do
+                    ParserManager.update()
+                    Net.update()
+                end
+                Reader.load(manga.chapters[1].pages)
+                MODE = READING_MODE
+            end
+        end
         if Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT) then
             Browser.setPage(current_page + 1)
         end
