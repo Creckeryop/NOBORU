@@ -24,6 +24,9 @@ Net = {
             if task.type == "String" then
                 Network.requestStringAsync(task.link)
             elseif task.type == "Image" then
+                if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
+                    System.deleteFile(LUA_APPDATA_DIR .. "cacheA.img")
+                end
                 Network.downloadFileAsync(task.link, LUA_APPDATA_DIR .. "cacheA.img")
             elseif task.type == "File" then
                 Network.downloadFileAsync(task.link, task.path)
@@ -43,7 +46,12 @@ Net = {
                     memory = memory + task.table[task.index]:len()
                 elseif task.type == "Image" then
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
-                        Graphics.loadImageAsync(LUA_APPDATA_DIR .. "cacheA.img")
+                        local width, height = System.getPictureResolution(LUA_APPDATA_DIR .. "cacheA.img")
+                        if height > 4095 then
+                            Graphics.loadPartImageAsync(LUA_APPDATA_DIR .. "cacheA.img",0,0,width,math.min(8192,height))
+                        else
+                            Graphics.loadImageAsync(LUA_APPDATA_DIR .. "cacheA.img")
+                        end
                         local handle = System.openFile(LUA_APPDATA_DIR .. "cacheA.img", FREAD)
                         memory = memory + System.sizeFile(handle)
                         System.closeFile(handle)
@@ -56,7 +64,6 @@ Net = {
                     task.table[task.index] = System.getAsyncResult()
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
                         Graphics.setImageFilters(task.table[task.index], FILTER_LINEAR, FILTER_LINEAR)
-                        System.deleteFile(LUA_APPDATA_DIR .. "cacheA.img")
                     end
                 elseif task.type == "File" then
                     local handle = System.openFile(task.path, FREAD)

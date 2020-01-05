@@ -90,7 +90,7 @@ Browser = {
         end
     end,
     update = function()
-        if math.abs(slider_vel) < 1 then
+        if math.abs(slider_vel) < 0.05 then
             local start_i = math.max(1, math.floor(slider_x / (MANGA_WIDTH + 10)))
             for i = 1, #Mangas.manga do
                 if i >= start_i and i <= math.min(start_i + 7, #Mangas.manga) then

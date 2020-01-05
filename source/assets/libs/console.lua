@@ -15,7 +15,7 @@ Console = {
         local y = 20
         for _, v in ipairs(lines) do
             Graphics.fillRect(0, 960, y, y + 20, console_color)
-            Font.Print(LUA_FONT, 0, y, v[1], v[2])
+            Font.print(LUA_FONT, 0, y, v[1], v[2])
             y = y + 20
         end
     end

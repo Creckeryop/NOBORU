@@ -74,6 +74,11 @@ Reader = {
         local height = Font.getTextHeight(LUA_FONT, Pages.page .. "/" .. #Pages)
         Graphics.fillRect(960 - width, 960, 0, height + 5, Color.new(0, 0, 0, 128))
         Font.print(LUA_FONT, 960 - width + 10, 0, Pages.page .. "/" .. #Pages, LUA_COLOR_WHITE)
+        Graphics.fillRect(0, 960, 20, 40, Color.new(0, 0, 0, 128))
+        local page = Pages[Pages.page]
+        if page ~= nil and page.image ~= nil then
+            Font.print(LUA_FONT, 0, 20, Graphics.getImageWidth(page.image) .. "x" .. Graphics.getImageHeight(page.image), LUA_COLOR_WHITE)
+        end
     end,
     update = function()
         if Pages[Pages.page] == nil then

@@ -47,7 +47,7 @@ local function draw()
             end
         end
         Graphics.debugPrint(0, 0, "FPS: " .. math.floor(60 / delta) .. "   NET_MEM: " .. (math.ceil(bytes_used * 10) / 10) .. " " .. str, LUA_COLOR_WHITE)
-    --Console.draw ()
+        Console.draw()
     end
     Graphics.termBlend()
     Screen.flip()
