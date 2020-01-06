@@ -16,7 +16,6 @@ local touchMode = TOUCH_NONE
 local BROWSER_NONE = 0
 local BROWSER_EDGE = 1
 local browserMode = BROWSER_NONE
-
 local drawManga = function(x, y, manga)
     if manga.image then
         local width, height = Graphics.getImageWidth(manga.image), Graphics.getImageHeight(manga.image)
@@ -177,13 +176,34 @@ Browser = {
                     ParserManager.update()
                     Net.update()
                 end
-                ParserManager.getChapterInfoAsync(manga.chapters[1])
-                while not manga.chapters[1].pages.done do
-                    ParserManager.update()
-                    Net.update()
+                if (#manga.chapters > 1) then
+                    for i = 1, #Mangas.manga do
+                        if Mangas.manga[i].image_download then
+                            if Mangas.manga[i].image then
+                                local success, err = pcall(Graphics.freeImage, Mangas.manga[i].image)
+                                if success then
+                                    Mangas.manga[i].image = nil
+                                else
+                                    Console.addLine(err)
+                                end
+                            else
+                                if Net.check(Mangas.manga[i], "image") then
+                                    Net.remove(Mangas.manga[i], "image")
+                                end
+                            end
+                            Mangas.manga[i].image_download = nil
+                        end
+                    end
+                    ParserManager.getChapterInfoAsync(manga.chapters[1])
+                    while not manga.chapters[1].pages.done do
+                        ParserManager.update()
+                        Net.update()
+                    end
+                    Reader.load(manga.chapters[1].pages)
+                    MODE = READING_MODE
+                else
+                    Console.addLine("No pages", LUA_COLOR_RED)
                 end
-                Reader.load(manga.chapters[1].pages)
-                MODE = READING_MODE
             end
         end
         if Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT) then

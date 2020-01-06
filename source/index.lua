@@ -13,7 +13,7 @@ while #ParserManager.getParserList() == 0 do
     Net.update()
     ParserManager.update()
 end
-ParserManager.setParser(ParserManager.getParserList()[2])
+ParserManager.setParser(ParserManager.getParserList()[3])
 Browser.setPage(1)
 BROWSING_MODE = 1
 READING_MODE = 2
