@@ -47,10 +47,16 @@ Net = {
                 elseif task.type == "Image" then
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
                         local width, height = System.getPictureResolution(LUA_APPDATA_DIR .. "cacheA.img")
-                        if height > 4095 then
-                            Graphics.loadPartImageAsync(LUA_APPDATA_DIR .. "cacheA.img",0,0,width,math.min(8192,height))
+                        if height > 4096 then
+                            if width == nil or height == nil then
+                                error("measure problem")
+                            end
+                            task.image = {width = width, height = height, parts = math.ceil(height / 4096)}
+                            Console.addLine(task.image.parts)
+                            task.type = "ImageLoadTable"
                         else
                             Graphics.loadImageAsync(LUA_APPDATA_DIR .. "cacheA.img")
+                            task.type = "ImageLoad"
                         end
                         local handle = System.openFile(LUA_APPDATA_DIR .. "cacheA.img", FREAD)
                         memory = memory + System.sizeFile(handle)
@@ -58,13 +64,47 @@ Net = {
                     else
                         error("File doesn't exists")
                     end
-                    task.type = "ImageLoad"
                     return
                 elseif task.type == "ImageLoad" then
                     task.table[task.index] = System.getAsyncResult()
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
                         Graphics.setImageFilters(task.table[task.index], FILTER_LINEAR, FILTER_LINEAR)
                     end
+                elseif task.type == "ImageLoadTable" then
+                    if task.image.i == nil then
+                        task.image.i = 0
+                        task.table[task.index] = {}
+                        task.table[task.index].parts = task.image.parts
+                        task.table[task.index].part_h = math.floor(task.image.height / task.image.parts)
+                        task.table[task.index].height = task.image.height
+                        task.table[task.index].width = task.image.width
+                    elseif task.image.i < task.image.parts then
+                        task.image.i = task.image.i + 1
+                        if (task.table[task.index]==trash.garbadge) then
+                            return
+                        end
+                        task.table[task.index][task.image.i] = System.getAsyncResult()
+                        if (task.table[task.index][task.image.i] == nil) then
+                            error("error with part function")
+                        else
+                            Console.addLine("Got " .. task.image.i .. " image")
+                        end
+                        Graphics.setImageFilters(task.table[task.index][task.image.i], FILTER_LINEAR, FILTER_LINEAR)
+                    else
+                        task = nil
+                        return
+                    end
+                    local height = math.floor(task.image.height / task.image.parts)
+                    if (task.image.i == task.image.parts - 1) then
+                        height = task.image.height - (task.image.i)*height
+                    end
+                    if (task.image.i < task.image.parts) then
+                        Console.addLine("Getting " .. (math.floor(task.image.height / task.image.parts) * task.image.i) .. " " .. (task.image.width) .. " " .. height .. " image")
+                        Graphics.loadPartImageAsync(LUA_APPDATA_DIR .. "cacheA.img", 0, math.floor(task.image.height / task.image.parts) * task.image.i, task.image.width, height)
+                    else
+                        task = nil
+                    end
+                    return
                 elseif task.type == "File" then
                     local handle = System.openFile(task.path, FREAD)
                     memory = memory + System.sizeFile(handle)
