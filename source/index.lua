@@ -1,4 +1,5 @@
 DEBUG_INFO = true
+
 dofile "app0:assets/libs/string.lua"
 dofile "app0:assets/libs/globals.lua"
 dofile "app0:assets/libs/console.lua"
@@ -8,12 +9,13 @@ dofile "app0:assets/libs/manga.lua"
 dofile "app0:assets/libs/reader.lua"
 dofile "app0:assets/libs/parsermanager.lua"
 dofile "app0:assets/libs/browser.lua"
+--dofile "app0:assets/libs/stress.lua"
 ParserManager.updateParserList()
 while #ParserManager.getParserList() == 0 do
     Net.update()
     ParserManager.update()
 end
-ParserManager.setParser(ParserManager.getParserList()[3])
+ParserManager.setParser(ParserManager.getParserList()[2])
 Browser.setPage(1)
 BROWSING_MODE = 1
 READING_MODE = 2
@@ -33,6 +35,8 @@ local function draw()
     if DEBUG_INFO then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 100))
         local bytes_used = Net.getMemoryDownloaded()
+        local garbadge = collectgarbage("count")
+        local str2 = "kbytes"
         local str = "bytes"
         if bytes_used > 1024 then
             bytes_used = bytes_used / 1024
@@ -46,7 +50,15 @@ local function draw()
                 end
             end
         end
-        Graphics.debugPrint(0, 0, "FPS: " .. math.floor(60 / delta) .. "   NET_MEM: " .. (math.ceil(bytes_used * 10) / 10) .. " " .. str, LUA_COLOR_WHITE)
+        if garbadge > 1024 then
+            garbadge = garbadge / 1024
+            str2 = "mbytes"
+            if garbadge > 1024 then
+                garbadge = garbadge / 1024
+                str2 = "gbytes"
+            end
+        end
+        Graphics.debugPrint(0, 0, "FPS: " .. math.floor(60 / delta) .. "   NET_MEM: " .. (math.ceil(bytes_used * 100) / 100) .. " " .. str .. "   LUA_MEM: " .. (math.ceil(garbadge * 100) / 100) .. " "..str2, LUA_COLOR_WHITE)
         Console.draw()
     end
     Graphics.termBlend()

@@ -44,34 +44,10 @@ local ChangePage = function(page)
     end
     if page - 2 > 0 then
         Net.remove(Pages[page - 2], "image")
-        if Pages[page - 2].image ~= nil then
-            if type(Pages[page - 2].image)=="table" then
-                for k = 1, Pages[page - 2].image.parts  do
-                    if (Pages[page - 2].image[k] ~= nil) then
-                        Graphics.freeImage(Pages[page - 2].image[k])
-                    end
-                end
-            else
-                if (Pages[page - 2].image~=nil) then
-                    Graphics.freeImage(Pages[page - 2].image)
-                end
-            end
-        end
         Pages[page - 2] = {link = Pages[page - 2].link, x = 0, y = 0}
     end
     if page + 2 < #Pages then
         Net.remove(Pages[page + 2], "image")
-        if type(Pages[page + 2].image)=="table" then
-            for k = 1, Pages[page + 2].image.parts  do
-                if (Pages[page + 2].image[k] ~= nil) then
-                    Graphics.freeImage(Pages[page - 2].image[k])
-                end
-            end
-        else
-            if (Pages[page + 2].image~=nil) then
-                Graphics.freeImage(Pages[page + 2].image)
-            end
-        end
         Pages[page + 2] = {link = Pages[page + 2].link, x = 0, y = 0}
     end
     return true
@@ -81,15 +57,15 @@ Reader = {
         for i = -1, 1 do
             local page = Pages[Pages.page + i]
             if page ~= nil and page.image ~= nil then
-                if (type(page.image)=="table") then
+                if (type(page.image.e or page.image) == "table") then
                     for k = 1, page.image.parts do
-                        if page.image[k]~=nil then
-                            local height = Graphics.getImageHeight(page.image[k])
-                            Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y + (k-1)*page.image.part_h*page.zoom) * 4) / 4 - page.height/2*page.zoom+page.image.part_h/2*page.zoom, page.image[k], 0, 0, page.width, height, 0, page.zoom, page.zoom)
+                        if page.image[k] and page.image[k].e ~= nil then
+                            local height = Graphics.getImageHeight(page.image[k].e)
+                            Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y + (k - 1) * page.image.part_h * page.zoom) * 4) / 4 - page.height / 2 * page.zoom + page.image.part_h / 2 * page.zoom, page.image[k].e, 0, 0, page.width, height, 0, page.zoom, page.zoom)
                         end
                     end
                 else
-                    Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4, page.image, 0, 0, page.width, page.height, 0, page.zoom, page.zoom)
+                    Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4, page.image.e, 0, 0, page.width, page.height, 0, page.zoom, page.zoom)
                 end
             elseif page ~= nil then
                 local loading = "Loading" .. string.sub("...", 1, (Timer.getTime(GlobalTimer) / 400) % 3 + 1)
@@ -104,7 +80,7 @@ Reader = {
         Graphics.fillRect(0, 960, 20, 40, Color.new(0, 0, 0, 128))
         local page = Pages[Pages.page]
         if page ~= nil and page.image ~= nil then
-            --Font.print(LUA_FONT, 0, 20, Graphics.getImageWidth(page.image) .. "x" .. Graphics.getImageHeight(page.image), LUA_COLOR_WHITE)
+        --Font.print(LUA_FONT, 0, 20, Graphics.getImageWidth(page.image) .. "x" .. Graphics.getImageHeight(page.image), LUA_COLOR_WHITE)
         end
     end,
     update = function()
@@ -113,12 +89,12 @@ Reader = {
         end
         for i = -1, 1 do
             local page = Pages[Pages.page + i]
-            if page ~= nil and page.zoom == nil and page.image ~= nil then
+            if page ~= nil and page.zoom == nil and page.image~=nil then
                 local image = page.image
-                if type(image)=="table" then
+                if type(image.e or image) == "table" then
                     page.width, page.height, page.x, page.y = image.width, image.height, 480 + i * 960, 272
                 else
-                    page.width, page.height, page.x, page.y = Graphics.getImageWidth(image), Graphics.getImageHeight(image), 480 + i * 960, 272
+                    page.width, page.height, page.x, page.y = Graphics.getImageWidth(image.e), Graphics.getImageHeight(image.e), 480 + i * 960, 272
                 end
                 Console.addLine("Added " .. Pages.page + i)
                 if page.width > page.height then
@@ -205,23 +181,10 @@ Reader = {
             for i = 1, #Pages do
                 if Pages[i] ~= nil then
                     Net.remove(Pages[i], "image")
-                    if Pages[i].image ~= nil then
-                        if type(Pages[i].image)=="table" then
-                            for k = 1, Pages[i].image.parts  do
-                                if (Pages[i].image[k] ~= nil) then
-                                    Graphics.freeImage(Pages[i].image[k])
-                                    Pages[i].image[k] = nil
-                                end
-                            end
-                        else
-                            if Pages[i].image~=nil then
-                                Graphics.freeImage(Pages[i].image)
-                                Pages[i].image = nil
-                            end
-                        end
-                    end
+                    Pages[i].image = nil
                 end
             end
+            collectgarbage()
             MODE = BROWSING_MODE
         end
         if Touch.y ~= nil and OldTouch.y ~= nil then
@@ -281,19 +244,7 @@ Reader = {
         for i = 1, #Pages do
             if Pages[i] ~= nil then
                 Net.remove(Pages[i], "image")
-                if type(Pages[i].image)=="table" then
-                    for k = 1, Pages[i].image.parts  do
-                        if (Pages[i].image[k] ~= nil) then
-                            Graphics.freeImage(Pages[i].image[k])
-                            Pages[i].image[k] = nil
-                        end
-                    end
-                else
-                    if Pages[i].image~=nil then
-                        Graphics.freeImage(Pages[i].image)
-                        Pages[i].image = nil
-                    end
-                end
+                Pages[i].image = nil
             end
         end
         Pages = {}
@@ -301,5 +252,6 @@ Reader = {
             Pages[i] = {link = pages_links[i], x = 0, y = 0}
         end
         ChangePage(1)
+        collectgarbage()
     end
 }

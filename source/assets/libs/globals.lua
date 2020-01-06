@@ -37,3 +37,27 @@ TableReverse = function(table)
     end
     return new_table
 end
+
+local function setmt__gc(t, mt)
+    local prox = newproxy(true)
+    getmetatable(prox).__gc = function() mt.__gc(t) end
+    t[prox] = true
+    return setmetatable(t, mt)
+end
+Image = {
+    __gc = function (self)
+        if self.e~=nil then
+            Graphics.freeImage(self.e)
+            Console.addLine("Freed!")
+        end
+    end,
+    new = function(self, image)
+        if image == nil then return nil end
+        local p = {e = image}
+        setmt__gc(p, self)
+        self.__index = self
+        return p
+    end
+}
+collectgarbage( "setpause", 200)
+collectgarbage( "setstepmul", 200)

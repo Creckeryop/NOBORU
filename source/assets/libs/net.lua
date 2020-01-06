@@ -47,6 +47,7 @@ Net = {
                 elseif task.type == "Image" then
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
                         local width, height = System.getPictureResolution(LUA_APPDATA_DIR .. "cacheA.img")
+                        Console.addLine(width.."x"..height.." image got")
                         if height > 4096 then
                             if width == nil or height == nil then
                                 error("measure problem")
@@ -66,9 +67,9 @@ Net = {
                     end
                     return
                 elseif task.type == "ImageLoad" then
-                    task.table[task.index] = System.getAsyncResult()
+                    task.table[task.index] = Image:new(System.getAsyncResult())
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
-                        Graphics.setImageFilters(task.table[task.index], FILTER_LINEAR, FILTER_LINEAR)
+                        Graphics.setImageFilters(task.table[task.index].e, FILTER_LINEAR, FILTER_LINEAR)
                     end
                 elseif task.type == "ImageLoadTable" then
                     if task.image.i == nil then
@@ -80,23 +81,23 @@ Net = {
                         task.table[task.index].width = task.image.width
                     elseif task.image.i < task.image.parts then
                         task.image.i = task.image.i + 1
-                        if (task.table[task.index]==trash.garbadge) then
+                        if (task.table[task.index] == trash.garbadge) then
                             return
                         end
-                        task.table[task.index][task.image.i] = System.getAsyncResult()
+                        task.table[task.index][task.image.i] = Image:new(System.getAsyncResult())
                         if (task.table[task.index][task.image.i] == nil) then
                             error("error with part function")
                         else
                             Console.addLine("Got " .. task.image.i .. " image")
                         end
-                        Graphics.setImageFilters(task.table[task.index][task.image.i], FILTER_LINEAR, FILTER_LINEAR)
+                        Graphics.setImageFilters(task.table[task.index][task.image.i].e, FILTER_LINEAR, FILTER_LINEAR)
                     else
                         task = nil
                         return
                     end
                     local height = math.floor(task.image.height / task.image.parts)
                     if (task.image.i == task.image.parts - 1) then
-                        height = task.image.height - (task.image.i)*height
+                        height = task.image.height - (task.image.i) * height
                     end
                     if (task.image.i < task.image.parts) then
                         Console.addLine("Getting " .. (math.floor(task.image.height / task.image.parts) * task.image.i) .. " " .. (task.image.width) .. " " .. height .. " image")
@@ -127,7 +128,6 @@ Net = {
         end
         if trash.garbadge ~= nil then
             if trash.type == "ImageLoad" then
-                Graphics.freeImage(trash.garbadge)
                 Console.addLine("NET:(Freeing image)" .. trash.link, LUA_COLOR_PURPLE)
             end
             trash.garbadge = nil
@@ -172,12 +172,12 @@ Net = {
         if not net_inited then
             Network.init()
             Network.downloadFile(link, LUA_APPDATA_DIR .. "cache.img")
-            image = Graphics.loadImage(LUA_APPDATA_DIR .. "cache.img")
+            image = Image:new(Graphics.loadImage(LUA_APPDATA_DIR .. "cache.img"))
             System.deleteFile(LUA_APPDATA_DIR .. "cache.img")
             Network.term()
         else
             Network.downloadFile(link, LUA_APPDATA_DIR .. "cache.img")
-            image = Graphics.loadImage(LUA_APPDATA_DIR .. "cache.img")
+            image = Image:new(Graphics.loadImage(LUA_APPDATA_DIR .. "cache.img"))
             System.deleteFile(LUA_APPDATA_DIR .. "cache.img")
         end
         return image

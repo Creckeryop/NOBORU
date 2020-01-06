@@ -18,14 +18,14 @@ local BROWSER_EDGE = 1
 local browserMode = BROWSER_NONE
 local drawManga = function(x, y, manga)
     if manga.image then
-        local width, height = Graphics.getImageWidth(manga.image), Graphics.getImageHeight(manga.image)
+        local width, height = Graphics.getImageWidth(manga.image.e), Graphics.getImageHeight(manga.image.e)
         local draw = false
         if width < height then
             local scale = MANGA_WIDTH / width
             local h = MANGA_HEIGHT / scale
             local s_y = (height - h) / 2
             if s_y >= 0 then
-                Graphics.drawImageExtended(x, y, manga.image, 0, s_y, width, h, 0, scale, scale)
+                Graphics.drawImageExtended(x, y, manga.image.e, 0, s_y, width, h, 0, scale, scale)
                 draw = true
             end
         end
@@ -33,7 +33,7 @@ local drawManga = function(x, y, manga)
             local scale = MANGA_HEIGHT / height
             local w = MANGA_WIDTH / scale
             local s_x = (width - w) / 2
-            Graphics.drawImageExtended(x, y, manga.image, s_x, 0, w, height, 0, scale, scale)
+            Graphics.drawImageExtended(x, y, manga.image.e, s_x, 0, w, height, 0, scale, scale)
         end
     else
         Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(128, 128, 128))
@@ -89,7 +89,7 @@ Browser = {
         end
     end,
     update = function()
-        if math.abs(slider_vel) < 0.05 then
+        if slider_vel == 0 then
             local start_i = math.max(1, math.floor(slider_x / (MANGA_WIDTH + 10)))
             for i = 1, #Mangas.manga do
                 if i >= start_i and i <= math.min(start_i + 7, #Mangas.manga) then
@@ -98,21 +98,8 @@ Browser = {
                         Mangas.manga[i].image_download = 0
                     end
                 else
-                    if Mangas.manga[i].image_download then
-                        if Mangas.manga[i].image then
-                            local success, err = pcall(Graphics.freeImage, Mangas.manga[i].image)
-                            if success then
-                                Mangas.manga[i].image = nil
-                            else
-                                Console.addLine(err)
-                            end
-                        else
-                            if Net.check(Mangas.manga[i], "image") then
-                                Net.remove(Mangas.manga[i], "image")
-                            end
-                        end
-                        Mangas.manga[i].image_download = nil
-                    end
+                    Mangas.manga[i].image = nil
+                    Mangas.manga[i].image_download = nil
                 end
             end
         end
@@ -178,21 +165,8 @@ Browser = {
                 end
                 if (#manga.chapters > 1) then
                     for i = 1, #Mangas.manga do
-                        if Mangas.manga[i].image_download then
-                            if Mangas.manga[i].image then
-                                local success, err = pcall(Graphics.freeImage, Mangas.manga[i].image)
-                                if success then
-                                    Mangas.manga[i].image = nil
-                                else
-                                    Console.addLine(err)
-                                end
-                            else
-                                if Net.check(Mangas.manga[i], "image") then
-                                    Net.remove(Mangas.manga[i], "image")
-                                end
-                            end
-                            Mangas.manga[i].image_download = nil
-                        end
+                        Mangas.manga[i].image = nil
+                        Mangas.manga[i].image_download = nil
                     end
                     ParserManager.getChapterInfoAsync(manga.chapters[1])
                     while not manga.chapters[1].pages.done do
@@ -216,42 +190,10 @@ Browser = {
         end
     end,
     Terminate = function()
-        if Mangas.manga then
-            for i = 1, #Mangas.manga do
-                if Mangas.manga[i].image then
-                    local success, err = pcall(Graphics.freeImage, Mangas.manga[i].image)
-                    if success then
-                        Mangas.manga[i].image = nil
-                    else
-                        Console.addLine(err)
-                    end
-                else
-                    if Net.check(Mangas.manga[i], "image") then
-                        Net.remove(Mangas.manga[i], "image")
-                    end
-                end
-                Mangas.manga[i].image_download = nil
-            end
-        end
+        Mangas = nil
     end,
     setPage = function(page)
-        if Mangas.manga then
-            for i = 1, #Mangas.manga do
-                if Mangas.manga[i].image then
-                    local success, err = pcall(Graphics.freeImage, Mangas.manga[i].image)
-                    if success then
-                        Mangas.manga[i].image = nil
-                    else
-                        Console.addLine(err)
-                    end
-                else
-                    if Net.check(Mangas.manga[i], "image") then
-                        Net.remove(Mangas.manga[i], "image")
-                    end
-                end
-                Mangas.manga[i].image_download = nil
-            end
-        end
+        Managas = {}
         ParserManager.getMangaListAsync(page, Mangas, "manga")
         current_page = page
         slider_x = 0
