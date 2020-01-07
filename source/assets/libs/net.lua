@@ -37,7 +37,7 @@ Net = {
                 Console.addLine("NET: #" .. (4 - task.retry) .. " " .. task.link, LUA_COLOR_BLUE)
             end
         else
-            Console.addLine("NET: " .. task.link, LUA_COLOR_GREEN)
+            Console.addLine("("..task.type..")NET: " .. task.link, LUA_COLOR_GREEN)
             local f_save = function()
                 trash.type = task.type
                 trash.link = task.link
@@ -46,6 +46,9 @@ Net = {
                     memory = memory + task.table[task.index]:len()
                 elseif task.type == "Image" then
                     if System.doesFileExist(LUA_APPDATA_DIR .. "cacheA.img") then
+                        local handle = System.openFile(LUA_APPDATA_DIR .. "cacheA.img", FREAD)
+                        memory = memory + System.sizeFile(handle)
+                        System.closeFile(handle)
                         local width, height = System.getPictureResolution(LUA_APPDATA_DIR .. "cacheA.img")
                         Console.addLine(width.."x"..height.." image got")
                         if height > 4096 then
@@ -56,14 +59,11 @@ Net = {
                             Console.addLine(task.image.parts)
                             task.type = "ImageLoadTable"
                         else
-                            Graphics.loadImageAsync(LUA_APPDATA_DIR .. "cacheA.img")
+                            Graphics.loadPartImageAsync(LUA_APPDATA_DIR .. "cacheA.img", 0, 0, width, height)
                             task.type = "ImageLoad"
                         end
-                        local handle = System.openFile(LUA_APPDATA_DIR .. "cacheA.img", FREAD)
-                        memory = memory + System.sizeFile(handle)
-                        System.closeFile(handle)
                     else
-                        error("File doesn't exists")
+                        task = nil
                     end
                     return
                 elseif task.type == "ImageLoad" then

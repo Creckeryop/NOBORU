@@ -59,5 +59,5 @@ Image = {
         return p
     end
 }
-collectgarbage( "setpause", 200)
-collectgarbage( "setstepmul", 200)
+--collectgarbage( "setpause", 120)
+--collectgarbage( "setstepmul", 4500)

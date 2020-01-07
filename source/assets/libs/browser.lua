@@ -17,7 +17,7 @@ local BROWSER_NONE = 0
 local BROWSER_EDGE = 1
 local browserMode = BROWSER_NONE
 local drawManga = function(x, y, manga)
-    if manga.image then
+    if manga.image and manga.image.e then
         local width, height = Graphics.getImageWidth(manga.image.e), Graphics.getImageHeight(manga.image.e)
         local draw = false
         if width < height then
@@ -98,7 +98,13 @@ Browser = {
                         Mangas.manga[i].image_download = 0
                     end
                 else
-                    Mangas.manga[i].image = nil
+                    Net.remove(Mangas.manga[i],'image')
+                    if Mangas.manga[i].image then
+                        if Mangas.manga[i].image.e then
+                            Graphics.freeImage(Mangas.manga[i].image.e)
+                            Mangas.manga[i].image.e = nil
+                        end
+                    end
                     Mangas.manga[i].image_download = nil
                 end
             end
