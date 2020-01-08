@@ -90,7 +90,7 @@ Reader = {
     draw = function()
         if STATE == STATE_LOADING then
             local loadingManga_name = "Loading " .. Chapters[current_chapter].manga.name
-            local loading = 'Loading Chapter "' .. Chapters[current_chapter].name .. '"' .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+            local loading = 'Loading Chapter ' .. Chapters[current_chapter].name .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
             local width = Font.getTextWidth(LUA_FONT, loading)
             local width2 = Font.getTextWidth(LUA_FONT, loadingManga_name)
             Font.print(LUA_FONT, 480 - width / 2, 272 + 10, loading, LUA_COLOR_BLACK)

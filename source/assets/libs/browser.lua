@@ -40,8 +40,9 @@ local drawManga = function(x, y, manga)
     end
     Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2 - 120, LUA_GRADIENT, MANGA_WIDTH, 1)
     if manga.name ~= nil then
+        local width = Font.getTextWidth(LUA_FONT,manga.name) --(MANGA_WIDTH - 20) / 10 - 1
         local count = (MANGA_WIDTH - 20) / 10 - 1
-        if manga.name:len() <= count then
+        if width < MANGA_WIDTH - 20 then
             Font.print(LUA_FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, manga.name, Color.new(255, 255, 255))
         else
             local n, f, s = 0, "", ""
