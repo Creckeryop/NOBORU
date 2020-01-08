@@ -12,7 +12,7 @@ local TOUCH_READ = 1
 local TOUCH_PRESS = 2
 local TOUCH_SLIDE = 3
 local touchMode = TOUCH_NONE
-
+TouchTimer = Timer.new()
 local BROWSER_NONE = 0
 local BROWSER_EDGE = 1
 local browserMode = BROWSER_NONE
@@ -89,7 +89,7 @@ Browser = {
         end
     end,
     update = function()
-        if slider_vel == 0 then
+        if slider_vel == 0 and Timer.getTime(TouchTimer)>1000 then
             local start_i = math.max(1, math.floor(slider_x / (MANGA_WIDTH + 10)))
             for i = 1, #Mangas.manga do
                 if i >= start_i and i <= math.min(start_i + 7, #Mangas.manga) then
@@ -135,6 +135,7 @@ Browser = {
             end
             if touchMode == TOUCH_SLIDE then
                 slider_vel = OldTouch.x - Touch.x
+                Timer.reset(TouchTimer)
             else
                 slider_vel = slider_vel / 1.12
                 offset.x = offset.x / 1.12
@@ -174,12 +175,7 @@ Browser = {
                         Mangas.manga[i].image = nil
                         Mangas.manga[i].image_download = nil
                     end
-                    ParserManager.getChapterInfoAsync(manga.chapters[1])
-                    while not manga.chapters[1].pages.done do
-                        ParserManager.update()
-                        Net.update()
-                    end
-                    Reader.load(manga.chapters[1].pages)
+                    Reader.load(manga.chapters)
                     MODE = READING_MODE
                 else
                     Console.addLine("No pages", LUA_COLOR_RED)

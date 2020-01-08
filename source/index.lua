@@ -26,10 +26,11 @@ local delta = 1
 
 local function draw()
     Graphics.initBlend()
-    Screen.clear()
     if MODE == BROWSING_MODE then
+        Screen.clear(LUA_COLOR_BLACK)
         Browser.draw()
     elseif MODE == READING_MODE then
+        Screen.clear(LUA_COLOR_WHITE)
         Reader.draw()
     end
     if DEBUG_INFO then
@@ -58,7 +59,7 @@ local function draw()
                 str2 = "gbytes"
             end
         end
-        Graphics.debugPrint(0, 0, "FPS: " .. math.floor(60 / delta) .. "   NET_MEM: " .. (math.ceil(bytes_used * 100) / 100) .. " " .. str .. "   LUA_MEM: " .. (math.ceil(garbadge * 100) / 100) .. " "..str2, LUA_COLOR_WHITE)
+        Graphics.debugPrint(0, 0, "FPS: " .. math.floor(60 / delta) .. "   NET_MEM: " .. (math.ceil(bytes_used * 100) / 100) .. " " .. str .. "   LUA_MEM: " .. (math.ceil(garbadge * 100) / 100) .. " "..str2.." TIME: "..Timer.getTime(GlobalTimer), LUA_COLOR_WHITE)
         Console.draw()
     end
     Graphics.termBlend()

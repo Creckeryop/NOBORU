@@ -7,6 +7,8 @@ LUA_COLOR_RED = Color.new(255, 0, 0, 255)
 LUA_COLOR_GREEN = Color.new(0, 255, 0, 255)
 LUA_COLOR_BLUE = Color.new(0, 0, 255, 255)
 LUA_COLOR_PURPLE = Color.new(255, 0, 255, 255)
+LUA_COLOR_BLACK = Color.new(0, 0, 0, 255)
+LUA_COLOR_SHADOW = Color.new(0, 0, 0, 100)
 
 LUA_FONT = Font.load("app0:roboto.ttf")
 LUA_FONT32 = Font.load("app0:roboto.ttf")
@@ -40,19 +42,23 @@ end
 
 local function setmt__gc(t, mt)
     local prox = newproxy(true)
-    getmetatable(prox).__gc = function() mt.__gc(t) end
+    getmetatable(prox).__gc = function()
+        mt.__gc(t)
+    end
     t[prox] = true
     return setmetatable(t, mt)
 end
 Image = {
-    __gc = function (self)
-        if self.e~=nil then
+    __gc = function(self)
+        if self.e ~= nil then
             Graphics.freeImage(self.e)
             Console.addLine("Freed!")
         end
     end,
     new = function(self, image)
-        if image == nil then return nil end
+        if image == nil then
+            return nil
+        end
         local p = {e = image}
         setmt__gc(p, self)
         self.__index = self
