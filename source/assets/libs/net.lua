@@ -82,6 +82,8 @@ Net = {
                     elseif task.image.i < task.image.parts then
                         task.image.i = task.image.i + 1
                         if (task.table[task.index] == trash.garbadge) then
+                            trash.garbadge = Image:new(System.getAsyncResult())
+                            trash.type = "ImageLoadTable2"
                             return
                         end
                         task.table[task.index][task.image.i] = Image:new(System.getAsyncResult())
@@ -129,6 +131,12 @@ Net = {
         if trash.garbadge ~= nil then
             if trash.type == "ImageLoad" then
                 Console.addLine("NET:(Freeing image)" .. trash.link, LUA_COLOR_PURPLE)
+                Graphics.freeImage(trash.garbadge.e)
+                trash.garbadge.e = nil
+            elseif trash.type == "ImageLoadTable2" then
+                Console.addLine("NET:(Freeing table image)" .. trash.link, LUA_COLOR_PURPLE)
+                Graphics.freeImage(trash.garbadge.e)
+                trash.garbadge.e = nil
             end
             trash.garbadge = nil
         end

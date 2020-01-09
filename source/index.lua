@@ -10,12 +10,16 @@ dofile "app0:assets/libs/reader.lua"
 dofile "app0:assets/libs/parsermanager.lua"
 dofile "app0:assets/libs/browser.lua"
 --dofile "app0:assets/libs/stress.lua"
+--[[
+for _, value in ipairs(GetLibrary()) do
+    Console.addLine(value.ParserID.." "..value.url)
+end--]]
 ParserManager.updateParserList()
 while #ParserManager.getParserList() == 0 do
     Net.update()
     ParserManager.update()
 end
-ParserManager.setParser(ParserManager.getParserList()[2])
+ParserManager.setParser(ParserManager.getParserList()[1])
 Browser.setPage(1)
 BROWSING_MODE = 1
 READING_MODE = 2

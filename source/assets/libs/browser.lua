@@ -13,9 +13,6 @@ local TOUCH_PRESS = 2
 local TOUCH_SLIDE = 3
 local touchMode = TOUCH_NONE
 TouchTimer = Timer.new()
-local BROWSER_NONE = 0
-local BROWSER_EDGE = 1
-local browserMode = BROWSER_NONE
 local drawManga = function(x, y, manga)
     if manga.image and manga.image.e then
         local width, height = Graphics.getImageWidth(manga.image.e), Graphics.getImageHeight(manga.image.e)
@@ -90,7 +87,7 @@ Browser = {
         end
     end,
     update = function()
-        if slider_vel == 0 and Timer.getTime(TouchTimer)>1000 then
+        if slider_vel == 0 and Timer.getTime(TouchTimer) > 500 then
             local start_i = math.max(1, math.floor(slider_x / (MANGA_WIDTH + 10)))
             for i = 1, #Mangas.manga do
                 if i >= start_i and i <= math.min(start_i + 7, #Mangas.manga) then

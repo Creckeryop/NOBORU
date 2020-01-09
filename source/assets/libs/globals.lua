@@ -39,7 +39,19 @@ TableReverse = function(table)
     end
     return new_table
 end
-
+Merge = function(ts)
+	local new_t = {}
+	for i, t in ipairs(ts) do
+		for k, v in pairs(t) do
+			if type(v)=="table" then
+				new_t[k] = Merge{new_t[k] or {}, v}
+			else
+				new_t[k] = v
+			end
+		end
+	end
+	return new_t
+end
 local function setmt__gc(t, mt)
     local prox = newproxy(true)
     getmetatable(prox).__gc = function()
@@ -65,5 +77,20 @@ Image = {
         return p
     end
 }
+
+DatabaseExecQuery = function(query)
+    local db = Database.open(LUA_APPDATA_DIR..'save.db')
+    local result = Database.execQuery(db, query)
+    Database.close(db)
+    return result
+end
+DatabaseExecQuery("CREATE TABLE IF NOT EXISTS Library (ParserID int, url varchar(255))")
+GetLibrary = function()
+    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (1,'/help_me_im_dying')")
+    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (2,'/help_me_im_dying2')")
+    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (3,'/help_me_im_3dying')")
+    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (1,'/help_me_im_5dying')")
+    return Merge{DatabaseExecQuery("SELECT ParserID FROM Library"),DatabaseExecQuery("SELECT url FROM Library")}
+end
 --collectgarbage( "setpause", 120)
 --collectgarbage( "setstepmul", 4500)
