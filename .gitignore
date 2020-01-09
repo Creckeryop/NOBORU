@@ -2,6 +2,5 @@
 *.vpk
 
 # Folders
-/.vscode
-/lpp-builder
+lpp-builder/build/*
 imgui.ini
