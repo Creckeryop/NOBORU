@@ -66,7 +66,7 @@ ParserManager = {
         order[order_count] = new_task
     end,
     getChaptersAsync = function(manga)
-        if parser == nil or (task ~= nil and task.table == manga and task.index == "chapters") then
+        if manga.parser == nil or (task ~= nil and task.table == manga and task.index == "chapters") then
             return
         end
         for _, v in ipairs(order) do
@@ -78,7 +78,7 @@ ParserManager = {
         local new_task = {
             type = "Chapters",
             f = function()
-                parser:getChapters(manga, "chapters")
+                manga.parser:getChapters(manga, "chapters")
             end,
             table = manga,
             index = "chapters"
@@ -87,7 +87,7 @@ ParserManager = {
         order[order_count] = new_task
     end,
     getChapterInfoAsync = function(chapter)
-        if parser == nil or (task ~= nil and task.table == chapter and task.index == "pages") then
+        if chapter.manga == nil or chapter.manga.parser == nil or (task ~= nil and task.table == chapter and task.index == "pages") then
             return
         end
         for _, v in ipairs(order) do
@@ -99,7 +99,7 @@ ParserManager = {
         local new_task = {
             type = "Info",
             f = function()
-                parser:getChapterInfo(chapter, "pages")
+                chapter.manga.parser:getChapterInfo(chapter, "pages")
             end,
             table = chapter,
             index = "pages"
