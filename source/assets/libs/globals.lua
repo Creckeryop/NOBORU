@@ -41,7 +41,7 @@ TableReverse = function(table)
 end
 Merge = function(ts)
 	local new_t = {}
-	for i, t in ipairs(ts) do
+	for _, t in ipairs(ts) do
 		for k, v in pairs(t) do
 			if type(v)=="table" then
 				new_t[k] = Merge{new_t[k] or {}, v}
@@ -81,16 +81,35 @@ Image = {
 DatabaseExecQuery = function(query)
     local db = Database.open(LUA_APPDATA_DIR..'save.db')
     local result = Database.execQuery(db, query)
+    if Console and Console.addLine then
+        Console.addLine(query)
+    end
     Database.close(db)
     return result
 end
-DatabaseExecQuery("CREATE TABLE IF NOT EXISTS Library (ParserID int, url varchar(255))")
+DatabaseExecQuery("CREATE TABLE IF NOT EXISTS Library (ParserID int, url varchar(255), UNIQUE(ParserID, url))")
 GetLibrary = function()
-    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (1,'/help_me_im_dying')")
-    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (2,'/help_me_im_dying2')")
-    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (3,'/help_me_im_3dying')")
-    DatabaseExecQuery("INSERT INTO Library (ParserID, url) VALUES (1,'/help_me_im_5dying')")
-    return Merge{DatabaseExecQuery("SELECT ParserID FROM Library"),DatabaseExecQuery("SELECT url FROM Library")}
+    local manga = Merge{DatabaseExecQuery("SELECT ParserID FROM Library"),DatabaseExecQuery("SELECT url FROM Library")}
+    local manga_list = {}
+    for _, v in ipairs(manga) do
+        local id = math.ceil(tonumber(v.ParserID))
+        if Parsers[id] then
+            local c = coroutine.create(function() return Parsers[id]:getMangaFromUrl(v.url) end)
+            while coroutine.status(c)~="dead" do
+                local _, result = coroutine.resume(c)
+                Net.update()
+                if coroutine.status(c)=="dead" and result ~= nil then
+                    manga_list[#manga_list + 1] = result
+                    break
+                end
+            end
+        end
+    end
+    return manga_list
+end
+AddManga = function(manga)
+    local query = "INSERT OR IGNORE INTO Library (ParserID, url) VALUES ("..manga.parser.id..",'"..manga.link.."')"
+    DatabaseExecQuery(query)
 end
 --collectgarbage( "setpause", 120)
 --collectgarbage( "setstepmul", 4500)

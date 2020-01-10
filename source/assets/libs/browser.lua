@@ -12,6 +12,10 @@ local TOUCH_READ = 1
 local TOUCH_PRESS = 2
 local TOUCH_SLIDE = 3
 local touchMode = TOUCH_NONE
+
+local LIBRARY = 0
+local BROWSER = 1
+local BRO_MODE = BROWSER
 TouchTimer = Timer.new()
 local drawManga = function(x, y, manga)
     if manga.image and manga.image.e then
@@ -87,27 +91,38 @@ Browser = {
         end
     end,
     update = function()
-        if slider_vel == 0 and Timer.getTime(TouchTimer) > 500 then
-            local start_i = math.max(1, math.floor(slider_x / (MANGA_WIDTH + 10)))
-            for i = 1, #Mangas.manga do
-                if i >= start_i and i <= math.min(start_i + 7, #Mangas.manga) then
-                    if Mangas.manga[i] and not Mangas.manga[i].image_download then
-                        Net.downloadImageAsync(Mangas.manga[i].img_link, Mangas.manga[i], "image")
-                        Mangas.manga[i].image_download = 0
-                    end
-                else
-                    Net.remove(Mangas.manga[i],'image')
-                    if Mangas.manga[i].image then
-                        if Mangas.manga[i].image.e then
-                            Graphics.freeImage(Mangas.manga[i].image.e)
-                            Mangas.manga[i].image.e = nil
-                        end
-                    end
-                    Mangas.manga[i].image_download = nil
-                end
+        if touchMode == TOUCH_NONE and Touch.x == nil and OldTouch.x ~=nil then
+            if BRO_MODE~= LIBRARY and OldTouch.x < 10 + Font.getTextWidth(LUA_FONT32, "LIBRARY") + 20 and OldTouch.x > 10 then
+                BRO_MODE = LIBRARY
+                Mangas.manga = GetLibrary() 
+            elseif BRO_MODE~=BROWSER and OldTouch.x > 10 + Font.getTextWidth(LUA_FONT32, "LIBRARY") + 20  and OldTouch.x < 10 + Font.getTextWidth(LUA_FONT32, "LIBRARY") + 20 + Font.getTextWidth(LUA_FONT32, "BROWSER") then
+                BRO_MODE = BROWSER
+                Managas = {}
+                ParserManager.getMangaListAsync(current_page, Mangas, "manga")
+                slider_x = 0
             end
         end
         if Mangas.manga ~= nil then
+            if slider_vel == 0 and Timer.getTime(TouchTimer) > 500 then
+                local start_i = math.max(1, math.floor(slider_x / (MANGA_WIDTH + 10)))
+                for i = 1, #Mangas.manga do
+                    if i >= start_i and i <= math.min(start_i + 7, #Mangas.manga) then
+                        if Mangas.manga[i] and not Mangas.manga[i].image_download then
+                            Net.downloadImageAsync(Mangas.manga[i].img_link, Mangas.manga[i], "image")
+                            Mangas.manga[i].image_download = 0
+                        end
+                    else
+                        Net.remove(Mangas.manga[i],'image')
+                        if Mangas.manga[i].image then
+                            if Mangas.manga[i].image.e then
+                                Graphics.freeImage(Mangas.manga[i].image.e)
+                                Mangas.manga[i].image.e = nil
+                            end
+                        end
+                        Mangas.manga[i].image_download = nil
+                    end
+                end
+            end
             if touchMode == TOUCH_NONE and Touch.x ~= nil and OldTouch.x ~= nil and Touch.y > 282 - MANGA_HEIGHT / 2 and Touch.y < 282 + MANGA_HEIGHT / 2 then
                 touchTemp = {x = Touch.x, y = Touch.y}
                 touchMode = TOUCH_READ
@@ -178,6 +193,7 @@ Browser = {
                 else
                     Console.addLine("No pages", LUA_COLOR_RED)
                 end
+                AddManga(manga)
             end
         end
         if Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT) then

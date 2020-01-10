@@ -268,6 +268,7 @@ Reader = {
                 end
             end
             Pages = {}
+            ParserManager.clear()
             collectgarbage()
             MODE = BROWSING_MODE
         end

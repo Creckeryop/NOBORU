@@ -27,7 +27,10 @@ ParserManager = {
                 end
                 task = nil
             else
-                coroutine.resume(task.update)
+                local _, isSafeToleave = coroutine.resume(task.update)
+                if task.stop and isSafeToleave then
+                    task = nil
+                end
             end
         end
     end,
@@ -123,5 +126,12 @@ ParserManager = {
     end,
     getActiveParser = function()
         return parser
+    end,
+    clear = function ()
+        order = {}
+        order_count = 0
+        if task~=nil then
+            task.stop = true
+        end
     end
 }
