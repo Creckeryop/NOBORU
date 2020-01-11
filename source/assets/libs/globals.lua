@@ -7,6 +7,6 @@ MANGA_HEIGHT    = math.floor(MANGA_WIDTH * 1.5)
 
 GlobalTimer = Timer.new()
 
-function CreateManga(Name, Link, ParserID)
-    return {Name = Name, Link = Link, ParserID = ParserID}
+function CreateManga(Name, Link, ImageLink, ParserID)
+    return {Name = Name, Link = Link, ImageLink = ImageLink, ParserID = ParserID}
 end
