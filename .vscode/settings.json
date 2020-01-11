@@ -30,6 +30,7 @@
         "FILTER_LINEAR",
         "SCE_CTRL_SELECT",
         "SCE_CTRL_CIRCLE",
-        "newproxy"
+        "newproxy",
+        "it_utf8"
     ]
 }

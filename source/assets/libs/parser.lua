@@ -1,16 +1,16 @@
 Parsers = {}
+
 Parser = {
-    downloadCover = nil,
-    getManga = nil,
-    getChapters = nil,
-    getChapterInfo = nil,
-    getPage = nil,
-    getMangaFromUrl = nil,
-    new = function(self, name, link, lang, id)
-        local p = {name = name, link = link, lang = lang, id = id}
-        setmetatable(p, self)
-        self.__index = self
-        Parsers[id] = p
-        return p
-    end
+    getManga        = nil,
+    getChapters     = nil,
+    prepareChapter  = nil,
+    loadChapterPage = nil
 }
+
+function Parser:new(Name, Link, Lang, ID)
+    local p = {Name = Name, Link = Link, Lang = Lang, ID = ID}
+    setmetatable (p, self)
+    self.__index = self
+    Parsers[ID] = p
+    return p
+end
