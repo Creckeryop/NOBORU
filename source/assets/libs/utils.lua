@@ -133,19 +133,19 @@ function table.serialize(t, name)
                 if type(k) == "string" then
                     _[#_ + 1] = format('%s = \"%s\"', k, v)
                 else
-                    _[#_ + 1] = format('[%x] = \"%s\"', k, v)
+                    _[#_ + 1] = format('[%d] = \"%s\"', k, v)
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then
                     _[#_ + 1] = format('%s%s', k, serialize(v,''))
                 else
-                    _[#_ + 1] = format('[%x]%s', k, serialize(v,''))
+                    _[#_ + 1] = format('[%d]%s', k, serialize(v,''))
                 end
             else
                 if type(k) == "string" then
                     _[#_ + 1] = format('%s = %s', k, v)
                 else
-                    _[#_ + 1] = format('[%x] = %s', k, v)
+                    _[#_ + 1] = format('[%d] = %s', k, v)
                 end
             end
         end

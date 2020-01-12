@@ -18,20 +18,27 @@ end
 MangaReader = Parser:new("MangaReader", "https://www.mangareader.net", "ENG", 1)
 
 function MangaReader:getManga(i)
-    Network.requestStringAsync(self.Link.."/popular/"..((i - 1) * 30))
-    while System.getAsyncState() == 0 do
-        coroutine.yield(false)
-    end
-    local content = System.getAsyncResult()
-    if content then
-        local table = {}
-        for img_link, link, name in content:gmatch('image:url%(\'(%S-)\'.-<div class="manga_name">.-<a href="(%S-)">(.-)</a>') do
-            table[#table + 1] = CreateManga(name, link, img_link, self)
-        end
-        return table
-    else
-        return {}
-    end
+	local manga = {}
+	Threads.RunTask{
+		Type = "StringDownload",
+		Link = self.Link.."/popular/"..((i - 1) * 30),
+		Save = function (str)
+			Threads.RunTask{
+				Type = "Coroutine",
+				F = function()
+					local table = {}
+					for img_link, link, name in str:gmatch('image:url%(\'(%S-)\'.-<div class="manga_name">.-<a href="(%S-)">(.-)</a>') do
+						table[#table + 1] = CreateManga(name, link, img_link, self)
+					end
+					return table
+				end,
+				Save = function(table)
+					manga = table
+				end
+			}
+		end
+	}
+	return manga
 end
 --[[
 

@@ -32,5 +32,6 @@
         "SCE_CTRL_CIRCLE",
         "newproxy",
         "it_utf8"
-    ]
+    ],
+    "Lua.runtime.version": "Lua 5.1"
 }
