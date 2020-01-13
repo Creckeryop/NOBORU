@@ -7,7 +7,6 @@ local MENU_MODE = -1
 local ButtonsAnimX = {1, 1, 1}
 
 Lib = {}
-local page = 1
 Menu = {
     SetMode = function (new_mode)
         if MENU_MODE == new_mode then return end
@@ -19,23 +18,6 @@ Menu = {
         end
         if Controls.check(Pad, SCE_CTRL_LTRIGGER) and not Controls.check(OldPad, SCE_CTRL_LTRIGGER) then
             Menu.SetMode(math.max(MENU_MODE - 1, 0))
-        end
-        if Controls.check(Pad, SCE_CTRL_SQUARE) and not Controls.check(OldPad, SCE_CTRL_SQUARE) then
-            local p = page
-            Threads.AddTask{
-                Type = "Coroutine",
-                F = function() return MangaReader:getManga(p) end,
-                Save = function(a)
-                    for i = 1, #a do
-                        Lib[#Lib+1] = a[i]
-                    end
-                    Loading.SetMode(LOADING_NONE)
-                end,
-                OnLaunch = function()
-                    Loading.SetMode(LOADING_WHITE)
-                end
-            }
-            page = page + 1
         end
         if Touch.x ~= nil and OldTouch.x == nil and Touch.x < 250 then
             if Touch.y < 85 then

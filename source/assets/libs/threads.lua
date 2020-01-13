@@ -5,6 +5,8 @@ local Num           = 0
 local NetInited     = false
 local InsideF       = false
 
+local bytes = 0
+
 local CreateTask = function (params)
     local Task = {
         Type = params.Type or "Skip",
@@ -102,14 +104,29 @@ Threads = {
                 end
             end
             Task.Launched = true
-            Task.OnLaunch()
+            if Task.Type ~= "Skip" then
+                Task.OnLaunch()
+            end
         else
             if Task.Type == "StringDownload" or Task.Type == "FileDownload" then
                 Network.term()
                 NetInited = false
             end
-            if Task.Type == "StringDownload" or Task.Type == "ImageLoad" then
+            if Task.Type == "StringDownload" then
+                local content = System.getAsyncResult()
+                bytes = bytes + string.len(content)
+                Task.Save(content)
+            elseif Task.Type == "ImageLoad" then
                 Task.Save(System.getAsyncResult())
+            elseif Task.Type == "FileDownload" then
+                if System.doesFileExist(Task.Path) then
+                    local f = System.openFile(Task.Path, FREAD)
+                    bytes = bytes + System.sizeFile (f)
+                    System.closeFile(f)
+                else
+                    Console.writeLine(string.format('[0x%05X]File "%s" not downloaded', Task.Num, Task.Path), Color.new(255,0,0))
+                    Task.OnComplete = function() end
+                end
             elseif Task.Type == "Coroutine" then
                 if coroutine.status(Task.F) ~= "dead" then
                     InsideF = true
@@ -124,6 +141,7 @@ Threads = {
                     end
                     if Task.Result and not Task.Result[1] then
                         Console.writeLine("Coroutine error: "..Task.Result[2])
+                        Task.OnComplete = function() end
                     end
                 end
             end
@@ -132,6 +150,13 @@ Threads = {
             end
             table.remove(Order, 1)
             OrderCount = OrderCount - 1
+            while OrderCount>0 and Order[1].Type == "Skip" do
+                if Order[1].Unique then
+                    Uniques[Order[1].Unique] = nil
+                end
+                table.remove(Order, 1)
+                OrderCount = OrderCount - 1
+            end
             Task.OnComplete()
         end
     end,
@@ -288,5 +313,19 @@ Threads = {
         else
             Console.writeLine("Trying to access to RunTask not from Task's F")
         end
+    end,
+    GetMemDownloaded = function ()
+        return bytes
+    end,
+    CheckUnique = function (UniqueKey)
+        return Uniques[UniqueKey] ~= nil
+    end,
+    CheckById = function (ID)
+        for i=1, #Order do
+            if Order.Num == ID then
+                return true
+            end
+        end
+        return false
     end
 }

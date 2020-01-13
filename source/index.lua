@@ -18,12 +18,24 @@ APP_MODE        = MENU
 local Pad = Controls.read()
 local OldTouch, Touch = {}, {x = nil, y = nil}
 
+TOUCH_LOCK = false
+
 local Menu, Reader = Menu, Reader
 local texture
 while true do
     Graphics.initBlend()
     OldPad, Pad = Pad, Controls.read()
-    OldTouch.x, OldTouch.y, Touch.x, Touch.y = Touch.x, Touch.y, Controls.readTouch()
+    OldTouch.x, OldTouch.y, Touch.x, Touch.y, TouchLockCheck = Touch.x, Touch.y, Controls.readTouch()
+    if TouchLockCheck~=nil then
+        TOUCH_LOCK = true
+    end
+    if Touch.x == nil then
+        TOUCH_LOCK = false
+    end
+    if TOUCH_LOCK then
+        Touch.x = nil
+        Touch.y = nil
+    end
     if APP_MODE == MENU then
         Menu.Input(OldPad, Pad, OldTouch, Touch)
         Menu.Update(1)
@@ -40,6 +52,23 @@ while true do
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
         Font.print(FONT, 0, 0, "DG_MODE", Color.new(255, 255, 255))
+        local str = "Bytes"
+        local mem = Threads.GetMemDownloaded()
+        if mem > 1024 then
+            mem = mem / 1024
+            str = "KBytes"
+            if mem > 1024 then
+                mem = mem / 1024
+                str = "MBytes"
+                if mem > 1024 then
+                    mem = mem / 1024
+                    str = "GBytes"
+                end
+            end
+        end
+        str = string.format('NET: %.2f %s',mem,str)
+
+        Font.print(FONT,  940 - Font.getTextWidth(FONT,str), 0, str, Color.new(0,255,0))
         Console.draw()
     end
     if Controls.check(Pad, SCE_CTRL_SELECT) and not Controls.check(OldPad, SCE_CTRL_SELECT) then

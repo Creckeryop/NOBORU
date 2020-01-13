@@ -33,4 +33,3 @@ Loading = {
         end
     end
 }
-Loading.SetMode(LOADING_WHITE)
