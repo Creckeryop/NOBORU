@@ -53,23 +53,29 @@ function DrawManga(x, y, Manga)
                     Manga.PrintName.s = Manga.Name
                     Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.Name, Color.new(255, 255, 255))
                 else
-                    local n, f, s = 0, "", ""
+                    local f, s = {}, {}
+                    local tf = false
                     for c in it_utf8(Manga.Name) do
-                        if n == count + 1 and c ~= " " then
-                            s = f:match(".+%s(.-)$") .. c
-                            f = f:match("^(.+)%s.-$")
-                        elseif n <= count then
-                            f = f .. c
-                        else
-                            s = s .. c
+                        if tf and Font.getTextWidth(FONT, table.concat(s)) > MANGA_WIDTH - 40 then
+                            s[#s + 1] = "..."
+                            break
+                        elseif tf then
+                            s[#s + 1] = c
+                        elseif not tf and Font.getTextWidth(FONT, table.concat(f)) > MANGA_WIDTH - 30 then
+                            f = table.concat(f)
+                            s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
+                            s[#s + 1] = c
+                            f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
+                            tf = true
+                        elseif not tf then
+                            f[#f + 1] = c
                         end
-                        n = n + 1
                     end
+                    if type(s) == "table" then s = table.concat(s) end
+                    if type(f) == "table" then f = table.concat(f) end
                     s = s:gsub("^(%s+)", "")
-                    if s:len() > count then
-                        s = s:sub(1, count - 2) .. "..."
-                    end
-                    Manga.PrintName.f = f
+                    if s == "" then s,f = f,"" end
+                    Manga.PrintName.f = f or ""
                     Manga.PrintName.s = s
                     Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, f, Color.new(255, 255, 255))
                     Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, s, Color.new(255, 255, 255))
