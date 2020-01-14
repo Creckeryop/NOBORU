@@ -40,6 +40,34 @@ function MangaReader:getManga(i)
 	}
 	return manga
 end
+ReadManga = Parser:new("ReadManga", "https://readmanga.me", "RUS", 2)
+
+function ReadManga:getManga(i)
+	local manga = {}
+	Threads.RunTask{
+		Type = "StringDownload",
+		Link = "http://readmanga.me/list?sortType=rate&offset=" .. ((i - 1) * 70),
+		Save = function (str)
+			Threads.RunTask{
+				Type = "Coroutine",
+				F = function()
+					local table = {}
+					for link, img_link, name in str:gmatch('<a href="(/%S-)" class="non%-hover".-original=\'(%S-)\' title=\'(.-)\' alt') do
+						if link:match("^/") then
+							table[#table+ 1] = CreateManga(name, link, img_link, self)
+						end
+						coroutine.yield(true)
+					end
+					return table
+				end,
+				Save = function(table)
+					manga = table
+				end
+			}
+		end
+	}
+	return manga
+end
 --[[
 
 function MangaReader:getManga(i, table, index)

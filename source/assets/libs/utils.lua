@@ -117,10 +117,10 @@ function string:sub(i, k)
 	end
 	return table.concat(text)
 end
-
+--[[
 function string:len()
 	return select(2, string.gsub(self, "[^\128-\193]", ""))
-end
+end]]
 
 function table.serialize(t, name)
     local format = string.format

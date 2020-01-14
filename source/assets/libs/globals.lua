@@ -45,29 +45,40 @@ function DrawManga(x, y, Manga)
     Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2 - 120, LUA_GRADIENT, MANGA_WIDTH, 1)
     if Manga.Name then
         local DrawMangaName = function ()
-            local width = Font.getTextWidth(FONT, Manga.Name)
-            local count = (MANGA_WIDTH - 20) / 10 - 1
-            if width < MANGA_WIDTH - 20 then
-                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.Name, Color.new(255, 255, 255))
-            else
-                local n, f, s = 0, "", ""
-                for c in it_utf8(Manga.Name) do
-                    if n == count + 1 and c ~= " " then
-                        s = f:match(".+%s(.-)$") .. c
-                        f = f:match("^(.+)%s.-$")
-                    elseif n <= count then
-                        f = f .. c
-                    else
-                        s = s .. c
+            if Manga.PrintName == nil then
+                Manga.PrintName = {}
+                local width = Font.getTextWidth(FONT, Manga.Name)
+                local count = (MANGA_WIDTH - 20) / 10 - 1
+                if width < MANGA_WIDTH - 20 then
+                    Manga.PrintName.s = Manga.Name
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.Name, Color.new(255, 255, 255))
+                else
+                    local n, f, s = 0, "", ""
+                    for c in it_utf8(Manga.Name) do
+                        if n == count + 1 and c ~= " " then
+                            s = f:match(".+%s(.-)$") .. c
+                            f = f:match("^(.+)%s.-$")
+                        elseif n <= count then
+                            f = f .. c
+                        else
+                            s = s .. c
+                        end
+                        n = n + 1
                     end
-                    n = n + 1
+                    s = s:gsub("^(%s+)", "")
+                    if s:len() > count then
+                        s = s:sub(1, count - 2) .. "..."
+                    end
+                    Manga.PrintName.f = f
+                    Manga.PrintName.s = s
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, f, Color.new(255, 255, 255))
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, s, Color.new(255, 255, 255))
                 end
-                s = s:gsub("^(%s+)", "")
-                if s:len() > count then
-                    s = s:sub(1, count - 2) .. "..."
+            else
+                if Manga.PrintName.f then
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255))
                 end
-                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, f, Color.new(255, 255, 255))
-                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, s, Color.new(255, 255, 255))
+                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255))
             end
         end
         pcall(DrawMangaName)

@@ -148,12 +148,16 @@ Threads = {
             if Task.Unique then
                 Uniques[Task.Unique] = nil
             end
+            if Task.Type == "Skip" then
+                Console.writeLine(string.format('[0x%05X] skiping task!',Task.Num),Color.new(255,255,0))
+            end
             table.remove(Order, 1)
             OrderCount = OrderCount - 1
             while OrderCount>0 and Order[1].Type == "Skip" do
                 if Order[1].Unique then
                     Uniques[Order[1].Unique] = nil
                 end
+                Console.writeLine(string.format('[0x%05X] skiping task!',Order[1].Num),Color.new(255,255,0))
                 table.remove(Order, 1)
                 OrderCount = OrderCount - 1
             end
