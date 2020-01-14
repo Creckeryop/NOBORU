@@ -14,7 +14,7 @@ Library = {
     end,
     Update = function(delta)
         if Lib ~= nil then
-            if true then
+            if SliderVel == 0 then
                 local start = math.max(1,math.floor((SliderY - 20) / (MANGA_HEIGHT+24))*4 + 1)
                 if #DownloadedImage > 12 then
                     local new_table = {}
