@@ -2,7 +2,9 @@ LUA_GRADIENT = Graphics.loadImage("app0:assets/images/gradient.png")
 
 FONT    = Font.load("app0:roboto.ttf")
 FONT32  = Font.load("app0:roboto.ttf")
+FONT24  = Font.load("app0:roboto.ttf")
 Font.setPixelSizes(FONT32, 32)
+Font.setPixelSizes(FONT24, 24)
 
 MANGA_WIDTH     = 160
 MANGA_HEIGHT    = math.floor(MANGA_WIDTH * 1.5)
@@ -19,7 +21,9 @@ function CreateManga(Name, Link, ImageLink, ParserID)
     return {Name = Name or "", Link = Link, ImageLink = ImageLink, ParserID = ParserID}
 end
 
-function DrawManga(x, y, Manga)
+function DrawManga(x, y, Manga, M)
+    local Mflag = M ~= nil
+    M = M or 1
     if Manga.image then
         local width, height = Graphics.getImageWidth(Manga.image), Graphics.getImageHeight(Manga.image)
         local draw = false
@@ -28,7 +32,7 @@ function DrawManga(x, y, Manga)
             local h = MANGA_HEIGHT / scale
             local s_y = (height - h) / 2
             if s_y >= 0 then
-                Graphics.drawImageExtended(x, y, Manga.image, 0, s_y, width, h, 0, scale, scale)
+                Graphics.drawImageExtended(x, y, Manga.image, 0, s_y, width, h, 0, scale*M, scale*M)
                 draw = true
             end
         end
@@ -36,22 +40,25 @@ function DrawManga(x, y, Manga)
             local scale = MANGA_HEIGHT / height
             local w = MANGA_WIDTH / scale
             local s_x = (width - w) / 2
-            Graphics.drawImageExtended(x, y, Manga.image, s_x, 0, w, height, 0, scale, scale)
+            Graphics.drawImageExtended(x, y, Manga.image, s_x, 0, w, height, 0, scale*M, scale*M)
         end
     else
         --Graphics.fillRect(x - MANGA_WIDTH / 2-3, x + MANGA_WIDTH / 2-3, y - MANGA_HEIGHT / 2+3, y + MANGA_HEIGHT / 2+3, Color.new(0, 0, 0, 64))
-        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(128, 128, 128))
+        Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(128, 128, 128))
     end
-    Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2 - 120, LUA_GRADIENT, MANGA_WIDTH, 1)
+    local alpha = M
+    if Mflag then
+        alpha = (0.5 - (M - 1)) / 0.5
+    end
+    Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT, MANGA_WIDTH * M, 1, Color.new(255,255,255,255*alpha))
     if Manga.Name then
         local DrawMangaName = function ()
             if Manga.PrintName == nil then
                 Manga.PrintName = {}
                 local width = Font.getTextWidth(FONT, Manga.Name)
-                local count = (MANGA_WIDTH - 20) / 10 - 1
                 if width < MANGA_WIDTH - 20 then
                     Manga.PrintName.s = Manga.Name
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.Name, Color.new(255, 255, 255))
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.Name, Color.new(255, 255, 255,255*alpha))
                 else
                     local f, s = {}, {}
                     local tf = false
@@ -77,14 +84,14 @@ function DrawManga(x, y, Manga)
                     if s == "" then s,f = f,"" end
                     Manga.PrintName.f = f or ""
                     Manga.PrintName.s = s
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, f, Color.new(255, 255, 255))
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, s, Color.new(255, 255, 255))
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, f, Color.new(255, 255, 255,255*alpha))
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, s, Color.new(255, 255, 255,255*alpha))
                 end
             else
                 if Manga.PrintName.f then
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255))
+                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255,255*alpha))
                 end
-                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255))
+                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255,255*alpha))
             end
         end
         pcall(DrawMangaName)

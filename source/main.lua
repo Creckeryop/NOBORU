@@ -18,7 +18,22 @@ TOUCH_LOCK      = false
 
 local Pad = Controls.read()
 local OldTouch, Touch = {}, {x = nil, y = nil}
-
+local function mem_to_str(bytes, name)
+    local str = "Bytes"
+    if bytes > 1024 then
+        bytes = bytes / 1024
+        str = "KBytes"
+        if bytes > 1024 then
+            bytes = bytes / 1024
+            str = "MBytes"
+            if bytes > 1024 then
+                bytes = bytes / 1024
+                str = "GBytes"
+            end
+        end
+    end
+    return string.format('%s: %.2f %s', name, bytes, str)
+end
 local Menu, Reader = Menu, Reader
 local texture
 while true do
@@ -51,23 +66,10 @@ while true do
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
         Font.print(FONT, 0, 0, "DG_MODE", Color.new(255, 255, 255))
-        local str = "Bytes"
-        local mem = Threads.GetMemDownloaded()
-        if mem > 1024 then
-            mem = mem / 1024
-            str = "KBytes"
-            if mem > 1024 then
-                mem = mem / 1024
-                str = "MBytes"
-                if mem > 1024 then
-                    mem = mem / 1024
-                    str = "GBytes"
-                end
-            end
-        end
-        str = string.format('NET: %.2f %s',mem,str)
-
-        Font.print(FONT,  940 - Font.getTextWidth(FONT,str), 0, str, Color.new(0,255,0))
+        local mem_net = mem_to_str(Threads.GetMemDownloaded(), "NET")
+        Font.print(FONT,  940 - Font.getTextWidth(FONT, mem_net), 0, mem_net, Color.new(0,255,0))
+        local mem_var = mem_to_str(collectgarbage("count") * 1024, "VAR")
+        Font.print(FONT,  480 - Font.getTextWidth(FONT, mem_var)/2, 0, mem_var, Color.new(255,128,0))
         Console.draw()
     end
     if Controls.check(Pad, SCE_CTRL_SELECT) and not Controls.check(OldPad, SCE_CTRL_SELECT) then
