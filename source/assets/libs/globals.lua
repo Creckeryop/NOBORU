@@ -4,7 +4,7 @@ FONT    = Font.load("app0:roboto.ttf")
 FONT32  = Font.load("app0:roboto.ttf")
 FONT24  = Font.load("app0:roboto.ttf")
 Font.setPixelSizes(FONT32, 32)
-Font.setPixelSizes(FONT24, 24)
+Font.setPixelSizes(FONT24, 26)
 
 MANGA_WIDTH     = 160
 MANGA_HEIGHT    = math.floor(MANGA_WIDTH * 1.5)
@@ -24,6 +24,7 @@ end
 function DrawManga(x, y, Manga, M)
     local Mflag = M ~= nil
     M = M or 1
+    Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, Color.new(0, 0, 0))
     if Manga.image then
         local width, height = Graphics.getImageWidth(Manga.image), Graphics.getImageHeight(Manga.image)
         local draw = false
@@ -43,12 +44,11 @@ function DrawManga(x, y, Manga, M)
             Graphics.drawImageExtended(x, y, Manga.image, s_x, 0, w, height, 0, scale*M, scale*M)
         end
     else
-        --Graphics.fillRect(x - MANGA_WIDTH / 2-3, x + MANGA_WIDTH / 2-3, y - MANGA_HEIGHT / 2+3, y + MANGA_HEIGHT / 2+3, Color.new(0, 0, 0, 64))
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(128, 128, 128))
     end
     local alpha = M
     if Mflag then
-        alpha = (0.5 - (M - 1)) / 0.5
+        alpha = (0.25 - (M - 1)) / 0.25
     end
     Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT, MANGA_WIDTH * M, 1, Color.new(255,255,255,255*alpha))
     if Manga.Name then

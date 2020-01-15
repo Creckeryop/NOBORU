@@ -54,7 +54,7 @@ Menu = {
                 bax[i] = math.min(bax[i] + 0.1, 1)
             end
         end
-        Screen.clear(Color.new(18, 18, 18))
+        Screen.clear(Color.new(9, 12, 22))
         Font.print(FONT32, 35,  45,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*bax[1]))
         Font.print(FONT32, 35, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*bax[2]))
         Font.print(FONT32, 35, 462, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*bax[3]))

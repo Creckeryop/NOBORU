@@ -31,8 +31,8 @@ Details = {
             DETAILS_MODE = DETAILS_START
             Point.x, Point.y = x, y
             alpha = 255
-            M = 0.5
-            Center.x, Center.y = (MANGA_WIDTH*1.5)/2 + 40, 272
+            M = 0.25
+            Center.x, Center.y = (MANGA_WIDTH*1.5)/2 + 40, MANGA_HEIGHT*1.5/2+70
             Timer.reset(AnimationTimer)
             Timer.reset(NameTimer)
         end
@@ -42,7 +42,7 @@ Details = {
             DETAILS_MODE = DETAILS_WAIT
             Timer.reset(AnimationTimer)
             alpha = 255*Fade
-            M = 0.5*Fade
+            M = 0.25*Fade
             Center.x = Point.x+(Center.x-Point.x)*Fade
             Center.y = Point.y+(Center.y-Point.y)*Fade
         end
@@ -57,9 +57,10 @@ Details = {
             end
         end
         if Manga then
-            local t = math.min(math.max(0,Timer.getTime(NameTimer)-1500),3000)
-            if t == 3000 then
-                if Timer.getTime(NameTimer) > 5500 then
+            local ms = 100*string.len(Manga.Name)
+            local t = math.min(math.max(0,Timer.getTime(NameTimer)-1500),ms)
+            if t == ms then
+                if Timer.getTime(NameTimer) > ms+2000 then
                     Timer.reset(NameTimer)
                 end
             end
@@ -67,12 +68,13 @@ Details = {
     end,
     Draw = function ()
         if DETAILS_MODE~=DETAILS_END then
-            Graphics.fillRect(0, 960, 0, 544, Color.new(18, 18, 18, alpha * Fade))
+            Graphics.fillRect(0, 960, 0, 544, Color.new(9, 12, 22, alpha * Fade))
             if Manga then
+                local ms = 100*string.len(Manga.Name)
                 local dif = math.max(Font.getTextWidth(FONT24, Manga.Name)-880,0)
-                local t = math.min(math.max(0,Timer.getTime(NameTimer)-1500),3000)
+                local t = math.min(math.max(0,Timer.getTime(NameTimer)-1500),ms)
                 DrawManga(Point.x+(Center.x-Point.x)*Fade, Point.y+(Center.y - Point.y)*Fade, Manga, 1 + (Fade * M))
-                Font.print(FONT24, 40 - dif*t/4000,-40 + 70 * alpha / 255*Fade,Manga.Name,Color.new(255,255,255,alpha * Fade))
+                Font.print(FONT24, 40 - dif*t/ms,-40 + 70 * alpha / 255*Fade,Manga.Name,Color.new(255,255,255,alpha * Fade))
             end
         end
     end,
