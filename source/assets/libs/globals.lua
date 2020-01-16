@@ -19,7 +19,11 @@ if not System.doesDirExist("ux0:data/Moondayo/") then
 end
 
 function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
-    return {Name = Name or "", Link = Link, ImageLink = ImageLink, ParserID = ParserID, RawLink = RawLink}
+    if Name and Link and ImageLink and ParserID then
+        return {Name = Name or "", Link = Link, ImageLink = ImageLink, ParserID = ParserID, RawLink = RawLink or ""}
+    else
+        return nil
+    end
 end
 
 function DrawManga(x, y, Manga, M)

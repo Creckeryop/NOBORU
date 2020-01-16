@@ -48,7 +48,7 @@ while true do
     Graphics.initBlend()
     OldPad, Pad = Pad, Controls.read()
     OldTouch.x, OldTouch.y, Touch.x, Touch.y, TouchLockCheck = Touch.x, Touch.y, Controls.readTouch()
-    if TouchLockCheck~=nil then
+    if TouchLockCheck ~= nil then
         TOUCH_LOCK = true
     end
     if Touch.x == nil then
@@ -58,6 +58,7 @@ while true do
         Touch.x = nil
         Touch.y = nil
     end
+
     if APP_MODE == MENU then
         Menu.Input(OldPad, Pad, OldTouch, Touch)
         Menu.Update(1)
@@ -67,10 +68,13 @@ while true do
         Reader.Update(1)
         Reader.Draw()
     end
+
     if texture ~= nil then
         Graphics.drawImage(0, 0, texture)
     end
+
     Loading.Draw()
+
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
         Font.print(FONT, 0, 0, "DG_MODE", Color.new(255, 255, 255))
@@ -80,6 +84,7 @@ while true do
         Font.print(FONT,  480 - Font.getTextWidth(FONT, mem_var)/2, 0, mem_var, Color.new(255,128,0))
         Console.draw()
     end
+
     if Controls.check(Pad, SCE_CTRL_SELECT) and not Controls.check(OldPad, SCE_CTRL_SELECT) then
         Loading.SetMode(LOADING_WHITE)
         Threads.AddTask{
@@ -98,7 +103,8 @@ while true do
                 end
             end}
     end
-    if Controls.check(Pad, SCE_CTRL_START) and Controls.check(Pad, SCE_CTRL_SQUARE) and not (Controls.check(OldPad, SCE_CTRL_START) and Controls.check(OldPad, SCE_CTRL_SQUARE)) then
+
+    if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_SQUARE) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_SQUARE) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
     Threads.Update()

@@ -1,159 +1,148 @@
-DETAILS_START = 0
-DETAILS_WAIT  = 1
-DETAILS_END   = 2
-local DETAILS_MODE = DETAILS_END
+DETAILS_START       = 0
+DETAILS_WAIT        = 1
+DETAILS_END         = 2
+local DETAILS_MODE  = DETAILS_END
 
 local Manga     = nil
 local Fade      = 0
 local Point     = {x = 0, y = 0}
 local Center    = {x = 0, y = 0}
-local alpha     = 255
-local M         = 0.5
-local Y         = 0
+
+local OldFade   = 1
+local ScrollY   = 0
 local VelY      = 0
-local AnimationTimer     = Timer.new()
-local NameTimer          = Timer.new()
+local ms        = 0
+local dif       = 0
+
+local AnimationTimer    = Timer.new()
+local NameTimer         = Timer.new()
+
 local Chapters = {}
 
-local easeInOutQuint = function(t)
+local scrollUpdate = function ()
+    ScrollY = ScrollY + VelY
+    VelY = VelY / 1.12
+    if math.abs(VelY) < 0.1 then
+        VelY = 0
+    end
+    if ScrollY < 0 then
+        ScrollY = 0
+        VelY = 0
+    elseif ScrollY > (#Chapters * 100 - 444) then
+        ScrollY = math.max(0, #Chapters * 100 - 444)
+        VelY = 0
+    end
+end
+
+local easeQubicOut = function(t)
     t = t - 1
     return 1 + t * t * t
 end
-local a544 = 960
+
+local animationUpdate = function ()
+    if DETAILS_MODE == DETAILS_START then
+        Fade = easeQubicOut(math.min((Timer.getTime(AnimationTimer) / 500), 1))
+    elseif DETAILS_MODE == DETAILS_WAIT then
+        if Fade == 0 then
+            DETAILS_MODE = DETAILS_END
+        end
+        Fade = 1 - easeQubicOut(math.min((Timer.getTime(AnimationTimer) / 500), 1))
+    end
+    local Time = Timer.getTime(NameTimer)
+    if Time > 3500 + ms then
+        Timer.reset(NameTimer)
+    end
+end
+
 Details = {
-    SetManga = function (manga, x, y)
+    SetManga = function(manga, x, y)
         if manga ~= nil and x ~= nil and y ~= nil then
-            Chapters = {}
             Manga = manga
+            ms = 50 * string.len(manga.Name)
+            dif = math.max(Font.getTextWidth(FONT32, manga.Name) - 880, 0)
+            Chapters = {}
             DETAILS_MODE = DETAILS_START
             Point.x, Point.y = x, y
-            alpha = 255
-            M = 0.25
-            a544 = 544
+            OldFade = 1
             if Parsers[manga.ParserID] then
-                Threads.InsertTask{
+                Threads.InsertTask {
                     Type = "Coroutine",
                     Unique = "ChaptersLoading",
-                    F = function ()
+                    F = function()
                         return Parsers[manga.ParserID]:getChapters(manga)
                     end,
                     Save = function(chapters)
                         Chapters = chapters
                         Loading.SetMode(LOADING_NONE)
                     end,
-                    OnLaunch = function ()
+                    OnLaunch = function()
                         Loading.SetMode(LOADING_WHITE)
                     end
                 }
             end
-            if manga.image == nil then
-                Threads.InsertTask{
-                    Type = "FileDownload",
-                    Path = "cache.img",
-                    Link = manga.ImageLink,
-                    OnComplete = function()
-                        Threads.InsertTask{
-                            Type = "ImageLoad",
-                            Path = "cache.img",
-                            Save = function(a)
-                                if a ~= nil then
-                                    Graphics.setImageFilters(a, FILTER_LINEAR, FILTER_LINEAR)
-                                    manga.image = a
-                                end
-                            end,
-                            Unique = "ImageLoading"
-                        }
-                    end,
-                    Unique = "ImageLoading"
-                }
-            end
-            Center.x, Center.y = (MANGA_WIDTH*1.5)/2 + 40, MANGA_HEIGHT*1.5/2+80
+            Center.x, Center.y = (MANGA_WIDTH * 1.5) / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80
             Timer.reset(AnimationTimer)
             Timer.reset(NameTimer)
         end
     end,
-    Input = function (OldPad, Pad, OldTouch, Touch)
-        if DETAILS_MODE == DETAILS_START and Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
-            DETAILS_MODE = DETAILS_WAIT
-            Timer.reset(AnimationTimer)
-            alpha = 255*Fade
-            M = 0.25*Fade
-            a544 = 544*Fade
-            Center.x = Point.x+(Center.x-Point.x)*Fade
-            Center.y = Point.y+(Center.y-Point.y)*Fade
-            Threads.DeleteUnique("ChaptersLoading")
-            Loading.SetMode(LOADING_NONE)
-        end
+    Input = function(OldPad, Pad, OldTouch, Touch)
         if DETAILS_MODE == DETAILS_START then
-            if Touch.x ~=nil and OldTouch.x ~= nil then
+            if Touch.x ~= nil and OldTouch.x ~= nil then
                 VelY = OldTouch.y - Touch.y
             end
-        end
-    end,
-    Update = function (delta)
-        if DETAILS_MODE == DETAILS_START then
-            Fade = easeInOutQuint(math.min((Timer.getTime(AnimationTimer)/500),1))
-        elseif DETAILS_MODE == DETAILS_WAIT then
-            if Fade == 0 then
-                DETAILS_MODE = DETAILS_END
-            end
-            Fade = 1 - easeInOutQuint(math.min((Timer.getTime(AnimationTimer)/500),1))
-        end
-        if Manga then
-            local ms = 50*string.len(Manga.Name)
-            local t = math.min(math.max(0,Timer.getTime(NameTimer)-1500),ms)
-            if t == ms then
-                if Timer.getTime(NameTimer) > ms+2000 then
-                    Timer.reset(NameTimer)
-                end
+            if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
+                DETAILS_MODE = DETAILS_WAIT
+                Threads.DeleteUnique("ChaptersLoading")
+                Loading.SetMode(LOADING_NONE)
+                Timer.reset(AnimationTimer)
+                OldFade = Fade
             end
         end
-        Y = Y + VelY
-        VelY = VelY / 1.12
-        if math.abs(VelY) < 0.1 then
-            VelY = 0
-        end
-        if Y < 0 then
-            Y = 0
-            VelY = 0
-        elseif Y > (#Chapters*100+10-544+90) then
-            Y = math.max(0,#Chapters*100+10-544+90)
-            VelY = 0
+    end,
+    Update = function(delta)
+        if DETAILS_MODE ~= DETAILS_END then
+            animationUpdate()
+            scrollUpdate()
         end
     end,
-    Draw = function ()
-        if DETAILS_MODE~=DETAILS_END then
-            local Alpha = alpha * Fade
+    Draw = function()
+        if DETAILS_MODE ~= DETAILS_END then
+            local M = OldFade * Fade
+            local Alpha = 255 * M
+
             Graphics.fillRect(0, 945, 90, 544, Color.new(9, 12, 22, Alpha))
-            local start = math.max(1,math.floor(Y/100)+1)
-            local WHITE = Color.new(255,255,255,Alpha)
-            local GRAY = Color.new(128,128,128,Alpha)
-            local x = 544-a544*Fade
-            for i=start, math.min(#Chapters,start+5) do
-                Graphics.fillRect(320,945,x+90+10+(i-1)*(90+10)-Y,x+90+i*(90+10)-Y,Color.new(65,65,65,Alpha))
-                Font.print(FONT,320+10,x+90+10+(i-1)*(90+10)+34-Y,Chapters[i].Name, WHITE)
-                Graphics.drawImage(945-70,x+90+10+(i-1)*(90+10)-Y,LUA_GRADIENTH, Color.new(65,65,65,Alpha))
+
+            local WHITE     = Color.new(255, 255, 255, Alpha)
+            local GRAY      = Color.new(128, 128, 128, Alpha)
+            local DARK_GRAY = Color.new( 65,  65,  65, Alpha)
+
+            local start = math.max(1, math.floor(ScrollY / 100) + 1)
+            local y = (1 - M) * 544 - ScrollY + start * 100
+
+            for i = start, math.min(#Chapters, start + 5) do
+                Graphics.fillRect(320, 945, y, y + 90, DARK_GRAY)
+                Font.print(FONT, 330, y + 34, Chapters[i].Name, WHITE)
+                Graphics.drawImage(875, y, LUA_GRADIENTH, DARK_GRAY)
+                y = y + 100
             end
-            if #Chapters == 0 and not Threads.CheckUnique("ChaptersLoading") then
+
+            if DETAILS_MODE == DETAILS_START and #Chapters == 0 and not Threads.CheckUnique("ChaptersLoading") then
                 local msg = Language[LANG].WARNINGS.NO_CHAPTERS
-                Font.print(FONT24,632-Font.getTextWidth(FONT24,msg)/2,x+240,msg,WHITE)
+                Font.print(FONT24, 632 - Font.getTextWidth(FONT24, msg) / 2, y + 240, msg, WHITE)
             end
+
             Graphics.fillRect(945, 960, 90, 544, Color.new(9, 12, 22, Alpha))
-            Graphics.fillRect(0, 960,  0,  90, Color.new(9, 12, 22, Alpha))
-            if Manga then
-                local ms = 50*string.len(Manga.Name)
-                local dif = math.max(Font.getTextWidth(FONT32, Manga.Name)-880,0)
-                local t = math.min(math.max(0,Timer.getTime(NameTimer)-1500),ms)
-                DrawManga(Point.x+(Center.x-Point.x)*Fade, Point.y+(Center.y - Point.y)*Fade, Manga, 1 + (Fade * M))
-                Font.print(FONT32, 40 - dif*t/ms,-40 + 70 * alpha / 255*Fade-5,Manga.Name, WHITE)
-                Font.print(FONT, 20+40,-40 + 70 * alpha / 255*Fade+30+5,Manga.RawLink, GRAY)
-            end
+            Graphics.fillRect(  0, 960,  0,  90, Color.new(9, 12, 22, Alpha))
+
+            DrawManga(Point.x + (Center.x - Point.x) * M, Point.y + (Center.y - Point.y) * M, Manga, 1 + (M * 0.25))
+
+            local t = math.min(math.max(0, Timer.getTime(NameTimer) - 1500), ms)
+            Font.print(FONT32, 40 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
+            Font.print(FONT, 60, 70 * M - 5, Manga.RawLink, GRAY)
         end
-    end,
-    GetMode = function ()
-        return DETAILS_MODE
-    end,
-    GetFade = function ()
-        return Fade
     end
 }
+
+Details.GetMode  = function() return DETAILS_MODE  end
+Details.GetFade  = function() return Fade          end
+Details.GetManga = function() return Manga         end
