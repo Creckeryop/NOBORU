@@ -116,7 +116,7 @@ Image = {
     __gc = function(self)
         if self.e ~= nil then
             Graphics.freeImage(self.e)
-            Console.addLine("Freed!")
+            Console.writeLine("Freed!")
         end
     end,
     new = function(self, image)

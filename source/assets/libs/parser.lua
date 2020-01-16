@@ -60,6 +60,52 @@ function MangaReader:getChapters(manga)
 	return chapters
 end
 
+function MangaReader:prepareChapter(chapter)
+	local pages = {}
+	Threads.RunTask{
+		Type = "StringDownload",
+		Link = self.Link..chapter.. chapter.manga.link .. chapter.link .. "#",
+		Save = function (str)
+			local count = str:match(" of (.-)<") or 0
+			for i = 1, count do
+				pages[#pages + 1] = {Link = self.Link .. chapter.manga.link .. chapter.link .. "/" .. i}
+			end
+		end
+	}
+	return pages
+end
+
+function MangaReader:loadChapterPage(page)
+	local PageImage = nil
+	Threads.RunTask{
+		Type = "StringDownload",
+		Link = page.Link,
+		Unique = page,
+		Save = function (str)
+			local link = str:match('id="img".-src="(.-)"')
+			if link ~= nil then
+				Threads.RunTask{
+					Type = "FileDownload",
+					Link = link,
+					Path = "cache.img",
+					Unique = page,
+					OnComplete = function ()
+						Threads.RunTask{
+							Type = "PageLoad",
+							Path = "cache.img",
+							Unique = page,
+							Save = function (a)
+								PageImage = a
+							end
+						}
+					end
+				}
+			end
+		end
+	}
+	return PageImage
+end
+
 ReadManga = Parser:new("ReadManga", "http://readmanga.me", "RUS", 2)
 
 function ReadManga:getManga(i)
@@ -120,10 +166,7 @@ function MangaReader:getManga(i, table, index)
 	end
 end
 
-
-
-function MangaReader:getChapterInfo(chapter, index)
-	local file = {}
+local file = {}
 	Net.downloadStringAsync("https://www.mangareader.net" .. chapter.manga.link .. chapter.link .. "#", file, "string")
 	while file.string == nil do
 		coroutine.yield(false)
@@ -131,14 +174,15 @@ function MangaReader:getChapterInfo(chapter, index)
 	local count = file.string:match(" of (.-)<")
 	for i = 1, count do
 		file = {}
-		Net.downloadStringAsync("https://www.mangareader.net" .. chapter.manga.link .. chapter.link .. "/" .. i, file, "string")
+		Net.downloadStringAsync(, file, "string")
 		while file.string == nil do
 			coroutine.yield(false)
 		end
-		chapter[index][i] = file.string:match('id="img".-src="(.-)"')
+		
 		coroutine.yield(true)
 	end
-end
+
+
 
 function MangaReader:getMangaFromUrl(url)
 	local file = {}

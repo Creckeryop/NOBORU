@@ -54,6 +54,16 @@ local CreateTask = function (params)
         else
             Task.F = coroutine.create(Task.F)
         end
+    elseif Task.Type =="PageLoad" then
+        if Task.Save == nil then
+            Console.writeLine("Task Creation Error: No Save function found ", Color.new(255, 0, 0))
+            return nil
+        elseif Task.Path == nil then
+            Console.writeLine("Task Creation Error: No Path value found ", Color.new(255, 0, 0))
+            return nil
+        else
+            Task.Path = "ux0:data/Moondayo/"..Task.Path
+        end
     elseif Task.Type == "Skip" then
         return nil
     end
@@ -102,6 +112,18 @@ Threads = {
                     Console.writeLine(string.format('File for ImageLoad not Found [0x%05X] "%s"',Task.Num,Task.Type),Color.new(255,0,0))
                     Task.Type = "Skip"
                 end
+            elseif Task.Type == "PageLoad" then
+                if System.doesFileExist(Task.Path) then
+                    local width, height = System.getPictureResolution(Task.Path)
+                    Console.addLine(width.."x"..height.." image got")
+                    Task.Temp = 1
+                    Task.Result = {Width = width, Height = height}
+                    Task.Result.Parts = math.ceil(height / 4096)
+                    Task.Result.PartH = math.floor(height / Task.Result.Parts)
+                else
+                    Console.writeLine(string.format('File for PageLoad not Found [0x%05X] "%s"',Task.Num,Task.Type),Color.new(255,0,0))
+                    Task.Type = "Skip"
+                end
             end
             Task.Launched = true
             if Task.Type ~= "Skip" then
@@ -118,6 +140,24 @@ Threads = {
                 Task.Save(content)
             elseif Task.Type == "ImageLoad" then
                 Task.Save(System.getAsyncResult())
+            elseif Task.Type == "PageLoad" then
+                if Task.Result[Task.Temp + 1] == nil then
+                    local height = Task.Result.PartH
+                    if Task.Temp == Task.Result.Parts - 1 then
+                        height = Task.Result.Height - (Task.Temp) * height
+                    end
+                    Graphics.loadPartImageAsync(Task.Path, 0, Task.Temp * Task.PartH, Task.Result.Width, height)
+                    Task.Result[Task.Temp + 1] = 0
+                    return
+                else
+                    Task.Result[Task.Temp + 1] = System.getAsyncResult()
+                    Task.Temp = Task.Temp + 1
+                    if Task.Temp >= Task.Result.Parts then
+                        Task.Save(Task.Result)
+                    else
+                        return
+                    end
+                end
             elseif Task.Type == "FileDownload" then
                 if System.doesFileExist(Task.Path) then
                     local f = System.openFile(Task.Path, FREAD)
@@ -204,6 +244,14 @@ Threads = {
                     Task.Save = function (a) end
                 elseif Task.Type == "ImageDownload" then
                     Task.Save = function (p) if p~=nil then Graphics.freeImage(p) end end
+                elseif Task.Type == "PageLoad" then
+                    Task.Result.Parts = Task.Temp
+                    Task.Save = function (p)
+                        for i = 1, #p do
+                            Graphics.freeImage(p[i])
+                            p[i] = nil
+                        end
+                    end
                 elseif Task.Type == "Coroutine" then
                     Task.Save = function (a) end
                 end
@@ -224,6 +272,14 @@ Threads = {
                         Task.Save = function (a) end
                     elseif Task.Type == "ImageDownload" then
                         Task.Save = function (p) if p~=nil then Graphics.freeImage(p) end end
+                    elseif Task.Type == "PageLoad" then
+                        Task.Result.Parts = Task.Temp
+                        Task.Save = function (p)
+                        for k = 1, #p do
+                            Graphics.freeImage(p[k])
+                            p[k] = nil
+                        end
+                    end
                     elseif Task.Type == "Coroutine" then
                         Task.Save = function (a) end
                     end
@@ -291,7 +347,40 @@ end,
                     Console.writeLine(string.format('File for ImageLoad not Found [0x05X] "%s"',Task.Num,Task.Type),Color.new(255,0,0))
                     Task.Type = "Skip"
                 end
+            elseif Task.Type == "PageLoad" then
+                if System.doesFileExist(Task.Path) then
+                    local width, height = System.getPictureResolution(Task.Path)
+                    Console.addLine(width.."x"..height.." image got")
+                    Task.Temp = 1
+                    Task.Result = {Width = width, Height = height}
+                    Task.Result.Parts = math.ceil(height / 4096)
+                    Task.Result.PartH = math.floor(height / Task.Result.Parts)
+                else
+                    Console.writeLine(string.format('File for PageLoad not Found [0x%05X] "%s"',Task.Num,Task.Type),Color.new(255,0,0))
+                    Task.Type = "Skip"
+                end
+                coroutine.yield(true)
+                while true do
+                    if Task.Result[Task.Temp + 1] == nil then
+                        local height = Task.Result.PartH
+                        if Task.Temp == Task.Result.Parts - 1 then
+                            height = Task.Result.Height - (Task.Temp) * height
+                        end
+                        Graphics.loadPartImageAsync(Task.Path, 0, Task.Temp * Task.PartH, Task.Result.Width, height)
+                        while System.getAsyncState()==0 do
+                            coroutine.yield(false)
+                        end
+                        Task.Result[Task.Temp + 1] = System.getAsyncResult()
+                        Task.Temp = Task.Temp + 1
+                        if Task.Temp >= Task.Result.Parts then
+                            Task.Save(Task.Result)
+                            break
+                        end
+                    end
+                    coroutine.yield(false)
+                end
             end
+            
             if (Task.Type == "StringDownload" or Task.Type == "FileDownload") and not NetInited then
                 Network.term()
             end
