@@ -19,7 +19,7 @@ local fonts = {FONT, FONT24, FONT32}
 for i = 1, 3 do
     Graphics.initBlend()
     Screen.clear()
-    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r",Color.new(255,255,255))
+    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r—",Color.new(255,255,255))
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()

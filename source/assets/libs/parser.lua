@@ -44,10 +44,16 @@ function MangaReader:getChapters(manga)
 		Link = self.Link .. manga.Link,
 		Save = function (str)
 			coroutine.yield(true)
+			local num = 0
 			str = str:match('id="chapterlist"(.+)$') or ""
 			for link, name, subName in str:gmatch('chico_manga.-<a href%="/.-(/%S-)">(.-)</a>(.-)</td>') do
 				local chapter = {Name = name .. subName, Link = link, Pages = {}, Manga = manga, RawLink = self.Link..manga.Link..link}
 				chapters[#chapters + 1] = chapter
+				num = num + 1
+				if num == 50 then
+					num = num - 50
+					coroutine.yield(true)
+				end
 			end
 		end
 	}
@@ -85,9 +91,15 @@ function ReadManga:getChapters(manga)
 		Link = self.Link .. manga.Link,
 		Save = function (str)
 			coroutine.yield(true)
+			local num = 0
 			for link, name in str:gmatch('<td class%=.-<a href%="/.-(/vol%S-)".->%s*(.-)</a>') do
 				local chapter = {Name = name:gsub("%s+", " "):gsub("<sup>.-</sup>",""):gsub("&quot;","\""):gsub("&amp;","&"):gsub("&#92;","\\"):gsub("&#39;","'"), Link = link, Pages = {}, Manga = manga, RawLink = self.Link..manga.Link..link}
 				chapters[#chapters+ 1] = chapter
+				num = num + 1
+				if num == 50 then
+					num = num - 50
+					coroutine.yield(true)
+				end
 			end
 		end
 	}
