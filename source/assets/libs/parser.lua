@@ -23,50 +23,76 @@ function MangaReader:getManga(i)
 		Type = "StringDownload",
 		Link = self.Link.."/popular/"..((i - 1) * 30),
 		Save = function (str)
+			coroutine.yield(true)
 			Threads.RunTask{
 				Type = "Coroutine",
 				F = function()
-					local table = {}
 					for img_link, link, name in str:gmatch('image:url%(\'(%S-)\'.-<div class="manga_name">.-<a href="(%S-)">(.-)</a>') do
-						table[#table + 1] = CreateManga(name, link, img_link, self)
+						manga[#manga + 1] = CreateManga(name, link, img_link, self.ID, self.Link..link)
 					end
-					return table
-				end,
-				Save = function(table)
-					manga = table
 				end
 			}
 		end
 	}
 	return manga
 end
-ReadManga = Parser:new("ReadManga", "https://readmanga.me", "RUS", 2)
+
+function MangaReader:getChapters(manga)
+	local chapters = {}
+	Threads.RunTask{
+		Type = "StringDownload",
+		Link = self.Link .. manga.Link,
+		Save = function (str)
+			coroutine.yield(true)
+			str = str:match('id="chapterlist"(.+)$') or ""
+			for link, name, subName in str:gmatch('chico_manga.-<a href%="/.-(/%S-)">(.-)</a>(.-)</td>') do
+				local chapter = {Name = name .. subName, Link = link, Pages = {}, Manga = manga, RawLink = self.Link..manga.Link..link}
+				chapters[#chapters + 1] = chapter
+			end
+		end
+	}
+	return chapters
+end
+
+ReadManga = Parser:new("ReadManga", "http://readmanga.me", "RUS", 2)
 
 function ReadManga:getManga(i)
 	local manga = {}
 	Threads.RunTask{
 		Type = "StringDownload",
-		Link = "http://readmanga.me/list?sortType=rate&offset=" .. ((i - 1) * 70),
+		Link = self.Link.."/list?sortType=rate&offset=" .. ((i - 1) * 70),
 		Save = function (str)
+			coroutine.yield(true)
 			Threads.RunTask{
 				Type = "Coroutine",
 				F = function()
-					local table = {}
 					for link, img_link, name in str:gmatch('<a href="(/%S-)" class="non%-hover".-original=\'(%S-)\' title=\'(.-)\' alt') do
 						if link:match("^/") then
-							table[#table+ 1] = CreateManga(name, link, img_link, self)
+							manga[#manga+ 1] = CreateManga(name, link, img_link, self.ID, self.Link..link)
 						end
-						coroutine.yield(true)
 					end
-					return table
-				end,
-				Save = function(table)
-					manga = table
 				end
 			}
 		end
 	}
 	return manga
+end
+
+function ReadManga:getChapters(manga)
+	local chapters = {}
+	Threads.RunTask{
+		Type = "StringDownload",
+		Link = self.Link .. manga.Link,
+		Save = function (str)
+			coroutine.yield(true)
+			for link, name in str:gmatch('<td class%=.-<a href%="/.-(/vol%S-)".->%s*(.-)</a>') do
+				local chapter = {Name = name:gsub("%s+", " "):gsub("<sup>.-</sup>",""):gsub("&quot;","\""):gsub("&amp;","&"):gsub("&#92;","\\"):gsub("&#39;","'"), Link = link, Pages = {}, Manga = manga, RawLink = self.Link..manga.Link..link}
+				chapters[#chapters+ 1] = chapter
+			end
+		end
+	}
+	table.reverse(chapters)
+	return chapters
 end
 --[[
 
@@ -82,19 +108,7 @@ function MangaReader:getManga(i, table, index)
 	end
 end
 
-function MangaReader:getChapters(manga, index)
-	local file = {}
-	Net.downloadStringAsync("https://www.mangareader.net" .. manga.link, file, "string")
-	while file.string == nil do
-		coroutine.yield(false)
-	end
-	file.string = file.string:match('id="chapterlist"(.+)$') or ""
-	for link, name, subName in file.string:gmatch('<td>.-<a href%="/.-(/%S-)">(.-)</a>(.-)</td>') do
-		local chapter = {name = name .. subName, link = link, pages = {}, manga = manga}
-		manga[index][#manga[index] + 1] = chapter
-		--Console.addLine ("Parser: Got chapter \""..chapter.name.."\" ("..chapter.link..")", LUA_COLOR_GREEN)
-	end
-end
+
 
 function MangaReader:getChapterInfo(chapter, index)
 	local file = {}

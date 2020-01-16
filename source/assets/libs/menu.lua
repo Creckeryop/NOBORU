@@ -24,11 +24,12 @@ Menu = {
                 Menu.SetMode(math.max(MENU_MODE - 1, 0))
             end
             if Touch.x ~= nil and OldTouch.x == nil and Touch.x < 250 then
-                if Touch.y < 85 then
+                if Touch.y < 45 then
+                elseif Touch.y < 85 then
                     Menu.SetMode(LIBRARY_MODE)
                 elseif Touch.y < 145 then
                     Menu.SetMode(CATALOGS_MODE)
-                elseif Touch.y > 440 then
+                elseif Touch.y > 460 then
                     Menu.SetMode(SETTINGS_MODE)
                 end
             end
@@ -55,11 +56,14 @@ Menu = {
             end
         end
         Screen.clear(Color.new(9, 12, 22))
-        Font.print(FONT32, 35,  45,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*bax[1]))
-        Font.print(FONT32, 35, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*bax[2]))
-        Font.print(FONT32, 35, 462, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*bax[3]))
-        if MENU_MODE == CATALOGS_MODE then
-            Catalogs.Draw()
+        Graphics.fillRect(255, 960, 0, 544,Color.new(233,233,233))
+        Font.print(FONT32, 30,  45,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*bax[1]))
+        Font.print(FONT32, 30, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*bax[2]))
+        Font.print(FONT32, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*bax[3]))
+        if Details.GetFade() ~= 1 then
+            if MENU_MODE == CATALOGS_MODE then
+                Catalogs.Draw()
+            end
         end
         Details.Draw()
     end

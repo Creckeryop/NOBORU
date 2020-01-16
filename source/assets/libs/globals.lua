@@ -1,9 +1,10 @@
-LUA_GRADIENT = Graphics.loadImage("app0:assets/images/gradient.png")
+LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
+LUA_GRADIENTH   = Graphics.loadImage("app0:assets/images/gradientH.png")
 
 FONT    = Font.load("app0:roboto.ttf")
 FONT32  = Font.load("app0:roboto.ttf")
 FONT24  = Font.load("app0:roboto.ttf")
-Font.setPixelSizes(FONT32, 32)
+Font.setPixelSizes(FONT32, 30)
 Font.setPixelSizes(FONT24, 26)
 
 MANGA_WIDTH     = 160
@@ -17,8 +18,8 @@ if not System.doesDirExist("ux0:data/Moondayo/") then
     System.createDirectory("ux0:data/Moondayo")
 end
 
-function CreateManga(Name, Link, ImageLink, ParserID)
-    return {Name = Name or "", Link = Link, ImageLink = ImageLink, ParserID = ParserID}
+function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
+    return {Name = Name or "", Link = Link, ImageLink = ImageLink, ParserID = ParserID, RawLink = RawLink}
 end
 
 function DrawManga(x, y, Manga, M)

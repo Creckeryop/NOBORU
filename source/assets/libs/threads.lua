@@ -134,6 +134,10 @@ Threads = {
                     InsideF = false
                     if not (Task.Result[2] and Task.Destroy) then
                         return
+                    else
+                        if Task.Destroy then
+                            Console.writeLine(string.format('[0x%05X] skiping task!',Task.Num),Color.new(255,255,0))
+                        end
                     end
                 else
                     if Task.Save and Task.Result and Task.Result[1] then

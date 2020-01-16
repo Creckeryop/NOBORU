@@ -1,5 +1,5 @@
 DEBUG_MODE  = false
-LANG        = "ENG"
+LANG        = "RUS"
 
 dofile "app0:assets/libs/utils.lua"
 dofile "app0:assets/libs/console.lua"
@@ -15,7 +15,15 @@ MENU            = 0
 READER          = 1
 APP_MODE        = MENU
 TOUCH_LOCK      = false
-
+local fonts = {FONT, FONT24, FONT32}
+for i = 1, 3 do
+    Graphics.initBlend()
+    Screen.clear()
+    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r",Color.new(255,255,255))
+    Graphics.termBlend()
+    Screen.flip()
+    Screen.waitVblankStart()
+end
 local Pad = Controls.read()
 local OldTouch, Touch = {}, {x = nil, y = nil}
 local function mem_to_str(bytes, name)
