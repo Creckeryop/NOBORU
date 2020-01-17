@@ -62,8 +62,42 @@ ParserManager = {
             Order[#Order + 1] = T
         end
     end,
-    prepareChapter = function (chapter)
-        
+    prepareChapter = function (chapter, Table, Insert)
+        local parser = GetParserByID(chapter.Manga.ParserID)
+        if parser == nil or ParserManager.Check(Table) then return end
+        local T = {
+            Type = "PrepareChapter",
+            F = function()
+                parser:prepareChapter(chapter, Table)
+            end,
+            Table = Table
+        }
+        OrderCount = OrderCount + 1
+        if Insert then
+            table.insert(Order, 1, T)
+        else
+            Order[#Order + 1] = T
+        end
+    end,
+    getPageImage = function (parserID, Link, Table, Insert)
+        local parser = GetParserByID(parserID)
+        if parser == nil or ParserManager.Check(Table) then return end
+        local T = {
+            Type = "getPageImage",
+            F = function()
+                parser:loadChapterPage(Link, Table)
+                if Table.Link ~= nil then
+                    threads.DownloadImageAsync(Table.Link, Table, "Image")
+                end
+            end,
+            Table = Table
+        }
+        OrderCount = OrderCount + 1
+        if Insert then
+            table.insert(Order, 1, T)
+        else
+            Order[#Order + 1] = T
+        end
     end,
     Check = function(Table)
         if Task ~= nil and Task.Table == Table then

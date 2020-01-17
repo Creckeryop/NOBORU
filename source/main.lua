@@ -28,6 +28,7 @@ for i = 1, 3 do
 end
 local Pad = Controls.read()
 local OldTouch, Touch = {}, {x = nil, y = nil}
+local OldTouch2, Touch2 = {}, {x = nil, y = nil}
 local function mem_to_str(bytes, name)
     local str = "Bytes"
     if bytes > 1024 then
@@ -49,8 +50,8 @@ local Menu, Reader = Menu, Reader
 while true do
     Graphics.initBlend()
     OldPad, Pad = Pad, Controls.read()
-    OldTouch.x, OldTouch.y, Touch.x, Touch.y, TouchLockCheck = Touch.x, Touch.y, Controls.readTouch()
-    if TouchLockCheck ~= nil then
+    OldTouch.x, OldTouch.y, OldTouch2.x, OldTouch2.y, Touch.x, Touch.y, Touch2.x, Touch2.y = Touch.x, Touch.y, Touch2.x, Touch2.y, Controls.readTouch()
+    if Touch2.x ~= nil and APP_MODE ~= READER then
         TOUCH_LOCK = true
     end
     if Touch.x == nil then
@@ -59,15 +60,25 @@ while true do
     if TOUCH_LOCK then
         Touch.x = nil
         Touch.y = nil
+        Touch2.x = nil
+        Touch2.y = nil
     end
 
     if APP_MODE == MENU then
         Menu.Input(OldPad, Pad, OldTouch, Touch)
+    elseif APP_MODE == READER then
+        Reader.Input(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
+    end
+    
+    if APP_MODE == MENU then
         Menu.Update(1)
+    elseif APP_MODE == READER then
+        Reader.Update(1)
+    end
+
+    if APP_MODE == MENU then
         Menu.Draw()
     elseif APP_MODE == READER then
-        Reader.Input(OldPad, Pad, OldTouch, Touch)
-        Reader.Update(1)
         Reader.Draw()
     end
 
