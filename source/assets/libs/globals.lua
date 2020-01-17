@@ -30,15 +30,15 @@ function DrawManga(x, y, Manga, M)
     local Mflag = M ~= nil
     M = M or 1
     Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, Color.new(0, 0, 0))
-    if Manga.image then
-        local width, height = Graphics.getImageWidth(Manga.image), Graphics.getImageHeight(Manga.image)
+    if Manga.Image and Manga.Image.e then
+        local width, height = Graphics.getImageWidth(Manga.Image.e), Graphics.getImageHeight(Manga.Image.e)
         local draw = false
         if width < height then
             local scale = MANGA_WIDTH / width
             local h = MANGA_HEIGHT / scale
             local s_y = (height - h) / 2
             if s_y >= 0 then
-                Graphics.drawImageExtended(x, y, Manga.image, 0, s_y, width, h, 0, scale*M, scale*M)
+                Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale*M, scale*M)
                 draw = true
             end
         end
@@ -46,7 +46,7 @@ function DrawManga(x, y, Manga, M)
             local scale = MANGA_HEIGHT / height
             local w = MANGA_WIDTH / scale
             local s_x = (width - w) / 2
-            Graphics.drawImageExtended(x, y, Manga.image, s_x, 0, w, height, 0, scale*M, scale*M)
+            Graphics.drawImageExtended(x, y, Manga.Image.e, s_x, 0, w, height, 0, scale*M, scale*M)
         end
     else
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(128, 128, 128))

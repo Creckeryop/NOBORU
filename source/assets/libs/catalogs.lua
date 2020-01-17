@@ -30,10 +30,12 @@ local UpdateMangas  = function()
                 if i < start or i > math.min(#Results, start + 11) then
                     local manga = Results[i]
                     if manga.ImageDownload then
-                        Threads.DeleteUnique("ImgLoad"..i)
-                        if manga.image ~= nil then
-                            Graphics.freeImage(manga.image)
-                            manga.image = nil
+                        threads.Remove(manga,'Image')
+                        if manga.Image then
+                            if manga.Image.e then
+                                Graphics.freeImage(manga.Image.e)
+                                manga.Image.e = nil
+                            end
                         end
                         manga.ImageDownload = nil
                     end
@@ -46,26 +48,7 @@ local UpdateMangas  = function()
         for i = start, math.min(#Results,start + 11) do
             local manga = Results[i]
             if not manga.ImageDownload then
-                local id = i
-                Threads.AddTask{
-                    Type = "FileDownload",
-                    Path = "cache.img",
-                    Link = manga.ImageLink,
-                    Unique = "ImgLoad"..id,
-                    OnComplete = function()
-                        Threads.InsertTask{
-                            Type = "ImageLoad",
-                            Path = "cache.img",
-                            Unique = "ImgLoad"..id,
-                            Save = function(a)
-                                if a ~= nil then
-                                    Graphics.setImageFilters(a, FILTER_LINEAR, FILTER_LINEAR)
-                                    manga.image = a
-                                end
-                            end
-                        }
-                    end
-                }
+                threads.DownloadImageAsync(manga.ImageLink, manga, "Image")
                 manga.ImageDownload = true
                 DownloadedImage[#DownloadedImage + 1] = i
             end
@@ -103,27 +86,9 @@ Catalogs = {
                             local manga = Results[i]
                             local id = i
                             Details.SetManga(manga, lx + MANGA_WIDTH / 2, uy + MANGA_HEIGHT / 2)
-                            if manga.image == nil then
-                                Threads.DeleteUnique("ImgLoad"..id)
-                                Threads.InsertTask{
-                                    Type = "FileDownload",
-                                    Path = "cache.img",
-                                    Link = manga.ImageLink,
-                                    Unique = "ImgLoad"..id,
-                                    OnComplete = function()
-                                        Threads.InsertTask{
-                                            Type = "ImageLoad",
-                                            Path = "cache.img",
-                                            Unique = "ImgLoad"..id,
-                                            Save = function(a)
-                                                if a ~= nil then
-                                                    Graphics.setImageFilters(a, FILTER_LINEAR, FILTER_LINEAR)
-                                                    manga.image = a
-                                                end
-                                            end
-                                        }
-                                    end
-                                }
+                            if manga.Image == nil then
+                                threads.Remove(manga, 'Image')
+                                threads.DownloadImageAsync(manga.ImageLink, manga, 'Image', true)
                                 if not manga.ImageDownload then
                                     DownloadedImage[#DownloadedImage + 1] = id
                                     manga.ImageDownload = true
@@ -164,27 +129,10 @@ Catalogs = {
             SliderY = math.max(0, math.ceil(#Results/4) * (MANGA_HEIGHT + 24) - 520)
             SliderVel = 0
             if not PagesDownloadDone then
-                local parser = Parser
-                if parser then
-                    if not Threads.CheckUnique("PageLoading") then
-                        Threads.InsertTask{
-                            Type = "Coroutine",
-                            Unique = "PageLoading",
-                            F = function() return parser:getManga(page) end,
-                            Save = function(a)
-                                for i = 1, #a do
-                                    Results[#Results + 1] = a[i]
-                                end
-                                Loading.SetMode(LOADING_NONE)
-                                page = page + 1
-                                if #a == 0 then
-                                    PagesDownloadDone = true
-                                end
-                            end,
-                            OnLaunch = function()
-                                Loading.SetMode(LOADING_BLACK, 599, 272)
-                            end
-                        }
+                if Parser then
+                    if not ParserManager.Check(Results) then
+                        ParserManager.getMangaListAsync(Parser, page, Results)
+                        page = page + 1
                     end
                 end
             end
@@ -229,22 +177,24 @@ Catalogs = {
         for _, i in ipairs(DownloadedImage) do
             local manga = Results[i]
             if manga.ImageDownload then
-                Threads.DeleteUnique("ImgLoad"..i)
-                if manga.image ~= nil then
-                    Graphics.freeImage(manga.image)
-                    manga.image = nil
+                threads.Remove(manga,'Image')
+                if manga.Image then
+                    if manga.Image.e then
+                        Graphics.freeImage(manga.Image.e)
+                        manga.Image.e = nil
+                    end
                 end
                 manga.ImageDownload = nil
             end
         end
-        Threads.DeleteUnique("PageLoading")
+        ParserManager.Remove(Results)
         Loading.SetMode(LOADING_NONE)
     end,
     Term = function()
         Catalogs.Shrink()
-        DownloadedImage = {}
-        PagesDownloadDone = false
-        page = 1
-        Results = {}
+        DownloadedImage     = {}
+        Results             = {}
+        page                = 1
+        PagesDownloadDone   = false
     end
 }

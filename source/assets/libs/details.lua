@@ -64,21 +64,9 @@ Details = {
             DETAILS_MODE = DETAILS_START
             Point.x, Point.y = x, y
             OldFade = 1
-            if Parsers[manga.ParserID] then
-                Threads.InsertTask {
-                    Type = "Coroutine",
-                    Unique = "ChaptersLoading",
-                    F = function()
-                        return Parsers[manga.ParserID]:getChapters(manga)
-                    end,
-                    Save = function(chapters)
-                        Chapters = chapters
-                        Loading.SetMode(LOADING_NONE)
-                    end,
-                    OnLaunch = function()
-                        Loading.SetMode(LOADING_WHITE)
-                    end
-                }
+            local Parser = GetParserByID(manga.ParserID)
+            if Parser then
+                ParserManager.getChaptersAsync(manga, Chapters)
             end
             Center.x, Center.y = (MANGA_WIDTH * 1.5) / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80
             Timer.reset(AnimationTimer)
@@ -92,8 +80,8 @@ Details = {
             end
             if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
                 DETAILS_MODE = DETAILS_WAIT
-                Threads.DeleteUnique("ChaptersLoading")
                 Loading.SetMode(LOADING_NONE)
+                ParserManager.Remove(Chapters)
                 Timer.reset(AnimationTimer)
                 OldFade = Fade
             end
@@ -102,6 +90,9 @@ Details = {
     Update = function(delta)
         if DETAILS_MODE ~= DETAILS_END then
             animationUpdate()
+            if ParserManager.Check(Chapters) then
+                
+            end
             scrollUpdate()
         end
     end,
@@ -126,7 +117,7 @@ Details = {
                 y = y + 100
             end
 
-            if DETAILS_MODE == DETAILS_START and #Chapters == 0 and not Threads.CheckUnique("ChaptersLoading") then
+            if DETAILS_MODE == DETAILS_START and #Chapters == 0 and not ParserManager.Check(Chapters) then
                 local msg = Language[LANG].WARNINGS.NO_CHAPTERS
                 Font.print(FONT24, 632 - Font.getTextWidth(FONT24, msg) / 2, y + 240, msg, WHITE)
             end

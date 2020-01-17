@@ -7,9 +7,11 @@ dofile "app0:assets/libs/language.lua"
 dofile "app0:assets/libs/globals.lua"
 dofile "app0:assets/libs/loading.lua"
 dofile "app0:assets/libs/parser.lua"
-dofile "app0:assets/libs/threads.lua"
+dofile "app0:assets/libs/net.lua"
+dofile "app0:assets/libs/parserhandler.lua"
 dofile "app0:assets/libs/reader.lua"
 dofile "app0:assets/libs/menu.lua"
+dofile "ux0:data/vsKoob/parsers.lua"
 
 MENU            = 0
 READER          = 1
@@ -43,7 +45,7 @@ local function mem_to_str(bytes, name)
     return string.format('%s: %.2f %s', name, bytes, str)
 end
 local Menu, Reader = Menu, Reader
-local texture
+
 while true do
     Graphics.initBlend()
     OldPad, Pad = Pad, Controls.read()
@@ -69,16 +71,12 @@ while true do
         Reader.Draw()
     end
 
-    if texture ~= nil then
-        Graphics.drawImage(0, 0, texture)
-    end
-
     Loading.Draw()
 
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
         Font.print(FONT, 0, 0, "DG_MODE", Color.new(255, 255, 255))
-        local mem_net = mem_to_str(Threads.GetMemDownloaded(), "NET")
+        local mem_net = mem_to_str(threads.GetMemoryDownloaded(), "NET")
         Font.print(FONT,  940 - Font.getTextWidth(FONT, mem_net), 0, mem_net, Color.new(0,255,0))
         local mem_var = mem_to_str(collectgarbage("count") * 1024, "VAR")
         Font.print(FONT,  480 - Font.getTextWidth(FONT, mem_var)/2, 0, mem_var, Color.new(255,128,0))
@@ -87,27 +85,13 @@ while true do
 
     if Controls.check(Pad, SCE_CTRL_SELECT) and not Controls.check(OldPad, SCE_CTRL_SELECT) then
         Loading.SetMode(LOADING_WHITE)
-        Threads.AddTask{
-            Type = "FileDownload",
-            Link = "https://i.ytimg.com/vi/4U3pZG4RXh4/maxresdefault.jpg",
-            Path = "image.jpg",
-            OnComplete = function()
-                if System.doesFileExist("ux0:data/Moondayo/image.jpg") then
-                    Threads.InsertTask{
-                        Type = "ImageLoad",
-                        Path = "image.jpg",
-                        Save = function (new_text)
-                            texture = new_text
-                        end
-                    }
-                end
-            end}
     end
 
     if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_SQUARE) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_SQUARE) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
-    Threads.Update()
+    threads.Update()
+    ParserManager.Update()
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()

@@ -4,6 +4,7 @@ dofile "app0:assets/libs/details.lua"
 LIBRARY_MODE    = 0
 CATALOGS_MODE   = 1
 SETTINGS_MODE   = 2
+PREVIOUS_MODE   = 0
 local MENU_MODE = -1
 
 local ButtonsAnimX = {1, 1, 1}
@@ -14,6 +15,7 @@ Menu = {
         if MENU_MODE == CATALOGS_MODE then
             Catalogs.Shrink()
         end
+        PREVIOUS_MODE = MENU_MODE
         MENU_MODE = new_mode
     end,
     Input = function (OldPad, Pad, OldTouch, Touch)
