@@ -7,9 +7,9 @@ local COLOR_BLACK   = Color.new(  0,   0,   0)
 
 local Parser        = nil
 
-TOUCH_MODE_NONE     = 0
-TOUCH_MODE_READ     = 1
-TOUCH_MODE_SLIDE    = 2
+local TOUCH_MODE_NONE     = 0
+local TOUCH_MODE_READ     = 1
+local TOUCH_MODE_SLIDE    = 2
 local TOUCH_MODE    = TOUCH_MODE_NONE
 
 local PARSERS_MODE  = 0
@@ -102,7 +102,7 @@ Catalogs = {
             TOUCH_MODE = TOUCH_MODE_NONE
         end
         if TOUCH_MODE == TOUCH_MODE_READ then
-            if SliderVel ~= 0 or math.abs(TouchY-Touch.y) > 10 then
+            if math.abs(SliderVel) > 0.1 or math.abs(TouchY-Touch.y) > 10 then
                 TOUCH_MODE = TOUCH_MODE_SLIDE
             end
         end
