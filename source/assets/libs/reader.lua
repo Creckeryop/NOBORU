@@ -17,7 +17,7 @@ local STATE_LOADING = 0
 local STATE_READING = 1
 local STATE = STATE_LOADING
 
-local max_zoom = 3
+local max_Zoom = 3
 
 local offset = {x = 0, y = 0}
 local touchTemp = {x = 0, y = 0}
@@ -27,23 +27,24 @@ local current_chapter = 1
 
 local PageChanged = nil
 
-local Scale = function(dzoom, Page)
-    local old_zoom = Page.zoom
-    Page.zoom = Page.zoom * dzoom
-    if Page.zoom < Page.min_zoom then
-        Page.zoom = Page.min_zoom
-    elseif Page.zoom > max_zoom then
-        Page.zoom = max_zoom
+local Scale = function(dZoom, Page)
+    local old_Zoom = Page.Zoom
+    Page.Zoom = Page.Zoom * dZoom
+    if Page.Zoom < Page.min_Zoom then
+        Page.Zoom = Page.min_Zoom
+    elseif Page.Zoom > max_Zoom then
+        Page.Zoom = max_Zoom
     end
-    Page.y = 272 + ((Page.y - 272) / old_zoom) * Page.zoom
-    Page.x = 480 + ((Page.x - 480) / old_zoom) * Page.zoom
+    Page.y = 272 + ((Page.y - 272) / old_Zoom) * Page.Zoom
+    Page.x = 480 + ((Page.x - 480) / old_Zoom) * Page.Zoom
 end
 
 local function deletePageImage(page)
+    ParserManager.Remove(Pages[page])
     threads.Remove(Pages[page], "Image")
     if Pages[page].Image then
         if type(Pages[page].Image.e or Pages[page].Image) == "table" then
-            for i = 1, Pages[page].Image.parts do
+            for i = 1, Pages[page].Image.Parts do
                 if Pages[page].Image[i] and Pages[page].Image[i].e then
                     Graphics.freeImage(Pages[page].Image[i].e)
                     Pages[page].Image[i].e = nil
@@ -122,13 +123,13 @@ Reader = {
                 velX = Touch.x - OldTouch.x
                 velY = Touch.y - OldTouch.y
             end
-            if Touch2.x ~= nil and OldTouch2.x ~= nil and Pages[Pages.page].zoom ~= nil then
+            if Touch2.x ~= nil and OldTouch2.x ~= nil and Pages[Pages.page].Zoom ~= nil then
                 touchMode = TOUCH_MULTI
-                local old_zoom = Pages[Pages.page].zoom
+                local old_Zoom = Pages[Pages.page].Zoom
                 local center = {x = (Touch.x + Touch2.x) / 2, y = (Touch.y + Touch2.y) / 2}
                 local n = (math.sqrt((Touch.x - Touch2.x) * (Touch.x - Touch2.x) + (Touch.y - Touch2.y) * (Touch.y - Touch2.y)) / math.sqrt((OldTouch.x - OldTouch2.x) * (OldTouch.x - OldTouch2.x) + (OldTouch.y - OldTouch2.y) * (OldTouch.y - OldTouch2.y)))
                 Scale(n, Pages[Pages.page])
-                n = Pages[Pages.page].zoom / old_zoom
+                n = Pages[Pages.page].Zoom / old_Zoom
                 Pages[Pages.page].y = Pages[Pages.page].y - (center.y - 272) * (n - 1)
                 Pages[Pages.page].x = Pages[Pages.page].x - (center.x - 480) * (n - 1)
             end
@@ -137,9 +138,9 @@ Reader = {
                 local old_page = Pages.page
                 if offset.x > 90 and ChangePage(Pages.page - 1) then
                     offset.x = -960 + offset.x
-                    if Pages[Pages.page + 1] ~= nil and Pages[Pages.page + 1].zoom ~= nil then
-                        if (Pages[Pages.page + 1].mode ~= "Horizontal" and Pages[Pages.page + 1].zoom >= 960 / Pages[Pages.page + 1].width) or Pages[Pages.page + 1].zoom * Pages[Pages.page + 1].width >= 960 then
-                            Pages[Pages.page + 1].x = 960 + Pages[Pages.page + 1].width * Pages[Pages.page + 1].zoom / 2
+                    if Pages[Pages.page + 1] ~= nil and Pages[Pages.page + 1].Zoom ~= nil then
+                        if (Pages[Pages.page + 1].Mode ~= "Horizontal" and Pages[Pages.page + 1].Zoom >= 960 / Pages[Pages.page + 1].Width) or Pages[Pages.page + 1].Zoom * Pages[Pages.page + 1].Width >= 960 then
+                            Pages[Pages.page + 1].x = 960 + Pages[Pages.page + 1].Width * Pages[Pages.page + 1].Zoom / 2
                         else
                             Pages[Pages.page + 1].x = 960 + 480
                         end
@@ -147,9 +148,9 @@ Reader = {
                     PageChanged = old_page
                 elseif offset.x < -90 and ChangePage(Pages.page + 1) then
                     offset.x = 960 + offset.x
-                    if Pages[Pages.page - 1] ~= nil and Pages[Pages.page - 1].zoom ~= nil then
-                        if (Pages[Pages.page - 1].mode ~= "Horizontal" and Pages[Pages.page - 1].zoom >= 960 / Pages[Pages.page - 1].width) or Pages[Pages.page - 1].zoom * Pages[Pages.page - 1].width >= 960 then
-                            Pages[Pages.page - 1].x = -Pages[Pages.page - 1].width * Pages[Pages.page - 1].zoom / 2
+                    if Pages[Pages.page - 1] ~= nil and Pages[Pages.page - 1].Zoom ~= nil then
+                        if (Pages[Pages.page - 1].Mode ~= "Horizontal" and Pages[Pages.page - 1].Zoom >= 960 / Pages[Pages.page - 1].Width) or Pages[Pages.page - 1].Zoom * Pages[Pages.page - 1].Width >= 960 then
+                            Pages[Pages.page - 1].x = -Pages[Pages.page - 1].Width * Pages[Pages.page - 1].Zoom / 2
                         else
                             Pages[Pages.page - 1].x = -480
                         end
@@ -163,9 +164,9 @@ Reader = {
             touchMode = TOUCH_IDLE
         end
         if Controls.check(Pad, SCE_CTRL_UP) then
-            Pages[Pages.page].y = Pages[Pages.page].y + 5 * Pages[Pages.page].zoom
+            Pages[Pages.page].y = Pages[Pages.page].y + 5 * Pages[Pages.page].Zoom
         elseif Controls.check(Pad, SCE_CTRL_DOWN) then
-            Pages[Pages.page].y = Pages[Pages.page].y - 5 * Pages[Pages.page].zoom
+            Pages[Pages.page].y = Pages[Pages.page].y - 5 * Pages[Pages.page].Zoom
         end
         if touchMode == TOUCH_READ then
             local len = math.sqrt((touchTemp.x - Touch.x) * (touchTemp.x - Touch.x) + (touchTemp.y - Touch.y) * (touchTemp.y - Touch.y))
@@ -199,35 +200,35 @@ Reader = {
             end
             for i = -1, 1 do
                 local page = Pages[Pages.page + i]
-                if page ~= nil and page.zoom == nil and page.Image ~= nil then
+                if page ~= nil and page.Zoom == nil and page.Image ~= nil then
                     local Image = page.Image
                     if type(Image.e or Image) == "table" then
-                        page.width, page.height, page.x, page.y = Image.width, Image.height, 480 + i * 960, 272
+                        page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
                     else
-                        page.width, page.height, page.x, page.y = Graphics.getImageWidth(Image.e), Graphics.getImageHeight(Image.e), 480 + i * 960, 272
+                        page.Width, page.Height, page.x, page.y = Graphics.getImageWidth(Image.e), Graphics.getImageHeight(Image.e), 480 + i * 960, 272
                     end
                     Console.writeLine("Added " .. Pages.page + i)
-                    if page.width > page.height then
-                        page.mode = "Horizontal"
-                        page.zoom = 544 / page.height
-                        page.min_zoom = page.zoom
-                        if page.width * page.zoom >= 960 then
-                            page.x = 480 + i * (480 + page.width * page.zoom / 2)
+                    if page.Width > page.Height then
+                        page.Mode = "Horizontal"
+                        page.Zoom = 544 / page.Height
+                        page.min_Zoom = page.Zoom
+                        if page.Width * page.Zoom >= 960 then
+                            page.x = 480 + i * (480 + page.Width * page.Zoom / 2)
                         else
                             page.x = 480 + i * 960
                         end
                     else
-                        page.mode = "Vertical"
-                        page.zoom = 960 / page.width
-                        page.min_zoom = page.zoom / 2
+                        page.Mode = "Vertical"
+                        page.Zoom = 960 / page.Width
+                        page.min_Zoom = page.Zoom / 2
                         page.x = 480 + i * 960
                     end
-                    page.y = page.zoom * page.height / 2
+                    page.y = page.Zoom * page.Height / 2
                 end
             end
             if touchMode == TOUCH_IDLE or touchMode == TOUCH_MOVE then
                 local page = Pages[Pages.page]
-                if page ~= nil and page.zoom ~= nil then
+                if page ~= nil and page.Zoom ~= nil then
                     page.x = page.x + velX
                     page.y = page.y + velY
                 end
@@ -271,21 +272,21 @@ Reader = {
                     end
                 end
             end
-            if Pages[Pages.page].zoom ~= nil then
-                if Pages[Pages.page].y - Pages[Pages.page].height / 2 * Pages[Pages.page].zoom > 0 then
-                    Pages[Pages.page].y = Pages[Pages.page].height / 2 * Pages[Pages.page].zoom
-                elseif Pages[Pages.page].y + Pages[Pages.page].height / 2 * Pages[Pages.page].zoom < 544 then
-                    Pages[Pages.page].y = 544 - Pages[Pages.page].height / 2 * Pages[Pages.page].zoom
+            if Pages[Pages.page].Zoom ~= nil then
+                if Pages[Pages.page].y - Pages[Pages.page].Height / 2 * Pages[Pages.page].Zoom > 0 then
+                    Pages[Pages.page].y = Pages[Pages.page].Height / 2 * Pages[Pages.page].Zoom
+                elseif Pages[Pages.page].y + Pages[Pages.page].Height / 2 * Pages[Pages.page].Zoom < 544 then
+                    Pages[Pages.page].y = 544 - Pages[Pages.page].Height / 2 * Pages[Pages.page].Zoom
                 end
-                if (Pages[Pages.page].mode ~= "Horizontal" and Pages[Pages.page].zoom >= 960 / Pages[Pages.page].width) or Pages[Pages.page].zoom * Pages[Pages.page].width > 960 then
-                    if Pages[Pages.page].zoom * Pages[Pages.page].width <= 960 or Pages[Pages.page].zoom == Pages[Pages.page].min_zoom and Pages[Pages.page].mode ~= "Horizontal" then
+                if (Pages[Pages.page].Mode ~= "Horizontal" and Pages[Pages.page].Zoom >= 960 / Pages[Pages.page].Width) or Pages[Pages.page].Zoom * Pages[Pages.page].Width > 960 then
+                    if Pages[Pages.page].Zoom * Pages[Pages.page].Width <= 960 or Pages[Pages.page].Zoom == Pages[Pages.page].min_Zoom and Pages[Pages.page].Mode ~= "Horizontal" then
                         pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
                     end
-                    if Pages[Pages.page].x - Pages[Pages.page].width / 2 * Pages[Pages.page].zoom >= 0 then
-                        Pages[Pages.page].x = Pages[Pages.page].width / 2 * Pages[Pages.page].zoom
+                    if Pages[Pages.page].x - Pages[Pages.page].Width / 2 * Pages[Pages.page].Zoom >= 0 then
+                        Pages[Pages.page].x = Pages[Pages.page].Width / 2 * Pages[Pages.page].Zoom
                         pageMode = bit32.bor(pageMode, PAGE_LEFT)
-                    elseif Pages[Pages.page].x + Pages[Pages.page].width / 2 * Pages[Pages.page].zoom <= 960 then
-                        Pages[Pages.page].x = 960 - Pages[Pages.page].width / 2 * Pages[Pages.page].zoom
+                    elseif Pages[Pages.page].x + Pages[Pages.page].Width / 2 * Pages[Pages.page].Zoom <= 960 then
+                        Pages[Pages.page].x = 960 - Pages[Pages.page].Width / 2 * Pages[Pages.page].Zoom
                         pageMode = bit32.bor(pageMode, PAGE_RIGHT)
                     else
                         pageMode = PAGE_NONE
@@ -304,39 +305,39 @@ Reader = {
         if STATE == STATE_LOADING then
             local loadingManga_Name = "Loading " .. Chapters[current_chapter].Manga.Name
             local loading = 'Loading Chapter ' .. Chapters[current_chapter].Name .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-            local width = Font.getTextWidth(FONT, loading)
-            local width2 = Font.getTextWidth(FONT, loadingManga_Name)
-            Font.print(FONT, 480 - width / 2, 272 + 10, loading, Color.new(0,0,0))
-            Font.print(FONT, 480 - width2 / 2, 272 - 10, loadingManga_Name, Color.new(0,0,0))
+            local Width = Font.getTextWidth(FONT, loading)
+            local Width2 = Font.getTextWidth(FONT, loadingManga_Name)
+            Font.print(FONT, 480 - Width / 2, 272 + 10, loading, Color.new(0,0,0))
+            Font.print(FONT, 480 - Width2 / 2, 272 - 10, loadingManga_Name, Color.new(0,0,0))
         elseif STATE == STATE_READING then
             for i = -1, 1 do
                 local page = Pages[Pages.page + i]
                 if page ~= nil and page.Image ~= nil then
                     if (type(page.Image.e or page.Image) == "table") then
-                        for k = 1, page.Image.parts do
+                        for k = 1, page.Image.Parts do
                             if page.Image[k] and page.Image[k].e ~= nil then
-                                local height = Graphics.getImageHeight(page.Image[k].e)
-                                Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.zoom - page.height / 2 * page.zoom + page.Image.part_h / 2 * page.zoom, page.Image[k].e, 0, 0, page.width, height, 0, page.zoom, page.zoom)
+                                local Height = Graphics.getImageHeight(page.Image[k].e)
+                                Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
                             else
                                 local loading = "Loading segment" .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                                local width = Font.getTextWidth(FONT, loading)
-                                Font.print(FONT, offset.x + 960 * i + 480 - width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.zoom - page.height / 2 * page.zoom + 10 * page.zoom, loading, Color.new(0,0,0))
+                                local Width = Font.getTextWidth(FONT, loading)
+                                Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, Color.new(0,0,0))
                             end
                         end
                     else
-                        Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4, page.Image.e, 0, 0, page.width, page.height, 0, page.zoom, page.zoom)
+                        Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
                     end
                 elseif page ~= nil then
                     local loading = "Loading" .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                    local width = Font.getTextWidth(FONT, loading)
-                    Font.print(FONT, offset.x + 960 * i + 480 - width / 2, 272 - 10, loading, Color.new(0,0,0))
+                    local Width = Font.getTextWidth(FONT, loading)
+                    Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, Color.new(0,0,0))
                 end
             end
             if Pages.page <= (Pages.Count or 0) and Pages.page > 0 then
-                local width = Font.getTextWidth(FONT, Pages.page .. "/" .. Pages.Count) + 20
-                local height = Font.getTextHeight(FONT, Pages.page .. "/" .. Pages.Count)
-                Graphics.fillRect(960 - width, 960, 0, height + 5, Color.new(0, 0, 0, 128))
-                Font.print(FONT, 960 - width + 10, 0, Pages.page .. "/" .. Pages.Count, Color.new(255, 255, 255))
+                local Width = Font.getTextWidth(FONT, Pages.page .. "/" .. Pages.Count) + 20
+                local Height = Font.getTextHeight(FONT, Pages.page .. "/" .. Pages.Count)
+                Graphics.fillRect(960 - Width, 960, 0, Height + 5, Color.new(0, 0, 0, 128))
+                Font.print(FONT, 960 - Width + 10, 0, Pages.page .. "/" .. Pages.Count, Color.new(255, 255, 255))
             end
         end
     end,

@@ -86,6 +86,7 @@ ParserManager = {
             Type = "getPageImage",
             F = function()
                 parser:loadChapterPage(Link, Table)
+                coroutine.yield(true)
                 if Table.Link ~= nil then
                     threads.DownloadImageAsync(Table.Link, Table, "Image")
                 end

@@ -71,8 +71,8 @@ threads = {
                     end
                     return
                 elseif Task.Type == "ImageLoad" then
-                    Task.Table[Task.Index] = Image:new(System.getAsyncResult())
                     if System.doesFileExist(IMAGE_CACHE_PATH) then
+                        Task.Table[Task.Index] = Image:new(System.getAsyncResult())
                         Graphics.setImageFilters(Task.Table[Task.Index].e, FILTER_LINEAR, FILTER_LINEAR)
                     end
                 elseif Task.Type == "ImageLoadTable" then
