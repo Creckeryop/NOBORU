@@ -317,7 +317,9 @@ Reader = {
                         for k = 1, page.Image.Parts do
                             if page.Image[k] and page.Image[k].e ~= nil then
                                 local Height = Graphics.getImageHeight(page.Image[k].e)
-                                Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
+                                local x, y = math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom
+                                Graphics.fillRect(x-page.Width/2*page.Zoom,x+page.Width/2*page.Zoom,y-Height/2*page.Zoom,y+Height/2*page.Zoom,Color.new(0,0,0))
+                                Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
                             else
                                 local loading = "Loading segment" .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                                 local Width = Font.getTextWidth(FONT, loading)
@@ -325,7 +327,9 @@ Reader = {
                             end
                         end
                     else
-                        Graphics.drawImageExtended(math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
+                        local x, y = math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4
+                        Graphics.fillRect(x-page.Width/2*page.Zoom,x+page.Width/2*page.Zoom,y-page.Height/2*page.Zoom,y+page.Height/2*page.Zoom,Color.new(0,0,0))
+                        Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
                     end
                 elseif page ~= nil then
                     local loading = "Loading" .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
