@@ -3,11 +3,17 @@ DETAILS_WAIT        = 1
 DETAILS_END         = 2
 local DETAILS_MODE  = DETAILS_END
 
+local TOUCH_MODE_NONE     = 0
+local TOUCH_MODE_READ     = 1
+local TOUCH_MODE_SLIDE    = 2
+local TOUCH_MODE    = TOUCH_MODE_NONE
+
 local Manga     = nil
 local Fade      = 0
 local Point     = {x = 0, y = 0}
 local Center    = {x = 0, y = 0}
 
+local TouchY    = 0
 local OldFade   = 1
 local ScrollY   = 0
 local VelY      = 0
@@ -75,8 +81,27 @@ Details = {
     end,
     Input = function(OldPad, Pad, OldTouch, Touch)
         if DETAILS_MODE == DETAILS_START then
-            if Touch.x ~= nil and OldTouch.x ~= nil then
-                VelY = OldTouch.y - Touch.y
+            if TOUCH_MODE == TOUCH_MODE_NONE and OldTouch.x ~= nil and Touch.x ~= nil and Touch.x > 240 then
+                TOUCH_MODE = TOUCH_MODE_READ
+                TouchY = Touch.y
+            elseif TOUCH_MODE ~= TOUCH_MODE_NONE and Touch.x == nil then
+                if TOUCH_MODE == TOUCH_MODE_READ and OldTouch.x > 320 and OldTouch.y > 90 then
+                    local id = math.floor((ScrollY + OldTouch.y) / 100)
+                    if id > 0 and id <= #Chapters then
+                        Reader.load(Chapters, id)
+                        APP_MODE = READER
+                    end
+                end
+                TOUCH_MODE = TOUCH_MODE_NONE
+            end
+            if TOUCH_MODE == TOUCH_MODE_READ then
+                if math.abs(VelY) > 0.1 or math.abs(Touch.y - TouchY)>10 then
+                    TOUCH_MODE = TOUCH_MODE_SLIDE
+                end
+            elseif TOUCH_MODE == TOUCH_MODE_SLIDE then
+                if Touch.x ~= nil and OldTouch.x ~= nil then
+                    VelY = OldTouch.y - Touch.y
+                end
             end
             if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
                 DETAILS_MODE = DETAILS_WAIT
@@ -91,7 +116,9 @@ Details = {
         if DETAILS_MODE ~= DETAILS_END then
             animationUpdate()
             if ParserManager.Check(Chapters) then
-                
+                Loading.SetMode(LOADING_WHITE)
+            else
+                Loading.SetMode(LOADING_NONE)
             end
             scrollUpdate()
         end
