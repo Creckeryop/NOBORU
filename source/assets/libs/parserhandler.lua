@@ -4,11 +4,11 @@ local OrderCount = 0
 local Task = nil
 local Trash = {}
 
+local Uniques = {}
+
 ParserManager = {
     Update = function()
-        if OrderCount == 0 and Task == nil then
-            return
-        end
+        if OrderCount == 0 and Task == nil then return end
         if Task == nil then
             Task = Order[1]
             table.remove(Order, 1)
@@ -23,17 +23,19 @@ ParserManager = {
                 if Task.Type ~= "Update" then
                     Task.Table.Done = true
                 end
+                Uniques[Task.Table] = nil
                 Task = nil
             else
                 local _, isSafeToleave = coroutine.resume(Task.Update)
                 if Task.Stop and isSafeToleave then
+                    Uniques[Task.Table] = nil
                     Task = nil
                 end
             end
         end
     end,
     getMangaListAsync = function(parser, i, Table)
-        if parser == nil or ParserManager.Check(Table) then return end
+        if parser == nil or Uniques[Table] then return end
         Console.writeLine("Task created", Color.new(255,255,255))
         local T = {
             Type = "MangaList",
@@ -44,10 +46,11 @@ ParserManager = {
         }
         OrderCount = OrderCount + 1
         Order[OrderCount] = T
+        Uniques[Table] = T
     end,
     getChaptersAsync = function(manga, Table, Insert)
         local parser = GetParserByID(manga.ParserID)
-        if parser == nil or ParserManager.Check(Table) then return end
+        if parser == nil or Uniques[Table] then return end
         local T = {
             Type = "Chapters",
             F = function()
@@ -61,10 +64,11 @@ ParserManager = {
         else
             Order[#Order + 1] = T
         end
+        Uniques[Table] = T
     end,
     prepareChapter = function (chapter, Table, Insert)
         local parser = GetParserByID(chapter.Manga.ParserID)
-        if parser == nil or ParserManager.Check(Table) then return end
+        if parser == nil or Uniques[Table] then return end
         local T = {
             Type = "PrepareChapter",
             F = function()
@@ -78,17 +82,18 @@ ParserManager = {
         else
             Order[#Order + 1] = T
         end
+        Uniques[Table] = T
     end,
     getPageImage = function (parserID, Link, Table, Insert)
         local parser = GetParserByID(parserID)
-        if parser == nil or ParserManager.Check(Table) then return end
+        if parser == nil or Uniques[Table] then return end
         local T = {
             Type = "getPageImage",
             F = function()
                 parser:loadChapterPage(Link, Table)
                 coroutine.yield(true)
                 if Table.Link ~= nil then
-                    threads.DownloadImageAsync(Table.Link, Table, "Image")
+                    threads.DownloadImageAsync(Table.Link, Table, "Image", true)
                 end
             end,
             Table = Table
@@ -99,34 +104,26 @@ ParserManager = {
         else
             Order[#Order + 1] = T
         end
+        Uniques[Table] = T
     end,
     Check = function(Table)
-        if Task ~= nil and Task.Table == Table then
-            return Task.Type ~= "Skip"
-        end
-        for _, v in pairs(Order) do
-            if v.Table == Table then
-                return v.Type ~= "Skip"
-            end
-        end
-        return false
+        return Uniques[Table] ~= nil
     end,
     Remove = function (Table)
         if Task ~= nil and Task.Table == Table then
             Task.Table = Trash
             Task.Stop = true
+            Uniques[Table] = nil
             return
-        end
-        for _, v in pairs(Order) do
-            if v.Table == Table then
-                v.Type = "Skip"
-                return
-            end
+        elseif Uniques[Table] then
+            Uniques[Table].Type = "Skip"
+            Uniques[Table] = nil
         end
     end,
     UpdateParserList = nil,
     Clear = function ()
         Order = {}
+        Uniques = {}
         OrderCount = 0
         if Task ~= nil then
             Task.Stop = true

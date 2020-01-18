@@ -6,6 +6,7 @@ local Task          = nil
 local Trash         = {Type = nil, Garbadge = nil}
 local NetInited     = false
 local bytes         = 0
+local Uniques       = {}
 
 threads = {
     Update = function()
@@ -67,6 +68,7 @@ threads = {
                             Task.Type = "ImageLoad"
                         end
                     else
+                        Uniques[Task.Table or Task.Link] = nil
                         Task = nil
                     end
                     return
@@ -98,6 +100,7 @@ threads = {
                         end
                         Graphics.setImageFilters(Task.Table[Task.Index][Task.Image.i].e, FILTER_LINEAR, FILTER_LINEAR)
                     else
+                        Uniques[Task.Table or Task.Link] = nil
                         Task = nil
                         return
                     end
@@ -109,6 +112,7 @@ threads = {
                         Console.writeLine("Getting " .. (math.floor(Task.Image.Height / Task.Image.Parts) * Task.Image.i) .. " " .. (Task.Image.Width) .. " " .. Height .. " Image")
                         Graphics.loadPartImageAsync(IMAGE_CACHE_PATH, 0, math.floor(Task.Image.Height / Task.Image.Parts) * Task.Image.i, Task.Image.Width, Height)
                     else
+                        Uniques[Task.Table or Task.Link] = nil
                         Task = nil
                     end
                     return
@@ -119,6 +123,7 @@ threads = {
                 elseif Task.Type == "Skip" then
                     Console.writeLine("WOW HOW THAT HAPPENED?", Color.new(255,0,0))
                 end
+                Uniques[Task.Table or Task.Link] = nil
                 Task = nil
             end
             local success, err = pcall(f_save)
@@ -128,6 +133,8 @@ threads = {
                 if Task.Retry > 0 then
                     table.insert(Order, Task)
                     OrderCount = OrderCount + 1
+                else
+                    Uniques[Task.Table or Task.Link] = nil
                 end
                 Task = nil
             end
@@ -148,6 +155,7 @@ threads = {
     Clear = function()
         OrderCount = 0
         Order = {}
+        Uniques = {}
         Task.Table, Task.Index = Trash, "Garbadge"
     end,
     isDownloadRunning = function()
@@ -195,7 +203,7 @@ threads = {
         return Image
     end,
     DownloadStringAsync = function(Link, Table, Index, Insert)
-        if threads.Check(Table, Index) then return false end
+        if Uniques[Table] and Uniques[Table][Index] then return false end
         OrderCount = OrderCount + 1
         local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3}
         if Insert then
@@ -203,10 +211,11 @@ threads = {
         else
             Order[#Order + 1] = T
         end
+        Uniques[Table] = T
         return true
     end,
     DownloadImageAsync = function(Link, Table, Index, Insert)
-        if threads.Check(Table, Index) then return false end
+        if Uniques[Table]  then return false end
         OrderCount = OrderCount + 1
         local T = {Type = "Image", Link = Link, Table = Table, Index = Index, Retry = 3}
         if Insert then
@@ -214,10 +223,11 @@ threads = {
         else
             Order[#Order + 1] = T
         end
+        Uniques[Table] = T
         return true
     end,
     DownloadFileAsync = function(Link, Path, Insert)
-        if threads.Check(Link, Path) then return false end
+        if Uniques[Link] and Uniques[Link][Path] then return false end
         OrderCount = OrderCount + 1
         local T = {Type = "File", Link = Link, Path = Path, Retry = 3}
         if Insert then
@@ -225,6 +235,7 @@ threads = {
         else
             Order[#Order + 1] = T
         end
+        Uniques[Link] = T
         return true
     end,
     Terminate = function()
@@ -238,27 +249,27 @@ threads = {
         end
     end,
     Remove = function(Table, Index)
-        if Task ~= nil and Task.Table == Table and Task.Index == Index then
+        if Task ~= nil and Task.Table == Table then
             Task.Table, Task.Index = Trash, "Garbadge"
-        end
-        for _, v in pairs(Order) do
-            if v.Table == Table and v.Index == Index then
-                v.Type = "Skip"
+            Uniques[Table] = nil
+        else
+            if Uniques[Table] then
+                Uniques[Table].Type = "Skip"
+                Uniques[Table] = nil
             end
         end
     end,
     Check = function(Table, Index)
-        if Task ~= nil and (Task.Table == Table or Task.Link == Table) and (Task.Index == Index or Task.Path == Index) then
+        if Task ~= nil and (Task.Table == Table or Task.Link == Table) then
             return Task.Type ~= "Skip"
+        else
+            return Uniques[Table] and Uniques[Table].Type ~= "Skip"
         end
-        for _, v in pairs(Order) do
-            if (v.Table == Table or v.Link == Table) and (v.Index == Index or v.Path == Index) then
-                return v.Type ~= "Skip"
-            end
-        end
-        return false
-    end,
-    GetMemoryDownloaded = function()
-        return bytes
     end
 }
+function threads.GetMemoryDownloaded()
+    return bytes
+end
+function threads.GetTasksNum()
+    return OrderCount + (Task ~= nil and 1 or 0)
+end
