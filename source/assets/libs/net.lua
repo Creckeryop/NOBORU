@@ -38,7 +38,7 @@ threads = {
                 Task = nil
                 Console.writeLine("NET: Skip", Color.new(255, 255, 0))
             end
-            if Task ~= nil then
+            if Task then
                 Console.writeLine("NET: #" .. (4 - Task.Retry) .. " " .. Task.Link, Color.new(0, 255, 0))
             end
         else
@@ -139,7 +139,7 @@ threads = {
                 Task = nil
             end
         end
-        if Trash.Garbadge ~= nil then
+        if Trash.Garbadge then
             if Trash.Type == "ImageLoad" then
                 Console.writeLine("NET:(Freeing Image)" .. Trash.Link, Color.new(255,0,255))
                 Graphics.freeImage(Trash.Garbadge.e)
@@ -203,7 +203,7 @@ threads = {
         return Image
     end,
     DownloadStringAsync = function(Link, Table, Index, Insert)
-        if Uniques[Table] and Uniques[Table][Index] then return false end
+        if Uniques[Table] then return false end
         OrderCount = OrderCount + 1
         local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3}
         if Insert then
@@ -227,7 +227,7 @@ threads = {
         return true
     end,
     DownloadFileAsync = function(Link, Path, Insert)
-        if Uniques[Link] and Uniques[Link][Path] then return false end
+        if Uniques[Link] then return false end
         OrderCount = OrderCount + 1
         local T = {Type = "File", Link = Link, Path = Path, Retry = 3}
         if Insert then
@@ -241,15 +241,15 @@ threads = {
     Terminate = function()
         if NetInited then
             threads.clear()
-            while Task ~= nil do
+            while Task do
                 threads.update()
             end
             Network.term()
             NetInited = false
         end
     end,
-    Remove = function(Table, Index)
-        if Task ~= nil and Task.Table == Table then
+    Remove = function(Table)
+        if Task and Task.Table == Table then
             Task.Table, Task.Index = Trash, "Garbadge"
             Uniques[Table] = nil
         else
@@ -259,8 +259,8 @@ threads = {
             end
         end
     end,
-    Check = function(Table, Index)
-        if Task ~= nil and (Task.Table == Table or Task.Link == Table) then
+    Check = function(Table)
+        if Task and (Task.Table == Table or Task.Link == Table) then
             return Task.Type ~= "Skip"
         else
             return Uniques[Table] and Uniques[Table].Type ~= "Skip"
@@ -271,5 +271,5 @@ function threads.GetMemoryDownloaded()
     return bytes
 end
 function threads.GetTasksNum()
-    return OrderCount + (Task ~= nil and 1 or 0)
+    return OrderCount + (Task and 1 or 0)
 end

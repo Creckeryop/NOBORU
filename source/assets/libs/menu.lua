@@ -24,7 +24,7 @@ Menu = {
             if Controls.check(Pad, SCE_CTRL_LTRIGGER) and not Controls.check(OldPad, SCE_CTRL_LTRIGGER) then
                 Menu.SetMode(math.max(MENU_MODE - 1, 0))
             end
-            if Touch.x ~= nil and OldTouch.x == nil and Touch.x < 250 then
+            if Touch.x and OldTouch.x == nil and Touch.x < 250 then
                 if Touch.y < 45 then
                 elseif Touch.y < 85 then
                     Menu.SetMode(LIBRARY_MODE)
@@ -55,11 +55,11 @@ Menu = {
                 ButtonsAnimX[i] = math.min(ButtonsAnimX[i] + 0.1, 1)
             end
         end
-        Screen.clear(Color.new(9, 12, 22))
+        Screen.clear(Color.new(0, 0, 0))
         Graphics.fillRect(255, 960, 0, 544,Color.new(233,233,233))
-        Font.print(FONT32, 30,  45,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*ButtonsAnimX[1]))
-        Font.print(FONT32, 30, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[2]))
-        Font.print(FONT32, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[3]))
+        Font.print(FONT30, 30,  45,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*ButtonsAnimX[1]))
+        Font.print(FONT30, 30, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[2]))
+        Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[3]))
         if Details.GetFade() ~= 1 then
             if MENU_MODE == CATALOGS_MODE then
                 Catalogs.Draw()

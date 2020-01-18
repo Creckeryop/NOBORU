@@ -6,10 +6,12 @@ COLOR_BLACK = Color.new(  0,   0,   0)
 COLOR_GRAY  = Color.new(128, 128, 128)
 
 FONT    = Font.load("app0:roboto.ttf")
-FONT32  = Font.load("app0:roboto.ttf")
-FONT24  = Font.load("app0:roboto.ttf")
-Font.setPixelSizes(FONT32, 30)
-Font.setPixelSizes(FONT24, 26)
+FONT12  = Font.load("app0:roboto.ttf")
+FONT30  = Font.load("app0:roboto.ttf")
+FONT26  = Font.load("app0:roboto.ttf")
+Font.setPixelSizes(FONT30, 30)
+Font.setPixelSizes(FONT26, 26)
+Font.setPixelSizes(FONT12, 12)
 
 MANGA_WIDTH     = 160
 MANGA_HEIGHT    = math.floor(MANGA_WIDTH * 1.5)
@@ -33,7 +35,7 @@ end
 function DrawManga(x, y, Manga, M)
     local Mflag = M ~= nil
     M = M or 1
-    Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, COLOR_BLACK)
+    --Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, COLOR_BLACK)
     if Manga.Image and Manga.Image.e then
         local width, height = Graphics.getImageWidth(Manga.Image.e), Graphics.getImageHeight(Manga.Image.e)
         local draw = false
@@ -53,7 +55,7 @@ function DrawManga(x, y, Manga, M)
             Graphics.drawImageExtended(x, y, Manga.Image.e, s_x, 0, w, height, 0, scale*M, scale*M)
         end
     else
-        Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(128, 128, 128))
+        Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(101, 115, 146))
     end
     local alpha = M
     if Mflag then
@@ -101,6 +103,7 @@ function DrawManga(x, y, Manga, M)
                     Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255,255*alpha))
                 end
                 Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255,255*alpha))
+                
             end
         end
         pcall(DrawMangaName)
@@ -118,7 +121,7 @@ end
 
 Image = {
     __gc = function(self)
-        if self.e ~= nil then
+        if self.e then
             Graphics.freeImage(self.e)
             Console.writeLine("Freed!")
         end

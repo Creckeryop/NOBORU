@@ -27,7 +27,7 @@ local UpdateMangas  = function()
                 if i < start or i > math.min(#Results, start + 11) then
                     local manga = Results[i]
                     if manga.ImageDownload then
-                        threads.Remove(manga,'Image')
+                        threads.Remove(manga)
                         if manga.Image then
                             if manga.Image.e then
                                 Graphics.freeImage(manga.Image.e)
@@ -61,7 +61,7 @@ Catalogs = {
                 Catalogs.Term()
             end
         end
-        if TOUCH_MODE == TOUCH_MODE_NONE and OldTouch.x ~= nil and Touch.x ~= nil and Touch.x > 240 then
+        if TOUCH_MODE == TOUCH_MODE_NONE and OldTouch.x and Touch.x and Touch.x > 240 then
             TOUCH_MODE = TOUCH_MODE_READ
             TouchY = Touch.y
         elseif TOUCH_MODE ~= TOUCH_MODE_NONE and Touch.x == nil then
@@ -69,7 +69,7 @@ Catalogs = {
                 if CATALOGS_MODE == PARSERS_MODE then
                     if OldTouch.x > 265 and OldTouch.x < 945 then
                         local id = math.floor((SliderY - 10 + OldTouch.y) / 70) + 1
-                        if Parsers[id] ~= nil then
+                        if Parsers[id]then
                             CATALOGS_MODE = MANGAS_MODE
                             Parser = Parsers[id]
                         end
@@ -84,7 +84,7 @@ Catalogs = {
                             local id = i
                             Details.SetManga(manga, lx + MANGA_WIDTH / 2, uy + MANGA_HEIGHT / 2)
                             if manga.Image == nil then
-                                threads.Remove(manga, 'Image')
+                                threads.Remove(manga)
                                 threads.DownloadImageAsync(manga.ImageLink, manga, 'Image', true)
                                 if not manga.ImageDownload then
                                     DownloadedImage[#DownloadedImage + 1] = id
@@ -103,7 +103,7 @@ Catalogs = {
                 TOUCH_MODE = TOUCH_MODE_SLIDE
             end
         end
-        if TOUCH_MODE == TOUCH_MODE_SLIDE and OldTouch.x ~= nil and Touch.x ~= nil and Touch.x > 240  then
+        if TOUCH_MODE == TOUCH_MODE_SLIDE and OldTouch.x and Touch.x and Touch.x > 240  then
             SliderVel = OldTouch.y - Touch.y
         end
     end,
@@ -179,7 +179,7 @@ Catalogs = {
         for _, i in ipairs(DownloadedImage) do
             local manga = Results[i]
             if manga.ImageDownload then
-                threads.Remove(manga,'Image')
+                threads.Remove(manga)
                 if manga.Image then
                     if manga.Image.e then
                         Graphics.freeImage(manga.Image.e)

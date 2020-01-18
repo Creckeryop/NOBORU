@@ -92,7 +92,7 @@ ParserManager = {
             F = function()
                 parser:loadChapterPage(Link, Table)
                 coroutine.yield(true)
-                if Table.Link ~= nil then
+                if Table.Link then
                     threads.DownloadImageAsync(Table.Link, Table, "Image", true)
                 end
             end,
@@ -110,7 +110,7 @@ ParserManager = {
         return Uniques[Table] ~= nil
     end,
     Remove = function (Table)
-        if Task ~= nil and Task.Table == Table then
+        if Task and Task.Table == Table then
             Task.Table = Trash
             Task.Stop = true
             Uniques[Table] = nil
@@ -125,7 +125,7 @@ ParserManager = {
         Order = {}
         Uniques = {}
         OrderCount = 0
-        if Task ~= nil then
+        if Task then
             Task.Stop = true
         end
     end

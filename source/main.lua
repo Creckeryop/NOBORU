@@ -17,8 +17,8 @@ MENU            = 0
 READER          = 1
 APP_MODE        = MENU
 TOUCH_LOCK      = false
-local fonts = {FONT, FONT24, FONT32}
-for i = 1, 3 do
+local fonts = {FONT12, FONT, FONT26, FONT30}
+for i = 1, 4 do
     Graphics.initBlend()
     Screen.clear()
     Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r—",COLOR_WHITE)
@@ -51,7 +51,7 @@ while true do
     Graphics.initBlend()
     OldPad, Pad = Pad, Controls.read()
     OldTouch.x, OldTouch.y, OldTouch2.x, OldTouch2.y, Touch.x, Touch.y, Touch2.x, Touch2.y = Touch.x, Touch.y, Touch2.x, Touch2.y, Controls.readTouch()
-    if Touch2.x ~= nil and APP_MODE ~= READER then
+    if Touch2.x and APP_MODE ~= READER then
         TOUCH_LOCK = true
     end
     if Touch.x == nil then

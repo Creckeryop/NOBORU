@@ -40,8 +40,6 @@ local Scale = function(dZoom, Page)
 end
 
 local function deletePageImage(page)
-    ParserManager.Remove(Pages[page])
-    threads.Remove(Pages[page], "Image")
     if Pages[page].Image then
         if type(Pages[page].Image.e or Pages[page].Image) == "table" then
             for i = 1, Pages[page].Image.Parts do
@@ -57,6 +55,9 @@ local function deletePageImage(page)
             end
         end
         Pages[page].Image = nil
+    else
+        ParserManager.Remove(Pages[page])
+        threads.Remove(Pages[page])
     end
 end
 
@@ -105,9 +106,10 @@ Reader = {
         end
         if Controls.check(Pad, SCE_CTRL_CIRCLE) then
             for i = 1, #Pages do
-                if Pages[i] ~= nil then
-                    threads.Remove(Pages[i], "Image")
+                if Pages[i] then
                     Pages[i].Image = nil
+                else
+                    threads.Remove(Pages[i])
                 end
             end
             Pages = {Page = 0}
@@ -115,7 +117,7 @@ Reader = {
             collectgarbage()
             APP_MODE = MENU
         end
-        if Touch.y ~= nil and OldTouch.y ~= nil then
+        if Touch.y and OldTouch.y then
             if touchMode ~= TOUCH_MULTI then
                 if touchMode == TOUCH_IDLE then
                     touchTemp.x = Touch.x
@@ -126,7 +128,7 @@ Reader = {
                 velY = Touch.y - OldTouch.y
             end
             local page = Pages[Pages.Page]
-            if Touch2.x ~= nil and OldTouch2.x ~= nil and page.Zoom ~= nil then
+            if Touch2.x and OldTouch2.x and page.Zoom then
                 touchMode = TOUCH_MULTI
                 local old_Zoom = page.Zoom
                 local center = {x = (Touch.x + Touch2.x) / 2, y = (Touch.y + Touch2.y) / 2}
@@ -142,7 +144,7 @@ Reader = {
                 if offset.x > 90 and ChangePage(Pages.Page - 1) then
                     offset.x = -960 + offset.x
                     local page = Pages[Pages.Page + 1]
-                    if page ~= nil and page.Zoom ~= nil then
+                    if page and page.Zoom then
                         if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
                             page.x = 960 + page.Width * page.Zoom / 2
                         else
@@ -153,7 +155,7 @@ Reader = {
                 elseif offset.x < -90 and ChangePage(Pages.Page + 1) then
                     offset.x = 960 + offset.x
                     local page = Pages[Pages.Page - 1]
-                    if page ~= nil and page.Zoom ~= nil then
+                    if page and page.Zoom then
                         if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
                             page.x = -page.Width * page.Zoom / 2
                         else
@@ -206,7 +208,7 @@ Reader = {
             end
             for i = -1, 1 do
                 local page = Pages[Pages.Page + i]
-                if page ~= nil and page.Zoom == nil and page.Image ~= nil then
+                if page and page.Zoom == nil and page.Image then
                     local Image = page.Image
                     if type(Image.e or Image) == "table" then
                         page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
@@ -234,7 +236,7 @@ Reader = {
             end
             if touchMode == TOUCH_IDLE or touchMode == TOUCH_MOVE then
                 local page = Pages[Pages.Page]
-                if page ~= nil and page.Zoom ~= nil then
+                if page and page.Zoom then
                     page.x = page.x + velX
                     page.y = page.y + velY
                 end
@@ -263,7 +265,7 @@ Reader = {
                         Reader.loadChapter(CurrentChapter - 1)
                         return
                     end
-                    if PageChanged ~= nil then
+                    if PageChanged then
                         if PageChanged ~= Pages.Page and Pages[PageChanged] and Pages[PageChanged].Image and type(Pages[PageChanged].Image.e or Pages[PageChanged].Image) =="table" then
                             deletePageImage(PageChanged)
                             if math.abs(PageChanged-Pages.Page) == 1 and Pages[PageChanged].Link ~= "LoadNext" and Pages[PageChanged].Link ~= "LoadPrev" then
@@ -279,7 +281,7 @@ Reader = {
                 end
             end
             local page = Pages[Pages.Page]
-            if page.Zoom ~= nil then
+            if page.Zoom then
                 if page.y - page.Height / 2 * page.Zoom > 0 then
                     page.y = page.Height / 2 * page.Zoom
                 elseif page.y + page.Height / 2 * page.Zoom < 544 then
@@ -313,20 +315,24 @@ Reader = {
             local MangaName = Chapters[CurrentChapter].Manga.Name
             local PrepareMessage = Language[LANG].READER.PREPARING_PAGES.. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
             local ChapterName = Chapters[CurrentChapter].Name
-            if Font.getTextWidth(FONT24, MangaName)>960 then
-                Font.print(FONT, 480 - Font.getTextWidth(FONT, MangaName) / 2, 242, MangaName, COLOR_BLACK)
+            if Font.getTextWidth(FONT26, MangaName) > 960 then
+                if Font.getTextWidth(FONT, MangaName) > 960 then
+                    Font.print(FONT12, 480 - Font.getTextWidth(FONT12, MangaName) / 2, 247, MangaName, COLOR_BLACK)
+                else
+                    Font.print(FONT, 480 - Font.getTextWidth(FONT, MangaName) / 2, 242, MangaName, COLOR_BLACK)
+                end
             else
-                Font.print(FONT24, 480 - Font.getTextWidth(FONT24, MangaName) / 2, 232, MangaName, COLOR_BLACK)
+                Font.print(FONT26, 480 - Font.getTextWidth(FONT26, MangaName) / 2, 232, MangaName, COLOR_BLACK)
             end
             Font.print(FONT, 480 - Font.getTextWidth(FONT, ChapterName) / 2, 264, ChapterName, COLOR_BLACK)
             Font.print(FONT, 480 - Font.getTextWidth(FONT, PrepareMessage) / 2, 284, PrepareMessage, COLOR_BLACK)
         elseif STATE == STATE_READING then
             for i = -1, 1 do
                 local page = Pages[Pages.Page + i]
-                if page ~= nil and page.Image ~= nil then
+                if page and page.Image then
                     if type(page.Image.e or page.Image) == "table" then
                         for k = 1, page.Image.Parts do
-                            if page.Image[k] and page.Image[k].e ~= nil then
+                            if page.Image[k] and page.Image[k].e then
                                 local Height = Graphics.getImageHeight(page.Image[k].e)
                                 local x, y = math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom
                                 Graphics.fillRect(x-page.Width/2*page.Zoom,x+page.Width/2*page.Zoom,y-Height/2*page.Zoom,y+Height/2*page.Zoom,COLOR_BLACK)
@@ -342,7 +348,7 @@ Reader = {
                         Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom,y + page.Height / 2 * page.Zoom, COLOR_BLACK)
                         Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
                     end
-                elseif page ~= nil then
+                elseif page then
                     local loading = Language[LANG].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                     local Width = Font.getTextWidth(FONT, loading)
                     Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
@@ -360,9 +366,10 @@ Reader = {
         STATE = STATE_LOADING
         CurrentChapter = chapter
         for i = 1, #Pages do
-            threads.Remove(Pages[i], "Image")
             if Pages[i] then
                 Pages[i].Image = nil
+            else
+                threads.Remove(Pages[i])
             end
         end
         Chapters[chapter].Pages = {}
