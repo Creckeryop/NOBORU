@@ -86,7 +86,7 @@ while true do
 
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
-        Font.print(FONT, 0, 0, "DG_MODE", Color.new(255, 255, 255))
+        Font.print(FONT, 0, 0, "DG_MODE "..threads.GetTasksNum(), Color.new(255, 255, 255))
         local mem_net = mem_to_str(threads.GetMemoryDownloaded(), "NET")
         Font.print(FONT,  940 - Font.getTextWidth(FONT, mem_net), 0, mem_net, Color.new(0,255,0))
         local mem_var = mem_to_str(collectgarbage("count") * 1024, "VAR")
