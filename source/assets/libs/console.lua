@@ -2,7 +2,7 @@ local lines = {}
 local console_color = Color.new(0, 0, 0, 128)
 Console = {
     writeLine = function(line, color)
-        color = color or Color.new(255, 255, 255)
+        color = color or COLOR_WHITE
         if #lines > 25 then
             table.remove(lines, 1)
         end

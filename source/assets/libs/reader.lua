@@ -96,10 +96,12 @@ end
 
 Reader = {
     Input = function(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
-        if Controls.check(Pad, SCE_CTRL_RTRIGGER) then
-            Scale(1.2, Pages[Pages.Page])
-        elseif Controls.check(Pad, SCE_CTRL_LTRIGGER) then
-            Scale(5 / 6, Pages[Pages.Page])
+        if STATE == STATE_READING and Pages[Pages.Page] and Pages[Pages.Page].Zoom then
+            if Controls.check(Pad, SCE_CTRL_RTRIGGER) then
+                Scale(1.2, Pages[Pages.Page])
+            elseif Controls.check(Pad, SCE_CTRL_LTRIGGER) then
+                Scale(5 / 6, Pages[Pages.Page])
+            end
         end
         if Controls.check(Pad, SCE_CTRL_CIRCLE) then
             for i = 1, #Pages do
@@ -306,12 +308,18 @@ Reader = {
         end
     end,
     Draw = function()
-        Screen.clear(Color.new(255, 255, 255))
+        Screen.clear(COLOR_WHITE)
         if STATE == STATE_LOADING then
-            local loadingManga_Name = "Loading " .. Chapters[CurrentChapter].Manga.Name
-            local loading = 'Loading Chapter ' .. Chapters[CurrentChapter].Name .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-            Font.print(FONT, 480 - Font.getTextWidth(FONT, loading) / 2, 282, loading, Color.new(0,0,0))
-            Font.print(FONT, 480 - Font.getTextWidth(FONT, loadingManga_Name) / 2, 262, loadingManga_Name, Color.new(0,0,0))
+            local MangaName = Chapters[CurrentChapter].Manga.Name
+            local PrepareMessage = Language[LANG].READER.PREPARING_PAGES.. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+            local ChapterName = Chapters[CurrentChapter].Name
+            if Font.getTextWidth(FONT24, MangaName)>960 then
+                Font.print(FONT, 480 - Font.getTextWidth(FONT, MangaName) / 2, 242, MangaName, COLOR_BLACK)
+            else
+                Font.print(FONT24, 480 - Font.getTextWidth(FONT24, MangaName) / 2, 232, MangaName, COLOR_BLACK)
+            end
+            Font.print(FONT, 480 - Font.getTextWidth(FONT, ChapterName) / 2, 264, ChapterName, COLOR_BLACK)
+            Font.print(FONT, 480 - Font.getTextWidth(FONT, PrepareMessage) / 2, 284, PrepareMessage, COLOR_BLACK)
         elseif STATE == STATE_READING then
             for i = -1, 1 do
                 local page = Pages[Pages.Page + i]
@@ -321,31 +329,30 @@ Reader = {
                             if page.Image[k] and page.Image[k].e ~= nil then
                                 local Height = Graphics.getImageHeight(page.Image[k].e)
                                 local x, y = math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom
-                                Graphics.fillRect(x-page.Width/2*page.Zoom,x+page.Width/2*page.Zoom,y-Height/2*page.Zoom,y+Height/2*page.Zoom,Color.new(0,0,0))
+                                Graphics.fillRect(x-page.Width/2*page.Zoom,x+page.Width/2*page.Zoom,y-Height/2*page.Zoom,y+Height/2*page.Zoom,COLOR_BLACK)
                                 Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
                             else
-                                local loading = "Loading segment" .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+                                local loading = Language[LANG].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                                 local Width = Font.getTextWidth(FONT, loading)
-                                Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, Color.new(0,0,0))
+                                Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_BLACK)
                             end
                         end
                     else
                         local x, y = math.ceil((offset.x + page.x) * 4) / 4, math.ceil((offset.y + page.y) * 4) / 4
-                        Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom,y + page.Height / 2 * page.Zoom, Color.new(0, 0, 0))
+                        Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom,y + page.Height / 2 * page.Zoom, COLOR_BLACK)
                         Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
                     end
                 elseif page ~= nil then
-                    local loading = "Loading" .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+                    local loading = Language[LANG].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                     local Width = Font.getTextWidth(FONT, loading)
-                    Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, Color.new(0, 0, 0))
+                    Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
                 end
             end
             if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
                 local Counter = Pages.Page .. "/" .. Pages.Count
                 local Width = Font.getTextWidth(FONT, Counter) + 20
-                local Height = Font.getTextHeight(FONT, Counter)
-                Graphics.fillRect(960 - Width, 960, 0, Height + 5, Color.new(0, 0, 0, 128))
-                Font.print(FONT, 970 - Width, 0, Counter, Color.new(255, 255, 255))
+                Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT, Counter) + 5, Color.new(0, 0, 0, 128))
+                Font.print(FONT, 970 - Width, 0, Counter, COLOR_WHITE)
             end
         end
     end,

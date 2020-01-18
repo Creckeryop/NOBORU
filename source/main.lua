@@ -21,7 +21,7 @@ local fonts = {FONT, FONT24, FONT32}
 for i = 1, 3 do
     Graphics.initBlend()
     Screen.clear()
-    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r—",Color.new(255,255,255))
+    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r—",COLOR_WHITE)
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()
@@ -86,7 +86,7 @@ while true do
 
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
-        Font.print(FONT, 0, 0, "DG_MODE "..threads.GetTasksNum(), Color.new(255, 255, 255))
+        Font.print(FONT, 0, 0, "DG_MODE "..threads.GetTasksNum(), COLOR_WHITE)
         local mem_net = mem_to_str(threads.GetMemoryDownloaded(), "NET")
         Font.print(FONT,  940 - Font.getTextWidth(FONT, mem_net), 0, mem_net, Color.new(0,255,0))
         local mem_var = mem_to_str(collectgarbage("count") * 1024, "VAR")

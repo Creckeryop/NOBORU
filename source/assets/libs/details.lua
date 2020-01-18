@@ -85,7 +85,7 @@ Details = {
                 TOUCH_MODE = TOUCH_MODE_READ
                 TouchY = Touch.y
             elseif TOUCH_MODE ~= TOUCH_MODE_NONE and Touch.x == nil then
-                if TOUCH_MODE == TOUCH_MODE_READ and OldTouch.x > 320 and OldTouch.y > 90 then
+                if TOUCH_MODE == TOUCH_MODE_READ and OldTouch.x > 320 and OldTouch.x < 900 and OldTouch.y > 90 then
                     local id = math.floor((ScrollY + OldTouch.y) / 100)
                     if id > 0 and id <= #Chapters then
                         Reader.load(Chapters, id)
@@ -116,7 +116,7 @@ Details = {
         if DETAILS_MODE ~= DETAILS_END then
             animationUpdate()
             if ParserManager.Check(Chapters) then
-                Loading.SetMode(LOADING_WHITE)
+                Loading.SetMode(LOADING_WHITE, 580, 250)
             else
                 Loading.SetMode(LOADING_NONE)
             end
@@ -128,7 +128,7 @@ Details = {
             local M = OldFade * Fade
             local Alpha = 255 * M
 
-            Graphics.fillRect(0, 945, 90, 544, Color.new(9, 12, 22, Alpha))
+            Graphics.fillRect(0, 900, 90, 544, Color.new(9, 12, 22, Alpha))
 
             local WHITE     = Color.new(255, 255, 255, Alpha)
             local GRAY      = Color.new(128, 128, 128, Alpha)
@@ -138,9 +138,9 @@ Details = {
             local y = (1 - M) * 544 - ScrollY + start * 100
 
             for i = start, math.min(#Chapters, start + 5) do
-                Graphics.fillRect(320, 945, y, y + 90, DARK_GRAY)
+                Graphics.fillRect(320, 900, y, y + 90, DARK_GRAY)
                 Font.print(FONT, 330, y + 34, Chapters[i].Name, WHITE)
-                Graphics.drawImage(875, y, LUA_GRADIENTH, DARK_GRAY)
+                Graphics.drawImage(830, y, LUA_GRADIENTH, DARK_GRAY)
                 y = y + 100
             end
 
@@ -149,7 +149,7 @@ Details = {
                 Font.print(FONT24, 632 - Font.getTextWidth(FONT24, msg) / 2, y + 240, msg, WHITE)
             end
 
-            Graphics.fillRect(945, 960, 90, 544, Color.new(9, 12, 22, Alpha))
+            Graphics.fillRect(900, 960, 90, 544, Color.new(9, 12, 22, Alpha))
             Graphics.fillRect(  0, 960,  0,  90, Color.new(9, 12, 22, Alpha))
 
             DrawManga(Point.x + (Center.x - Point.x) * M, Point.y + (Center.y - Point.y) * M, Manga, 1 + (M * 0.25))
@@ -157,6 +157,10 @@ Details = {
             local t = math.min(math.max(0, Timer.getTime(NameTimer) - 1500), ms)
             Font.print(FONT32, 40 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
             Font.print(FONT, 60, 70 * M - 5, Manga.RawLink, GRAY)
+
+            if #Chapters > 5 then
+                
+            end
         end
     end
 }

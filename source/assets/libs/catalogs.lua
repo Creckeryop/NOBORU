@@ -2,9 +2,6 @@ local SliderY       = 0
 local SliderVel     = 0
 local TouchY        = 0
 
-local COLOR_WHITE   = Color.new(255, 255, 255)
-local COLOR_BLACK   = Color.new(  0,   0,   0)
-
 local Parser        = nil
 
 local TOUCH_MODE_NONE     = 0
@@ -113,6 +110,11 @@ Catalogs = {
     Update = function(delta)
         if CATALOGS_MODE == MANGAS_MODE then
             UpdateMangas()
+            if ParserManager.Check(Results) then
+                Loading.SetMode(LOADING_BLACK, 600, 272)
+            elseif Details.GetMode() == DETAILS_END then
+                Loading.SetMode(LOADING_NONE)
+            end
         end
         SliderY = SliderY + SliderVel
         SliderVel = SliderVel / 1.12
@@ -169,7 +171,7 @@ Catalogs = {
             end
             if #Results > 4 then
                 local h = math.ceil(#Results / 4) * (MANGA_HEIGHT + 24) / 544
-                Graphics.fillRect(955, 960, SliderY / h, (SliderY + 544) / h, Color.new(0, 0, 0))
+                Graphics.fillRect(955, 960, SliderY / h, (SliderY + 544) / h, COLOR_BLACK)
             end
         end
     end,

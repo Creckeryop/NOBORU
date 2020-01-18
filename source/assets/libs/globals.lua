@@ -1,6 +1,10 @@
 LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH   = Graphics.loadImage("app0:assets/images/gradientH.png")
 
+COLOR_WHITE = Color.new(255, 255, 255)
+COLOR_BLACK = Color.new(  0,   0,   0)
+COLOR_GRAY  = Color.new(128, 128, 128)
+
 FONT    = Font.load("app0:roboto.ttf")
 FONT32  = Font.load("app0:roboto.ttf")
 FONT24  = Font.load("app0:roboto.ttf")
@@ -29,7 +33,7 @@ end
 function DrawManga(x, y, Manga, M)
     local Mflag = M ~= nil
     M = M or 1
-    Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, Color.new(0, 0, 0))
+    Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, COLOR_BLACK)
     if Manga.Image and Manga.Image.e then
         local width, height = Graphics.getImageWidth(Manga.Image.e), Graphics.getImageHeight(Manga.Image.e)
         local draw = false

@@ -36,7 +36,7 @@ ParserManager = {
     end,
     getMangaListAsync = function(parser, i, Table)
         if parser == nil or Uniques[Table] then return end
-        Console.writeLine("Task created", Color.new(255,255,255))
+        Console.writeLine("Task created")
         local T = {
             Type = "MangaList",
             F = function()

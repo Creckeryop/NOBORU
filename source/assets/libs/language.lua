@@ -11,6 +11,11 @@ Language = {
         },
         WARNINGS = {
             NO_CHAPTERS = "Нет глав"
+        },
+        READER = {
+            PREPARING_PAGES = "Подготовка страниц",
+            LOADING_PAGE = "Загрузка страницы",
+            LOADING_SEGMENT = "Загрузка сегмента страницы"
         }
     },
     ENG = {
@@ -25,6 +30,11 @@ Language = {
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
+        },
+        READER = {
+            PREPARING_PAGES = "Preparing pages",
+            LOADING_PAGE = "Loading page",
+            LOADING_SEGMENT = "Loading segment"
         }
     }
 }
