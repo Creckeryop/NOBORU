@@ -1,6 +1,8 @@
 LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH   = Graphics.loadImage("app0:assets/images/gradientH.png")
 
+USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+
 COLOR_WHITE = Color.new(255, 255, 255)
 COLOR_BLACK = Color.new(  0,   0,   0)
 COLOR_GRAY  = Color.new(128, 128, 128)

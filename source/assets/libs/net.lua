@@ -26,14 +26,38 @@ threads = {
             table.remove(Order, 1)
             OrderCount = OrderCount - 1
             if Task.Type == "String" then
-                Network.requestStringAsync(Task.Link)
+                if Task.HttpMethod then
+                    if Task.PostData then
+                        Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData)
+                    else
+                        Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod)
+                    end
+                else
+                    Network.requestStringAsync(Task.Link)
+                end
             elseif Task.Type == "Image" then
                 if System.doesFileExist(IMAGE_CACHE_PATH) then
                     System.deleteFile(IMAGE_CACHE_PATH)
                 end
-                Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH)
+                if Task.HttpMethod then
+                    if Task.PostData then
+                        Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH, USERAGENT, Task.HttpMethod, Task.PostData)
+                    else
+                        Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH, USERAGENT, Task.HttpMethod)
+                    end
+                else
+                    Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH)
+                end
             elseif Task.Type == "File" then
-                Network.downloadFileAsync(Task.Link, Task.Path)
+                if Task.HttpMethod then
+                    if Task.PostData then
+                        Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData)
+                    else
+                        Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod)
+                    end
+                else
+                    Network.downloadFileAsync(Task.Link, Task.Path)
+                end
             elseif Task.Type == "Skip" then
                 Task = nil
                 Console.writeLine("NET: Skip", Color.new(255, 255, 0))
@@ -49,6 +73,9 @@ threads = {
                 if Task.Type == "String" then
                     Task.Table[Task.Index] = System.getAsyncResult()
                     bytes = bytes + Task.Table[Task.Index]:len()
+                    if (Task.Table[Task.Index]:len() < 100) then
+                        Console.writeLine("NET:"..Task.Table[Task.Index])
+                    end
                 elseif Task.Type == "Image" then
                     if System.doesFileExist(IMAGE_CACHE_PATH) then
                         local handle = System.openFile(IMAGE_CACHE_PATH, FREAD)
@@ -202,10 +229,10 @@ threads = {
         end
         return Image
     end,
-    DownloadStringAsync = function(Link, Table, Index, Insert)
+    DownloadStringAsync = function(Link, Table, Index, Insert, HttpMethod, PostData)
         if Uniques[Table] then return false end
         OrderCount = OrderCount + 1
-        local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3}
+        local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData}
         if Insert then
             table.insert(Order, 1, T)
         else
@@ -214,10 +241,10 @@ threads = {
         Uniques[Table] = T
         return true
     end,
-    DownloadImageAsync = function(Link, Table, Index, Insert)
+    DownloadImageAsync = function(Link, Table, Index, Insert, HttpMethod, PostData)
         if Uniques[Table]  then return false end
         OrderCount = OrderCount + 1
-        local T = {Type = "Image", Link = Link, Table = Table, Index = Index, Retry = 3}
+        local T = {Type = "Image", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData}
         if Insert then
             table.insert(Order, 1, T)
         else
@@ -226,10 +253,10 @@ threads = {
         Uniques[Table] = T
         return true
     end,
-    DownloadFileAsync = function(Link, Path, Insert)
+    DownloadFileAsync = function(Link, Path, Insert, HttpMethod, PostData)
         if Uniques[Link] then return false end
         OrderCount = OrderCount + 1
-        local T = {Type = "File", Link = Link, Path = Path, Retry = 3}
+        local T = {Type = "File", Link = Link, Path = Path, Retry = 3, HttpMethod = HttpMethod, PostData = PostData}
         if Insert then
             table.insert(Order, 1, T)
         else
