@@ -35,5 +35,8 @@
         "SCE_CTRL_CROSS",
         "POST_METHOD"
     ],
-    "Lua.runtime.version": "Lua 5.1"
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.diagnostics.disable": [
+        113
+    ]
 }

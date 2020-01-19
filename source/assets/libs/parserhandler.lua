@@ -1,3 +1,4 @@
+local ffi = require 'ffi'
 local Order = {}
 local OrderCount = 0
 
@@ -110,13 +111,13 @@ ParserManager = {
         return Uniques[Table] ~= nil
     end,
     Remove = function (Table)
-        if Task and Task.Table == Table then
-            Task.Table = Trash
-            Task.Stop = true
-            Uniques[Table] = nil
-            return
-        elseif Uniques[Table] then
-            Uniques[Table].Type = "Skip"
+        if Uniques[Table] then
+            if Uniques[Table] == Task then
+                Task.Table = Trash
+                Task.Stop = true
+            else
+                Uniques[Table].Type = "Skip"
+            end
             Uniques[Table] = nil
         end
     end,

@@ -1,3 +1,18 @@
+local ffi = require 'ffi'
+ffi.cdef[[
+    typedef struct {double x, y;} __attribute__ ((packed)) Point_t;
+    typedef struct{
+		static const int8_t NONE = 0;
+		static const int8_t READ = 1;
+		static const int8_t SLIDE = 2;
+		int8_t MODE;
+    } __attribute__ ((packed)) TOUCH;
+    typedef struct{
+        double Y;
+        double V;
+        double TouchY;
+    } __attribute__ ((packed)) Slider;
+]]
 LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH   = Graphics.loadImage("app0:assets/images/gradientH.png")
 
@@ -34,12 +49,44 @@ function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
     end
 end
 
+local DrawMangaName = function (Manga)
+    Manga.PrintName = {}
+    local width = Font.getTextWidth(FONT, Manga.Name)
+    if width < MANGA_WIDTH - 20 then
+        Manga.PrintName.s = Manga.Name
+    else
+        local f, s = {}, {}
+        local tf = false
+        for c in it_utf8(Manga.Name) do
+            if tf and Font.getTextWidth(FONT, table.concat(s)) > MANGA_WIDTH - 40 then
+                s[#s + 1] = "..."
+                break
+            elseif tf then
+                s[#s + 1] = c
+            elseif not tf and Font.getTextWidth(FONT, table.concat(f)) > MANGA_WIDTH - 30 then
+                f = table.concat(f)
+                s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
+                s[#s + 1] = c
+                f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
+                tf = true
+            elseif not tf then
+                f[#f + 1] = c
+            end
+        end
+        if type(s) == "table" then s = table.concat(s) end
+        if type(f) == "table" then f = table.concat(f) end
+        s = s:gsub("^(%s+)", "")
+        if s == "" then s,f = f,"" end
+        Manga.PrintName.f = f or ""
+        Manga.PrintName.s = s
+    end
+end
+
 function DrawManga(x, y, Manga, M)
     local Mflag = M ~= nil
     M = M or 1
-    --Graphics.fillRect(x - MANGA_WIDTH * M / 2-1, x + MANGA_WIDTH * M / 2+1, y - MANGA_HEIGHT * M / 2-1, y + MANGA_HEIGHT * M / 2+1, COLOR_BLACK)
     if Manga.Image and Manga.Image.e then
-        local width, height = Graphics.getImageWidth(Manga.Image.e), Graphics.getImageHeight(Manga.Image.e)
+        local width, height = Manga.Image.Width, Manga.Image.Height
         local draw = false
         if width < height then
             local scale = MANGA_WIDTH / width
@@ -65,50 +112,14 @@ function DrawManga(x, y, Manga, M)
     end
     Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT, MANGA_WIDTH * M, 1, Color.new(255,255,255,255*alpha))
     if Manga.Name then
-        local DrawMangaName = function ()
-            if Manga.PrintName == nil then
-                Manga.PrintName = {}
-                local width = Font.getTextWidth(FONT, Manga.Name)
-                if width < MANGA_WIDTH - 20 then
-                    Manga.PrintName.s = Manga.Name
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, Manga.Name, Color.new(255, 255, 255,255*alpha))
-                else
-                    local f, s = {}, {}
-                    local tf = false
-                    for c in it_utf8(Manga.Name) do
-                        if tf and Font.getTextWidth(FONT, table.concat(s)) > MANGA_WIDTH - 40 then
-                            s[#s + 1] = "..."
-                            break
-                        elseif tf then
-                            s[#s + 1] = c
-                        elseif not tf and Font.getTextWidth(FONT, table.concat(f)) > MANGA_WIDTH - 30 then
-                            f = table.concat(f)
-                            s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
-                            s[#s + 1] = c
-                            f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
-                            tf = true
-                        elseif not tf then
-                            f[#f + 1] = c
-                        end
-                    end
-                    if type(s) == "table" then s = table.concat(s) end
-                    if type(f) == "table" then f = table.concat(f) end
-                    s = s:gsub("^(%s+)", "")
-                    if s == "" then s,f = f,"" end
-                    Manga.PrintName.f = f or ""
-                    Manga.PrintName.s = s
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 45, f, Color.new(255, 255, 255,255*alpha))
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT / 2 - 25, s, Color.new(255, 255, 255,255*alpha))
-                end
-            else
-                if Manga.PrintName.f then
-                    Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255,255*alpha))
-                end
-                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255,255*alpha))
-                
+        if Manga.PrintName == nil then
+            pcall(DrawMangaName, Manga)
+        else
+            if Manga.PrintName.f then
+                Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255,255*alpha))
             end
+            Font.print(FONT, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT*M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255,255*alpha))
         end
-        pcall(DrawMangaName)
     end
 end
 
@@ -132,7 +143,7 @@ Image = {
         if image == nil then
             return nil
         end
-        local p = {e = image}
+        local p = {e = image, Width = Graphics.getImageWidth(image), Height = Graphics.getImageHeight(image)}
         setmt__gc(p, self)
         self.__index = self
         return p

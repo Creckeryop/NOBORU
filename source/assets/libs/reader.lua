@@ -1,3 +1,6 @@
+local ffi = require 'ffi'
+local Point_t = ffi.typeof("Point_t")
+
 local Pages = {Page = 0}
 local velX, velY = 0, 0
 
@@ -19,8 +22,8 @@ local STATE = STATE_LOADING
 
 local max_Zoom = 3
 
-local offset = {x = 0, y = 0}
-local touchTemp = {x = 0, y = 0}
+local offset = Point_t(0, 0)
+local touchTemp = Point_t(0, 0)
 
 local Chapters = {}
 local CurrentChapter = 1
@@ -210,11 +213,7 @@ Reader = {
                 local page = Pages[Pages.Page + i]
                 if page and page.Zoom == nil and page.Image then
                     local Image = page.Image
-                    if type(Image.e or Image) == "table" then
-                        page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
-                    else
-                        page.Width, page.Height, page.x, page.y = Graphics.getImageWidth(Image.e), Graphics.getImageHeight(Image.e), 480 + i * 960, 272
-                    end
+                    page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
                     Console.writeLine("Added " .. Pages.Page + i)
                     if page.Width > page.Height then
                         page.Mode = "Horizontal"
@@ -335,7 +334,7 @@ Reader = {
                             if page.Image[k] and page.Image[k].e then
                                 local Height = Graphics.getImageHeight(page.Image[k].e)
                                 local x, y = math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom
-                                Graphics.fillRect(x-page.Width/2*page.Zoom,x+page.Width/2*page.Zoom,y-Height/2*page.Zoom,y+Height/2*page.Zoom,COLOR_BLACK)
+                                Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - Height / 2 * page.Zoom, y + Height / 2 * page.Zoom, COLOR_BLACK)
                                 Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
                             else
                                 local loading = Language[LANG].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)

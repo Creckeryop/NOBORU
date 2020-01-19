@@ -1,3 +1,4 @@
+local ffi = require 'ffi'
 DEBUG_MODE  = false
 LANG        = "RUS"
 

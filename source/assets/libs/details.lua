@@ -1,22 +1,20 @@
+local ffi = require 'ffi'
+local Point_t = ffi.typeof("Point_t")
+
 DETAILS_START       = 0
 DETAILS_WAIT        = 1
 DETAILS_END         = 2
 local DETAILS_MODE  = DETAILS_END
 
-local TOUCH_MODE_NONE     = 0
-local TOUCH_MODE_READ     = 1
-local TOUCH_MODE_SLIDE    = 2
-local TOUCH_MODE    = TOUCH_MODE_NONE
+local TOUCH = ffi.new("TOUCH")
+local Slider = ffi.new("Slider")
 
 local Manga     = nil
 local Fade      = 0
-local Point     = {x = 0, y = 0}
-local Center    = {x = 0, y = 0}
+local Point     = Point_t(0, 0)
+local Center    = Point_t(0, 0)
 
-local TouchY    = 0
 local OldFade   = 1
-local ScrollY   = 0
-local VelY      = 0
 local ms        = 0
 local dif       = 0
 
@@ -26,17 +24,17 @@ local NameTimer         = Timer.new()
 local Chapters = {}
 
 local scrollUpdate = function ()
-    ScrollY = ScrollY + VelY
-    VelY = VelY / 1.12
-    if math.abs(VelY) < 0.1 then
-        VelY = 0
+    Slider.Y = Slider.Y + Slider.V
+    Slider.V = Slider.V / 1.12
+    if math.abs(Slider.V) < 0.1 then
+        Slider.V = 0
     end
-    if ScrollY < 0 then
-        ScrollY = 0
-        VelY = 0
-    elseif ScrollY > (#Chapters * 100 - 444) then
-        ScrollY = math.max(0, #Chapters * 100 - 444)
-        VelY = 0
+    if Slider.Y < 0 then
+        Slider.Y = 0
+        Slider.V = 0
+    elseif Slider.Y > (#Chapters * 100 - 444) then
+        Slider.Y = math.max(0, #Chapters * 100 - 444)
+        Slider.V = 0
     end
 end
 
@@ -68,40 +66,40 @@ Details = {
             dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
             Chapters = {}
             DETAILS_MODE = DETAILS_START
-            Point.x, Point.y = x, y
+            Point = Point_t(x, y)
             OldFade = 1
             local Parser = GetParserByID(manga.ParserID)
             if Parser then
                 ParserManager.getChaptersAsync(manga, Chapters)
             end
-            Center.x, Center.y = (MANGA_WIDTH * 1.25) / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80
+            Center = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
             Timer.reset(AnimationTimer)
             Timer.reset(NameTimer)
         end
     end,
     Input = function(OldPad, Pad, OldTouch, Touch)
         if DETAILS_MODE == DETAILS_START then
-            if TOUCH_MODE == TOUCH_MODE_NONE and OldTouch.x and Touch.x and Touch.x > 240 then
-                TOUCH_MODE = TOUCH_MODE_READ
-                TouchY = Touch.y
-            elseif TOUCH_MODE ~= TOUCH_MODE_NONE and Touch.x == nil then
-                if TOUCH_MODE == TOUCH_MODE_READ and OldTouch.x > 320 and OldTouch.x < 900 and OldTouch.y > 90 then
-                    local id = math.floor((ScrollY + OldTouch.y) / 100)
+            if TOUCH.MODE == TOUCH.NONE and OldTouch.x and Touch.x and Touch.x > 240 then
+                TOUCH.MODE = TOUCH.READ
+                Slider.TouchY = Touch.y
+            elseif TOUCH.MODE ~= TOUCH.NONE and Touch.x == nil then
+                if TOUCH.MODE == TOUCH.READ and OldTouch.x > 320 and OldTouch.x < 900 and OldTouch.y > 90 then
+                    local id = math.floor((Slider.Y + OldTouch.y) / 100)
                     if id > 0 and id <= #Chapters then
                         Catalogs.Shrink()
                         Reader.load(Chapters, id)
                         APP_MODE = READER
                     end
                 end
-                TOUCH_MODE = TOUCH_MODE_NONE
+                TOUCH.MODE = TOUCH.NONE
             end
-            if TOUCH_MODE == TOUCH_MODE_READ then
-                if math.abs(VelY) > 0.1 or math.abs(Touch.y - TouchY)>10 then
-                    TOUCH_MODE = TOUCH_MODE_SLIDE
+            if TOUCH.MODE == TOUCH.READ then
+                if math.abs(Slider.V) > 0.1 or math.abs(Touch.y - Slider.TouchY)>10 then
+                    TOUCH.MODE = TOUCH.SLIDE
                 end
-            elseif TOUCH_MODE == TOUCH_MODE_SLIDE then
+            elseif TOUCH.MODE == TOUCH.SLIDE then
                 if Touch.x and OldTouch.x then
-                    VelY = OldTouch.y - Touch.y
+                    Slider.V = OldTouch.y - Touch.y
                 end
             end
             if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
@@ -135,9 +133,9 @@ Details = {
             local GRAY      = Color.new(128, 128, 128, Alpha)
             local DARK_GRAY = Color.new( 42,  47,  78, Alpha)
 
-            local start = math.max(1, math.floor(ScrollY / 100) + 1)
+            local start = math.max(1, math.floor(Slider.Y / 100) + 1)
             local shift = (1 - M) * 544
-            local y = shift - ScrollY + start * 100
+            local y = shift - Slider.Y + start * 100
 
             for i = start, math.min(#Chapters, start + 5) do
                 Graphics.fillRect(280, 920, y, y + 90, DARK_GRAY)
@@ -166,7 +164,7 @@ Details = {
             if DETAILS_MODE == DETAILS_START and #Chapters > 5 then
                 local h = #Chapters * 100 / 454
                 Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92))
-                Graphics.fillRect(926, 936, 90 + ScrollY / h, 90 + (ScrollY + 454) / h, DARK_GRAY)
+                Graphics.fillRect(926, 936, 90 + Slider.Y / h, 90 + (Slider.Y + 454) / h, DARK_GRAY)
             end
         end
     end

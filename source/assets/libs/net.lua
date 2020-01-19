@@ -91,7 +91,7 @@ threads = {
                             Console.writeLine(Task.Image.Parts)
                             Task.Type = "ImageLoadTable"
                         else
-                            Graphics.loadPartImageAsync(IMAGE_CACHE_PATH, 0, 0, Width, Height)
+                            Graphics.loadImageAsync(IMAGE_CACHE_PATH)
                             Task.Type = "ImageLoad"
                         end
                     else
@@ -242,7 +242,7 @@ threads = {
         return true
     end,
     DownloadImageAsync = function(Link, Table, Index, Insert, HttpMethod, PostData)
-        if Uniques[Table]  then return false end
+        if Uniques[Table] then return false end
         OrderCount = OrderCount + 1
         local T = {Type = "Image", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData}
         if Insert then
@@ -276,22 +276,17 @@ threads = {
         end
     end,
     Remove = function(Table)
-        if Task and Task.Table == Table then
-            Task.Table, Task.Index = Trash, "Garbadge"
-            Uniques[Table] = nil
-        else
-            if Uniques[Table] then
+        if Uniques[Table] then
+            if Task == Uniques[Table] then
+                Task.Table, Task.Index = Trash, "Garbadge"
+            else
                 Uniques[Table].Type = "Skip"
-                Uniques[Table] = nil
             end
+            Uniques[Table] = nil
         end
     end,
     Check = function(Table)
-        if Task and (Task.Table == Table or Task.Link == Table) then
-            return Task.Type ~= "Skip"
-        else
-            return Uniques[Table] and Uniques[Table].Type ~= "Skip"
-        end
+        return Uniques[Table] ~= nil
     end
 }
 function threads.GetMemoryDownloaded()
