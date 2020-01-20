@@ -49,7 +49,6 @@ end
 local Menu, Reader = Menu, Reader
 
 while true do
-    Graphics.initBlend()
     OldPad, Pad = Pad, Controls.read()
     OldTouch.x, OldTouch.y, OldTouch2.x, OldTouch2.y, Touch.x, Touch.y, Touch2.x, Touch2.y = Touch.x, Touch.y, Touch2.x, Touch2.y, Controls.readTouch()
     if Touch2.x and APP_MODE ~= READER then
@@ -77,6 +76,7 @@ while true do
         Reader.Update(1)
     end
 
+    Graphics.initBlend()
     if APP_MODE == MENU then
         Menu.Draw()
     elseif APP_MODE == READER then
@@ -87,24 +87,24 @@ while true do
 
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
-        Font.print(FONT, 0, 0, "DG_MODE "..threads.GetTasksNum(), COLOR_WHITE)
+        Font.print(FONT, 0, 0, "TASKS "..threads.GetTasksNum(), COLOR_WHITE)
         local mem_net = mem_to_str(threads.GetMemoryDownloaded(), "NET")
-        Font.print(FONT,  940 - Font.getTextWidth(FONT, mem_net), 0, mem_net, Color.new(0,255,0))
+        Font.print(FONT,  720 - Font.getTextWidth(FONT, mem_net)/2, 0, mem_net, Color.new(0, 255, 0))
         local mem_var = mem_to_str(collectgarbage("count") * 1024, "VAR")
-        Font.print(FONT,  480 - Font.getTextWidth(FONT, mem_var)/2, 0, mem_var, Color.new(255,128,0))
+        Font.print(FONT,  480 - Font.getTextWidth(FONT, mem_var)/2, 0, mem_var, Color.new(255, 128, 0))
+        local mem_gpu = mem_to_str(Image.GetMem(), "GPU")
+        Font.print(FONT,  240 - Font.getTextWidth(FONT, mem_gpu)/2, 0, mem_gpu, Color.new(0, 0, 255))
         Console.draw()
     end
-
-    if Controls.check(Pad, SCE_CTRL_SELECT) and not Controls.check(OldPad, SCE_CTRL_SELECT) then
-        Loading.SetMode(LOADING_WHITE)
-    end
+    
+    Graphics.termBlend()
+    Screen.flip()
+    Screen.waitVblankStart()
 
     if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_SQUARE) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_SQUARE) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
+    
     threads.Update()
     ParserManager.Update()
-    Graphics.termBlend()
-    Screen.flip()
-    Screen.waitVblankStart()
 end

@@ -26,10 +26,7 @@ local UpdateMangas  = function()
                     local manga = Results[i]
                     if manga.ImageDownload then
                         if manga.Image then
-                            if manga.Image.e then
-                                Graphics.freeImage(manga.Image.e)
-                                manga.Image.e = nil
-                            end
+                            manga.Image:free()
                         else
                             threads.Remove(manga)
                         end
@@ -190,10 +187,7 @@ Catalogs = {
             if manga.ImageDownload then
                 threads.Remove(manga)
                 if manga.Image then
-                    if manga.Image.e then
-                        Graphics.freeImage(manga.Image.e)
-                        manga.Image.e = nil
-                    end
+                    manga.Image:free()
                     manga.Image = nil
                 end
                 manga.ImageDownload = nil

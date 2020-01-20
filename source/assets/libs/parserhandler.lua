@@ -32,6 +32,9 @@ ParserManager = {
                     Uniques[Task.Table] = nil
                     Task = nil
                 end
+                if not _ then
+                    Console.writeLine(isSafeToleave, Color.new(255,0 ,0 ))
+                end
             end
         end
     end,

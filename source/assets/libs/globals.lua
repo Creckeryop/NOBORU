@@ -131,21 +131,31 @@ local function setmt__gc(t, mt)
     t[prox] = true
     return setmetatable(t, mt)
 end
-
+local GPU_MEM = 0
 Image = {
     __gc = function(self)
-        if self.e then
-            Graphics.freeImage(self.e)
-            Console.writeLine("Freed!")
-        end
+        Image.free(self)
     end,
     new = function(self, image)
         if image == nil then
             return nil
         end
         local p = {e = image, Width = Graphics.getImageWidth(image), Height = Graphics.getImageHeight(image)}
+        p.mem = bit32.band(p.Width + 7, bit32.bnot(7)) * p.Height * 4
+        GPU_MEM = GPU_MEM + p.mem
         setmt__gc(p, self)
         self.__index = self
         return p
+    end,
+    free = function (self)
+        if self.e then
+            Graphics.freeImage(self.e)
+            Console.writeLine("Freed!")
+            self.e = nil
+            GPU_MEM = GPU_MEM - self.mem
+        end
+    end,
+    GetMem = function ()
+       return GPU_MEM
     end
 }

@@ -33,7 +33,8 @@
         "newproxy",
         "it_utf8",
         "SCE_CTRL_CROSS",
-        "POST_METHOD"
+        "POST_METHOD",
+        "JSON"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [

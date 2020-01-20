@@ -7,7 +7,7 @@ CATALOGS_MODE   = 1
 SETTINGS_MODE   = 2
 local MENU_MODE = -1
 
-local ButtonsAnimX = ffi.new("float[3]", {1, 1, 1})
+local ButtonsAnimX = {1, 1, 1}
 
 Menu = {
     SetMode = function (new_mode)

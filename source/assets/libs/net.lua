@@ -28,7 +28,11 @@ threads = {
             if Task.Type == "String" then
                 if Task.HttpMethod then
                     if Task.PostData then
-                        Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData)
+                        if Task.ContentType then
+                            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType)
+                        else
+                            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData)
+                        end
                     else
                         Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod)
                     end
@@ -169,12 +173,10 @@ threads = {
         if Trash.Garbadge then
             if Trash.Type == "ImageLoad" then
                 Console.writeLine("NET:(Freeing Image)" .. Trash.Link, Color.new(255,0,255))
-                Graphics.freeImage(Trash.Garbadge.e)
-                Trash.Garbadge.e = nil
+                Trash.Garbadge:free()
             elseif Trash.Type == "ImageLoadTable2" then
                 Console.writeLine("NET:(Freeing Table Image)" .. Trash.Link, Color.new(255,0,255))
-                Graphics.freeImage(Trash.Garbadge.e)
-                Trash.Garbadge.e = nil
+                Trash.Garbadge:free()
             end
             Trash.Garbadge = nil
         end
@@ -229,10 +231,10 @@ threads = {
         end
         return Image
     end,
-    DownloadStringAsync = function(Link, Table, Index, Insert, HttpMethod, PostData)
+    DownloadStringAsync = function(Link, Table, Index, Insert, HttpMethod, PostData, ContentType)
         if Uniques[Table] then return false end
         OrderCount = OrderCount + 1
-        local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData}
+        local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData, ContentType = ContentType}
         if Insert then
             table.insert(Order, 1, T)
         else

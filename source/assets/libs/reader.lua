@@ -45,16 +45,15 @@ end
 local function deletePageImage(page)
     if Pages[page].Image then
         if type(Pages[page].Image.e or Pages[page].Image) == "table" then
+            threads.Remove(Pages[page])
             for i = 1, Pages[page].Image.Parts do
                 if Pages[page].Image[i] and Pages[page].Image[i].e then
-                    Graphics.freeImage(Pages[page].Image[i].e)
-                    Pages[page].Image[i].e = nil
+                    Pages[page].Image[i]:free()
                 end
             end
         else
             if Pages[page].Image.e then
-                Graphics.freeImage(Pages[page].Image.e)
-                Pages[page].Image.e = nil
+                Pages[page].Image:free()
             end
         end
         Pages[page].Image = nil
@@ -109,11 +108,7 @@ Reader = {
         end
         if Controls.check(Pad, SCE_CTRL_CIRCLE) then
             for i = 1, #Pages do
-                if Pages[i] then
-                    Pages[i].Image = nil
-                else
-                    threads.Remove(Pages[i])
-                end
+                threads.Remove(Pages[i])
             end
             Pages = {Page = 0}
             ParserManager.Clear()
@@ -221,14 +216,11 @@ Reader = {
                         page.min_Zoom = page.Zoom
                         if page.Width * page.Zoom >= 960 then
                             page.x = 480 + i * (480 + page.Width * page.Zoom / 2)
-                        else
-                            page.x = 480 + i * 960
                         end
                     else
                         page.Mode = "Vertical"
                         page.Zoom = 960 / page.Width
                         page.min_Zoom = page.Zoom / 2
-                        page.x = 480 + i * 960
                     end
                     page.y = page.Zoom * page.Height / 2
                 end
@@ -356,7 +348,7 @@ Reader = {
             if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
                 local Counter = Pages.Page .. "/" .. Pages.Count
                 local Width = Font.getTextWidth(FONT, Counter) + 20
-                Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT, Counter) + 5, Color.new(0, 0, 0, 128))
+                Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT, Counter) + 4, Color.new(0, 0, 0, 128))
                 Font.print(FONT, 970 - Width, 0, Counter, COLOR_WHITE)
             end
         end
@@ -365,13 +357,17 @@ Reader = {
         STATE = STATE_LOADING
         CurrentChapter = chapter
         for i = 1, #Pages do
-            if Pages[i] then
-                Pages[i].Image = nil
-            else
-                threads.Remove(Pages[i])
-            end
+            threads.Remove(Pages[i])
+        end
+        if Chapters[chapter] == nil then
+            Console.writeLine("Error loading chapter", Color.new(255, 0, 0))
+            ParserManager.Clear()
+            collectgarbage()
+            APP_MODE = MENU
+            return
         end
         Chapters[chapter].Pages = {}
+        Pages = {Page = 0}
         collectgarbage("collect")
         ParserManager.prepareChapter(Chapters[chapter], Chapters[chapter].Pages)
     end,

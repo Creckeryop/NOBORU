@@ -7,7 +7,8 @@ Language = {
         },
         PARSERS = {
             RUS     = "Русский",
-            ENG     = "Английский"
+            ENG     = "Английский",
+            DIF     = "Разные"
         },
         WARNINGS = {
             NO_CHAPTERS = "Нет глав"
@@ -26,7 +27,8 @@ Language = {
         },
         PARSERS = {
             RUS     = "Russian",
-            ENG     = "English"
+            ENG     = "English",
+            DIF     = "Different"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
