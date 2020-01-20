@@ -77,7 +77,7 @@ Catalogs = {
             if TOUCH.MODE == TOUCH.READ then
                 if CATALOGS_MODE == PARSERS_MODE then
                     if OldTouch.x > 265 and OldTouch.x < 945 then
-                        local id = floor((Slider.Y - 10 + OldTouch.y) / 70) + 1
+                        local id = floor((Slider.Y - 10 + OldTouch.y) / 75) + 1
                         if Parsers[id]then
                             CATALOGS_MODE = MANGAS_MODE
                             Parser = Parsers[id]
@@ -107,8 +107,25 @@ Catalogs = {
             end
             TOUCH.MODE = TOUCH.NONE
         end
-        if TOUCH.MODE == TOUCH.READ and (abs(Slider.V) > 0.1 or abs(Slider.TouchY - Touch.y) > 10) then
+        local new_itemID = 0
+        if TOUCH.MODE == TOUCH.READ then
+            if (abs(Slider.V) > 0.1 or abs(Slider.TouchY - Touch.y) > 10) then
+                TOUCH.MODE = TOUCH.SLIDE
+            else
+                if CATALOGS_MODE == PARSERS_MODE then
+                    if OldTouch.x > 265 and OldTouch.x < 945 then
+                        local id = floor((Slider.Y - 10 + OldTouch.y) / 75) + 1
+                        if Parsers[id] then
+                            new_itemID = id
+                        end
+                    end
+                end
+            end
+        end
+        if Slider.ItemID > 0 and new_itemID > 0 and Slider.ItemID ~= new_itemID then
             TOUCH.MODE = TOUCH.SLIDE
+        else
+            Slider.ItemID = new_itemID
         end
         if TOUCH.MODE == TOUCH.SLIDE and OldTouch.x and Touch.x and Touch.x > 240  then
             Slider.V = OldTouch.y - Touch.y
@@ -131,8 +148,8 @@ Catalogs = {
         if Slider.Y < 0 then
             Slider.Y = 0
             Slider.V = 0
-        elseif CATALOGS_MODE == PARSERS_MODE and Slider.Y > ceil(#Parsers) * 70 - 534 then
-            Slider.Y = max(0, ceil(#Parsers) * 70 - 534)
+        elseif CATALOGS_MODE == PARSERS_MODE and Slider.Y > ceil(#Parsers) * 75 - 534 then
+            Slider.Y = max(0, ceil(#Parsers) * 75 - 534)
             Slider.V = 0
         elseif CATALOGS_MODE == MANGAS_MODE and Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 24) - 520 then
             Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 24) - 520)
@@ -150,22 +167,27 @@ Catalogs = {
     Draw = function()
         Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
         if CATALOGS_MODE == PARSERS_MODE then
-            local start = max(1, floor((Slider.Y - 10) / 70))
-            local y = start * 70 - Slider.Y
+            local start = max(1, floor((Slider.Y - 10) / 75))
+            local y = start * 75 - Slider.Y
             for i = start, min(#Parsers,start + 9) do
                 local parser = Parsers[i]
-                Graphics.fillRect(265, 945, y - 60, y, COLOR_WHITE)
-                Font.print(FONT, 275, y - 50, parser.Name, COLOR_BLACK)
+                Graphics.fillRect(265, 945, y - 65, y, COLOR_WHITE)
+                Font.print(FONT26, 275, y - 60, parser.Name, COLOR_BLACK)
 
                 local lang_text = Language[LANG].PARSERS[parser.Lang] or parser.Lang or ""
                 Font.print(FONT, 935 - Font.getTextWidth(FONT, lang_text), y - 10 - Font.getTextHeight(FONT,lang_text), lang_text, Color.new(101, 101, 101))
-
+                if parser.NSFW then
+                    Font.print(FONT26, 935 - Font.getTextWidth(FONT26, "NSFW"), y - 60, "NSFW", Color.new(0, 105, 170))
+                end
                 local link_text = (parser.Link.."/")
                 Font.print(FONT, 275, y - 10 - Font.getTextHeight(FONT, link_text), link_text, Color.new(128, 128, 128))
-                y = y + 70
+                if Slider.ItemID == i then
+                    Graphics.fillRect(265, 945, y - 65, y, Color.new(0, 0, 0, 32))
+                end
+                y = y + 75
             end
             if #Parsers > 7 then
-                local h = #Parsers * 70 / 544
+                local h = #Parsers * 75 / 544
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 544) / h, COLOR_BLACK)
             end
         elseif CATALOGS_MODE == MANGAS_MODE then

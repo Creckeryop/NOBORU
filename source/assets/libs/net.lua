@@ -29,7 +29,11 @@ threads = {
                 if Task.HttpMethod then
                     if Task.PostData then
                         if Task.ContentType then
-                            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType)
+                            if Task.Cookie then
+                                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+                            else
+                                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType)
+                            end
                         else
                             Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData)
                         end
@@ -231,10 +235,10 @@ threads = {
         end
         return Image
     end,
-    DownloadStringAsync = function(Link, Table, Index, Insert, HttpMethod, PostData, ContentType)
+    DownloadStringAsync = function(Link, Table, Index, Insert, HttpMethod, PostData, ContentType, Cookie)
         if Uniques[Table] then return false end
         OrderCount = OrderCount + 1
-        local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData, ContentType = ContentType}
+        local T = {Type = "String", Link = Link, Table = Table, Index = Index, Retry = 3, HttpMethod = HttpMethod, PostData = PostData, ContentType = ContentType, Cookie = Cookie}
         if Insert then
             table.insert(Order, 1, T)
         else

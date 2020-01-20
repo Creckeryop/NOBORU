@@ -34,7 +34,9 @@
         "it_utf8",
         "SCE_CTRL_CROSS",
         "POST_METHOD",
-        "JSON"
+        "JSON",
+        "GET_METHOD",
+        "XWWW"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [

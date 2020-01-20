@@ -11,6 +11,7 @@ ffi.cdef[[
         double Y;
         double V;
         double TouchY;
+        int ItemID;
     } __attribute__ ((packed)) Slider;
 ]]
 LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
