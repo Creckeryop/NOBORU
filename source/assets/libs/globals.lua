@@ -14,8 +14,10 @@ ffi.cdef[[
         int ItemID;
     } __attribute__ ((packed)) Slider;
 ]]
+dofile "app0:assets/libs/parser.lua"
 LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH   = Graphics.loadImage("app0:assets/images/gradientH.png")
+LUA_PANEL       = Graphics.loadImage("app0:assets/images/panel.png")
 
 USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 
@@ -27,6 +29,7 @@ FONT    = Font.load("app0:roboto.ttf")
 FONT12  = Font.load("app0:roboto.ttf")
 FONT30  = Font.load("app0:roboto.ttf")
 FONT26  = Font.load("app0:roboto.ttf")
+
 Font.setPixelSizes(FONT30, 30)
 Font.setPixelSizes(FONT26, 26)
 Font.setPixelSizes(FONT12, 12)
@@ -40,6 +43,21 @@ PI = 3.14159265359
 
 if not System.doesDirExist("ux0:data/Moondayo/") then
     System.createDirectory("ux0:data/Moondayo")
+end
+
+if System.doesDirExist("ux0:data/Moondayo/parsers/") then
+    local path = "ux0:data/Moondayo/parsers/"
+    local files = System.listDirectory(path)
+    for _, file in pairs(files) do
+        if not file.directory then
+            local suc, err = pcall(function() dofile (path..file.name) end)
+            if not suc then
+                Console.writeLine("Cant load "..path..":"..err, Color.new(255,0,0))
+            end
+        end
+    end
+else
+    System.createDirectory("ux0:data/Moondayo/parsers")
 end
 
 function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
