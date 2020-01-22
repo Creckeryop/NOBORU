@@ -8,7 +8,7 @@ local NetInited     = false
 local bytes         = 0
 local Uniques       = {}
 
-threads = {
+Threads = {
     Update = function()
         if NetInited and Task == nil and OrderCount == 0 then
             Network.term()
@@ -57,6 +57,9 @@ threads = {
                     Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH)
                 end
             elseif Task.Type == "File" then
+                if System.doesFileExist(Task.Path) then
+                    System.deleteFile(Task.Path)
+                end
                 if Task.HttpMethod then
                     if Task.PostData then
                         Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData)
@@ -273,9 +276,9 @@ threads = {
     end,
     Terminate = function()
         if NetInited then
-            threads.clear()
+            Threads.clear()
             while Task do
-                threads.update()
+                Threads.update()
             end
             Network.term()
             NetInited = false
@@ -295,9 +298,9 @@ threads = {
         return Uniques[Table] ~= nil
     end
 }
-function threads.GetMemoryDownloaded()
+function Threads.GetMemoryDownloaded()
     return bytes
 end
-function threads.GetTasksNum()
+function Threads.GetTasksNum()
     return OrderCount + (Task and 1 or 0)
 end
