@@ -1,19 +1,12 @@
-local ffi = require 'ffi'
-ffi.cdef[[
-    typedef struct {double x, y;} __attribute__ ((packed)) Point_t;
-    typedef struct{
-		static const int8_t NONE = 0;
-		static const int8_t READ = 1;
-		static const int8_t SLIDE = 2;
-		int8_t MODE;
-    } __attribute__ ((packed)) TOUCH;
-    typedef struct{
-        double Y;
-        double V;
-        double TouchY;
-        int ItemID;
-    } __attribute__ ((packed)) Slider;
-]]
+Point_t = function (x, y)
+    return {x = x or 0, y = y or 0}
+end
+TOUCH = function ()
+    return {NONE = 0, READ = 1, SLIDE = 2, MODE = 0}
+end
+Slider = function ()
+    return {Y = 0 , V = 0, TouchY = 0, ItemID = 0}
+end
 dofile "app0:assets/libs/parser.lua"
 LUA_GRADIENT    = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH   = Graphics.loadImage("app0:assets/images/gradientH.png")
@@ -125,10 +118,7 @@ function DrawManga(x, y, Manga, M)
     else
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(101, 115, 146))
     end
-    local alpha = M
-    if Mflag then
-        alpha = (0.25 - (M - 1)) / 0.25
-    end
+    local alpha = Mflag and 5 - M / 0.25 or M
     Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT, MANGA_WIDTH * M, 1, Color.new(255,255,255,255*alpha))
     if Manga.Name then
         if Manga.PrintName == nil then

@@ -1,4 +1,3 @@
-local ffi = require 'ffi'
 dofile "app0:assets/libs/catalogs.lua"
 dofile "app0:assets/libs/details.lua"
 

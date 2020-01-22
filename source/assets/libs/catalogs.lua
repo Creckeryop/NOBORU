@@ -1,6 +1,5 @@
-local ffi = require 'ffi'
-local Slider = ffi.new("Slider")
-local TOUCH  = ffi.new("TOUCH")
+local Slider = Slider()
+local TOUCH  = TOUCH()
 Slider.Y = -10
 
 local Parser        = nil
@@ -66,6 +65,7 @@ Catalogs = {
     Input = function(OldPad, Pad, OldTouch, Touch)
         if CATALOGS_MODE == MANGAS_MODE and Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
             CATALOGS_MODE = PARSERS_MODE
+            Slider.Y = -10
             Catalogs.Term()
         end
         if CATALOGS_MODE == PARSERS_MODE then
@@ -115,7 +115,7 @@ Catalogs = {
         end
         local new_itemID = 0
         if TOUCH.MODE == TOUCH.READ then
-            if (abs(Slider.V) > 0.1 or abs(Slider.TouchY - Touch.y) > 10) then
+            if abs(Slider.V) > 0.1 or abs(Slider.TouchY - Touch.y) > 10 then
                 TOUCH.MODE = TOUCH.SLIDE
             else
                 if CATALOGS_MODE == PARSERS_MODE then
@@ -145,6 +145,14 @@ Catalogs = {
             elseif Details.GetMode() == DETAILS_END then
                 Loading.SetMode(LOADING_NONE)
             end
+            Panel.Set{
+                Touch = "Choose"
+            }
+        elseif CATALOGS_MODE == PARSERS_MODE then
+            Panel.Set{
+                Triangle = "Update",
+                Touch = "Choose"
+            }
         end
         Slider.Y = Slider.Y + Slider.V
         Slider.V = Slider.V / 1.12

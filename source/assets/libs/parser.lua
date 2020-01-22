@@ -1,4 +1,3 @@
-local ffi = require 'ffi'
 local i = {}
 Parsers = {}
 GetParserByID = function (ID)

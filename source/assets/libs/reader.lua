@@ -1,5 +1,4 @@
-local ffi = require 'ffi'
-local Point_t = ffi.typeof("Point_t")
+local Point_t = Point_t
 
 local Pages = {Page = 0}
 local velX, velY = 0, 0

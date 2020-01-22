@@ -1,4 +1,3 @@
-local ffi = require 'ffi'
 local Order = {}
 local OrderCount = 0
 
