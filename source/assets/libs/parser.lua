@@ -18,9 +18,11 @@ function Parser:new(Name, Link, Lang, ID)
 	self.__index = self
 	if i[ID] then
 		Parsers[i[ID]] = p
+		Console.writeLine('Parser "'..Name..'" Updated!')
 	else
 		Parsers[#Parsers + 1] = p
 		i[ID] = #Parsers
+		Console.writeLine('Parser "'..Name..'" Loaded!')
 	end
     return p
 end

@@ -61,6 +61,7 @@ end
 Details = {
     SetManga = function(manga, x, y)
         if manga and x and y then
+            Panel.Hide()
             Manga = manga
             ms = 50 * string.len(manga.Name)
             dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
@@ -107,6 +108,7 @@ Details = {
                 Loading.SetMode(LOADING_NONE)
                 ParserManager.Remove(Chapters)
                 Timer.reset(AnimationTimer)
+                Panel.Show()
                 OldFade = Fade
             end
         end

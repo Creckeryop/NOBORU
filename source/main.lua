@@ -7,18 +7,18 @@ dofile "app0:assets/libs/console.lua"
 dofile "app0:assets/libs/language.lua"
 dofile "app0:assets/libs/globals.lua"
 dofile "app0:assets/libs/loading.lua"
-dofile "app0:assets/libs/parser.lua"
 dofile "app0:assets/libs/net.lua"
 dofile "app0:assets/libs/parserhandler.lua"
 dofile "app0:assets/libs/reader.lua"
 dofile "app0:assets/libs/menu.lua"
-dofile "ux0:data/vsKoob/parsers.lua"
+dofile "app0:assets/libs/panel.lua"
 
 MENU            = 0
 READER          = 1
 APP_MODE        = MENU
 TOUCH_LOCK      = false
 local fonts = {FONT12, FONT, FONT26, FONT30}
+Panel.Show()
 for i = 1, 4 do
     Graphics.initBlend()
     Screen.clear()
@@ -27,6 +27,7 @@ for i = 1, 4 do
     Screen.flip()
     Screen.waitVblankStart()
 end
+
 local Pad = Controls.read()
 local OldTouch, Touch = {}, {x = nil, y = nil}
 local OldTouch2, Touch2 = {}, {x = nil, y = nil}
@@ -82,13 +83,14 @@ while true do
     elseif APP_MODE == READER then
         Reader.Draw()
     end
+    Panel.Draw()
 
     Loading.Draw()
 
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
-        Font.print(FONT, 0, 0, "TASKS "..threads.GetTasksNum(), COLOR_WHITE)
-        local mem_net = mem_to_str(threads.GetMemoryDownloaded(), "NET")
+        Font.print(FONT, 0, 0, "TASKS "..Threads.GetTasksNum(), COLOR_WHITE)
+        local mem_net = mem_to_str(Threads.GetMemoryDownloaded(), "NET")
         Font.print(FONT,  720 - Font.getTextWidth(FONT, mem_net)/2, 0, mem_net, Color.new(0, 255, 0))
         local mem_var = mem_to_str(collectgarbage("count") * 1024, "VAR")
         Font.print(FONT,  480 - Font.getTextWidth(FONT, mem_var)/2, 0, mem_var, Color.new(255, 128, 0))
@@ -104,7 +106,7 @@ while true do
     if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_SQUARE) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_SQUARE) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
-    
-    threads.Update()
+    Panel.Update()
+    Threads.Update()
     ParserManager.Update()
 end
