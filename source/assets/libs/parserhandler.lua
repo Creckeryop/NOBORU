@@ -97,7 +97,7 @@ ParserManager = {
                 parser:loadChapterPage(Link, Table)
                 coroutine.yield(true)
                 if Table.Link then
-                    threads.DownloadImageAsync(Table.Link, Table, "Image", true)
+                    Threads.DownloadImageAsync(Table.Link, Table, "Image", true)
                 end
             end,
             Table = Table
@@ -124,7 +124,41 @@ ParserManager = {
             Uniques[Table] = nil
         end
     end,
-    UpdateParserList = nil,
+    UpdateParserList = function(Table, Insert)
+        if Uniques[Table] then return end
+        local T = {
+            Type = "Update",
+            F = function()
+                local file = {}
+                Threads.DownloadStringAsync("https://github.com/Creckeryop/vsKoob-parsers/tree/master/parsers", file, 'string', true)
+                while file.string == nil do
+                    coroutine.yield(false)
+                end
+                for link, name in file.string:gmatch("href=\"([^\"]-.lua)\">(.-)<") do
+                    local link2row = "https://raw.githubusercontent.com"..link:gsub("/blob",""):gsub("%%","%%%%")
+                    local path2row = "ux0:data/Moondayo/parsers/"..name
+                    Threads.DownloadFileAsync(link2row, path2row)
+                    while Threads.Check(link2row) do
+                        coroutine.yield(false)
+                    end
+                    if System.doesFileExist(path2row) then
+                        local suc, err = pcall(function() dofile (path2row) end)
+                        if not suc then
+                            Console.writeLine("Cant load "..path2row..":"..err, Color.new(255, 0, 0))
+                        end
+                    end
+                end
+            end,
+            Table = Table
+        }
+        OrderCount = OrderCount + 1
+        if Insert then
+            table.insert(Order, 1, T)
+        else
+            Order[#Order + 1] = T
+        end
+        Uniques["Update"] = T
+    end,
     Clear = function ()
         Order = {}
         Uniques = {}
