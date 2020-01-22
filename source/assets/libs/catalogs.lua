@@ -1,6 +1,7 @@
 local ffi = require 'ffi'
 local Slider = ffi.new("Slider")
 local TOUCH  = ffi.new("TOUCH")
+Slider.Y = -10
 
 local Parser        = nil
 local TouchTimer    = Timer.new()
@@ -28,7 +29,7 @@ local UpdateMangas  = function()
                         if manga.Image then
                             manga.Image:free()
                         else
-                            threads.Remove(manga)
+                            Threads.Remove(manga)
                         end
                         manga.ImageDownload = nil
                     end
@@ -41,7 +42,7 @@ local UpdateMangas  = function()
         for i = start, min(#Results,start + 11) do
             local manga = Results[i]
             if not manga.ImageDownload then
-                threads.DownloadImageAsync(manga.ImageLink, manga, "Image")
+                Threads.DownloadImageAsync(manga.ImageLink, manga, "Image")
                 manga.ImageDownload = true
                 DownloadedImage[#DownloadedImage + 1] = i
             end
@@ -50,8 +51,8 @@ local UpdateMangas  = function()
         local new_table = {}
         for _, i in ipairs(DownloadedImage) do
             local manga = Results[i]
-            if threads.Check(manga) and (Details.GetFade() == 0 or manga ~= Details.GetManga()) then
-                threads.Remove(manga)
+            if Threads.Check(manga) and (Details.GetFade() == 0 or manga ~= Details.GetManga()) then
+                Threads.Remove(manga)
                 manga.ImageDownload = nil
             else
                 new_table[#new_table + 1] = i
@@ -66,6 +67,11 @@ Catalogs = {
         if CATALOGS_MODE == MANGAS_MODE and Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
             CATALOGS_MODE = PARSERS_MODE
             Catalogs.Term()
+        end
+        if CATALOGS_MODE == PARSERS_MODE then
+            if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
+                ParserManager.UpdateParserList(Parsers)
+            end
         end
         if Touch.x then
             Timer.reset(TouchTimer)
@@ -93,8 +99,8 @@ Catalogs = {
                             local id = i
                             Details.SetManga(manga, lx + MANGA_WIDTH / 2, uy + MANGA_HEIGHT / 2)
                             if manga.Image == nil then
-                                threads.Remove(manga)
-                                threads.DownloadImageAsync(manga.ImageLink, manga, 'Image', true)
+                                Threads.Remove(manga)
+                                Threads.DownloadImageAsync(manga.ImageLink, manga, 'Image', true)
                                 if not manga.ImageDownload then
                                     DownloadedImage[#DownloadedImage + 1] = id
                                     manga.ImageDownload = true
@@ -145,20 +151,28 @@ Catalogs = {
         if abs(Slider.V) < 1 then
             Slider.V = 0
         end
-        if Slider.Y < 0 then
-            Slider.Y = 0
-            Slider.V = 0
-        elseif CATALOGS_MODE == PARSERS_MODE and Slider.Y > ceil(#Parsers) * 75 - 534 then
-            Slider.Y = max(0, ceil(#Parsers) * 75 - 534)
-            Slider.V = 0
-        elseif CATALOGS_MODE == MANGAS_MODE and Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 24) - 520 then
-            Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 24) - 520)
-            Slider.V = 0
-            if not PagesDownloadDone then
-                if Parser then
-                    if not ParserManager.Check(Results) then
-                        ParserManager.getMangaListAsync(Parser, page, Results)
-                        page = page + 1
+        
+        if CATALOGS_MODE == PARSERS_MODE then
+            if Slider.Y < -10 then
+                Slider.Y = -10
+                Slider.V = 0
+            elseif Slider.Y > ceil(#Parsers) * 75 - 514 then
+                Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
+                Slider.V = 0
+            end
+        elseif CATALOGS_MODE == MANGAS_MODE then
+            if Slider.Y < 0 then
+                Slider.Y = 0
+                Slider.V = 0
+            elseif Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 24) - 500 then
+                Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 24) - 500)
+                Slider.V = 0
+                if not PagesDownloadDone then
+                    if Parser then
+                        if not ParserManager.Check(Results) then
+                            ParserManager.getMangaListAsync(Parser, page, Results)
+                            page = page + 1
+                        end
                     end
                 end
             end
@@ -171,24 +185,28 @@ Catalogs = {
             local y = start * 75 - Slider.Y
             for i = start, min(#Parsers,start + 9) do
                 local parser = Parsers[i]
-                Graphics.fillRect(265, 945, y - 65, y, COLOR_WHITE)
-                Font.print(FONT26, 275, y - 60, parser.Name, COLOR_BLACK)
+                Graphics.fillRect(264, 946, y - 75, y, Color.new(0, 0, 0, 32))
+                Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+                Font.print(FONT26, 275, y - 70, parser.Name, COLOR_BLACK)
 
                 local lang_text = Language[LANG].PARSERS[parser.Lang] or parser.Lang or ""
                 Font.print(FONT, 935 - Font.getTextWidth(FONT, lang_text), y - 10 - Font.getTextHeight(FONT,lang_text), lang_text, Color.new(101, 101, 101))
                 if parser.NSFW then
-                    Font.print(FONT26, 935 - Font.getTextWidth(FONT26, "NSFW"), y - 60, "NSFW", Color.new(0, 105, 170))
+                    Font.print(FONT, 280 + Font.getTextWidth(FONT26, parser.Name), y - 70 +Font.getTextHeight(FONT26, parser.Name)-Font.getTextHeight(FONT, "NSFW"), "NSFW", Color.new(0, 105, 170))
                 end
                 local link_text = (parser.Link.."/")
-                Font.print(FONT, 275, y - 10 - Font.getTextHeight(FONT, link_text), link_text, Color.new(128, 128, 128))
+                Font.print(FONT, 275, y - 23 - Font.getTextHeight(FONT, link_text), link_text, Color.new(128, 128, 128))
                 if Slider.ItemID == i then
-                    Graphics.fillRect(265, 945, y - 65, y, Color.new(0, 0, 0, 32))
+                    Graphics.fillRect(265, 945, y - 74, y, Color.new(0, 0, 0, 32))
                 end
                 y = y + 75
             end
+            if #Parsers > 0 then
+                Graphics.fillRect(264, 946, y - 75, y-74, Color.new(0, 0, 0, 32))
+            end
             if #Parsers > 7 then
-                local h = #Parsers * 75 / 544
-                Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 544) / h, COLOR_BLACK)
+                local h = #Parsers * 75 / 524
+                Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
         elseif CATALOGS_MODE == MANGAS_MODE then
             local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 24)) * 4 + 1)
@@ -198,8 +216,8 @@ Catalogs = {
                 end
             end
             if #Results > 4 then
-                local h = ceil(#Results / 4) * (MANGA_HEIGHT + 24) / 544
-                Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 544) / h, COLOR_BLACK)
+                local h = ceil(#Results / 4) * (MANGA_HEIGHT + 24) / 524
+                Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
         end
     end,
@@ -207,7 +225,7 @@ Catalogs = {
         for _, i in ipairs(DownloadedImage) do
             local manga = Results[i]
             if manga.ImageDownload then
-                threads.Remove(manga)
+                Threads.Remove(manga)
                 if manga.Image then
                     manga.Image:free()
                     manga.Image = nil
