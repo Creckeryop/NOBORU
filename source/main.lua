@@ -1,4 +1,3 @@
-local ffi = require 'ffi'
 DEBUG_MODE  = false
 LANG        = "RUS"
 
@@ -12,13 +11,14 @@ dofile "app0:assets/libs/parserhandler.lua"
 dofile "app0:assets/libs/reader.lua"
 dofile "app0:assets/libs/menu.lua"
 dofile "app0:assets/libs/panel.lua"
+dofile "app0:assets/libs/notifications.lua"
 
 MENU            = 0
 READER          = 1
 APP_MODE        = MENU
 TOUCH_LOCK      = false
 
-local fonts = {FONT12, FONT, FONT26, FONT30}
+local fonts = {FONT12, FONT, FONT20, FONT26, FONT30}
 
 Panel.Show()
 
@@ -82,6 +82,7 @@ while true do
     elseif APP_MODE == READER then
         Reader.Update(1)
     end
+    Notifications.Update()
 
     Graphics.initBlend()
     if APP_MODE == MENU then
@@ -89,9 +90,9 @@ while true do
     elseif APP_MODE == READER then
         Reader.Draw()
     end
-    Panel.Draw()
-
     Loading.Draw()
+    Notifications.Draw()
+    Panel.Draw()
 
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))

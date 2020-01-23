@@ -20,11 +20,13 @@ COLOR_GRAY  = Color.new(128, 128, 128)
 
 FONT    = Font.load("app0:roboto.ttf")
 FONT12  = Font.load("app0:roboto.ttf")
+FONT20  = Font.load("app0:roboto.ttf")
 FONT30  = Font.load("app0:roboto.ttf")
 FONT26  = Font.load("app0:roboto.ttf")
 
 Font.setPixelSizes(FONT30, 30)
 Font.setPixelSizes(FONT26, 26)
+Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT12, 12)
 
 MANGA_WIDTH     = 160
