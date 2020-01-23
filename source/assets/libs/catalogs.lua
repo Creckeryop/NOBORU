@@ -166,7 +166,7 @@ Catalogs = {
             end
             Panel.Set{
                 ["L\\R"] = "Change Section",
-                Square = GETMANGA_MODE == POPULAR_MODE and "Sort by: Popularity" or "Sort by: Date",
+                Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Popular" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
                 Triangle = Parser.searchManga and "Search" or nil,
                 DPad = "Choose"
             }
