@@ -45,7 +45,7 @@ ParserManager = {
         if parser == nil or Uniques[Table] then return end
         Console.writeLine("Task created")
         if mode == SEARCH_MODE then
-            data = data:gsub("%%","%%%%25"):gsub("!","%%%%21"):gsub("#","%%%%23"):gsub("%$","%%%%24"):gsub("&","%%%%26"):gsub("'","%%%%27"):gsub("%(","%%%%28"):gsub("%)","%%%%29"):gsub("%*","%%%%2A"):gsub("%+","%%%%2B"):gsub(",","%%%%2C"):gsub("%.","%%%%2E"):gsub("/","%%%%2F")
+            data = data:gsub("%%","%%%%25"):gsub("!","%%%%21"):gsub("#","%%%%23"):gsub("%$","%%%%24"):gsub("&","%%%%26"):gsub("'","%%%%27"):gsub("%(","%%%%28"):gsub("%)","%%%%29"):gsub("%*","%%%%2A"):gsub("%+","%%%%2B"):gsub(",","%%%%2C"):gsub("%.","%%%%2E"):gsub("/","%%%%2F"):gsub(" ","%+")
         end
         local T = {
             Type = "MangaList",
