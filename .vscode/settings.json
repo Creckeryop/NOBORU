@@ -36,7 +36,13 @@
         "POST_METHOD",
         "JSON",
         "GET_METHOD",
-        "XWWW"
+        "XWWW",
+        "TYPE_DEFAULT",
+        "MODE_TEXT",
+        "OPT_NO_AUTOCAP",
+        "RUNNING",
+        "FINISHED",
+        "CANCELED"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [

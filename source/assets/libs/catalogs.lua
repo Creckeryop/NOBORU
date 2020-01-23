@@ -9,12 +9,17 @@ local PARSERS_MODE  = 0
 local MANGAS_MODE   = 1
 local CATALOGS_MODE = PARSERS_MODE
 
+local GETMANGA_MODE = POPULAR_MODE
+local SEARCH_DATA = ""
+
 local DownloadedImage   = {}
 local page              = 1
 local PagesDownloadDone = false
 local Results           = {}
 
 local abs, ceil, floor, max, min = math.abs, math.ceil, math.floor, math.max, math.min
+
+START_SEARCH = false
 
 local UpdateMangas  = function()
     if Slider.V == 0 and Timer.getTime(TouchTimer) > 200 then
@@ -63,12 +68,26 @@ end
 
 Catalogs = {
     Input = function(OldPad, Pad, OldTouch, Touch)
-        if CATALOGS_MODE == MANGAS_MODE and Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
-            CATALOGS_MODE = PARSERS_MODE
-            Slider.Y = -10
-            Catalogs.Term()
-        end
-        if CATALOGS_MODE == PARSERS_MODE then
+        if CATALOGS_MODE == MANGAS_MODE then
+            if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
+                CATALOGS_MODE = PARSERS_MODE
+                Slider.Y = -10
+                Catalogs.Term()
+            end
+            if Controls.check(Pad, SCE_CTRL_SQUARE) and not Controls.check(OldPad, SCE_CTRL_SQUARE) then
+                local new_mode = GETMANGA_MODE == POPULAR_MODE and Parser.getLatestManga and LATEST_MODE or POPULAR_MODE
+                if GETMANGA_MODE ~= new_mode then
+                    Catalogs.Term()
+                    GETMANGA_MODE = new_mode
+                end
+            end
+            if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
+                if Parser.searchManga then
+                    Keyboard.show("Search", SEARCH_DATA, 128, TYPE_DEFAULT, MODE_TEXT,OPT_NO_AUTOCAP)
+                    START_SEARCH = true
+                end
+            end
+        elseif CATALOGS_MODE == PARSERS_MODE then
             if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
                 ParserManager.UpdateParserList(Parsers)
             end
@@ -146,20 +165,41 @@ Catalogs = {
                 Loading.SetMode(LOADING_NONE)
             end
             Panel.Set{
-                Touch = "Choose"
+                ["L\\R"] = "Change Section",
+                Square = GETMANGA_MODE == POPULAR_MODE and "Sort by: Popularity" or "Sort by: Date",
+                Triangle = Parser.searchManga and "Search" or nil,
+                DPad = "Choose"
             }
         elseif CATALOGS_MODE == PARSERS_MODE then
             Panel.Set{
+                ["L\\R"] = "Change Section",
                 Triangle = "Update",
-                Touch = "Choose"
+                DPad = "Choose"
             }
         end
+
         Slider.Y = Slider.Y + Slider.V
         Slider.V = Slider.V / 1.12
+
         if abs(Slider.V) < 1 then
             Slider.V = 0
         end
-        
+        if START_SEARCH then
+            if Keyboard.getState() == FINISHED then
+                local data = Keyboard.getInput()
+                Console.writeLine("Searching for "..data)
+                if data:gsub("%s","") ~= "" then
+                    Catalogs.Term()
+                    SEARCH_DATA = data
+                    GETMANGA_MODE = SEARCH_MODE
+                end
+                START_SEARCH = false
+                Keyboard.clear()
+            elseif Keyboard.getState() == CANCELED then
+                START_SEARCH = false
+                Keyboard.clear()
+            end
+        end
         if CATALOGS_MODE == PARSERS_MODE then
             if Slider.Y < -10 then
                 Slider.Y = -10
@@ -178,7 +218,7 @@ Catalogs = {
                 if not PagesDownloadDone then
                     if Parser then
                         if not ParserManager.Check(Results) then
-                            ParserManager.getMangaListAsync(Parser, page, Results)
+                            ParserManager.getMangaListAsync(GETMANGA_MODE, Parser, page, Results, SEARCH_DATA)
                             page = page + 1
                         end
                     end
@@ -250,5 +290,7 @@ Catalogs = {
         Results             = {}
         page                = 1
         PagesDownloadDone   = false
+        SEARCH_DATA = ""
+        GETMANGA_MODE = POPULAR_MODE
     end
 }

@@ -21,10 +21,7 @@ Panel = {
     end,
     Set = function (buttons)
         if type(buttons) == "table" then
-            Hints = {}
-            for k, v in pairs(buttons) do
-                Hints[k] = v
-            end
+            Hints = buttons
         end
     end,
     Update = function ()
@@ -71,7 +68,7 @@ Panel = {
                 x = x + Font.getTextWidth(FONT12, k) + 5
             end
             Font.print(FONT12, x, 526 + Y, v, Color.new(0, 0, 0))
-            x = x + Font.getTextWidth(FONT12, v) + 20
+            x = x + Font.getTextWidth(FONT12, v) + 10
         end
     end
 }

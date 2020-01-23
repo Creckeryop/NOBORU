@@ -17,12 +17,16 @@ MENU            = 0
 READER          = 1
 APP_MODE        = MENU
 TOUCH_LOCK      = false
+
 local fonts = {FONT12, FONT, FONT26, FONT30}
+
 Panel.Show()
-for i = 1, 4 do
+
+for i = 1, #fonts do
     Graphics.initBlend()
     Screen.clear()
-    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r—",COLOR_WHITE)
+    Font.print(fonts[i],0,0,"1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]\"\\/.,{}:;'|? №~<>`\r—",COLOR_BLACK)
+    Font.print(FONT, 0,0,"Loading Fonts "..i.."/"..#fonts, COLOR_WHITE)
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()
@@ -65,12 +69,14 @@ while true do
         Touch2.y = nil
     end
 
-    if APP_MODE == MENU then
-        Menu.Input(OldPad, Pad, OldTouch, Touch)
-    elseif APP_MODE == READER then
-        Reader.Input(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
+    if not START_SEARCH then
+        if APP_MODE == MENU then
+            Menu.Input(OldPad, Pad, OldTouch, Touch)
+        elseif APP_MODE == READER then
+            Reader.Input(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
+        end
     end
-    
+
     if APP_MODE == MENU then
         Menu.Update(1)
     elseif APP_MODE == READER then
@@ -98,12 +104,12 @@ while true do
         Font.print(FONT,  240 - Font.getTextWidth(FONT, mem_gpu)/2, 0, mem_gpu, Color.new(0, 0, 255))
         Console.draw()
     end
-    
+
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()
 
-    if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_SQUARE) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_SQUARE) ~= 0 then
+    if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_RTRIGGER) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_RTRIGGER) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
     Panel.Update()

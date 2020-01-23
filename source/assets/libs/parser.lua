@@ -4,7 +4,8 @@ GetParserByID = function (ID)
 	return Parsers[i[ID]]
 end
 Parser = {
-    getManga        = nil,
+    getLatestManga  = nil,
+    getPopularManga = nil,
     getChapters     = nil,
     prepareChapter  = nil,
 	loadChapterPage = nil,

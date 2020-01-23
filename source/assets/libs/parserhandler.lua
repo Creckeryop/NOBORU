@@ -1,6 +1,10 @@
 local Order = {}
 local OrderCount = 0
 
+LATEST_MODE = 0
+POPULAR_MODE = 1
+SEARCH_MODE = 2
+
 local Task = nil
 local Trash = {}
 
@@ -37,13 +41,31 @@ ParserManager = {
             end
         end
     end,
-    getMangaListAsync = function(parser, i, Table)
+    getMangaListAsync = function(mode, parser, i, Table, data)
         if parser == nil or Uniques[Table] then return end
         Console.writeLine("Task created")
         local T = {
             Type = "MangaList",
             F = function()
-                parser:getManga(i, Table)
+                if mode == POPULAR_MODE then
+                    if parser.getPopularManga then
+                        parser:getPopularManga(i, Table)
+                    else
+                        Console.writeLine(parser.Name.." doesn't support getPopularManga function", COLOR_GRAY)
+                    end
+                elseif mode == LATEST_MODE then
+                    if parser.getLatestManga then
+                        parser:getLatestManga(i, Table)
+                    else
+                        Console.writeLine(parser.Name.." doesn't support getLatestManga function", COLOR_GRAY)
+                    end
+                elseif mode == SEARCH_MODE then
+                    if parser.searchManga then
+                        parser:searchManga(data, i, Table)
+                    else
+                        Console.writeLine(parser.Name.." doesn't support searchManga function", COLOR_GRAY)
+                    end
+                end
             end,
             Table = Table
         }
