@@ -100,6 +100,7 @@ function DrawManga(x, y, Manga, M)
     local Mflag = M ~= nil
     M = M or 1
     if Manga.Image and Manga.Image.e then
+        Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(0, 0, 0))
         local width, height = Manga.Image.Width, Manga.Image.Height
         local draw = false
         if width < height then

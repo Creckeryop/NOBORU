@@ -79,6 +79,7 @@ Catalogs = {
                 if GETMANGA_MODE ~= new_mode then
                     Catalogs.Term()
                     GETMANGA_MODE = new_mode
+                    Notifications.Push(GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest")
                 end
             end
             if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
@@ -109,10 +110,10 @@ Catalogs = {
                         end
                     end
                 elseif CATALOGS_MODE == MANGAS_MODE then
-                    local start = max(1,floor((Slider.Y - 20) / (MANGA_HEIGHT+24))*4 + 1)
+                    local start = max(1,floor((Slider.Y - 20) / (MANGA_HEIGHT+12))*4 + 1)
                     for i = start, min(#Results,start + 11) do
                         local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
-                        local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 24) - Slider.Y + 24
+                        local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 12) - Slider.Y + 12
                         if OldTouch.x > lx and OldTouch.x < lx + MANGA_WIDTH and OldTouch.y > uy and OldTouch.y < uy + MANGA_HEIGHT  then
                             local manga = Results[i]
                             local id = i
@@ -166,7 +167,7 @@ Catalogs = {
             end
             Panel.Set{
                 ["L\\R"] = "Change Section",
-                Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Popular" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
+                Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
                 Triangle = Parser.searchManga and "Search" or nil,
                 DPad = "Choose"
             }
@@ -212,8 +213,8 @@ Catalogs = {
             if Slider.Y < 0 then
                 Slider.Y = 0
                 Slider.V = 0
-            elseif Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 24) - 500 then
-                Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 24) - 500)
+            elseif Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 12) - 512 then
+                Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 12) - 512)
                 Slider.V = 0
                 if not PagesDownloadDone then
                     if Parser then
@@ -257,14 +258,14 @@ Catalogs = {
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
         elseif CATALOGS_MODE == MANGAS_MODE then
-            local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 24)) * 4 + 1)
-            for i = start, min(#Results, start + 11) do
+            local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
+            for i = start, min(#Results, start + 15) do
                 if Details.GetFade() == 0 or Details.GetManga() ~= Results[i] then
-                    DrawManga(610 + (((i - 1) % 4) - 2)*(MANGA_WIDTH + 10) + MANGA_WIDTH/2, MANGA_HEIGHT / 2 - Slider.Y + floor((i - 1)/4) * (MANGA_HEIGHT + 24) + 24, Results[i])
+                    DrawManga(610 + (((i - 1) % 4) - 2)*(MANGA_WIDTH + 10) + MANGA_WIDTH/2, MANGA_HEIGHT / 2 - Slider.Y + floor((i - 1)/4) * (MANGA_HEIGHT + 12) + 12, Results[i])
                 end
             end
             if #Results > 4 then
-                local h = ceil(#Results / 4) * (MANGA_HEIGHT + 24) / 524
+                local h = ceil(#Results / 4) * (MANGA_HEIGHT + 12) / 524
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
         end
