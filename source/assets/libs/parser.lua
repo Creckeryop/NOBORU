@@ -1,28 +1,61 @@
-local i = {}
-Parsers = {}
-GetParserByID = function (ID)
-	return Parsers[i[ID]]
-end
+
+---Hash table with all parsers
+local parserTable = {}
+
+---@class Parser
 Parser = {
-    getLatestManga  = nil,
-    getPopularManga = nil,
-    getChapters     = nil,
-    prepareChapter  = nil,
+	getLatestManga = nil,
+	getPopularManga = nil,
+	getChapters = nil,
+	prepareChapter = nil,
 	loadChapterPage = nil,
-	getMangaUrl		= nil
+	getMangaUrl = nil
 }
 
+---Local variable used in Parser functions
+local updated = false
+
+---@param Name string
+---@param Link string
+---@param Lang string
+---@param ID integer
+---@return Parser
+---Creates/Updates Parser Object
 function Parser:new(Name, Link, Lang, ID)
-    local p = {Name = Name, Link = Link, Lang = Lang, ID = ID}
-    setmetatable (p, self)
+	local p = {
+		Name = Name,
+		Link = Link,
+		Lang = Lang,
+		ID = ID
+	}
+	setmetatable(p, self)
 	self.__index = self
-	if i[ID] then
-		Parsers[i[ID]] = p
-		Console.writeLine('Parser "'..Name..'" Updated!')
-	else
-		Parsers[#Parsers + 1] = p
-		i[ID] = #Parsers
-		Console.writeLine('Parser "'..Name..'" Loaded!')
+	local message = string.format('Parser "%s" %s!', Name, (parserTable[ID]) and "Updated!" or "Loaded!")
+	Console.write(message)
+	parserTable[ID] = p
+	updated = true
+	return p
+end
+
+---@param ID integer
+---@return Parser
+---Gives Parser Object by `ID`
+function GetParserByID(ID)
+	return parserTable[ID]
+end
+
+---Cached Parser List
+local cachedList = {}
+
+---@return table
+---Gives Parser List
+function GetParserList()
+	if not updated then return cachedList end
+	updated = false
+	local list = {}
+	for _, v in pairs(parserTable) do
+		list[#list+1] = v
 	end
-    return p
+	cachedList = list
+	return list
 end

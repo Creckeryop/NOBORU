@@ -1,6 +1,8 @@
 local Point_t = Point_t
 
-local Pages = {Page = 0}
+local Pages = {
+    Page = 0
+}
 local velX, velY = 0, 0
 
 local TOUCH_IDLE = 0
@@ -76,7 +78,7 @@ local ChangePage = function(page)
         local o = orderPageLoad
         local i = o[k]
         if page + i > 0 and page + i <= #Pages then
-            if Pages[page + i].Image == nil and not (Pages[page + i].Link == "LoadPrev" or Pages[page + i].Link == "LoadNext") then
+            if not Pages[page + i].Image and not (Pages[page + i].Link == "LoadPrev" or Pages[page + i].Link == "LoadNext") then
                 if Pages[page + i].Link then
                     Threads.DownloadImageAsync(Pages[page + i].Link, Pages[page + i], "Image", true)
                 else
@@ -109,10 +111,12 @@ Reader = {
             for i = 1, #Pages do
                 Threads.Remove(Pages[i])
             end
-            Pages = {Page = 0}
+            Pages = {
+                Page = 0
+            }
             ParserManager.Clear()
             collectgarbage()
-            APP_MODE = MENU
+            AppMode = MENU
         end
         if Touch.y and OldTouch.y then
             if touchMode ~= TOUCH_MULTI then
@@ -190,25 +194,37 @@ Reader = {
                 local chapter = Chapters[CurrentChapter]
                 Pages.Count = #chapter.Pages
                 for i = 1, #chapter.Pages do
-                    Pages[i] = {chapter.Pages[i], x = 0, y = 0}
+                    Pages[i] = {
+                        chapter.Pages[i],
+                        x = 0,
+                        y = 0
+                    }
                 end
-                Pages[0] = {Link = "LoadPrev", x = 0, y = 0}
+                Pages[0] = {
+                    Link = "LoadPrev",
+                    x = 0,
+                    y = 0
+                }
                 if CurrentChapter < #Chapters then
-                    Pages[#Pages + 1] = {Link = "LoadNext", x = 0, y = 0}
+                    Pages[#Pages + 1] = {
+                        Link = "LoadNext",
+                        x = 0,
+                        y = 0
+                    }
                 end
                 ChangePage(1)
             else
             end
         elseif STATE == STATE_READING then
-            if Pages[Pages.Page] == nil then
+            if not Pages[Pages.Page] then
                 return
             end
             for i = -1, 1 do
                 local page = Pages[Pages.Page + i]
-                if page and page.Zoom == nil and page.Image then
+                if page and not page.Zoom and page.Image then
                     local Image = page.Image
                     page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
-                    Console.writeLine("Added " .. Pages.Page + i)
+                    Console.write("Added " .. Pages.Page + i)
                     if page.Width > page.Height then
                         page.Mode = "Horizontal"
                         page.Zoom = 544 / page.Height
@@ -306,16 +322,16 @@ Reader = {
             local PrepareMessage = Language[LANG].READER.PREPARING_PAGES.. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
             local ChapterName = Chapters[CurrentChapter].Name
             if Font.getTextWidth(FONT26, MangaName) > 960 then
-                if Font.getTextWidth(FONT, MangaName) > 960 then
+                if Font.getTextWidth(FONT16, MangaName) > 960 then
                     Font.print(FONT12, 480 - Font.getTextWidth(FONT12, MangaName) / 2, 247, MangaName, COLOR_BLACK)
                 else
-                    Font.print(FONT, 480 - Font.getTextWidth(FONT, MangaName) / 2, 242, MangaName, COLOR_BLACK)
+                    Font.print(FONT16, 480 - Font.getTextWidth(FONT16, MangaName) / 2, 242, MangaName, COLOR_BLACK)
                 end
             else
                 Font.print(FONT26, 480 - Font.getTextWidth(FONT26, MangaName) / 2, 232, MangaName, COLOR_BLACK)
             end
-            Font.print(FONT, 480 - Font.getTextWidth(FONT, ChapterName) / 2, 264, ChapterName, COLOR_BLACK)
-            Font.print(FONT, 480 - Font.getTextWidth(FONT, PrepareMessage) / 2, 284, PrepareMessage, COLOR_BLACK)
+            Font.print(FONT16, 480 - Font.getTextWidth(FONT16, ChapterName) / 2, 264, ChapterName, COLOR_BLACK)
+            Font.print(FONT16, 480 - Font.getTextWidth(FONT16, PrepareMessage) / 2, 284, PrepareMessage, COLOR_BLACK)
         elseif STATE == STATE_READING then
             for i = -1, 1 do
                 local page = Pages[Pages.Page + i]
@@ -329,8 +345,8 @@ Reader = {
                                 Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
                             else
                                 local loading = Language[LANG].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                                local Width = Font.getTextWidth(FONT, loading)
-                                Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_BLACK)
+                                local Width = Font.getTextWidth(FONT16, loading)
+                                Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_BLACK)
                             end
                         end
                     else
@@ -340,15 +356,15 @@ Reader = {
                     end
                 elseif page then
                     local loading = Language[LANG].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                    local Width = Font.getTextWidth(FONT, loading)
-                    Font.print(FONT, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
+                    local Width = Font.getTextWidth(FONT16, loading)
+                    Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
                 end
             end
             if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
                 local Counter = Pages.Page .. "/" .. Pages.Count
-                local Width = Font.getTextWidth(FONT, Counter) + 20
-                Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT, Counter) + 4, Color.new(0, 0, 0, 128))
-                Font.print(FONT, 970 - Width, 0, Counter, COLOR_WHITE)
+                local Width = Font.getTextWidth(FONT16, Counter) + 20
+                Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT16, Counter) + 4, Color.new(0, 0, 0, 128))
+                Font.print(FONT16, 970 - Width, 0, Counter, COLOR_WHITE)
             end
         end
     end,
@@ -358,15 +374,17 @@ Reader = {
         for i = 1, #Pages do
             Threads.Remove(Pages[i])
         end
-        if Chapters[chapter] == nil then
-            Console.writeLine("Error loading chapter", Color.new(255, 0, 0))
+        if not Chapters[chapter] then
+            Console.write("Error loading chapter", Color.new(255, 0, 0))
             ParserManager.Clear()
             collectgarbage()
-            APP_MODE = MENU
+            AppMode = MENU
             return
         end
         Chapters[chapter].Pages = {}
-        Pages = {Page = 0}
+        Pages = {
+            Page = 0
+        }
         collectgarbage("collect")
         ParserManager.prepareChapter(Chapters[chapter], Chapters[chapter].Pages)
     end,

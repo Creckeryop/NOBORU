@@ -20,6 +20,8 @@ local dif       = 0
 local AnimationTimer    = Timer.new()
 local NameTimer         = Timer.new()
 
+local NOTIFICATION_SHOW = false
+
 local Chapters = {}
 
 local scrollUpdate = function ()
@@ -60,7 +62,7 @@ end
 Details = {
     SetManga = function(manga, x, y)
         if manga and x and y then
-            Panel.Hide()
+            Panel.hide()
             Manga = manga
             ms = 50 * string.len(manga.Name)
             dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
@@ -72,6 +74,7 @@ Details = {
             if Parser then
                 ParserManager.getChaptersAsync(manga, Chapters)
             end
+            NOTIFICATION_SHOW = false
             Center = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
             Timer.reset(AnimationTimer)
             Timer.reset(NameTimer)
@@ -82,13 +85,13 @@ Details = {
             if TOUCH.MODE == TOUCH.NONE and OldTouch.x and Touch.x and Touch.x > 240 then
                 TOUCH.MODE = TOUCH.READ
                 Slider.TouchY = Touch.y
-            elseif TOUCH.MODE ~= TOUCH.NONE and Touch.x == nil then
+            elseif TOUCH.MODE ~= TOUCH.NONE and not Touch.x then
                 if TOUCH.MODE == TOUCH.READ and OldTouch.x > 320 and OldTouch.x < 900 and OldTouch.y > 90 then
                     local id = math.floor((Slider.Y + OldTouch.y - 20) / 70)
                     if id > 0 and id <= #Chapters then
                         Catalogs.Shrink()
                         Reader.load(Chapters, id)
-                        APP_MODE = READER
+                        AppMode = READER
                     end
                 end
                 TOUCH.MODE = TOUCH.NONE
@@ -117,10 +120,10 @@ Details = {
             end
             if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
                 DETAILS_MODE = DETAILS_WAIT
-                Loading.SetMode(LOADING_NONE)
+                Loading.set_mode(LOADING_NONE)
                 ParserManager.Remove(Chapters)
                 Timer.reset(AnimationTimer)
-                Panel.Show()
+                Panel.show()
                 OldFade = Fade
             end
         end
@@ -129,9 +132,9 @@ Details = {
         if DETAILS_MODE ~= DETAILS_END then
             animationUpdate()
             if ParserManager.Check(Chapters) then
-                Loading.SetMode(LOADING_WHITE, 580, 250)
+                Loading.set_mode(LOADING_WHITE, 580, 250)
             else
-                Loading.SetMode(LOADING_NONE)
+                Loading.set_mode(LOADING_NONE)
             end
             scrollUpdate()
         end
@@ -154,7 +157,7 @@ Details = {
             for i = start, math.min(#Chapters, start + 8) do
                 if y < 544 then
                     Graphics.fillRect(280, 920, y, y + 69, BLUE)
-                    Font.print(FONT, 290, y + 24, Chapters[i].Name, WHITE)
+                    Font.print(FONT16, 290, y + 24, Chapters[i].Name, WHITE)
                     Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 69, BLUE)
                     if i == Slider.ItemID then
                         Graphics.fillRect(280, 920, y, y + 69, Color.new(0, 0, 0, 32))
@@ -168,9 +171,9 @@ Details = {
             Graphics.fillRect(35, 245, shift + 420, shift + 472, BLUE)
             Graphics.fillRect(35, 245, shift + 482, shift + 534, Color.new(19, 76, 76, Alpha))
 
-            if #Chapters == 0 and not ParserManager.Check(Chapters) then
-                local msg = Language[LANG].WARNINGS.NO_CHAPTERS
-                Font.print(FONT26, 140 - Font.getTextWidth(FONT26, msg) / 2, shift + 490, msg, WHITE)
+            if DETAILS_MODE == DETAILS_START and #Chapters == 0 and not ParserManager.Check(Chapters) and not NOTIFICATION_SHOW then
+                NOTIFICATION_SHOW = true
+                Notifications.Push(Language[LANG].WARNINGS.NO_CHAPTERS)
             end
 
             Graphics.fillRect(900, 960, 90, 544, Color.new(0, 0, 0, Alpha))
@@ -180,12 +183,12 @@ Details = {
 
             local t = math.min(math.max(0, Timer.getTime(NameTimer) - 1500), ms)
             Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
-            Font.print(FONT, 40, 70 * M - 5, Manga.RawLink, GRAY)
+            Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
 
             if DETAILS_MODE == DETAILS_START and #Chapters > 5 then
                 local h = #Chapters * 70 / 454
                 Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92))
-                Graphics.fillRect(926, 936, 90 + (Slider.Y+20) / h, 90 + (Slider.Y + 464) / h, BLUE)
+                Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, BLUE)
             end
         end
     end

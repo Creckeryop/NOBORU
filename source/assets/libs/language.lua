@@ -3,7 +3,8 @@ Language = {
         APP = {
             LIBRARY     = "БИБЛИОТЕКА",
             CATALOGS    = "КАТАЛОГИ",
-            SETTINGS    = "НАСТРОЙКИ"
+            SETTINGS    = "НАСТРОЙКИ",
+            SEARCH      = "Поиск"
         },
         PARSERS = {
             RUS     = "Русский",
@@ -23,7 +24,8 @@ Language = {
         APP = {
             LIBRARY     = "LIBRARY",
             CATALOGS    = "CATALOGS",
-            SETTINGS    = "SETTINGS"
+            SETTINGS    = "SETTINGS",
+            SEARCH      = "Search"
         },
         PARSERS = {
             RUS     = "Russian",

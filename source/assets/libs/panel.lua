@@ -1,74 +1,68 @@
-local Y = 23
 local MODE_HIDE = 0
 local MODE_SHOW = 1
-local MODE      = MODE_HIDE
-local cross     = Image:new(Graphics.loadImage("app0:assets/images/cross_button.png"))
-local triangle  = Image:new(Graphics.loadImage("app0:assets/images/triangle_button.png"))
-local square    = Image:new(Graphics.loadImage("app0:assets/images/square_button.png"))
-local circle    = Image:new(Graphics.loadImage("app0:assets/images/circle_button.png"))
-local dpad      = Image:new(Graphics.loadImage("app0:assets/images/dpad.png"))
-local Hints = {}
-Panel = {
-    Hide = function ()
-        if MODE == MODE_SHOW then
-            MODE = MODE_HIDE
-        end
-    end,
-    Show = function ()
-        if MODE == MODE_HIDE then
-            MODE = MODE_SHOW
-        end
-    end,
-    Set = function (buttons)
-        if type(buttons) == "table" then
-            Hints = buttons
-        end
-    end,
-    Update = function ()
-        if MODE == MODE_HIDE then
-            Y = math.min(23, Y + (23-Y)/4)
-        elseif MODE == MODE_SHOW then
-            Y = math.max(0, Y - Y/4)
-        end
-    end,
-    Draw = function ()
-        Graphics.fillRect(0, 960, 521 + Y, 524 + Y, Color.new(0, 0, 0, 32))
-        Graphics.fillRect(0, 960, 522 + Y, 524 + Y, Color.new(0, 0, 0, 32))
-        Graphics.drawImage(0, 524 + Y, LUA_PANEL)
-        
-        local x = 20
-        for k, v in pairs(Hints) do
-            if k == "Triangle" then
-                if triangle then
-                    Graphics.drawImage(x, 526 + Y, triangle.e)
-                end
-                x = x + 20
-            elseif k == "Square" then
-                if square then
-                    Graphics.drawImage(x, 526 + Y, square.e)
-                end
-                x = x + 20
-            elseif k == "Circle" then
-                if circle then
-                    Graphics.drawImage(x, 526 + Y, circle.e)
-                end
-                x = x + 20
-            elseif k == "Cross" then
-                if cross then
-                    Graphics.drawImage(x, 526 + Y, cross.e)
-                end
-                x = x + 20
-            elseif k == "DPad" then
-                if dpad then
-                    Graphics.drawImage(x, 526 + Y, dpad.e)
-                end
-                x = x + 20
-            else
-                Font.print(FONT12, x, 526 + Y, k, Color.new(0, 0, 0))
-                x = x + Font.getTextWidth(FONT12, k) + 5
-            end
-            Font.print(FONT12, x, 526 + Y, v, Color.new(0, 0, 0))
-            x = x + Font.getTextWidth(FONT12, v) + 10
-        end
-    end
+local Mode = MODE_HIDE
+
+---Textures for PS Buttons
+local textures_16x16 = {
+    Cross = Image:new(Graphics.loadImage("app0:assets/images/cross_button.png")),
+    Triangle = Image:new(Graphics.loadImage("app0:assets/images/triangle_button.png")),
+    Square = Image:new(Graphics.loadImage("app0:assets/images/square_button.png")),
+    Circle = Image:new(Graphics.loadImage("app0:assets/images/circle_button.png")),
+    DPad = Image:new(Graphics.loadImage("app0:assets/images/dpad.png"))
 }
+
+---Table of actions
+local hints = {}
+
+---Table of Panel functions
+Panel = {}
+
+---Hides Panel
+function Panel.hide()
+    if Mode ~= MODE_SHOW then return end
+    Mode = MODE_HIDE
+end
+
+---Shows Panel
+function Panel.show()
+    if Mode ~= MODE_HIDE then return end
+    Mode = MODE_SHOW
+end
+
+---@param buttons table
+---Sets table of actions
+function Panel.set(buttons)
+    hints = buttons
+end
+
+---Local variable used as vertical offset of panel
+local Y = 23
+
+---Updates Panel Animation
+function Panel.update()
+    if Mode == MODE_HIDE then
+        Y = math.min(23, Y + (23 - Y) / 4)
+    elseif Mode == MODE_SHOW then
+        Y = math.max(0, Y - Y / 4)
+    end
+end
+
+---Draws Panel on screen
+function Panel.draw()
+    if Y >= 23 then return end
+    Graphics.fillRect(0, 960, 521 + Y, 524 + Y, Color.new(0, 0, 0, 32))
+    Graphics.fillRect(0, 960, 522 + Y, 524 + Y, Color.new(0, 0, 0, 32))
+    Graphics.drawImage(0, 524 + Y, LUA_PANEL)
+    local x = 20
+    for k, v in pairs(hints) do
+        if textures_16x16[k] then
+            Graphics.drawImage(x, 526 + Y, textures_16x16[k].e)
+            x = x + 20
+        else
+            Font.print(FONT12, x, 526 + Y, k, COLOR_BLACK)
+            x = x + Font.getTextWidth(FONT12, k) + 5
+        end
+        Font.print(FONT12, x, 526 + Y, v, COLOR_BLACK)
+        x = x + Font.getTextWidth(FONT12, v) + 10
+    end
+end

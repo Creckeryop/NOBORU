@@ -145,7 +145,7 @@ local old_lower = string.lower
 function string:lower()
 	local str = {}
 	for c in it_utf8(self) do
-		if utf8U[c] == nil then
+		if not utf8U[c] then
 			str[#str+1] = old_lower(c)
 		else
 			str[#str+1] = utf8U[c]
@@ -158,7 +158,7 @@ local old_upper = string.upper
 function string:upper()
 	local str = {}
 	for c in it_utf8(self) do
-		if utf8L[c] == nil then
+		if not utf8L[c] then
 			str[#str + 1] = old_upper(c)
 		else
 			str[#str + 1] = utf8L[c]
@@ -194,29 +194,29 @@ function table.serialize(t, name)
     local concat = table.concat
     local type = type
     local function serialize(_t, _name)
-        local _ = {}
+        local P = {}
         for k, v in pairs(_t) do
             if type(v) == "string" then
                 if type(k) == "string" then
-                    _[#_ + 1] = format('%s = \"%s\"', k, v)
+                    P[#P + 1] = format('%s = \"%s\"', k, v)
                 else
-                    _[#_ + 1] = format('[%d] = \"%s\"', k, v)
+                    P[#P + 1] = format('[%d] = \"%s\"', k, v)
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then
-                    _[#_ + 1] = format('%s%s', k, serialize(v,''))
+                    P[#P + 1] = format('%s%s', k, serialize(v,''))
                 else
-                    _[#_ + 1] = format('[%d]%s', k, serialize(v,''))
+                    P[#P + 1] = format('[%d]%s', k, serialize(v,''))
                 end
             else
                 if type(k) == "string" then
-                    _[#_ + 1] = format('%s = %s', k, v)
+                    P[#P + 1] = format('%s = %s', k, v)
                 else
-                    _[#_ + 1] = format('[%d] = %s', k, v)
+                    P[#P + 1] = format('[%d] = %s', k, v)
                 end
             end
         end
-        return format('%s = {%s}',_name,concat(_,', '))
+        return format('%s = {%s}',_name,concat(P,', '))
     end
     return serialize(t,name)
 end
@@ -282,4 +282,13 @@ function AnsiToUtf8(s)
 			end
 		end
 	return table.concat(r)
+end
+
+function Setmt__gc(t, mt)
+    local prox = newproxy(true)
+    getmetatable(prox).__gc = function()
+        mt.__gc(t)
+    end
+    t[prox] = true
+    return setmetatable(t, mt)
 end

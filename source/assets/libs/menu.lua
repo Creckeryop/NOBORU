@@ -1,5 +1,5 @@
-dofile "app0:assets/libs/catalogs.lua"
-dofile "app0:assets/libs/details.lua"
+dofile("app0:assets/libs/catalogs.lua")
+dofile("app0:assets/libs/details.lua")
 
 LIBRARY_MODE    = 0
 CATALOGS_MODE   = 1
@@ -24,7 +24,7 @@ Menu = {
             if Controls.check(Pad, SCE_CTRL_LTRIGGER) and not Controls.check(OldPad, SCE_CTRL_LTRIGGER) then
                 Menu.SetMode(math.max(MENU_MODE - 1, 0))
             end
-            if Touch.x and OldTouch.x == nil and Touch.x < 250 then
+            if Touch.x and not OldTouch.x and Touch.x < 250 then
                 if Touch.y < 45 then
                 elseif Touch.y < 85 then
                     Menu.SetMode(LIBRARY_MODE)
