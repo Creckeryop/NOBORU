@@ -96,20 +96,26 @@ Threads = {
                         System.closeFile(handle)
                         local Width, Height = System.getPictureResolution(IMAGE_CACHE_PATH)
                         Console.write(Width.."x"..Height.." Image got")
-                        if Height > 4096 and Height / Width > 2 then
-                            if not (Width and Height) then
-                                error("measure problem")
-                            end
-                            Task.Image = {
-                                Width = Width,
-                                Height = Height,
-                                Parts = math.ceil(Height / 4096)
-                            }
-                            Console.write(Task.Image.Parts)
-                            Task.Type = "ImageLoadTable"
+                        if GetTextureMemoryUsed() + Width * Height * 3 > 96 * 1024 * 1024 then
+                            Console.write("No enough memory to load image", Color.new(255, 0, 0))
+                            Uniques[Task.Table or Task.Link] = nil
+                            Task = nil
                         else
-                            Graphics.loadImageAsync(IMAGE_CACHE_PATH)
-                            Task.Type = "ImageLoad"
+                            if Height > 4096 and Height / Width > 2 then
+                                if not (Width and Height) then
+                                    error("measure problem")
+                                end
+                                Task.Image = {
+                                    Width = Width,
+                                    Height = Height,
+                                    Parts = math.ceil(Height / 4096)
+                                }
+                                Console.write(Task.Image.Parts)
+                                Task.Type = "ImageLoadTable"
+                            else
+                                Graphics.loadImageAsync(IMAGE_CACHE_PATH)
+                                Task.Type = "ImageLoad"
+                            end
                         end
                     else
                         Uniques[Task.Table or Task.Link] = nil

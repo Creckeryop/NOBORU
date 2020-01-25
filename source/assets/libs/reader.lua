@@ -64,18 +64,17 @@ local function deletePageImage(page)
     end
 end
 
-local orderPageLoad = {-1, 1, 0}
-
 local ChangePage = function(page)
     if page < 0 and CurrentChapter > 1 or page > #Pages then
         return false
     end
+    local prev_page = Pages.Page
     Pages.Page = page
     if Pages[Pages.Page].Link == "LoadNext" or Pages[Pages.Page].Link == "LoadPrev" then
         return true
     end
-    for k = 1, 3 do
-        local o = orderPageLoad
+    local o = {-prev_page+page, 0}
+    for k = 1, #o do
         local i = o[k]
         if page + i > 0 and page + i <= #Pages then
             if not Pages[page + i].Image and not (Pages[page + i].Link == "LoadPrev" or Pages[page + i].Link == "LoadNext") then
@@ -91,7 +90,7 @@ local ChangePage = function(page)
         deletePageImage(page - 2)
         Pages[page - 2] = {Pages[page - 2][1], Link = Pages[page - 2].Link, x = 0, y = 0}
     end
-    if page + 2 < #Pages then
+    if page + 2 <= #Pages then
         deletePageImage(page + 2)
         Pages[page + 2] = {Pages[page + 2][1], Link = Pages[page + 2].Link, x = 0, y = 0}
     end
@@ -141,7 +140,7 @@ Reader = {
             end
         else
             if touchMode == TOUCH_SWIPE then
-                local old_page = Pages.Page
+                Pages.PrevPage = Pages.Page
                 if offset.x > 90 and ChangePage(Pages.Page - 1) then
                     offset.x = -960 + offset.x
                     local page = Pages[Pages.Page + 1]
@@ -152,7 +151,7 @@ Reader = {
                             page.x = 960 + 480
                         end
                     end
-                    PageChanged = old_page
+                    PageChanged = Pages.PrevPage
                 elseif offset.x < -90 and ChangePage(Pages.Page + 1) then
                     offset.x = 960 + offset.x
                     local page = Pages[Pages.Page - 1]
@@ -163,7 +162,7 @@ Reader = {
                             page.x = -480
                         end
                     end
-                    PageChanged = old_page
+                    PageChanged = Pages.PrevPage
                 end
                 velX = 0
                 velY = 0
@@ -218,6 +217,9 @@ Reader = {
         elseif STATE == STATE_READING then
             if not Pages[Pages.Page] then
                 return
+            end
+            if Pages.PrevPage and Pages.PrevPage > 0 and Pages.PrevPage<=#Pages and offset.x == 0 then
+                deletePageImage(Pages.PrevPage)
             end
             for i = -1, 1 do
                 local page = Pages[Pages.Page + i]

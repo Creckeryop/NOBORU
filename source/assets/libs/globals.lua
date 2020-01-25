@@ -92,7 +92,8 @@ function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
             Link = Link,
             ImageLink = ImageLink,
             ParserID = ParserID,
-            RawLink = RawLink or ""
+            RawLink = RawLink or "",
+            Data = {}
         }
     else
         return nil
