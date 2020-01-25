@@ -173,6 +173,7 @@ Catalogs = {
             end
             if CATALOGS_MODE == MANGAS_MODE then
                 Panel.set{
+                    "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
                     ["L\\R"] = "Change Section",
                     Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
                     Triangle = Parser.searchManga and "Search" or nil,
@@ -182,11 +183,15 @@ Catalogs = {
                 }
             elseif CATALOGS_MODE == LIBRARY_MODE then
                 Panel.set{
-                    ["L\\R"] = "Change Section"
+                    "L\\R", "DPad", "Cross",
+                    ["L\\R"] = "Change Section",
+                    DPad = "Choose",
+                    Cross = "Select"
                 }
             end
         elseif CATALOGS_MODE == PARSERS_MODE then
             Panel.set{
+                "L\\R", "Triangle", "DPad", "Cross",
                 ["L\\R"] = "Change Section",
                 Triangle = "Update",
                 DPad = "Choose",
@@ -292,7 +297,7 @@ Catalogs = {
     Shrink = function()
         for _, i in ipairs(DownloadedImage) do
             local manga = Results[i]
-            if manga.ImageDownload then
+            if manga and manga.ImageDownload then
                 Threads.Remove(manga)
                 if manga.Image then
                     manga.Image:free()
@@ -315,6 +320,7 @@ Catalogs = {
 }
 function Catalogs.SetMode(new_mode)
     CATALOGS_MODE = new_mode
+    Catalogs.Shrink()
     page = 1
     Slider.Y = -100
     DownloadedImage = {}

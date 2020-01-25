@@ -54,15 +54,15 @@ function Panel.draw()
     Graphics.fillRect(0, 960, 522 + Y, 524 + Y, Color.new(0, 0, 0, 32))
     Graphics.drawImage(0, 524 + Y, LUA_PANEL)
     local x = 20
-    for k, v in pairs(hints) do
-        if textures_16x16[k] then
-            Graphics.drawImage(x, 526 + Y, textures_16x16[k].e)
+    for _, v in ipairs(hints) do
+        if textures_16x16[v] then
+            Graphics.drawImage(x, 526 + Y, textures_16x16[v].e)
             x = x + 20
         else
-            Font.print(FONT12, x, 526 + Y, k, COLOR_BLACK)
-            x = x + Font.getTextWidth(FONT12, k) + 5
+            Font.print(FONT12, x, 526 + Y, v, COLOR_BLACK)
+            x = x + Font.getTextWidth(FONT12, v) + 5
         end
-        Font.print(FONT12, x, 526 + Y, v, COLOR_BLACK)
-        x = x + Font.getTextWidth(FONT12, v) + 10
+        Font.print(FONT12, x, 526 + Y, hints[v], COLOR_BLACK)
+        x = x + Font.getTextWidth(FONT12, hints[v]) + 10
     end
 end
