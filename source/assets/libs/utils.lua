@@ -198,21 +198,21 @@ function table.serialize(t, name)
         for k, v in pairs(_t) do
             if type(v) == "string" then
                 if type(k) == "string" then
-                    P[#P + 1] = format('%s = \"%s\"', k, v)
+                    P[#P + 1] = format('["%s"] = \"%s\"', k, v)
                 else
-                    P[#P + 1] = format('[%d] = \"%s\"', k, v)
+                    P[#P + 1] = format('[%s] = \"%s\"', k, v)
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then
-                    P[#P + 1] = format('%s%s', k, serialize(v,''))
+                    P[#P + 1] = format('["%s"]%s', k, serialize(v,''))
                 else
-                    P[#P + 1] = format('[%d]%s', k, serialize(v,''))
+                    P[#P + 1] = format('[%s]%s', k, serialize(v,''))
                 end
             else
                 if type(k) == "string" then
-                    P[#P + 1] = format('%s = %s', k, v)
+                    P[#P + 1] = format('["%s"] = %s', k, v)
                 else
-                    P[#P + 1] = format('[%d] = %s', k, v)
+                    P[#P + 1] = format('[%s] = %s', k, v)
                 end
             end
         end

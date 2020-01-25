@@ -42,7 +42,8 @@
         "OPT_NO_AUTOCAP",
         "RUNNING",
         "FINISHED",
-        "CANCELED"
+        "CANCELED",
+        "FCREATE"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [

@@ -96,6 +96,20 @@ Details = {
                 end
                 TOUCH.MODE = TOUCH.NONE
             end
+            if OldTouch.x and OldTouch.x < 240 and not Touch.x then
+                if OldTouch.x > 35 and OldTouch.x < 245 and OldTouch.y > 420 and OldTouch.y < 472 then
+                    if Manga then
+                        if Database.check(Manga) then
+                            Database.remove(Manga)
+                            Notifications.Push("Manga removed from library")
+                        else
+                            Database.add(Manga)
+                            Notifications.Push("Manga added to library")
+                        end
+                        Database.save()
+                    end
+                end
+            end
             local new_itemID = 0
             if TOUCH.MODE == TOUCH.READ then
                 if math.abs(Slider.V) > 0.1 or math.abs(Touch.y - Slider.TouchY)>10 then
@@ -146,9 +160,10 @@ Details = {
 
             Graphics.fillRect(0, 900, 90, 544, Color.new(0, 0, 0, Alpha))
 
-            local WHITE     = Color.new(255, 255, 255, Alpha)
-            local GRAY      = Color.new(128, 128, 128, Alpha)
-            local BLUE = Color.new( 42,  47,  78, Alpha)
+            local WHITE = Color.new(255, 255, 255, Alpha)
+            local GRAY = Color.new(128, 128, 128, Alpha)
+            local BLUE = Color.new(42, 47, 78, Alpha)
+            local RED = Color.new(137, 30, 43, Alpha)
 
             local start = math.max(1, math.floor(Slider.Y / 70)+1)
             local shift = (1 - M) * 544
@@ -168,7 +183,17 @@ Details = {
                 y = y + 70
             end
 
-            Graphics.fillRect(35, 245, shift + 420, shift + 472, BLUE)
+            if Manga then
+                if Database.check(Manga) then
+                    Graphics.fillRect(35, 245, shift + 420, shift + 472, RED)
+                    local text = "Remove from library"
+                    Font.print(FONT20, 140-Font.getTextWidth(FONT20, text)/2, 444 + shift-Font.getTextHeight(FONT20, text)/2, text, WHITE)
+                else
+                    Graphics.fillRect(35, 245, shift + 420, shift + 472, BLUE)
+                    local text = "Add to library"
+                    Font.print(FONT20, 140-Font.getTextWidth(FONT20, text)/2, 444 + shift-Font.getTextHeight(FONT20, text)/2, text, WHITE)
+                end
+            end
             Graphics.fillRect(35, 245, shift + 482, shift + 534, Color.new(19, 76, 76, Alpha))
 
             if DETAILS_MODE == DETAILS_START and #Chapters == 0 and not ParserManager.Check(Chapters) and not NOTIFICATION_SHOW then

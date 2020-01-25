@@ -5,8 +5,9 @@ Slider.Y = -10
 local Parser        = nil
 local TouchTimer    = Timer.new()
 
-local PARSERS_MODE  = 0
-local MANGAS_MODE   = 1
+local PARSERS_MODE = 0
+local MANGAS_MODE = 1
+local LIBRARY_MODE = 2
 local CATALOGS_MODE = PARSERS_MODE
 
 local GETMANGA_MODE = POPULAR_MODE
@@ -112,7 +113,7 @@ Catalogs = {
                                 Parser = parserList[id]
                             end
                         end
-                    elseif CATALOGS_MODE == MANGAS_MODE then
+                    elseif CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
                         local start = max(1,floor((Slider.Y - 20) / (MANGA_HEIGHT+12))*4 + 1)
                         for i = start, min(#Results,start + 11) do
                             local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
@@ -163,21 +164,27 @@ Catalogs = {
     end,
     Update = function(delta)
         Parsers = GetParserList()
-        if CATALOGS_MODE == MANGAS_MODE then
+        if CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
             UpdateMangas()
             if ParserManager.Check(Results) then
                 Loading.set_mode(LOADING_BLACK, 600, 272)
             elseif Details.GetMode() == DETAILS_END then
                 Loading.set_mode(LOADING_NONE)
             end
-            Panel.set{
-                ["L\\R"] = "Change Section",
-                Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
-                Triangle = Parser.searchManga and "Search" or nil,
-                Circle = "Back",
-                DPad = "Choose",
-                Cross = "Select"
-            }
+            if CATALOGS_MODE == MANGAS_MODE then
+                Panel.set{
+                    ["L\\R"] = "Change Section",
+                    Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
+                    Triangle = Parser.searchManga and "Search" or nil,
+                    Circle = "Back",
+                    DPad = "Choose",
+                    Cross = "Select"
+                }
+            elseif CATALOGS_MODE == LIBRARY_MODE then
+                Panel.set{
+                    ["L\\R"] = "Change Section"
+                }
+            end
         elseif CATALOGS_MODE == PARSERS_MODE then
             Panel.set{
                 ["L\\R"] = "Change Section",
@@ -218,17 +225,23 @@ Catalogs = {
                 Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
                 Slider.V = 0
             end
-        elseif CATALOGS_MODE == MANGAS_MODE then
+        elseif CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
             if Slider.Y < 0 then
                 Slider.Y = 0
                 Slider.V = 0
             elseif Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 12) - 512 then
                 Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 12) - 512)
                 Slider.V = 0
-                if not Results.NoPages and Parser then
-                    if not ParserManager.Check(Results) then
-                        ParserManager.getMangaListAsync(GETMANGA_MODE, Parser, page, Results, SEARCH_DATA)
-                        page = page + 1
+                if CATALOGS_MODE == MANGAS_MODE then
+                    if not Results.NoPages and Parser then
+                        if not ParserManager.Check(Results) then
+                            ParserManager.getMangaListAsync(GETMANGA_MODE, Parser, page, Results, SEARCH_DATA)
+                            page = page + 1
+                        end
+                    end
+                elseif CATALOGS_MODE == LIBRARY_MODE then
+                    if #Results ~= #Database.getMangaList() then
+                        Results = Database.getMangaList()
                     end
                 end
             end
@@ -244,7 +257,6 @@ Catalogs = {
                 Graphics.fillRect(264, 946, y - 75, y, Color.new(0, 0, 0, 32))
                 Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
                 Font.print(FONT26, 275, y - 70, parser.Name, COLOR_BLACK)
-
                 local lang_text = Language[LANG].PARSERS[parser.Lang] or parser.Lang or ""
                 Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16,lang_text), lang_text, Color.new(101, 101, 101))
                 if parser.NSFW then
@@ -264,7 +276,7 @@ Catalogs = {
                 local h = #Parsers * 75 / 524
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
-        elseif CATALOGS_MODE == MANGAS_MODE then
+        elseif CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
             local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
             for i = start, min(#Results, start + 15) do
                 if Details.GetFade() == 0 or Details.GetManga() ~= Results[i] then
@@ -301,3 +313,10 @@ Catalogs = {
         GETMANGA_MODE = POPULAR_MODE
     end
 }
+function Catalogs.SetMode(new_mode)
+    CATALOGS_MODE = new_mode
+    page = 1
+    Slider.Y = -100
+    DownloadedImage = {}
+    Results = {}
+end

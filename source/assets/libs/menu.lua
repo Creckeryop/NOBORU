@@ -14,6 +14,11 @@ Menu = {
         if MENU_MODE == CATALOGS_MODE then
             Catalogs.Shrink()
         end
+        if new_mode == LIBRARY_MODE then
+            Catalogs.SetMode(2)
+        else
+            Catalogs.SetMode(0)
+        end
         MENU_MODE = new_mode
     end,
     Input = function (OldPad, Pad, OldTouch, Touch)
@@ -34,7 +39,7 @@ Menu = {
                     Menu.SetMode(SETTINGS_MODE)
                 end
             end
-            if MENU_MODE == CATALOGS_MODE then
+            if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE  then
                 Catalogs.Input(OldPad, Pad, OldTouch, Touch)
             end
         else
@@ -42,7 +47,7 @@ Menu = {
         end
     end,
     Update = function (delta)
-        if MENU_MODE == CATALOGS_MODE then
+        if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE  then
             Catalogs.Update(delta)
         end
         Details.Update(delta)
@@ -61,7 +66,7 @@ Menu = {
         Font.print(FONT30, 30, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[2]))
         Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[3]))
         if Details.GetFade() ~= 1 then
-            if MENU_MODE == CATALOGS_MODE then
+            if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE then
                 Catalogs.Draw()
             end
         end

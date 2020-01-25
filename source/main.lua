@@ -13,6 +13,8 @@ dofile("app0:assets/libs/menu.lua")
 dofile("app0:assets/libs/panel.lua")
 dofile("app0:assets/libs/notifications.lua")
 
+Database.load()
+
 MENU = 0
 READER = 1
 AppMode = MENU

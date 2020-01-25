@@ -22,9 +22,10 @@ Slider = function()
         ItemID = 0
     }
 end
-
+dofile("app0:assets/libs/database.lua")
 dofile("app0:assets/libs/image.lua")
 dofile("app0:assets/libs/parser.lua")
+
 
 LUA_GRADIENT = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH = Graphics.loadImage("app0:assets/images/gradientH.png")
