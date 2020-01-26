@@ -43,7 +43,8 @@
         "RUNNING",
         "FINISHED",
         "CANCELED",
-        "FCREATE"
+        "FCREATE",
+        "textures_16x16"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [

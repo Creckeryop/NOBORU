@@ -19,12 +19,14 @@ local dif       = 0
 
 local AnimationTimer    = Timer.new()
 local NameTimer         = Timer.new()
+local ControlsTimer     = Timer.new()
 
 local NOTIFICATION_SHOW = false
 
 local Chapters = {}
 
 local scrollUpdate = function ()
+    
     Slider.Y = Slider.Y + Slider.V
     Slider.V = Slider.V / 1.12
     if math.abs(Slider.V) < 0.1 then
@@ -59,6 +61,12 @@ local animationUpdate = function ()
     end
 end
 
+local TimerSpace = 400
+local TOUCH_MODE = 0
+local KEYS_MODE = 1
+local CONTROL_MODE = TOUCH_MODE
+local ItemSelected = 0
+
 Details = {
     SetManga = function(manga, x, y)
         if manga and x and y then
@@ -67,11 +75,13 @@ Details = {
             ms = 50 * string.len(manga.Name)
             dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
             Chapters = {}
+            ItemSelected = 0
+            TimerSpace = 400
+            CONTROL_MODE = TOUCH_MODE
             DETAILS_MODE = DETAILS_START
             Point = Point_t(x, y)
             OldFade = 1
-            local Parser = GetParserByID(manga.ParserID)
-            if Parser then
+            if GetParserByID(manga.ParserID) then
                 ParserManager.getChaptersAsync(manga, Chapters)
             end
             NOTIFICATION_SHOW = false
@@ -83,12 +93,15 @@ Details = {
     Input = function(OldPad, Pad, OldTouch, Touch)
         if DETAILS_MODE == DETAILS_START then
             if TOUCH.MODE == TOUCH.NONE and OldTouch.x and Touch.x and Touch.x > 240 then
+                ItemSelected = 0
+                TimerSpace = 400
                 TOUCH.MODE = TOUCH.READ
                 Slider.TouchY = Touch.y
+                CONTROL_MODE = TOUCH_MODE
             elseif TOUCH.MODE ~= TOUCH.NONE and not Touch.x then
                 if TOUCH.MODE == TOUCH.READ and OldTouch.x > 320 and OldTouch.x < 900 and OldTouch.y > 90 then
                     local id = math.floor((Slider.Y + OldTouch.y - 20) / 70)
-                    if id > 0 and id <= #Chapters then
+                    if Chapters[id] then
                         Catalogs.Shrink()
                         Reader.load(Chapters, id)
                         AppMode = READER
@@ -96,17 +109,69 @@ Details = {
                 end
                 TOUCH.MODE = TOUCH.NONE
             end
+            local AddToLibrary = false
             if OldTouch.x and OldTouch.x < 240 and not Touch.x then
                 if OldTouch.x > 35 and OldTouch.x < 245 and OldTouch.y > 420 and OldTouch.y < 472 then
-                    if Manga then
-                        if Database.check(Manga) then
-                            Database.remove(Manga)
-                            Notifications.Push("Manga removed from library")
+                    AddToLibrary = true
+                end
+            end
+            if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
+                AddToLibrary = true
+            end
+            if Manga and AddToLibrary then
+                if Database.check(Manga) then
+                    Database.remove(Manga)
+                    Notifications.Push("Manga removed from library")
+                else
+                    Database.add(Manga)
+                    Notifications.Push("Manga added to library")
+                end
+                Database.save()
+            end
+            if Timer.getTime(ControlsTimer)>TimerSpace or (Controls.check(Pad, SCE_CTRL_DOWN) and not Controls.check(OldPad, SCE_CTRL_DOWN) or Controls.check(Pad, SCE_CTRL_UP) and not Controls.check(OldPad, SCE_CTRL_UP)) then
+                if (Controls.check(Pad, SCE_CTRL_DOWN) or Controls.check(Pad, SCE_CTRL_UP)) then
+                    if CONTROL_MODE == TOUCH_MODE then
+                        ItemSelected = math.floor((Slider.Y - 20 + 90) / 70)
+                        if #Chapters > 0 then
+                            if ItemSelected == 0 then
+                                ItemSelected = 1
+                            end
                         else
-                            Database.add(Manga)
-                            Notifications.Push("Manga added to library")
+                            ItemSelected = 0
                         end
-                        Database.save()
+                        CONTROL_MODE = KEYS_MODE
+                    elseif CONTROL_MODE == KEYS_MODE then
+                        if Controls.check(Pad, SCE_CTRL_DOWN) then
+                            ItemSelected = ItemSelected + 1
+                            if ItemSelected > #Chapters then
+                                ItemSelected = #Chapters
+                            end
+                        elseif Controls.check(Pad, SCE_CTRL_UP) then
+                            ItemSelected = ItemSelected - 1
+                            if ItemSelected < 1 then
+                                if #Chapters > 0 then
+                                    ItemSelected = 1
+                                else
+                                    ItemSelected = 0
+                                end
+                            end
+                        end
+                    end
+                    if TimerSpace > 50 then
+                        TimerSpace = TimerSpace / 2
+                    end
+                    Slider.V = 0
+                    Timer.reset(ControlsTimer)
+                else
+                    TimerSpace = 400
+                end
+            end
+            if Controls.check(Pad, SCE_CTRL_CROSS) and not Controls.check(OldPad, SCE_CTRL_CROSS) then
+                if ItemSelected ~= 0 then
+                    if Chapters[ItemSelected] then
+                        Catalogs.Shrink()
+                        Reader.load(Chapters, ItemSelected)
+                        AppMode = READER
                     end
                 end
             end
@@ -117,7 +182,7 @@ Details = {
                 else
                     if OldTouch.x > 320 and OldTouch.x < 900 then
                         local id = math.floor((Slider.Y - 20 + OldTouch.y) / 70)
-                        if id > 0 and id <= #Chapters then
+                        if Chapters[id] then
                             new_itemID = id
                         end
                     end
@@ -149,6 +214,9 @@ Details = {
                 Loading.set_mode(LOADING_WHITE, 580, 250)
             else
                 Loading.set_mode(LOADING_NONE)
+            end
+            if ItemSelected ~= 0 then
+                Slider.Y = Slider.Y + (ItemSelected*70 - 272 - Slider.Y)/8
             end
             scrollUpdate()
         end
@@ -182,17 +250,19 @@ Details = {
                 end
                 y = y + 70
             end
-
+            Graphics.fillRect(900, 960, 90, 544, Color.new(0, 0, 0, Alpha))
+            DrawManga(Point.x + (Center.x - Point.x) * M, Point.y + (Center.y - Point.y) * M, Manga, 1 + (M * 0.25))
             if Manga then
+                local text, color = "Add to library", BLUE
                 if Database.check(Manga) then
-                    Graphics.fillRect(35, 245, shift + 420, shift + 472, RED)
-                    local text = "Remove from library"
-                    Font.print(FONT20, 140-Font.getTextWidth(FONT20, text)/2, 444 + shift-Font.getTextHeight(FONT20, text)/2, text, WHITE)
-                else
-                    Graphics.fillRect(35, 245, shift + 420, shift + 472, BLUE)
-                    local text = "Add to library"
-                    Font.print(FONT20, 140-Font.getTextWidth(FONT20, text)/2, 444 + shift-Font.getTextHeight(FONT20, text)/2, text, WHITE)
+                    color = RED
+                    text = "Remove from library"
                 end
+                Graphics.fillRect(35, 245, shift + 420, shift + 472, color)
+                if textures_16x16.Triangle and textures_16x16.Triangle.e then
+                    Graphics.drawImageExtended(35, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
+                end
+                Font.print(FONT20, 140-Font.getTextWidth(FONT20, text)/2, 444 + shift-Font.getTextHeight(FONT20, text)/2, text, WHITE)
             end
             Graphics.fillRect(35, 245, shift + 482, shift + 534, Color.new(19, 76, 76, Alpha))
 
@@ -200,11 +270,16 @@ Details = {
                 NOTIFICATION_SHOW = true
                 Notifications.Push(Language[LANG].WARNINGS.NO_CHAPTERS)
             end
+            if ItemSelected ~= 0 then
+                y = shift - Slider.Y + ItemSelected * 70
+                local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer)/1000)))
+                Graphics.fillEmptyRect(279, 902, y - 1, y + 70, RED)
+                Graphics.fillEmptyRect(280, 901, y, y + 71, RED)
+                Graphics.fillEmptyRect(279, 902, y - 1, y + 70, SELECTED_RED)
+                Graphics.fillEmptyRect(280, 901, y, y + 71, SELECTED_RED)
+            end
+            Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
 
-            Graphics.fillRect(900, 960, 90, 544, Color.new(0, 0, 0, Alpha))
-            Graphics.fillRect(  0, 960,  0,  90, Color.new(0, 0, 0, Alpha))
-
-            DrawManga(Point.x + (Center.x - Point.x) * M, Point.y + (Center.y - Point.y) * M, Manga, 1 + (M * 0.25))
 
             local t = math.min(math.max(0, Timer.getTime(NameTimer) - 1500), ms)
             Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)

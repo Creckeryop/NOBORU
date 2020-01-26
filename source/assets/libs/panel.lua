@@ -3,7 +3,7 @@ local MODE_SHOW = 1
 local Mode = MODE_HIDE
 
 ---Textures for PS Buttons
-local textures_16x16 = {
+textures_16x16 = {
     Cross = Image:new(Graphics.loadImage("app0:assets/images/cross_button.png")),
     Triangle = Image:new(Graphics.loadImage("app0:assets/images/triangle_button.png")),
     Square = Image:new(Graphics.loadImage("app0:assets/images/square_button.png")),
