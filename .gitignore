@@ -1,6 +1,2 @@
 # Executables
 *.vpk
-
-# Folders
-lpp-builder/build/*
-imgui.ini

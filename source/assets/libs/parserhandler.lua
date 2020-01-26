@@ -167,7 +167,7 @@ ParserManager = {
                 end
                 for link, name in file.string:gmatch('href="([^"]-.lua)">(.-)<') do
                     local link2row = "https://raw.githubusercontent.com" .. link:gsub("/blob", ""):gsub("%%", "%%%%")
-                    local path2row = "ux0:data/Moondayo/parsers/" .. name
+                    local path2row = "ux0:data/noboru/parsers/" .. name
                     Threads.DownloadFileAsync(link2row, path2row)
                     while Threads.Check(link2row) do
                         coroutine.yield(false)

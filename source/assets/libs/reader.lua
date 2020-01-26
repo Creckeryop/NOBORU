@@ -73,7 +73,7 @@ local ChangePage = function(page)
     if Pages[Pages.Page].Link == "LoadNext" or Pages[Pages.Page].Link == "LoadPrev" then
         return true
     end
-    local o = {-prev_page+page, 0}
+    local o = {-prev_page + page, 0}
     for k = 1, #o do
         local i = o[k]
         if page + i > 0 and page + i <= #Pages then
@@ -88,11 +88,21 @@ local ChangePage = function(page)
     end
     if page - 2 > 0 then
         deletePageImage(page - 2)
-        Pages[page - 2] = {Pages[page - 2][1], Link = Pages[page - 2].Link, x = 0, y = 0}
+        Pages[page - 2] = {
+            Pages[page - 2][1],
+            Link = Pages[page - 2].Link,
+            x = 0,
+            y = 0
+        }
     end
     if page + 2 <= #Pages then
         deletePageImage(page + 2)
-        Pages[page + 2] = {Pages[page + 2][1], Link = Pages[page + 2].Link, x = 0, y = 0}
+        Pages[page + 2] = {
+        Pages[page + 2][1],
+        Link = Pages[page + 2].Link,
+        x = 0,
+        y = 0
+    }
     end
     return true
 end
@@ -215,10 +225,8 @@ Reader = {
             else
             end
         elseif STATE == STATE_READING then
-            if not Pages[Pages.Page] then
-                return
-            end
-            if Pages.PrevPage and Pages.PrevPage > 0 and Pages.PrevPage<=#Pages and offset.x == 0 then
+            if not Pages[Pages.Page] then return end
+            if Pages.PrevPage and Pages.PrevPage~=Pages.Page and Pages.PrevPage > 0 and Pages.PrevPage<=#Pages and offset.x == 0 then
                 deletePageImage(Pages.PrevPage)
             end
             for i = -1, 1 do

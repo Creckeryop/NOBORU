@@ -1,5 +1,6 @@
 dofile("app0:assets/libs/catalogs.lua")
 dofile("app0:assets/libs/details.lua")
+local logo_small = Graphics.loadImage("app0:assets/images/logo-small.png")
 
 LIBRARY_MODE    = 0
 CATALOGS_MODE   = 1
@@ -30,10 +31,10 @@ Menu = {
                 Menu.SetMode(math.max(MENU_MODE - 1, 0))
             end
             if Touch.x and not OldTouch.x and Touch.x < 250 then
-                if Touch.y < 45 then
-                elseif Touch.y < 85 then
+                if Touch.y < 127 then
+                elseif Touch.y < 187 then
                     Menu.SetMode(LIBRARY_MODE)
-                elseif Touch.y < 145 then
+                elseif Touch.y < 230 then
                     Menu.SetMode(CATALOGS_MODE)
                 elseif Touch.y > 460 then
                     Menu.SetMode(SETTINGS_MODE)
@@ -61,9 +62,10 @@ Menu = {
             end
         end
         Screen.clear(Color.new(0, 0, 0))
-        Graphics.fillRect(255, 960, 0, 544,Color.new(233,233,233))
-        Font.print(FONT30, 30,  45,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*ButtonsAnimX[1]))
-        Font.print(FONT30, 30, 105, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[2]))
+        Graphics.drawImage(0, 0, logo_small)
+        Graphics.fillRect(255, 960, 0, 544, Color.new(233,233,233))
+        Font.print(FONT30, 30, 137,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*ButtonsAnimX[1]))
+        Font.print(FONT30, 30, 197, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[2]))
         Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[3]))
         if Details.GetFade() ~= 1 then
             if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE then

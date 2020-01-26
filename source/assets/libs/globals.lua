@@ -55,12 +55,12 @@ GlobalTimer = Timer.new()
 
 PI = 3.14159265359
 
-if not System.doesDirExist("ux0:data/Moondayo/") then
-    System.createDirectory("ux0:data/Moondayo")
+if not System.doesDirExist("ux0:data/noboru/") then
+    System.createDirectory("ux0:data/noboru")
 end
 
-if System.doesDirExist("ux0:data/Moondayo/parsers/") then
-    local path = "ux0:data/Moondayo/parsers/"
+if System.doesDirExist("ux0:data/noboru/parsers/") then
+    local path = "ux0:data/noboru/parsers/"
     local files = System.listDirectory(path)
     for _, file in pairs(files) do
         if not file.directory then
@@ -76,7 +76,7 @@ if System.doesDirExist("ux0:data/Moondayo/parsers/") then
         end
     end
 else
-    System.createDirectory("ux0:data/Moondayo/parsers")
+    System.createDirectory("ux0:data/noboru/parsers")
 end
 
 ---@param Name string

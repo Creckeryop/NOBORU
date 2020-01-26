@@ -1,4 +1,4 @@
-local IMAGE_CACHE_PATH = "ux0:data/Moondayo/cache.img"
+local IMAGE_CACHE_PATH = "ux0:data/noboru/cache.img"
 
 local Order = {}
 local OrderCount = 0

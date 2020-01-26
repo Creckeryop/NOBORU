@@ -40,17 +40,17 @@ function Database.save()
         manga_table[v.ParserID .. v.Link] = k
     end
     local save = table.serialize(manga_table, "base")
-    if System.doesFileExist("ux0:data/Moondayo/save.dat") then
-        System.deleteFile("ux0:data/Moondayo/save.dat")
+    if System.doesFileExist("ux0:data/noboru/save.dat") then
+        System.deleteFile("ux0:data/noboru/save.dat")
     end
-    local f = System.openFile("ux0:data/Moondayo/save.dat", FCREATE)
+    local f = System.openFile("ux0:data/noboru/save.dat", FCREATE)
     System.writeFile(f, save, save:len())
     System.closeFile(f)
 end
 
 function Database.load()
-    if System.doesFileExist("ux0:data/Moondayo/save.dat") then
-        local f = System.openFile("ux0:data/Moondayo/save.dat", FREAD)
+    if System.doesFileExist("ux0:data/noboru/save.dat") then
+        local f = System.openFile("ux0:data/noboru/save.dat", FREAD)
         base = load("local "..System.readFile(f, System.sizeFile(f)) .. " return base")()
         System.closeFile(f)
     end
