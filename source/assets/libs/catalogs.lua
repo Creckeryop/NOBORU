@@ -81,7 +81,7 @@ Catalogs = {
                 if GETMANGA_MODE ~= new_mode then
                     Catalogs.Term()
                     GETMANGA_MODE = new_mode
-                    Notifications.Push(GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest")
+                    Notifications.Push(GETMANGA_MODE == POPULAR_MODE and Language[LANG].PANEL.MODE_POPULAR or GETMANGA_MODE == LATEST_MODE and Language[LANG].PANEL.MODE_LATEST)
                 end
             end
             if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
@@ -174,28 +174,28 @@ Catalogs = {
             if CATALOGS_MODE == MANGAS_MODE then
                 Panel.set{
                     "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
-                    ["L\\R"] = "Change Section",
-                    Square = GETMANGA_MODE == POPULAR_MODE and "Mode: Popular" or GETMANGA_MODE == LATEST_MODE and "Mode: Latest" or GETMANGA_MODE == SEARCH_MODE and "Mode: Searching <<"..SEARCH_DATA..">>",
-                    Triangle = Parser.searchManga and "Search" or nil,
-                    Circle = "Back",
-                    DPad = "Choose",
-                    Cross = "Select"
+                    ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
+                    Square = GETMANGA_MODE == POPULAR_MODE and Language[LANG].PANEL.MODE_POPULAR or GETMANGA_MODE == LATEST_MODE and Language[LANG].PANEL.MODE_LATEST or GETMANGA_MODE == SEARCH_MODE and string.format(Language[LANG].PANEL.MODE_SEARCHING,SEARCH_DATA),
+                    Triangle = Parser.searchManga and Language[LANG].PANEL.SEARCH or nil,
+                    Circle = Language[LANG].PANEL.BACK,
+                    DPad = Language[LANG].PANEL.CHOOSE,
+                    Cross = Language[LANG].PANEL.SELECT
                 }
             elseif CATALOGS_MODE == LIBRARY_MODE then
                 Panel.set{
                     "L\\R", "DPad", "Cross",
-                    ["L\\R"] = "Change Section",
-                    DPad = "Choose",
-                    Cross = "Select"
+                    ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
+                    DPad = Language[LANG].PANEL.CHOOSE,
+                    Cross = Language[LANG].PANEL.SELECT
                 }
             end
         elseif CATALOGS_MODE == PARSERS_MODE then
             Panel.set{
                 "L\\R", "Triangle", "DPad", "Cross",
-                ["L\\R"] = "Change Section",
-                Triangle = "Update",
-                DPad = "Choose",
-                Cross = "Select"
+                ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
+                Triangle = Language[LANG].PANEL.UPDATE,
+                DPad = Language[LANG].PANEL.CHOOSE,
+                Cross = Language[LANG].PANEL.SELECT
             }
         end
 
@@ -213,7 +213,7 @@ Catalogs = {
                     Catalogs.Term()
                     SEARCH_DATA = data
                     GETMANGA_MODE = SEARCH_MODE
-                    Notifications.Push('Searching "'..data..'"')
+                    Notifications.Push(string.format(Language[LANG].NOTIFICATIONS.SEARCHING, data))
                 end
                 StartSearch = false
                 Keyboard.clear()
@@ -320,6 +320,7 @@ Catalogs = {
 }
 function Catalogs.SetMode(new_mode)
     CATALOGS_MODE = new_mode
+    GETMANGA_MODE = POPULAR_MODE
     Catalogs.Shrink()
     page = 1
     Slider.Y = -100
