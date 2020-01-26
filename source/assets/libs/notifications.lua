@@ -23,7 +23,7 @@ end
 
 ---Updates notification animation
 function Notifications.Update()
-    if Timer.getTime(animation_timer) > 3000 or not Notification then
+    if Timer.getTime(animation_timer) > 2000 or not Notification then
         Notification = table.remove(Order, 1)
         Timer.reset(animation_timer)
     end
