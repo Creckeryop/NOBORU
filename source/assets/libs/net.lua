@@ -96,7 +96,7 @@ Threads = {
                         System.closeFile(handle)
                         local Width, Height = System.getPictureResolution(IMAGE_CACHE_PATH)
                         Console.write(Width.."x"..Height.." Image got")
-                        if GetTextureMemoryUsed() + Width * Height * 3 > 96 * 1024 * 1024 then
+                        if GetTextureMemoryUsed() + bit32.band(bit32.bor(Width, 7), bit32.bnot(7)) * Height * 4 > 96 * 1024 * 1024 then
                             Console.write("No enough memory to load image", Color.new(255, 0, 0))
                             Uniques[Task.Table or Task.Link] = nil
                             Task = nil

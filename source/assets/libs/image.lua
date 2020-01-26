@@ -19,7 +19,7 @@ function Image:new(image)
         Width = Graphics.getImageWidth(image),
         Height = Graphics.getImageHeight(image)
     }
-    p.Memory = bit32.band(p.Width + 7, bit32.bnot(7)) * p.Height * 4
+    p.Memory = bit32.band(bit32.bor(p.Width, 7), bit32.bnot(7)) * p.Height * 4
     textureMemUsed = textureMemUsed + p.Memory
     Setmt__gc(p, self)
     self.__index = self

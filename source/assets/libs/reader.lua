@@ -109,11 +109,33 @@ end
 
 Reader = {
     Input = function(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
-        if STATE == STATE_READING and Pages[Pages.Page] and Pages[Pages.Page].Zoom then
-            if Controls.check(Pad, SCE_CTRL_RTRIGGER) then
-                Scale(1.2, Pages[Pages.Page])
-            elseif Controls.check(Pad, SCE_CTRL_LTRIGGER) then
-                Scale(5 / 6, Pages[Pages.Page])
+        if STATE == STATE_READING and math.abs(offset.x) < 80 then
+            if Controls.check(Pad, SCE_CTRL_RTRIGGER) and not Controls.check(OldPad, SCE_CTRL_RTRIGGER) then
+                Pages.PrevPage = Pages.Page
+                if Pages.Page ~= #Pages and ChangePage(Pages.Page + 1) then
+                    offset.x = 960 + offset.x
+                    local page = Pages[Pages.Page - 1]
+                    if page and page.Zoom then
+                        if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
+                            page.x = -page.Width * page.Zoom / 2
+                        else
+                            page.x = -480
+                        end
+                    end
+                end
+            elseif Controls.check(Pad, SCE_CTRL_LTRIGGER) and not Controls.check(OldPad, SCE_CTRL_LTRIGGER) then
+                Pages.PrevPage = Pages.Page
+                if (Pages.Page ~= 1 or CurrentChapter ~= 1) and ChangePage(Pages.Page - 1) then
+                    offset.x = -960 + offset.x
+                    local page = Pages[Pages.Page + 1]
+                    if page and page.Zoom then
+                        if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
+                            page.x = 960 + page.Width * page.Zoom / 2
+                        else
+                            page.x = 960 + 480
+                        end
+                    end
+                end
             end
         end
         if Controls.check(Pad, SCE_CTRL_CIRCLE) then
@@ -141,7 +163,10 @@ Reader = {
             if Touch2.x and OldTouch2.x and page.Zoom then
                 touchMode = TOUCH_MULTI
                 local old_Zoom = page.Zoom
-                local center = {x = (Touch.x + Touch2.x) / 2, y = (Touch.y + Touch2.y) / 2}
+                local center = {
+                    x = (Touch.x + Touch2.x) / 2,
+                    y = (Touch.y + Touch2.y) / 2
+                }
                 local n = (math.sqrt((Touch.x - Touch2.x) * (Touch.x - Touch2.x) + (Touch.y - Touch2.y) * (Touch.y - Touch2.y)) / math.sqrt((OldTouch.x - OldTouch2.x) * (OldTouch.x - OldTouch2.x) + (OldTouch.y - OldTouch2.y) * (OldTouch.y - OldTouch2.y)))
                 Scale(n, page)
                 n = page.Zoom / old_Zoom

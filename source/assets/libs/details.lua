@@ -142,15 +142,15 @@ Details = {
                         elseif Controls.check(Pad, SCE_CTRL_LEFT) then
                             ItemSelected = ItemSelected - 3
                         end
-                        if #Chapters > 0 then
-                            if ItemSelected <= 0 then
-                                ItemSelected = 1
-                            elseif ItemSelected > #Chapters then
-                                ItemSelected = #Chapters
-                            end
-                        else
-                            ItemSelected = 0
+                    end
+                    if #Chapters > 0 then
+                        if ItemSelected <= 0 then
+                            ItemSelected = 1
+                        elseif ItemSelected > #Chapters then
+                            ItemSelected = #Chapters
                         end
+                    else
+                        ItemSelected = 0
                     end
                     if TimerSpace > 50 then
                         TimerSpace = math.max(50, TimerSpace / 2)
@@ -246,20 +246,19 @@ Details = {
                 y = y + 70
             end
             Graphics.fillRect(900, 960, 90, 544, Color.new(0, 0, 0, Alpha))
-            DrawManga(Point.x + (Center.x - Point.x) * M, Point.y + (Center.y - Point.y) * M, Manga, 1 + (M * 0.25))
             if Manga then
                 local text, color = Language[LANG].DETAILS.ADD_TO_LIBRARY, BLUE
                 if Database.check(Manga) then
                     color = RED
                     text = Language[LANG].DETAILS.REMOVE_FROM_LIBRARY
                 end
-                Graphics.fillRect(20, 260, shift + 420, shift + 475, color)
+                Graphics.fillRect(20, 260, shift + 420, shift + 479, color)
                 if textures_16x16.Triangle and textures_16x16.Triangle.e then
                     Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
                 end
-                Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
+                Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 448 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
             end
-            Graphics.fillRect(20, 260, shift + 480, shift + 540, Color.new(19, 76, 76, Alpha))
+            Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
 
             if DETAILS_MODE == DETAILS_START and #Chapters == 0 and not ParserManager.Check(Chapters) and not NOTIFICATION_SHOW then
                 NOTIFICATION_SHOW = true
@@ -274,6 +273,7 @@ Details = {
                 Graphics.fillEmptyRect(282, 899, y + 2, y + 68, SELECTED_RED)
             end
             Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
+            DrawManga(Point.x + (Center.x - Point.x) * M, Point.y + (Center.y - Point.y) * M, Manga, 1 + (M * 0.25))
 
             local t = math.min(math.max(0, Timer.getTime(NameTimer) - 1500), ms)
             Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)

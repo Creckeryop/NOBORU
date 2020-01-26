@@ -195,12 +195,12 @@ function table.serialize(t, name)
     local type = type
     local function serialize(_t, _name)
         local P = {}
-        for k, v in pairs(_t) do
+		for k, v in pairs(_t) do
             if type(v) == "string" then
                 if type(k) == "string" then
-                    P[#P + 1] = format('["%s"] = \"%s\"', k, v)
+                    P[#P + 1] = format('["%s"] = \"%s\"', k, v:gsub("\\","\\\\"))
                 else
-                    P[#P + 1] = format('[%s] = \"%s\"', k, v)
+                    P[#P + 1] = format('[%s] = \"%s\"', k, v:gsub("\\","\\\\"))
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then
@@ -219,6 +219,10 @@ function table.serialize(t, name)
         return format('%s = {%s}',_name,concat(P,', '))
     end
     return serialize(t,name)
+end
+
+function utf8char(char) 
+	return load("return \"\\u{"..char.."}\"")()
 end
 
 function table.reverse(t)
