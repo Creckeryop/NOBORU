@@ -138,10 +138,12 @@ while true do
     Screen.flip()
     Screen.waitVblankStart()
 
-    if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_RTRIGGER) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_RTRIGGER) ~= 0 then
+    if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_LEFT) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_LEFT) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
     Panel.update()
-    Threads.Update()
-    ParserManager.Update()
+    if fade == 0 then
+        Threads.Update()
+        ParserManager.Update()
+    end
 end
