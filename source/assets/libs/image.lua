@@ -1,13 +1,12 @@
-
----Variable to count used memory by textures
-local textureMemUsed = 0
-
 ---@class Image
 Image = {
     __gc = function(self)
         self:free()
     end
 }
+
+---Variable to count used memory by textures
+local textureMemUsed = 0
 
 ---@param image integer
 ---@return Image|nil

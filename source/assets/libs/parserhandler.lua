@@ -1,10 +1,6 @@
 local Order = {}
 local OrderCount = 0
 
-LATEST_MODE = 0
-POPULAR_MODE = 1
-SEARCH_MODE = 2
-
 local Task = nil
 local Trash = {}
 
@@ -35,7 +31,7 @@ ParserManager = {
                     Task = nil
                 end
                 if not _ then
-                    Console.write(isSafeToleave, Color.new(255, 0, 0))
+                    Console.error(isSafeToleave)
                 end
             end
         end
@@ -43,25 +39,25 @@ ParserManager = {
     getMangaListAsync = function(mode, parser, i, Table, data)
         if not parser or Uniques[Table] then return end
         Console.write("Task created")
-        if mode == SEARCH_MODE then
+        if mode == "SEARCH" then
             data = data:gsub("%%", "%%%%25"):gsub("!", "%%%%21"):gsub("#", "%%%%23"):gsub("%$", "%%%%24"):gsub("&", "%%%%26"):gsub("'", "%%%%27"):gsub("%(", "%%%%28"):gsub("%)", "%%%%29"):gsub("%*", "%%%%2A"):gsub("%+", "%%%%2B"):gsub(",", "%%%%2C"):gsub("%.", "%%%%2E"):gsub("/", "%%%%2F"):gsub(" ", "%+")
         end
         local T = {
             Type = "MangaList",
             F = function()
-                if mode == POPULAR_MODE then
+                if mode == "POPULAR" then
                     if parser.getPopularManga then
                         parser:getPopularManga(i, Table)
                     else
                         Console.write(parser.Name .. " doesn't support getPopularManga function", COLOR_GRAY)
                     end
-                elseif mode == LATEST_MODE then
+                elseif mode == "LATEST" then
                     if parser.getLatestManga then
                         parser:getLatestManga(i, Table)
                     else
                         Console.write(parser.Name .. " doesn't support getLatestManga function", COLOR_GRAY)
                     end
-                elseif mode == SEARCH_MODE then
+                elseif mode == "SEARCH" then
                     if parser.searchManga then
                         parser:searchManga(data, i, Table)
                     else
@@ -173,14 +169,11 @@ ParserManager = {
                         coroutine.yield(false)
                     end
                     if System.doesFileExist(path2row) then
-                        local suc, err =
-                            pcall(
-                            function()
-                                dofile(path2row)
-                            end
-                        )
+                        local suc, err = pcall(function()
+                            dofile(path2row)
+                        end)
                         if not suc then
-                            Console.write("Cant load " .. path2row .. ":" .. err, Color.new(255, 0, 0))
+                            Console.error(string.format("Cant load %s:%s", path2row, err))
                         end
                     end
                 end

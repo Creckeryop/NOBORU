@@ -5,12 +5,9 @@ Slider.Y = -10
 local Parser        = nil
 local TouchTimer    = Timer.new()
 
-local PARSERS_MODE = 0
-local MANGAS_MODE = 1
-local LIBRARY_MODE = 2
-local CATALOGS_MODE = PARSERS_MODE
+local mode = "PARSERS"
 
-local GETMANGA_MODE = POPULAR_MODE
+local getMangaMode = "POPULAR"
 local SEARCH_DATA = ""
 
 local DownloadedImage   = {}
@@ -55,7 +52,7 @@ local UpdateMangas  = function()
         local new_table = {}
         for _, i in ipairs(DownloadedImage) do
             local manga = Results[i]
-            if Threads.Check(manga) and (Details.GetFade() == 0 or manga ~= Details.GetManga()) then
+            if Threads.Check(manga) and (Details.getFade() == 0 or manga ~= Details.getManga()) then
                 Threads.Remove(manga)
                 manga.ImageDownload = nil
             else
@@ -70,18 +67,18 @@ local Parsers = {}
 
 Catalogs = {
     Input = function(OldPad, Pad, OldTouch, Touch)
-        if CATALOGS_MODE == MANGAS_MODE then
+        if mode == "MANGA" then
             if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
-                CATALOGS_MODE = PARSERS_MODE
+                mode = "PARSERS"
                 Slider.Y = -10
                 Catalogs.Term()
             end
             if Controls.check(Pad, SCE_CTRL_SQUARE) and not Controls.check(OldPad, SCE_CTRL_SQUARE) then
-                local new_mode = GETMANGA_MODE == POPULAR_MODE and Parser.getLatestManga and LATEST_MODE or POPULAR_MODE
-                if GETMANGA_MODE ~= new_mode then
+                local new_mode = getMangaMode == "POPULAR" and Parser.getLatestManga and "LATEST" or "POPULAR"
+                if getMangaMode ~= new_mode then
                     Catalogs.Term()
-                    GETMANGA_MODE = new_mode
-                    Notifications.Push(GETMANGA_MODE == POPULAR_MODE and Language[LANG].PANEL.MODE_POPULAR or GETMANGA_MODE == LATEST_MODE and Language[LANG].PANEL.MODE_LATEST)
+                    getMangaMode = new_mode
+                    Notifications.push(getMangaMode == "POPULAR" and Language[LANG].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[LANG].PANEL.MODE_LATEST)
                 end
             end
             if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
@@ -90,7 +87,7 @@ Catalogs = {
                     StartSearch = true
                 end
             end
-        elseif CATALOGS_MODE == PARSERS_MODE then
+        elseif mode == "PARSERS" then
             if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
                 ParserManager.UpdateParserList(Parsers)
             end
@@ -105,15 +102,15 @@ Catalogs = {
         elseif TOUCH.MODE ~= TOUCH.NONE and not Touch.x then
             if OldTouch.x then
                 if TOUCH.MODE == TOUCH.READ then
-                    if CATALOGS_MODE == PARSERS_MODE then
+                    if mode == "PARSERS" then
                         if OldTouch.x > 265 and OldTouch.x < 945 then
                             local id = floor((Slider.Y - 10 + OldTouch.y) / 75) + 1
                             if parserList[id]then
-                                CATALOGS_MODE = MANGAS_MODE
+                                mode = "MANGA"
                                 Parser = parserList[id]
                             end
                         end
-                    elseif CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
+                    elseif mode == "MANGA" or mode == "LIBRARY" then
                         local start = max(1,floor((Slider.Y - 20) / (MANGA_HEIGHT+12))*4 + 1)
                         for i = start, min(#Results,start + 11) do
                             local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
@@ -121,7 +118,7 @@ Catalogs = {
                             if OldTouch.x > lx and OldTouch.x < lx + MANGA_WIDTH and OldTouch.y > uy and OldTouch.y < uy + MANGA_HEIGHT  then
                                 local manga = Results[i]
                                 local id = i
-                                Details.SetManga(manga, lx + MANGA_WIDTH / 2, uy + MANGA_HEIGHT / 2)
+                                Details.setManga(manga, lx + MANGA_WIDTH / 2, uy + MANGA_HEIGHT / 2)
                                 if not manga.Image then
                                     Threads.Remove(manga)
                                     Threads.DownloadImageAsync(manga.ImageLink, manga, 'Image', true)
@@ -143,7 +140,7 @@ Catalogs = {
             if abs(Slider.V) > 0.1 or abs(Slider.TouchY - Touch.y) > 10 then
                 TOUCH.MODE = TOUCH.SLIDE
             else
-                if CATALOGS_MODE == PARSERS_MODE then
+                if mode == "PARSERS" then
                     if OldTouch.x > 265 and OldTouch.x < 945 then
                         local id = floor((Slider.Y - 10 + OldTouch.y) / 75) + 1
                         if parserList[id] then
@@ -164,24 +161,24 @@ Catalogs = {
     end,
     Update = function(delta)
         Parsers = GetParserList()
-        if CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
+        if mode == "MANGA" or mode == "LIBRARY" then
             UpdateMangas()
             if ParserManager.Check(Results) then
-                Loading.set_mode(LOADING_BLACK, 600, 272)
-            elseif Details.GetMode() == DETAILS_END then
-                Loading.set_mode(LOADING_NONE)
+                Loading.setMode("BLACK", 600, 272)
+            elseif Details.getMode() == "END" then
+                Loading.setMode("NONE")
             end
-            if CATALOGS_MODE == MANGAS_MODE then
+            if mode == "MANGA" then
                 Panel.set{
                     "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
                     ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
-                    Square = GETMANGA_MODE == POPULAR_MODE and Language[LANG].PANEL.MODE_POPULAR or GETMANGA_MODE == LATEST_MODE and Language[LANG].PANEL.MODE_LATEST or GETMANGA_MODE == SEARCH_MODE and string.format(Language[LANG].PANEL.MODE_SEARCHING,SEARCH_DATA),
+                    Square = getMangaMode == "POPULAR" and Language[LANG].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[LANG].PANEL.MODE_LATEST or getMangaMode == "SEARCH" and string.format(Language[LANG].PANEL.MODE_SEARCHING,SEARCH_DATA),
                     Triangle = Parser.searchManga and Language[LANG].PANEL.SEARCH or nil,
                     Circle = Language[LANG].PANEL.BACK,
                     DPad = Language[LANG].PANEL.CHOOSE,
                     Cross = Language[LANG].PANEL.SELECT
                 }
-            elseif CATALOGS_MODE == LIBRARY_MODE then
+            elseif mode == "LIBRARY" then
                 Panel.set{
                     "L\\R", "DPad", "Cross",
                     ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
@@ -189,7 +186,7 @@ Catalogs = {
                     Cross = Language[LANG].PANEL.SELECT
                 }
             end
-        elseif CATALOGS_MODE == PARSERS_MODE then
+        elseif mode == "PARSERS" then
             Panel.set{
                 "L\\R", "Triangle", "DPad", "Cross",
                 ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
@@ -212,8 +209,8 @@ Catalogs = {
                 if data:gsub("%s","") ~= "" then
                     Catalogs.Term()
                     SEARCH_DATA = data
-                    GETMANGA_MODE = SEARCH_MODE
-                    Notifications.Push(string.format(Language[LANG].NOTIFICATIONS.SEARCHING, data))
+                    getMangaMode = "SEARCH"
+                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.SEARCHING, data))
                 end
                 StartSearch = false
                 Keyboard.clear()
@@ -222,7 +219,7 @@ Catalogs = {
                 Keyboard.clear()
             end
         end
-        if CATALOGS_MODE == PARSERS_MODE then
+        if mode == "PARSERS" then
             if Slider.Y < -10 then
                 Slider.Y = -10
                 Slider.V = 0
@@ -230,21 +227,21 @@ Catalogs = {
                 Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
                 Slider.V = 0
             end
-        elseif CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
+        elseif mode == "MANGA" or mode == "LIBRARY" then
             if Slider.Y < 0 then
                 Slider.Y = 0
                 Slider.V = 0
             elseif Slider.Y > ceil(#Results/4) * (MANGA_HEIGHT + 12) - 512 then
                 Slider.Y = max(0, ceil(#Results/4) * (MANGA_HEIGHT + 12) - 512)
                 Slider.V = 0
-                if CATALOGS_MODE == MANGAS_MODE then
+                if mode == "MANGA" then
                     if not Results.NoPages and Parser then
                         if not ParserManager.Check(Results) then
-                            ParserManager.getMangaListAsync(GETMANGA_MODE, Parser, page, Results, SEARCH_DATA)
+                            ParserManager.getMangaListAsync(getMangaMode, Parser, page, Results, SEARCH_DATA)
                             page = page + 1
                         end
                     end
-                elseif CATALOGS_MODE == LIBRARY_MODE then
+                elseif mode == "LIBRARY" then
                     if #Results ~= #Database.getMangaList() then
                         Results = Database.getMangaList()
                     end
@@ -254,7 +251,7 @@ Catalogs = {
     end,
     Draw = function()
         Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
-        if CATALOGS_MODE == PARSERS_MODE then
+        if mode == "PARSERS" then
             local start = max(1, floor((Slider.Y - 10) / 75))
             local y = start * 75 - Slider.Y
             for i = start, min(#Parsers,start + 9) do
@@ -281,10 +278,10 @@ Catalogs = {
                 local h = #Parsers * 75 / 524
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
-        elseif CATALOGS_MODE == MANGAS_MODE or CATALOGS_MODE == LIBRARY_MODE then
+        elseif mode == "MANGA" or mode == "LIBRARY" then
             local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
             for i = start, min(#Results, start + 15) do
-                if Details.GetFade() == 0 or Details.GetManga() ~= Results[i] then
+                if Details.getFade() == 0 or Details.getManga() ~= Results[i] then
                     DrawManga(610 + (((i - 1) % 4) - 2)*(MANGA_WIDTH + 10) + MANGA_WIDTH/2, MANGA_HEIGHT / 2 - Slider.Y + floor((i - 1)/4) * (MANGA_HEIGHT + 12) + 12, Results[i])
                 end
             end
@@ -307,7 +304,7 @@ Catalogs = {
             end
         end
         ParserManager.Remove(Results)
-        Loading.set_mode(LOADING_NONE)
+        Loading.setMode("NONE")
     end,
     Term = function()
         Catalogs.Shrink()
@@ -315,12 +312,14 @@ Catalogs = {
         Results             = {}
         page                = 1
         SEARCH_DATA = ""
-        GETMANGA_MODE = POPULAR_MODE
+        getMangaMode = "POPULAR"
     end
 }
-function Catalogs.SetMode(new_mode)
-    CATALOGS_MODE = new_mode
-    GETMANGA_MODE = POPULAR_MODE
+
+---@param new_mode string | '"PARSERS"' | '"MANGA"' | '"LIBRARY"'
+function Catalogs.setMode(new_mode)
+    mode = new_mode
+    getMangaMode = "POPULAR"
     Catalogs.Shrink()
     page = 1
     Slider.Y = -100

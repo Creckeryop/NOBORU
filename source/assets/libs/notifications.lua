@@ -1,37 +1,33 @@
+Notifications = {}
+
 ---Order of notification messages
-local Order = {}
+local order = {}
 
 ---Active notification message
-local Notification = nil
+local notification = nil
 
-local animation_timer = Timer.new()
-
----@param time number @ in range of [0..1]
----Function to get easing value in range [0..1]
-local function easeInOutCubic(time)
-    return time < 0.5 and 4 * time * time * time or (time - 1) * (2 * time - 2) * (2 * time - 2) + 1
-end
-
----Table for notification
-Notifications = {}
+---Easing function that used here
+local easing = EaseInOutCubic
 
 ---@param message string
 ---Adds notification with given message that will be shown on screen
-function Notifications.Push(message)
-    Order[#Order + 1] = message
+function Notifications.push(message)
+    order[#order + 1] = message
 end
 
+local animation_timer = Timer.new()
+
 ---Updates notification animation
-function Notifications.Update()
-    if Timer.getTime(animation_timer) > 2000 or not Notification then
-        Notification = table.remove(Order, 1)
+function Notifications.update()
+    if Timer.getTime(animation_timer) > 1900 or not notification then
+        notification = table.remove(order, 1)
         Timer.reset(animation_timer)
     end
 end
 
 ---Draws notification on screen
-function Notifications.Draw()
-    if not Notification then return end
+function Notifications.draw()
+    if not notification then return end
     local time = Timer.getTime(animation_timer)
     local fade = 0
     if time < 500 then
@@ -41,10 +37,9 @@ function Notifications.Draw()
     elseif time < 1800 then
         fade = 1 - (time - 1300) / 500
     end
-    fade = easeInOutCubic(fade)
-    local width = (Font.getTextWidth(FONT20, Notification) + 20) * fade
-    local w = Font.getTextWidth(FONT20, Notification) + 20
-    local height = Font.getTextHeight(FONT20, Notification) + 10
-    Graphics.fillRect(480 - width / 2, 480 + width / 2, 544 - 100 * fade, 544 - 100 * fade + height, Color.new(20, 20, 20, 255 * fade))
-    Font.print(FONT20, 480 - w / 2 + 10, 544 - 100 * fade + 2, Notification, Color.new(255, 255, 255, 255 * fade))
+    fade = easing(fade)
+    local width = (Font.getTextWidth(FONT20, notification) + 20) / 2
+    local height = Font.getTextHeight(FONT20, notification) + 10
+    Graphics.fillRect(480 - width, 480 + width, 544 - 100 * fade, 544 - 100 * fade + height, Color.new(20, 20, 20, 255 * fade))
+    Font.print(FONT20, 480 - width + 10, 544 - 100 * fade + 2, notification, Color.new(255, 255, 255, 255 * fade))
 end

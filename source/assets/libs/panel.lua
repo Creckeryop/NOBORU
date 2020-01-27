@@ -1,6 +1,4 @@
-local MODE_HIDE = 0
-local MODE_SHOW = 1
-local Mode = MODE_HIDE
+local mode = "HIDE"
 
 ---Textures for PS Buttons
 textures_16x16 = {
@@ -19,14 +17,14 @@ Panel = {}
 
 ---Hides Panel
 function Panel.hide()
-    if Mode ~= MODE_SHOW then return end
-    Mode = MODE_HIDE
+    if mode ~= "SHOW" then return end
+    mode = "HIDE"
 end
 
 ---Shows Panel
 function Panel.show()
-    if Mode ~= MODE_HIDE then return end
-    Mode = MODE_SHOW
+    if mode ~= "HIDE" then return end
+    mode = "SHOW"
 end
 
 ---@param buttons table
@@ -36,33 +34,33 @@ function Panel.set(buttons)
 end
 
 ---Local variable used as vertical offset of panel
-local Y = 23
+local y = 23
 
 ---Updates Panel Animation
-function Panel.update()
-    if Mode == MODE_HIDE then
-        Y = math.min(23, Y + (23 - Y) / 4)
-    elseif Mode == MODE_SHOW then
-        Y = math.max(0, Y - Y / 4)
+function Panel.update(dt)
+    if mode == "HIDE" then
+        y = math.min(23, y + dt * (23 - y) / 4)
+    elseif mode == "SHOW" then
+        y = math.max(0, y - dt * y / 4)
     end
 end
 
 ---Draws Panel on screen
 function Panel.draw()
-    if Y >= 23 then return end
-    Graphics.fillRect(0, 960, 521 + Y, 524 + Y, Color.new(0, 0, 0, 32))
-    Graphics.fillRect(0, 960, 522 + Y, 524 + Y, Color.new(0, 0, 0, 32))
-    Graphics.drawImage(0, 524 + Y, LUA_PANEL)
+    if y >= 23 then return end
+    Graphics.fillRect(0, 960, 521 + y, 524 + y, Color.new(0, 0, 0, 32))
+    Graphics.fillRect(0, 960, 522 + y, 524 + y, Color.new(0, 0, 0, 32))
+    Graphics.drawImage(0, 524 + y, LUA_PANEL)
     local x = 20
     for _, v in ipairs(hints) do
         if textures_16x16[v] then
-            Graphics.drawImage(x, 526 + Y, textures_16x16[v].e)
+            Graphics.drawImage(x, 526 + y, textures_16x16[v].e)
             x = x + 20
         else
-            Font.print(FONT12, x, 526 + Y, v, COLOR_BLACK)
+            Font.print(FONT12, x, 526 + y, v, COLOR_BLACK)
             x = x + Font.getTextWidth(FONT12, v) + 5
         end
-        Font.print(FONT12, x, 526 + Y, hints[v], COLOR_BLACK)
+        Font.print(FONT12, x, 526 + y, hints[v], COLOR_BLACK)
         x = x + Font.getTextWidth(FONT12, hints[v]) + 10
     end
 end

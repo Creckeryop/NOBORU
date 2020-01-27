@@ -14,11 +14,15 @@ dofile("app0:assets/libs/loading.lua")
 dofile("app0:assets/libs/net.lua")
 dofile("app0:assets/libs/parserhandler.lua")
 dofile("app0:assets/libs/reader.lua")
+dofile("app0:assets/libs/catalogs.lua")
+dofile("app0:assets/libs/details.lua")
 dofile("app0:assets/libs/menu.lua")
 dofile("app0:assets/libs/panel.lua")
 dofile("app0:assets/libs/notifications.lua")
 
 Database.load()
+Menu.setMode("LIBRARY")
+Panel.show()
 
 MENU = 0
 READER = 1
@@ -45,7 +49,6 @@ for k, v in ipairs(fonts) do
     Screen.waitVblankStart()
 end
 
-Panel.show()
 local Pad = Controls.read()
 local OldTouch, Touch = {}, {x = nil, y = nil}
 local OldTouch2, Touch2 = {}, {x = nil, y = nil}
@@ -90,9 +93,9 @@ while true do
 
     if not StartSearch then
         if AppMode == MENU then
-            Menu.Input(OldPad, Pad, OldTouch, Touch)
+            Menu.input(OldPad, Pad, OldTouch, Touch)
         elseif AppMode == READER then
-            Reader.Input(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
+            Reader.input(OldPad, Pad, OldTouch, Touch, OldTouch2, Touch2)
         end
     end
     if fade > 0 then
@@ -102,21 +105,21 @@ while true do
         end
     end
     if AppMode == MENU then
-        Menu.Update(1)
+        Menu.update(1)
     elseif AppMode == READER then
-        Reader.Update(1)
+        Reader.update(1)
     end
 
-    Notifications.Update()
+    Notifications.update()
 
     Graphics.initBlend()
     if AppMode == MENU then
-        Menu.Draw()
+        Menu.draw()
     elseif AppMode == READER then
-        Reader.Draw()
+        Reader.draw()
     end
     Loading.draw()
-    Notifications.Draw()
+    Notifications.draw()
     Panel.draw()
 
     if DEBUG_MODE then
@@ -141,7 +144,7 @@ while true do
     if bit32.bxor(Pad, SCE_CTRL_START + SCE_CTRL_LEFT) == 0 and bit32.bxor(OldPad, SCE_CTRL_START + SCE_CTRL_LEFT) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
-    Panel.update()
+    Panel.update(1)
     if fade == 0 then
         Threads.Update()
         ParserManager.Update()

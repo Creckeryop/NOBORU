@@ -1,79 +1,92 @@
-dofile("app0:assets/libs/catalogs.lua")
-dofile("app0:assets/libs/details.lua")
-local logo_small = Graphics.loadImage("app0:assets/images/logo-small.png")
+Menu = {}
 
-LIBRARY_MODE    = 0
-CATALOGS_MODE   = 1
-SETTINGS_MODE   = 2
-local MENU_MODE = -1
+local logoSmall = Graphics.loadImage("app0:assets/images/logo-small.png")
 
-local ButtonsAnimX = {1, 1, 1}
+---@param mode string
+---Menu mode
+local mode
 
-Menu = {
-    SetMode = function (new_mode)
-        if MENU_MODE == new_mode then return end
-        if MENU_MODE == CATALOGS_MODE then
-            Catalogs.Shrink()
-        end
-        if new_mode == LIBRARY_MODE then
-            Catalogs.SetMode(2)
-        else
-            Catalogs.SetMode(0)
-        end
-        MENU_MODE = new_mode
-    end,
-    Input = function (OldPad, Pad, OldTouch, Touch)
-        if Details.GetMode() == DETAILS_END then
-            if Controls.check(Pad, SCE_CTRL_RTRIGGER) and not Controls.check(OldPad, SCE_CTRL_RTRIGGER) then
-                Menu.SetMode(math.min(MENU_MODE + 1, 2))
-            end
-            if Controls.check(Pad, SCE_CTRL_LTRIGGER) and not Controls.check(OldPad, SCE_CTRL_LTRIGGER) then
-                Menu.SetMode(math.max(MENU_MODE - 1, 0))
-            end
-            if Touch.x and not OldTouch.x and Touch.x < 250 then
-                if Touch.y < 127 then
-                elseif Touch.y < 187 then
-                    Menu.SetMode(LIBRARY_MODE)
-                elseif Touch.y < 230 then
-                    Menu.SetMode(CATALOGS_MODE)
-                elseif Touch.y > 460 then
-                    Menu.SetMode(SETTINGS_MODE)
-                end
-            end
-            if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE  then
-                Catalogs.Input(OldPad, Pad, OldTouch, Touch)
-            end
-        else
-            Details.Input(OldPad, Pad, OldTouch, Touch)
-        end
-    end,
-    Update = function (delta)
-        if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE  then
-            Catalogs.Update(delta)
-        end
-        Details.Update(delta)
-    end,
-    Draw = function ()
-        for i = 1, 3 do
-            if MENU_MODE + 1 == i then
-                ButtonsAnimX[i] = math.max(ButtonsAnimX[i] - 0.1, 0)
-            else
-                ButtonsAnimX[i] = math.min(ButtonsAnimX[i] + 0.1, 1)
-            end
-        end
-        Screen.clear(Color.new(0, 0, 0))
-        Graphics.drawImage(0, 0, logo_small)
-        Graphics.fillRect(255, 960, 0, 544, Color.new(233,233,233))
-        Font.print(FONT30, 30, 137,  Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255-128*ButtonsAnimX[1]))
-        Font.print(FONT30, 30, 197, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[2]))
-        Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255-128*ButtonsAnimX[3]))
-        if Details.GetFade() ~= 1 then
-            if MENU_MODE == CATALOGS_MODE or MENU_MODE == LIBRARY_MODE then
-                Catalogs.Draw()
-            end
-        end
-        Details.Draw()
+---@param new_mode string | '"LIBRARY"' | '"CATALOGS"' | '"PARSERS"'
+---Sets menu mode
+function Menu.setMode(new_mode)
+    if mode == new_mode then return end
+    if new_mode == "LIBRARY" then
+        Catalogs.setMode("LIBRARY")
+    elseif new_mode == "CATALOGS" then
+        Catalogs.setMode("PARSERS")
     end
+    mode = new_mode
+end
+
+local next_mode = {
+    ["LIBRARY"] = "CATALOGS",
+    ["CATALOGS"] = "SETTINGS",
+    ["SETTINGS"] = "SETTINGS"
 }
 
-Menu.SetMode(LIBRARY_MODE)
+local prev_mode = {
+    ["LIBRARY"] = "LIBRARY",
+    ["CATALOGS"] = "LIBRARY",
+    ["SETTINGS"] = "CATALOGS"
+}
+
+function Menu.input(oldpad, pad, oldtouch, touch)
+    if Details.getMode() == "END" then
+        if Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldpad, SCE_CTRL_RTRIGGER) then
+            Menu.setMode(next_mode[mode])
+        end
+        if Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldpad, SCE_CTRL_LTRIGGER) then
+            Menu.setMode(prev_mode[mode])
+        end
+        if touch.x and not oldtouch.x and touch.x < 250 then
+            if touch.y < 127 then
+            elseif touch.y < 187 then
+                Menu.setMode("LIBRARY")
+            elseif touch.y < 230 then
+                Menu.setMode("CATALOGS")
+            elseif touch.y > 460 then
+                Menu.setMode("SETTINGS")
+            end
+        end
+        if mode == "CATALOGS" or mode == "LIBRARY" then
+            Catalogs.Input(oldpad, pad, oldtouch, touch)
+        end
+    else
+        Details.input(oldpad, pad, oldtouch, touch)
+    end
+end
+
+function Menu.update(dt)
+    if mode == "CATALOGS" or mode == "LIBRARY" then
+        Catalogs.Update(dt)
+    end
+    Details.update(dt)
+end
+
+local button_a = {
+    ["LIBRARY"] = 1,
+    ["CATALOGS"] = 1,
+    ["SETTINGS"] = 1
+}
+
+function Menu.draw()
+    for k, v in pairs(button_a) do
+        if k == mode then
+            button_a[k] = math.max(v - 0.1, 0)
+        else
+            button_a[k] = math.min(v + 0.1, 1)
+        end
+    end
+    Screen.clear(Color.new(0, 0, 0))
+    Graphics.drawImage(0, 0, logoSmall)
+    Graphics.fillRect(255, 960, 0, 544, Color.new(233, 233, 233))
+    Font.print(FONT30, 30, 137, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
+    Font.print(FONT30, 30, 197, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
+    Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    if Details.getFade() ~= 1 then
+        if mode == "CATALOGS" or mode == "LIBRARY" then
+            Catalogs.Draw()
+        end
+    end
+    Details.draw()
+end

@@ -1,4 +1,3 @@
-
 ---Hash table with all parsers
 local parserTable = {}
 
@@ -30,7 +29,7 @@ function Parser:new(Name, Link, Lang, ID)
 	}
 	setmetatable(p, self)
 	self.__index = self
-	local message = string.format('Parser "%s" %s!', Name, (parserTable[ID]) and "Updated!" or "Loaded!")
+	local message = string.format('Parser "%s" %s!', Name, parserTable[ID] and "Updated!" or "Loaded!")
 	Console.write(message)
 	parserTable[ID] = p
 	updated = true
@@ -54,7 +53,7 @@ function GetParserList()
 	updated = false
 	local list = {}
 	for _, v in pairs(parserTable) do
-		list[#list+1] = v
+		list[#list + 1] = v
 	end
 	cachedList = list
 	return list

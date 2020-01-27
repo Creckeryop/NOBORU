@@ -64,14 +64,11 @@ if System.doesDirExist("ux0:data/noboru/parsers/") then
     local files = System.listDirectory(path)
     for _, file in pairs(files) do
         if not file.directory then
-            local suc, err =
-                pcall(
-                function()
-                    dofile(path .. file.name)
-                end
-            )
+            local suc, err = pcall(function()
+                dofile(path .. file.name)
+            end)
             if not suc then
-                Console.write("Cant load " .. path .. ":" .. err, Color.new(255, 0, 0))
+                Console.error("Cant load " .. path .. ":" .. err)
             end
         end
     end
@@ -88,7 +85,7 @@ end
 function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
     if Name and Link and ImageLink and ParserID then
         return {
-            Name = Name or "",
+            Name = Name,
             Link = Link,
             ImageLink = ImageLink,
             ParserID = ParserID,
