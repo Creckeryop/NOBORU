@@ -94,7 +94,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         end
     elseif mode == "PARSERS" then
         if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
-            ParserManager.UpdateParserList(Parsers)
+            ParserManager.updateParserList(Parsers)
         end
     end
     if touch.x then
@@ -173,7 +173,7 @@ function Catalogs.update()
     Parsers = GetParserList()
     if mode == "MANGA" or mode == "LIBRARY" then
         UpdateMangas()
-        if ParserManager.Check(Results) then
+        if ParserManager.check(Results) then
             Loading.setMode("BLACK", 600, 272)
         elseif Details.getMode() == "END" then
             Loading.setMode("NONE")
@@ -246,7 +246,7 @@ function Catalogs.update()
             Slider.V = 0
             if mode == "MANGA" then
                 if not Results.NoPages and Parser then
-                    if not ParserManager.Check(Results) then
+                    if not ParserManager.check(Results) then
                         ParserManager.getMangaListAsync(getMangaMode, Parser, page, Results, searchData)
                         page = page + 1
                     end
@@ -308,7 +308,7 @@ function Catalogs.Shrink()
     for _, i in ipairs(DownloadedImage) do
         freeMangaImage(Results[i])
     end
-    ParserManager.Remove(Results)
+    ParserManager.remove(Results)
     Loading.setMode("NONE")
 end
 

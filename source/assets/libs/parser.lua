@@ -58,3 +58,16 @@ function GetParserList()
 	cachedList = list
 	return list
 end
+
+function ClearParsers()
+	if System.doesDirExist("ux0:data/noboru/parsers") then
+		local list = System.listDirectory("ux0:/data/noboru/parsers")
+		for _, v in ipairs(list) do
+			if not v.is_directory then
+				System.deleteFile("ux0:data/noboru/parsers/"..v.name)
+			end
+		end
+	end
+	parserTable = {}
+	cachedList = {}
+end

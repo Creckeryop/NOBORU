@@ -186,7 +186,7 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
         if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
             mode = "WAIT"
             Loading.setMode("NONE")
-            ParserManager.Remove(Chapters)
+            ParserManager.remove(Chapters)
             Timer.reset(animation_timer)
             Panel.show()
             old_fade = fade
@@ -197,7 +197,7 @@ end
 function Details.update()
     if mode ~= "END" then
         animationUpdate()
-        if ParserManager.Check(Chapters) then
+        if ParserManager.check(Chapters) then
             Loading.setMode("WHITE", 580, 250)
         else
             Loading.setMode("NONE")
@@ -256,7 +256,7 @@ function Details.draw()
 
         Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
 
-        if mode == "START" and #Chapters == 0 and not ParserManager.Check(Chapters) and not is_notification_showed then
+        if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[LANG].WARNINGS.NO_CHAPTERS)
         end

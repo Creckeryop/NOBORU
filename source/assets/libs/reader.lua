@@ -59,7 +59,7 @@ local function deletePageImage(page)
         end
         Pages[page].Image = nil
     else
-        ParserManager.Remove(Pages[page])
+        ParserManager.remove(Pages[page])
         Threads.remove(Pages[page])
     end
 end
@@ -182,7 +182,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         Pages = {
             Page = 0
         }
-        ParserManager.Clear()
+        ParserManager.clear()
         collectgarbage("collect")
         AppMode = MENU
     end
@@ -435,7 +435,7 @@ function Reader.loadChapter(chapter)
     end
     if not Chapters[chapter] then
         Console.error("Error loading chapter")
-        ParserManager.Clear()
+        ParserManager.clear()
         collectgarbage("collect")
         AppMode = MENU
         return
