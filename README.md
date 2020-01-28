@@ -3,7 +3,7 @@
 App for PSVita to read manga or comic<br>
 All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBORU-parsers">this repo</a>
 ```diff
-- There is a lot of problems with performance, i don't think i can solve 'em
+- There is a lot of problems with performance, i don't think i can solve 'em all
 ```
 ## Features:
 * Browsing manga sites
