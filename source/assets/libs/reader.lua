@@ -406,10 +406,11 @@ function Reader.draw()
                 Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
             end
         end
+        --[[
         local page = Pages[Pages.Page]
         if page and page.Path then
             Font.print(FONT16, 0, 0, page.Path, Color.new(255, 0, 0))
-        end
+        end--]]
         if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
             local Counter = Pages.Page .. "/" .. Pages.Count
             local Width = Font.getTextWidth(FONT16, Counter) + 20

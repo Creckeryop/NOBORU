@@ -258,3 +258,18 @@ end
 function math.sign(x)
 	return x > 0 and 1 or x < 0 and -1 or 0
 end
+
+function deleteFolder(path)
+	if System.doesDirExist(path) then
+		for k, v in ipairs(System.listDirectory(path)) do
+			if v.is_directory then
+				deleteFolder(path.."/"..v.name)
+			else
+				System.deleteFile(path.."/"..v.name)
+				Console.write("Delete "..path.."/"..v.name)
+			end
+		end
+		System.deleteDirectory(path)
+		Console.write("Delete "..path)
+	end
+end

@@ -46,12 +46,26 @@ local function UpdateMangas()
         for i = start, min(#Results, start + 11) do
             local manga = Results[i]
             if not manga.ImageDownload then
-                Threads.addTask(manga, {
-                    Type = "ImageDownload",
-                    Link = manga.ImageLink,
-                    Table = manga,
-                    Index = "Image"
-                })
+                if manga.Path and System.doesFileExist("ux0:data/noboru/books/"..manga.Path) then
+                    Threads.addTask(manga, {
+                        Type = "Image",
+                        Path = "books/"..manga.Path,
+                        Table = manga,
+                        Index = "Image"
+                    })
+                else
+                    local UniquePath = (manga.ParserID..manga.Link):gsub("%p","").."/cover.img"
+                    Threads.addTask(manga, {
+                        Type = "ImageDownload",
+                        Link = manga.ImageLink,
+                        Table = manga,
+                        Index = "Image",
+                        Path = Database.check(manga) and "books/"..UniquePath or nil,
+                        OnComplete = Database.check(manga) and function ()
+                            manga.Path = UniquePath
+                        end or nil
+                    })
+                end
                 manga.ImageDownload = true
                 DownloadedImage[#DownloadedImage + 1] = i
             end
@@ -126,12 +140,26 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                             Details.setManga(manga, lx + MANGA_WIDTH / 2, uy + MANGA_HEIGHT / 2)
                             if not manga.Image then
                                 Threads.remove(manga)
-                                Threads.addTask(manga, {
-                                    Type = "ImageDownload",
-                                    Link = manga.ImageLink,
-                                    Table = manga,
-                                    Index = "Image"
-                                })
+                                if manga.Path and System.doesFileExist("ux0:data/noboru/books/"..manga.Path) then
+                                    Threads.addTask(manga, {
+                                        Type = "Image",
+                                        Path = "books/"..manga.Path,
+                                        Table = manga,
+                                        Index = "Image"
+                                    })
+                                else
+                                    local UniquePath = (manga.ParserID..manga.Link):gsub("%p","").."/cover.img"
+                                    Threads.addTask(manga, {
+                                        Type = "ImageDownload",
+                                        Link = manga.ImageLink,
+                                        Table = manga,
+                                        Index = "Image",
+                                        Path = Database.check(manga) and "books/"..UniquePath or nil,
+                                        OnComplete = Database.check(manga) and function ()
+                                            manga.Path = UniquePath
+                                        end or nil
+                                    })
+                                end
                                 if not manga.ImageDownload then
                                     DownloadedImage[#DownloadedImage + 1] = i
                                     manga.ImageDownload = true

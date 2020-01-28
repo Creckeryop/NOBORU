@@ -16,9 +16,20 @@ end
 ---@param manga table
 ---Adds `manga` to database
 function Database.add(manga)
-    if not base[manga.ParserID .. manga.Link] then
+    local UniqueKey = manga.ParserID..manga.Link
+    if not base[UniqueKey] then
         base[#base + 1] = manga
-        base[manga.ParserID .. manga.Link] = #base
+        base[UniqueKey] = #base
+        UniqueKey = UniqueKey:gsub("%p","")
+        System.createDirectory("ux0:data/noboru/books/"..UniqueKey)
+        Threads.insertTask(tostring(manga).."coverDownload",{
+            Type = "FileDownload",
+            Path = "books/"..UniqueKey.."/cover.img",
+            Link = manga.ImageLink,
+            OnComplete = function()
+                manga.Path = "books/"..UniqueKey.."/cover.img"
+            end
+        })
     end
 end
 
@@ -31,10 +42,13 @@ end
 ---@param manga table
 ---Removes `manga` from database
 function Database.remove(manga)
-    if base[manga.ParserID .. manga.Link] then
-        local n = base[manga.ParserID .. manga.Link]
+    local UniqueKey = manga.ParserID..manga.Link
+    if base[UniqueKey] then
+        local n = base[UniqueKey]
         table.remove(base, n)
-        base[manga.ParserID .. manga.Link] = nil
+        base[UniqueKey] = nil
+        UniqueKey = UniqueKey:gsub("%p","")
+        deleteFolder("ux0:data/noboru/books/"..UniqueKey)
         for i = n, #base do
             base[base[i].ParserID .. base[i].Link] = base[base[i].ParserID .. base[i].Link] - 1
         end
@@ -47,6 +61,7 @@ function Database.save()
     for k, v in ipairs(base) do
         manga_table[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
         manga_table[k].Data = v.Data
+        manga_table[k].Path = v.Path
         manga_table[v.ParserID .. v.Link] = k
     end
     local save = table.serialize(manga_table, "base")
@@ -63,6 +78,13 @@ function Database.load()
     if System.doesFileExist("ux0:data/noboru/save.dat") then
         local f = System.openFile("ux0:data/noboru/save.dat", FREAD)
         base = load("local " .. System.readFile(f, System.sizeFile(f)) .. " return base")()
+        for k, v in ipairs(base) do
+            if v.Path then
+                if not System.doesFileExist("ux0:data/noboru/books/"..v.Path) then
+                    v.Path = nil
+                end
+            end
+        end
         System.closeFile(f)
     end
 end
