@@ -1,7 +1,25 @@
 # NOBORU
 <img src="/res/logo.png" width="50%" height="50%"><br>
 App for PSVita to read manga or comic<br>
-All Parser questions to <a href="https://github.com/Creckeryop/NOBORU-parsers">this repo</a>
+All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBORU-parsers">this repo</a>
+```diff
+- There is a lot of problems with performance, i don't think i can solve 'em
+```
+## Features:
+* Browsing manga sites
+* Searchinge
+* Reading manga
+* MultiTouch, Swipes and other touch things
+* Adding manga to library
+* Loading longpages (webmanga) without downscaling (thanks to my [piclib](https://github.com/Creckeryop/piclib))
+* Multilanguage
+## TODO:
+* Offline mode
+* Settings
+* Caching info about last readed chapters (to make continue function)
+* Add more parsers
+* History
+* More languages
 ## Compile
 	Execute `build.bat`
 ## Credits:
