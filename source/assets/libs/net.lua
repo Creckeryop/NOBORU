@@ -15,7 +15,7 @@ local net_inited = false
 local bytes = 0
 local uniques = {}
 
-function Threads.Update()
+function Threads.update()
     if net_inited and not Task and OrderCount == 0 then
         Network.term()
         net_inited = false
@@ -30,82 +30,48 @@ function Threads.Update()
     if not Task then
         Task = table.remove(Order, 1)
         OrderCount = OrderCount - 1
-        if Task.Type == "String" then
-            if Task.HttpMethod then
-                if Task.PostData then
-                    if Task.ContentType then
-                        if Task.Cookie then
-                            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
-                        else
-                            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType)
-                        end
-                    else
-                        Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData)
-                    end
-                else
-                    Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod)
-                end
-            else
-                Network.requestStringAsync(Task.Link)
-            end
-        elseif Task.Type == "Image" then
-            if System.doesFileExist(IMAGE_CACHE_PATH) then
-                System.deleteFile(IMAGE_CACHE_PATH)
-            end
-            if Task.HttpMethod then
-                if Task.PostData then
-                    Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH, USERAGENT, Task.HttpMethod, Task.PostData)
-                else
-                    Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH, USERAGENT, Task.HttpMethod)
-                end
-            else
-                Network.downloadFileAsync(Task.Link, IMAGE_CACHE_PATH)
-            end
-        elseif Task.Type == "File" then
+        if Task.Type == "StringRequest" then
+            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+        elseif Task.Type == "FileDownload" or Task.Type == "ImageDownload" then
             if System.doesFileExist(Task.Path) then
                 System.deleteFile(Task.Path)
             end
-            if Task.HttpMethod then
-                if Task.PostData then
-                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData)
-                else
-                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod)
-                end
-            else
-                Network.downloadFileAsync(Task.Link, Task.Path)
+            Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData)
+            if Task.Type == "ImageDownload" then
+                Task.Type = "Image"
             end
         elseif Task.Type == "Skip" then
             Task = nil
             Console.write("NET: Skip", Color.new(255, 255, 0))
         end
         if Task then
-            Console.write("NET: #" .. (4 - Task.Retry) .. " " .. Task.Link, Color.new(0, 255, 0))
+            Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link), Color.new(0, 255, 0))
         end
     else
         Console.write("(" .. Task.Type .. ")NET: " .. Task.Link, Color.new(0, 255, 0))
         local f_save = function()
             Trash.Type = Task.Type
             Trash.Link = Task.Link
-            if Task.Type == "String" then
+            if Task.Type == "StringRequest" then
                 Task.Table[Task.Index] = System.getAsyncResult()
                 bytes = bytes + Task.Table[Task.Index]:len()
                 if Task.Table[Task.Index]:len() < 100 then
                     Console.write("NET:" .. Task.Table[Task.Index])
                 end
             elseif Task.Type == "Image" then
-                if System.doesFileExist(IMAGE_CACHE_PATH) then
-                    local handle = System.openFile(IMAGE_CACHE_PATH, FREAD)
+                if System.doesFileExist(Task.Path) then
+                    local handle = System.openFile(Task.Path, FREAD)
                     bytes = bytes + System.sizeFile(handle)
                     System.closeFile(handle)
-                    local Width, Height = System.getPictureResolution(IMAGE_CACHE_PATH)
+                    local Width, Height = System.getPictureResolution(Task.Path)
                     Console.write(Width .. "x" .. Height .. " Image got")
                     if GetTextureMemoryUsed() + bit32.band(bit32.bor(Width, 7), bit32.bnot(7)) * Height * 4 > 96 * 1024 * 1024 then
                         Console.error("No enough memory to load image")
-                        uniques[Task.Table or Task.Link] = nil
+                        uniques[Task.UniqueKey] = nil
                         Task = nil
                     else
                         if Height > 4096 and Height / Width > 2 then
-                            if not (Width and Height) then
+                            if not (Width and Height) or Width <= 0 or Height <= 0 then
                                 error("measure problem")
                             end
                             Task.Image = {
@@ -121,14 +87,13 @@ function Threads.Update()
                         end
                     end
                 else
-                    uniques[Task.Table or Task.Link] = nil
+                    uniques[Task.UniqueKey] = nil
                     Task = nil
                 end
                 return
             elseif Task.Type == "ImageLoad" then
-                if System.doesFileExist(IMAGE_CACHE_PATH) then
-                    Task.Table[Task.Index] = Image:new(System.getAsyncResult())
-                    Graphics.setImageFilters(Task.Table[Task.Index].e, FILTER_LINEAR, FILTER_LINEAR)
+                if System.doesFileExist(Task.Path) then
+                    Task.Table[Task.Index] = Image:new(System.getAsyncResult(), FILTER_LINEAR)
                 end
             elseif Task.Type == "ImageLoadTable" then
                 if not Task.Image.i then
@@ -145,15 +110,14 @@ function Threads.Update()
                         Trash.Type = "ImageLoadTable2"
                         return
                     end
-                    Task.Table[Task.Index][Task.Image.i] = Image:new(System.getAsyncResult())
+                    Task.Table[Task.Index][Task.Image.i] = Image:new(System.getAsyncResult(), FILTER_LINEAR)
                     if not Task.Table[Task.Index][Task.Image.i] then
                         error("error with part function")
                     else
                         Console.write("Got " .. Task.Image.i .. " Image")
                     end
-                    Graphics.setImageFilters(Task.Table[Task.Index][Task.Image.i].e, FILTER_LINEAR, FILTER_LINEAR)
                 else
-                    uniques[Task.Table or Task.Link] = nil
+                    uniques[Task.UniqueKey] = nil
                     Task = nil
                     return
                 end
@@ -163,20 +127,20 @@ function Threads.Update()
                 end
                 if Task.Image.i < Task.Image.Parts then
                     Console.write("Getting " .. (Task.Table[Task.Index].part_h * Task.Image.i) .. " " .. (Task.Image.Width) .. " " .. Height .. " Image")
-                    Graphics.loadPartImageAsync(IMAGE_CACHE_PATH, 0, Task.Table[Task.Index].part_h * Task.Image.i, Task.Image.Width, Height)
+                    Graphics.loadPartImageAsync(Task.Path, 0, Task.Table[Task.Index].part_h * Task.Image.i, Task.Image.Width, Height)
                 else
-                    uniques[Task.Table or Task.Link] = nil
+                    uniques[Task.UniqueKey] = nil
                     Task = nil
                 end
                 return
-            elseif Task.Type == "File" then
+            elseif Task.Type == "FileDownload" then
                 local handle = System.openFile(Task.Path, FREAD)
                 bytes = bytes + System.sizeFile(handle)
                 System.closeFile(handle)
             elseif Task.Type == "Skip" then
                 Console.error("WOW HOW THAT HAPPENED?")
             end
-            uniques[Task.Table or Task.Link] = nil
+            uniques[Task.UniqueKey] = nil
             Task = nil
         end
         local success, err = pcall(f_save)
@@ -187,7 +151,7 @@ function Threads.Update()
                 table.insert(Order, Task)
                 OrderCount = OrderCount + 1
             else
-                uniques[Task.Table or Task.Link] = nil
+                uniques[Task.UniqueKey] = nil
             end
             Task = nil
         end
@@ -204,7 +168,7 @@ function Threads.Update()
     end
 end
 
-function Threads.Clear()
+function Threads.clear()
     OrderCount = 0
     Order = {}
     uniques = {}
@@ -248,70 +212,68 @@ function Threads.DownloadImage(Link)
     if not net_inited then
         Network.init()
         Network.downloadFile(Link, IMAGE_CACHE_PATH)
-        Image = Image:new(Graphics.loadImage(IMAGE_CACHE_PATH))
+        Image = Image:new(Graphics.loadImage(IMAGE_CACHE_PATH), FILTER_LINEAR)
         System.deleteFile(IMAGE_CACHE_PATH)
         Network.term()
     else
         Network.downloadFile(Link, IMAGE_CACHE_PATH)
-        Image = Image:new(Graphics.loadImage(IMAGE_CACHE_PATH))
+        Image = Image:new(Graphics.loadImage(IMAGE_CACHE_PATH), FILTER_LINEAR)
         System.deleteFile(IMAGE_CACHE_PATH)
     end
     return Image
 end
 
-local function addThread(UniqueKey, T, Insert)
+---@param UniqueKey string
+---@param T table
+---@return boolean
+---Inserts task to threads
+function Threads.insertTask(UniqueKey, T)
+    if UniqueKey and uniques[UniqueKey] then return false end
+    local newTask = {
+        Type = T.Type,
+        Link = T.Link,
+        Table = T.Table,
+        Index = T.Index,
+        Path = T.Path or IMAGE_CACHE_PATH,
+        Retry = 3,
+        HttpMethod = T.HttpMethod or GET_METHOD,
+        PostData = T.PostData or "",
+        ContentType = T.ContentType or XWWW,
+        Cookie = T.Cookie or "",
+        UniqueKey = UniqueKey
+    }
     OrderCount = OrderCount + 1
-    if Insert then
-        table.insert(Order, 1, T)
-    else
-        Order[#Order + 1] = T
-    end
-    uniques[UniqueKey] = T
-end
-
-function Threads.DownloadStringAsync(Link, Table, Index, Insert, HttpMethod, PostData, ContentType, Cookie)
-    if uniques[Table] then return false end
-    addThread(Table, {
-        Type = "String",
-        Link = Link,
-        Table = Table,
-        Index = Index,
-        Retry = 3,
-        HttpMethod = HttpMethod,
-        PostData = PostData,
-        ContentType = ContentType,
-        Cookie = Cookie
-    }, Insert)
+    table.insert(Order, 1, newTask)
+    uniques[UniqueKey] = newTask
     return true
 end
 
-function Threads.DownloadImageAsync(Link, Table, Index, Insert, HttpMethod, PostData)
-    if uniques[Table] then return false end
-    addThread(Table, {
-        Type = "Image",
-        Link = Link,
-        Table = Table,
-        Index = Index,
+---@param UniqueKey string
+---@param T table
+---@return boolean
+---Adds task to threads
+function Threads.addTask(UniqueKey, T)
+    if UniqueKey and uniques[UniqueKey] then return false end
+    local newTask = {
+        Type = T.Type,
+        Link = T.Link,
+        Table = T.Table,
+        Index = T.Index,
+        Path = T.Path or IMAGE_CACHE_PATH,
         Retry = 3,
-        HttpMethod = HttpMethod,
-        PostData = PostData
-    }, Insert)
+        HttpMethod = T.HttpMethod or GET_METHOD,
+        PostData = T.PostData or "",
+        ContentType = T.ContentType or XWWW,
+        Cookie = T.Cookie or "",
+        UniqueKey = UniqueKey
+    }
+    OrderCount = OrderCount + 1
+    Order[#Order + 1] = newTask
+    uniques[UniqueKey] = newTask
     return true
 end
 
-function Threads.DownloadFileAsync(Link, Path, Insert, HttpMethod, PostData)
-    if uniques[Link] then return false end
-    addThread(Link, {
-        Type = "File",
-        Link = Link,
-        Path = Path,
-        Retry = 3,
-        HttpMethod = HttpMethod,
-        PostData = PostData
-    }, Insert)
-    return true
-end
-
+---Terminates Threads functions and net features
 function Threads.Terminate()
     if net_inited then
         Threads.clear()
@@ -324,8 +286,8 @@ function Threads.Terminate()
 end
 
 ---@param UniqueKey string
----Removes task by `UniqueKey` = `Table` or `Link` (if no `Table`)
-function Threads.Remove(UniqueKey)
+---Removes task by `UniqueKey`
+function Threads.remove(UniqueKey)
     if uniques[UniqueKey] then
         if Task == uniques[UniqueKey] then
             Task.Table, Task.Index = Trash, "Garbadge"
@@ -337,19 +299,19 @@ function Threads.Remove(UniqueKey)
 end
 
 ---@param UniqueKey string
----Checks if task is in order by `UniqueKey` = `Table` or `Link` (if no `Table`)
-function Threads.Check(UniqueKey)
+---Checks if task is in order by `UniqueKey`
+function Threads.check(UniqueKey)
     return uniques[UniqueKey] ~= nil
 end
 
 ---@return number
 ---Returns count of bytes downloaded by Threads functions
-function Threads.GetMemoryDownloaded()
+function Threads.getMemoryDownloaded()
     return bytes
 end
 
 ---@return integer number of tasks
 ---Returns quantity of tasks in order
-function Threads.GetTasksNum()
+function Threads.getTasksNum()
     return OrderCount + (Task and 1 or 0)
 end

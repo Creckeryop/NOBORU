@@ -46,7 +46,7 @@ end
 local function deletePageImage(page)
     if Pages[page].Image then
         if type(Pages[page].Image.e or Pages[page].Image) == "table" then
-            Threads.Remove(Pages[page])
+            Threads.remove(Pages[page])
             for i = 1, Pages[page].Image.Parts do
                 if Pages[page].Image[i] and Pages[page].Image[i].e then
                     Pages[page].Image[i]:free()
@@ -60,7 +60,7 @@ local function deletePageImage(page)
         Pages[page].Image = nil
     else
         ParserManager.Remove(Pages[page])
-        Threads.Remove(Pages[page])
+        Threads.remove(Pages[page])
     end
 end
 
@@ -79,7 +79,12 @@ local function changePage(page)
         if page + i > 0 and page + i <= #Pages then
             if not Pages[page + i].Image and not (Pages[page + i].Link == "LoadPrev" or Pages[page + i].Link == "LoadNext") then
                 if Pages[page + i].Link then
-                    Threads.DownloadImageAsync(Pages[page + i].Link, Pages[page + i], "Image", true)
+                    Threads.insertTask(Pages[page + i], {
+                        Type = "ImageDownload",
+                        Link = Pages[page + i].Link,
+                        Table = Pages[page + i],
+                        Index = "Image"
+                    })
                 else
                     ParserManager.getPageImage(Chapters[current_chapter].Manga.ParserID, Pages[page + i][1], Pages[page + i], true)
                 end
@@ -172,7 +177,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
     end
     if Controls.check(pad, SCE_CTRL_CIRCLE) then
         for i = 1, #Pages do
-            Threads.Remove(Pages[i])
+            Threads.remove(Pages[i])
         end
         Pages = {
             Page = 0
@@ -231,7 +236,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
     end
 end
 
-function Reader.update(dt)
+function Reader.update()
     if STATE == STATE_LOADING then
         if Chapters[current_chapter].Pages.Done then
             STATE = STATE_READING
@@ -323,7 +328,12 @@ function Reader.update(dt)
                         deletePageImage(PageChanged)
                         if math.abs(PageChanged - Pages.Page) == 1 and Pages[PageChanged].Link ~= "LoadNext" and Pages[PageChanged].Link ~= "LoadPrev" then
                             if Pages[PageChanged].Link then
-                                Threads.DownloadImageAsync(Pages[PageChanged].Link, Pages[PageChanged], "Image")
+                                Threads.addTask(Pages[PageChanged], {
+                                    Type = "ImageDownload",
+                                    Link = Pages[PageChanged].Link,
+                                    Table = Pages[PageChanged],
+                                    Index = "Image"
+                                })
                             else
                                 ParserManager.getPageImage(Chapters[current_chapter].Manga.ParserID, Pages[PageChanged][1], Pages[PageChanged])
                             end
@@ -421,7 +431,7 @@ function Reader.loadChapter(chapter)
     STATE = STATE_LOADING
     current_chapter = chapter
     for i = 1, #Pages do
-        Threads.Remove(Pages[i])
+        Threads.remove(Pages[i])
     end
     if not Chapters[chapter] then
         Console.error("Error loading chapter")

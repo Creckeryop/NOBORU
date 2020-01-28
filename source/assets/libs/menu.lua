@@ -49,18 +49,18 @@ function Menu.input(oldpad, pad, oldtouch, touch)
             end
         end
         if mode == "CATALOGS" or mode == "LIBRARY" then
-            Catalogs.Input(oldpad, pad, oldtouch, touch)
+            Catalogs.input(oldpad, pad, oldtouch, touch)
         end
     else
         Details.input(oldpad, pad, oldtouch, touch)
     end
 end
 
-function Menu.update(dt)
+function Menu.update()
     if mode == "CATALOGS" or mode == "LIBRARY" then
-        Catalogs.Update(dt)
+        Catalogs.update()
     end
-    Details.update(dt)
+    Details.update()
 end
 
 local button_a = {
@@ -79,7 +79,7 @@ function Menu.draw()
     end
     Screen.clear(Color.new(0, 0, 0))
     Graphics.drawImage(0, 0, logoSmall)
-    Graphics.fillRect(255, 960, 0, 544, Color.new(233, 233, 233))
+    Graphics.fillRect(255, 960, 0, 544, Color.new(245, 245, 245))
     Font.print(FONT30, 30, 137, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 197, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))

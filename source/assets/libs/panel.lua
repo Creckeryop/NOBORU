@@ -37,11 +37,11 @@ end
 local y = 23
 
 ---Updates Panel Animation
-function Panel.update(dt)
+function Panel.update()
     if mode == "HIDE" then
-        y = math.min(23, y + dt * (23 - y) / 4)
+        y = math.min(23, y + (23 - y) / 4)
     elseif mode == "SHOW" then
-        y = math.max(0, y - dt * y / 4)
+        y = math.max(0, y - y / 4)
     end
 end
 

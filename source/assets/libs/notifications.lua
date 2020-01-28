@@ -19,7 +19,7 @@ local animation_timer = Timer.new()
 
 ---Updates notification animation
 function Notifications.update()
-    if Timer.getTime(animation_timer) > 1900 or not notification then
+    if Timer.getTime(animation_timer) > 1800 or not notification then
         notification = table.remove(order, 1)
         Timer.reset(animation_timer)
     end

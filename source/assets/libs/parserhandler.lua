@@ -7,7 +7,7 @@ local Trash = {}
 local Uniques = {}
 
 ParserManager = {
-    Update = function()
+    update = function()
         if OrderCount == 0 and not Task then return end
         if not Task then
             Task = table.remove(Order, 1)
@@ -122,7 +122,12 @@ ParserManager = {
                 parser:loadChapterPage(Link, Table)
                 coroutine.yield(true)
                 if Table.Link then
-                    Threads.DownloadImageAsync(Table.Link, Table, "Image", true)
+                    Threads.insertTask(Table, {
+                        Type = "ImageDownload",
+                        Link = Table.Link,
+                        Table = Table,
+                        Index = "Image"
+                    })
                 end
             end,
             Table = Table
@@ -157,15 +162,24 @@ ParserManager = {
             Type = "Update",
             F = function()
                 local file = {}
-                Threads.DownloadStringAsync("https://github.com/Creckeryop/vsKoob-parsers/tree/master/parsers", file, "string", true)
+                Threads.insertTask(file, {
+                    Type = "StringRequest",
+                    Link = "https://github.com/Creckeryop/vsKoob-parsers/tree/master/parsers",
+                    Table = file,
+                    Index = "string"
+                })
                 while not file.string do
                     coroutine.yield(false)
                 end
                 for link, name in file.string:gmatch('href="([^"]-.lua)">(.-)<') do
                     local link2row = "https://raw.githubusercontent.com" .. link:gsub("/blob", ""):gsub("%%", "%%%%")
                     local path2row = "ux0:data/noboru/parsers/" .. name
-                    Threads.DownloadFileAsync(link2row, path2row)
-                    while Threads.Check(link2row) do
+                    Threads.addTask(link2row, {
+                        Type = "FileDownload",
+                        Link = link2row,
+                        Path = path2row
+                    })
+                    while Threads.check(link2row) do
                         coroutine.yield(false)
                     end
                     if System.doesFileExist(path2row) then

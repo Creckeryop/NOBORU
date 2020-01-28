@@ -194,7 +194,7 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
     end
 end
 
-function Details.update(dt)
+function Details.update()
     if mode ~= "END" then
         animationUpdate()
         if ParserManager.Check(Chapters) then

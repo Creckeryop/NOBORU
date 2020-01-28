@@ -11,13 +11,16 @@ local textureMemUsed = 0
 ---@param image integer
 ---@return Image|nil
 ---Creates Image Object
-function Image:new(image)
+function Image:new(image, filter)
     if not image then return nil end
     local p = {
         e = image,
         Width = Graphics.getImageWidth(image),
         Height = Graphics.getImageHeight(image)
     }
+    if filter then
+        Graphics.setImageFilters(image, filter, filter)
+    end
     p.Memory = bit32.band(bit32.bor(p.Width, 7), bit32.bnot(7)) * p.Height * 4
     textureMemUsed = textureMemUsed + p.Memory
     Setmt__gc(p, self)
