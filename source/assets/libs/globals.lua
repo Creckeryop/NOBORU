@@ -97,7 +97,7 @@ function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
     end
 end
 
-local DrawMangaName = function(Manga)
+local function drawMangaName(Manga)
     Manga.PrintName = {}
     local width = Font.getTextWidth(FONT16, Manga.Name)
     if width < MANGA_WIDTH - 20 then
@@ -165,7 +165,7 @@ function DrawManga(x, y, Manga, M)
     Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT, MANGA_WIDTH * M, 1, Color.new(255, 255, 255, 255 * alpha))
     if Manga.Name then
         if not Manga.PrintName then
-            pcall(DrawMangaName, Manga)
+            pcall(drawMangaName, Manga)
         else
             if Manga.PrintName.f then
                 Font.print(FONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))

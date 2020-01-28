@@ -73,9 +73,7 @@ end
 
 function ParserManager.getChaptersAsync(manga, Table, Insert)
     local parser = GetParserByID(manga.ParserID)
-    if not parser or uniques[Table] then
-        return
-    end
+    if not parser or uniques[Table] then return end
     local T = {
         Type = "Chapters",
         F = function()
@@ -93,9 +91,7 @@ end
 
 function ParserManager.prepareChapter(chapter, Table, Insert)
     local parser = GetParserByID(chapter.Manga.ParserID)
-    if not parser or uniques[Table] then
-        return
-    end
+    if not parser or uniques[Table] then return end
     local T = {
         Type = "PrepareChapter",
         F = function()
@@ -155,9 +151,7 @@ function ParserManager.remove(Table)
 end
 
 function ParserManager.updateParserList(Table, Insert)
-    if uniques[Table] then
-        return
-    end
+    if uniques[Table] then return end
     local T = {
         Type = "Update",
         F = function()

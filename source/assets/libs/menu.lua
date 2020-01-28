@@ -39,10 +39,10 @@ function Menu.input(oldpad, pad, oldtouch, touch)
             Menu.setMode(prev_mode[mode])
         end
         if touch.x and not oldtouch.x and touch.x < 250 then
-            if touch.y < 127 then
-            elseif touch.y < 187 then
+            if touch.y < 97 then
+            elseif touch.y < 157 then
                 Menu.setMode("LIBRARY")
-            elseif touch.y < 230 then
+            elseif touch.y < 200 then
                 Menu.setMode("CATALOGS")
             elseif touch.y > 460 then
                 Menu.setMode("SETTINGS")
@@ -80,12 +80,12 @@ function Menu.draw()
     Screen.clear(Color.new(0, 0, 0))
     Graphics.drawImage(0, 0, logoSmall)
     Graphics.fillRect(255, 960, 0, 544, Color.new(245, 245, 245))
-    Font.print(FONT30, 30, 137, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
-    Font.print(FONT30, 30, 197, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
+    Font.print(FONT30, 30, 107, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
+    Font.print(FONT30, 30, 167, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
     if Details.getFade() ~= 1 then
         if mode == "CATALOGS" or mode == "LIBRARY" then
-            Catalogs.Draw()
+            Catalogs.draw()
         end
     end
     Details.draw()

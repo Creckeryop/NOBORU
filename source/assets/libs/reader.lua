@@ -1,3 +1,5 @@
+Reader = {}
+
 local Point_t = Point_t
 
 local Pages = {
@@ -64,6 +66,7 @@ local function deletePageImage(page)
     end
 end
 
+---@param page integer
 local function changePage(page)
     if page < 0 and current_chapter > 1 or page > #Pages then
         return false
@@ -91,28 +94,22 @@ local function changePage(page)
             end
         end
     end
-    if page - 2 > 0 then
-        deletePageImage(page - 2)
-        Pages[page - 2] = {
-            Pages[page - 2][1],
-            Link = Pages[page - 2].Link,
-            x = 0,
-            y = 0
-        }
-    end
-    if page + 2 <= #Pages then
-        deletePageImage(page + 2)
-        Pages[page + 2] = {
-            Pages[page + 2][1],
-            Link = Pages[page + 2].Link,
-            x = 0,
-            y = 0
-        }
+    for i = page - 2, page + 2, 4 do
+        if i > 0 and i <= #Pages then
+            deletePageImage(i)
+            Pages[i] = {
+                Pages[i][1],
+                Link = Pages[i].Link,
+                x = 0,
+                y = 0
+            }
+        end
     end
     return true
 end
 
 ---@param direction string | '"LEFT"' | '"RIGHT"'
+---Turns the page according to the `direction`
 local function swipe(direction)
     Pages.PrevPage = Pages.Page
     if direction == "LEFT" then
@@ -141,8 +138,6 @@ local function swipe(direction)
         end
     end
 end
-
-Reader = {}
 
 function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
     if STATE == STATE_READING then
@@ -262,7 +257,6 @@ function Reader.update()
                 }
             end
             changePage(1)
-        else
         end
     elseif STATE == STATE_READING then
         if not Pages[Pages.Page] then
@@ -398,13 +392,13 @@ function Reader.draw()
                     for k = 1, page.Image.Parts do
                         if page.Image[k] and page.Image[k].e then
                             local Height = Graphics.getImageHeight(page.Image[k].e)
-                            local x, y = math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + page.Image.part_h / 2 * page.Zoom
+                            local x, y = math.ceil((offset.x + page.x) * 4) / 4, offset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + page.Image.SliceHeight / 2 * page.Zoom
                             Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - Height / 2 * page.Zoom, y + Height / 2 * page.Zoom, COLOR_BLACK)
                             Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
                         else
                             local loading = Language[LANG].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                             local Width = Font.getTextWidth(FONT16, loading)
-                            Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.part_h * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_BLACK)
+                            Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_BLACK)
                         end
                     end
                 else

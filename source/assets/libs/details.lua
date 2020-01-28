@@ -2,6 +2,8 @@ local Point_t = Point_t
 
 local mode = "END"
 
+Details = {}
+
 local TOUCH = TOUCH()
 local Slider = Slider()
 
@@ -54,12 +56,9 @@ local animationUpdate = function()
     end
 end
 
-
 local control_timer = Timer.new()
 local time_space = 400
 local item_selected = 0
-
-Details = {}
 
 function Details.setManga(manga, x, y)
     if manga and x and y then
@@ -82,18 +81,18 @@ function Details.setManga(manga, x, y)
     end
 end
 
-function Details.input(OldPad, Pad, OldTouch, Touch)
+function Details.input(oldpad, pad, oldtouch, touch)
     if mode == "START" then
-        if TOUCH.MODE == TOUCH.NONE and OldTouch.x and Touch.x and Touch.x > 240 then
+        if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
             item_selected = 0
             time_space = 400
             TOUCH.MODE = TOUCH.READ
-            Slider.TouchY = Touch.y
-        elseif TOUCH.MODE ~= TOUCH.NONE and not Touch.x then
-            if TOUCH.MODE == TOUCH.READ and OldTouch.x > 320 and OldTouch.x < 900 and OldTouch.y > 90 then
-                local id = math.floor((Slider.Y + OldTouch.y - 20) / 70)
+            Slider.TouchY = touch.y
+        elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
+            if TOUCH.MODE == TOUCH.READ and oldtouch.x > 320 and oldtouch.x < 900 and oldtouch.y > 90 then
+                local id = math.floor((Slider.Y + oldtouch.y - 20) / 70)
                 if Chapters[id] then
-                    Catalogs.Shrink()
+                    Catalogs.shrink()
                     Reader.load(Chapters, id)
                     AppMode = READER
                 end
@@ -101,12 +100,12 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
             TOUCH.MODE = TOUCH.NONE
         end
         local AddToLibrary = false
-        if OldTouch.x and OldTouch.x < 260 and not Touch.x then
-            if OldTouch.x > 20 and OldTouch.x < 260 and OldTouch.y > 420 and OldTouch.y < 475 then
+        if oldtouch.x and oldtouch.x < 260 and not touch.x then
+            if oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 420 and oldtouch.y < 475 then
                 AddToLibrary = true
             end
         end
-        if Controls.check(Pad, SCE_CTRL_TRIANGLE) and not Controls.check(OldPad, SCE_CTRL_TRIANGLE) then
+        if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             AddToLibrary = true
         end
         if Manga and AddToLibrary then
@@ -119,18 +118,18 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
             end
             Database.save()
         end
-        if Timer.getTime(control_timer) > time_space or (Controls.check(Pad, SCE_CTRL_DOWN) and not Controls.check(OldPad, SCE_CTRL_DOWN) or Controls.check(Pad, SCE_CTRL_UP) and not Controls.check(OldPad, SCE_CTRL_UP) or Controls.check(Pad, SCE_CTRL_LEFT) and not Controls.check(OldPad, SCE_CTRL_LEFT) or Controls.check(Pad, SCE_CTRL_RIGHT) and not Controls.check(OldPad, SCE_CTRL_RIGHT)) then
-            if (Controls.check(Pad, SCE_CTRL_DOWN) or Controls.check(Pad, SCE_CTRL_UP) or Controls.check(Pad, SCE_CTRL_RIGHT) or Controls.check(Pad, SCE_CTRL_LEFT)) then
+        if Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)) then
+            if (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_RIGHT) or Controls.check(pad, SCE_CTRL_LEFT)) then
                 if item_selected == 0 then
                     item_selected = math.floor((Slider.Y - 20 + 90) / 70)
                 elseif item_selected ~= 0 then
-                    if Controls.check(Pad, SCE_CTRL_DOWN) then
+                    if Controls.check(pad, SCE_CTRL_DOWN) then
                         item_selected = item_selected + 1
-                    elseif Controls.check(Pad, SCE_CTRL_UP) then
+                    elseif Controls.check(pad, SCE_CTRL_UP) then
                         item_selected = item_selected - 1
-                    elseif Controls.check(Pad, SCE_CTRL_RIGHT) then
+                    elseif Controls.check(pad, SCE_CTRL_RIGHT) then
                         item_selected = item_selected + 3
-                    elseif Controls.check(Pad, SCE_CTRL_LEFT) then
+                    elseif Controls.check(pad, SCE_CTRL_LEFT) then
                         item_selected = item_selected - 3
                     end
                 end
@@ -152,10 +151,10 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
                 time_space = 400
             end
         end
-        if Controls.check(Pad, SCE_CTRL_CROSS) and not Controls.check(OldPad, SCE_CTRL_CROSS) then
+        if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
             if item_selected ~= 0 then
                 if Chapters[item_selected] then
-                    Catalogs.Shrink()
+                    Catalogs.shrink()
                     Reader.load(Chapters, item_selected)
                     AppMode = READER
                 end
@@ -163,19 +162,19 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
         end
         local new_itemID = 0
         if TOUCH.MODE == TOUCH.READ then
-            if math.abs(Slider.V) > 0.1 or math.abs(Touch.y - Slider.TouchY) > 10 then
+            if math.abs(Slider.V) > 0.1 or math.abs(touch.y - Slider.TouchY) > 10 then
                 TOUCH.MODE = TOUCH.SLIDE
             else
-                if OldTouch.x > 320 and OldTouch.x < 900 then
-                    local id = math.floor((Slider.Y - 20 + OldTouch.y) / 70)
+                if oldtouch.x > 320 and oldtouch.x < 900 then
+                    local id = math.floor((Slider.Y - 20 + oldtouch.y) / 70)
                     if Chapters[id] then
                         new_itemID = id
                     end
                 end
             end
         elseif TOUCH.MODE == TOUCH.SLIDE then
-            if Touch.x and OldTouch.x then
-                Slider.V = OldTouch.y - Touch.y
+            if touch.x and oldtouch.x then
+                Slider.V = oldtouch.y - touch.y
             end
         end
         if Slider.ItemID > 0 and new_itemID > 0 and Slider.ItemID ~= new_itemID then
@@ -183,7 +182,7 @@ function Details.input(OldPad, Pad, OldTouch, Touch)
         else
             Slider.ItemID = new_itemID
         end
-        if Controls.check(Pad, SCE_CTRL_CIRCLE) and not Controls.check(OldPad, SCE_CTRL_CIRCLE) then
+        if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
             mode = "WAIT"
             Loading.setMode("NONE")
             ParserManager.remove(Chapters)

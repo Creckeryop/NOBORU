@@ -1,3 +1,4 @@
+Catalogs = {}
 local Slider = Slider()
 local TOUCH = TOUCH()
 Slider.Y = -10
@@ -26,7 +27,7 @@ local function freeMangaImage(manga)
         manga.ImageDownload = nil
     end
 end
-local UpdateMangas = function()
+local function UpdateMangas()
     if Slider.V == 0 and Timer.getTime(TouchTimer) > 200 then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
         if #DownloadedImage > 12 then
@@ -70,18 +71,16 @@ end
 
 local Parsers = {}
 
-Catalogs = {}
-
 function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
             mode = "PARSERS"
-            Catalogs.Term()
+            Catalogs.terminate()
         end
         if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local new_mode = getMangaMode == "POPULAR" and Parser.getLatestManga and "LATEST" or "POPULAR"
             if getMangaMode ~= new_mode then
-                Catalogs.Term()
+                Catalogs.terminate()
                 getMangaMode = new_mode
                 Notifications.push(getMangaMode == "POPULAR" and Language[LANG].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[LANG].PANEL.MODE_LATEST)
             end
@@ -217,7 +216,7 @@ function Catalogs.update()
             local data = Keyboard.getInput()
             Console.write('Searching for "' .. data .. '"')
             if data:gsub("%s", "") ~= "" then
-                Catalogs.Term()
+                Catalogs.terminate()
                 searchData = data
                 getMangaMode = "SEARCH"
                 Notifications.push(string.format(Language[LANG].NOTIFICATIONS.SEARCHING, data))
@@ -259,7 +258,7 @@ function Catalogs.update()
     end
 end
 
-function Catalogs.Draw()
+function Catalogs.draw()
     Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
     if mode == "PARSERS" then
         local start = max(1, floor((Slider.Y - 10) / 75))
@@ -304,7 +303,7 @@ function Catalogs.Draw()
 end
 
 ---Frees all images loaded in catalog
-function Catalogs.Shrink()
+function Catalogs.shrink()
     for _, i in ipairs(DownloadedImage) do
         freeMangaImage(Results[i])
     end
@@ -312,8 +311,8 @@ function Catalogs.Shrink()
     Loading.setMode("NONE")
 end
 
-function Catalogs.Term()
-    Catalogs.Shrink()
+function Catalogs.terminate()
+    Catalogs.shrink()
     DownloadedImage = {}
     Results = {}
     page = 1
@@ -325,5 +324,5 @@ end
 ---@param new_mode string | '"PARSERS"' | '"MANGA"' | '"LIBRARY"'
 function Catalogs.setMode(new_mode)
     mode = new_mode
-    Catalogs.Term()
+    Catalogs.terminate()
 end
