@@ -43,15 +43,15 @@ function Threads.update()
             Console.write("NET: Skip", Color.new(255, 255, 0))
         end
         if Task then
-            Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link), Color.new(0, 255, 0))
+            Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
         end
     else
-        Console.write("(" .. Task.Type .. ")NET: " .. Task.Link, Color.new(0, 255, 0))
+        Console.write("(" .. Task.Type .. ")" .. (Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
         local f_save = function()
             Trash.Type = Task.Type
             Trash.Link = Task.Link
             if Task.Type == "StringRequest" then
-                Task.Table[Task.Index] = System.getAsyncResult()
+                Task.Table[Task.Index] = System.getAsyncResult() or ""
                 bytes = bytes + Task.Table[Task.Index]:len()
                 if Task.Table[Task.Index]:len() < 100 then
                     Console.write("NET:" .. Task.Table[Task.Index])
@@ -80,7 +80,7 @@ function Threads.update()
                             Console.write(Task.Image.Parts)
                             Task.Type = "ImageLoadTable"
                         else
-                            Graphics.loadImageAsync(IMAGE_CACHE_PATH)
+                            Graphics.loadImageAsync(Task.Path)
                             Task.Type = "ImageLoad"
                         end
                     end
@@ -141,8 +141,16 @@ function Threads.update()
             uniques[Task.UniqueKey] = nil
             Task = nil
         end
+        local TempTask = Task
         local success, err = pcall(f_save)
-        if not success then
+        if success then
+            if Task == nil then
+                if TempTask.OnComplete then
+                    TempTask.OnComplete()
+                    Console.write("OnComplete executing for "..TempTask.Type.. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
+                end
+            end
+        else
             Console.error("NET: " .. err)
             Task.Retry = Task.Retry - 1
             if Task.Retry > 0 then
@@ -155,10 +163,10 @@ function Threads.update()
     end
     if Trash.Garbadge then
         if Trash.Type == "ImageLoad" then
-            Console.write("NET:(Freeing Image)" .. Trash.Link, Color.new(255, 0, 255))
+            Console.write("NET:(Freeing Image)", Color.new(255, 0, 255))
             Trash.Garbadge:free()
         elseif Trash.Type == "ImageLoadTable2" then
-            Console.write("NET:(Freeing Table Image)" .. Trash.Link, Color.new(255, 0, 255))
+            Console.write("NET:(Freeing Table Image)", Color.new(255, 0, 255))
             Trash.Garbadge:free()
         end
         Trash.Garbadge = nil
@@ -178,8 +186,7 @@ function Threads.isDownloadRunning()
 end
 
 function Threads.DownloadString(Link)
-    repeat
-        until System.getAsyncState() ~= 0
+    repeat until System.getAsyncState() ~= 0
     if not net_inited then
         Network.init()
         local content = Network.requestString(Link)
@@ -191,8 +198,7 @@ function Threads.DownloadString(Link)
 end
 
 function Threads.DownloadFile(Link, Path)
-    repeat
-        until System.getAsyncState() ~= 0
+    repeat until System.getAsyncState() ~= 0
     if not net_inited then
         Network.init()
         Network.downloadFile(Link, Path)
@@ -203,8 +209,7 @@ function Threads.DownloadFile(Link, Path)
 end
 
 function Threads.DownloadImage(Link)
-    repeat
-        until System.getAsyncState() ~= 0
+    repeat until System.getAsyncState() ~= 0
     local Image
     if not net_inited then
         Network.init()
@@ -239,6 +244,7 @@ local function taskete(UniqueKey, T, foo)
         Link = T.Link,
         Table = T.Table,
         Index = T.Index,
+        OnComplete = T.OnComplete,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
         Retry = 3,
         HttpMethod = T.HttpMethod or GET_METHOD,
@@ -267,6 +273,7 @@ end
 local function taskadd(task)
     Order[#Order + 1] = task
 end
+
 ---@param UniqueKey string
 ---@param T table
 ---@return boolean

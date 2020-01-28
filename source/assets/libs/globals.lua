@@ -59,6 +59,14 @@ if not System.doesDirExist("ux0:data/noboru/") then
     System.createDirectory("ux0:data/noboru")
 end
 
+if not System.doesDirExist("ux0:data/noboru/cache") then
+    System.createDirectory("ux0:data/noboru/cache")
+end
+
+if not System.doesDirExist("ux0:data/noboru/books") then
+    System.createDirectory("ux0:data/noboru/books")
+end
+
 if System.doesDirExist("ux0:data/noboru/parsers/") then
     local path = "ux0:data/noboru/parsers/"
     local files = System.listDirectory(path)

@@ -107,7 +107,7 @@ function ParserManager.prepareChapter(chapter, Table, Insert)
     uniques[Table] = T
 end
 
-function ParserManager.getPageImage(parserID, Link, Table, Insert)
+function ParserManager.loadPageImage(parserID, Link, Table, id, Insert)
     local parser = GetParserByID(parserID)
     if not parser or uniques[Table] then return end
     local T = {
@@ -115,14 +115,16 @@ function ParserManager.getPageImage(parserID, Link, Table, Insert)
         F = function()
             parser:loadChapterPage(Link, Table)
             coroutine.yield(true)
-            if Table.Link then
-                Threads.insertTask(Table, {
-                    Type = "ImageDownload",
-                    Link = Table.Link,
-                    Table = Table,
-                    Index = "Image"
-                })
-            end
+            Threads.insertTask(Table, {
+                Type = "ImageDownload",
+                Link = Table.Link,
+                Table = Table,
+                Index = "Image",
+                Path = string.format("cache/%s.image", id),
+                OnComplete = function()
+                    Table.Path = string.format("cache/%s.image", id)
+                end
+            })
         end,
         Table = Table
     }

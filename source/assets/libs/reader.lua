@@ -31,8 +31,6 @@ local touchTemp = Point_t(0, 0)
 local Chapters = {}
 local current_chapter = 1
 
-local PageChanged = nil
-
 local function scale(dZoom, Page)
     local old_Zoom = Page.Zoom
     Page.Zoom = Page.Zoom * dZoom
@@ -78,18 +76,30 @@ local function changePage(page)
     end
     local o = {math.sign(-prev_page + page), 0}
     for k = 1, #o do
-        local i = o[k]
-        if page + i > 0 and page + i <= #Pages then
-            if not Pages[page + i].Image and not (Pages[page + i].Link == "LoadPrev" or Pages[page + i].Link == "LoadNext") then
-                if Pages[page + i].Link then
-                    Threads.insertTask(Pages[page + i], {
-                        Type = "ImageDownload",
-                        Link = Pages[page + i].Link,
-                        Table = Pages[page + i],
+        local p = page + o[k]
+        if p > 0 and p <= #Pages then
+            if not Pages[p].Image and not (Pages[p].Link == "LoadPrev" or Pages[p].Link == "LoadNext") then
+                local tab = Pages[p]
+                if Pages[p].Path then
+                    Threads.insertTask(Pages[p], {
+                        Type = "Image",
+                        Path = Pages[p].Path,
+                        Table = Pages[p],
                         Index = "Image"
                     })
+                elseif Pages[p].Link then
+                    Threads.insertTask(Pages[p], {
+                        Type = "ImageDownload",
+                        Link = Pages[p].Link,
+                        Table = Pages[p],
+                        Index = "Image",
+                        Path = string.format("cache/%s.image", p),
+                        OnComplete = function ()
+                            tab.Path = string.format("cache/%s.image", p)
+                        end
+                    })
                 else
-                    ParserManager.getPageImage(Chapters[current_chapter].Manga.ParserID, Pages[page + i][1], Pages[page + i], true)
+                    ParserManager.loadPageImage(Chapters[current_chapter].Manga.ParserID, Pages[p][1], Pages[p], p, true)
                 end
             end
         end
@@ -100,6 +110,7 @@ local function changePage(page)
             Pages[i] = {
                 Pages[i][1],
                 Link = Pages[i].Link,
+                Path = Pages[i].Path,
                 x = 0,
                 y = 0
             }
@@ -240,6 +251,7 @@ function Reader.update()
             for i = 1, #chapter.Pages do
                 Pages[i] = {
                     chapter.Pages[i],
+                    Path = chapter.Pathes and chapter.Pathes[i],
                     x = 0,
                     y = 0
                 }
@@ -317,24 +329,6 @@ function Reader.update()
                     Reader.loadChapter(current_chapter - 1)
                     return
                 end
-                if PageChanged then
-                    if PageChanged ~= Pages.Page and Pages[PageChanged] and Pages[PageChanged].Image and type(Pages[PageChanged].Image.e or Pages[PageChanged].Image) == "table" then
-                        deletePageImage(PageChanged)
-                        if math.abs(PageChanged - Pages.Page) == 1 and Pages[PageChanged].Link ~= "LoadNext" and Pages[PageChanged].Link ~= "LoadPrev" then
-                            if Pages[PageChanged].Link then
-                                Threads.addTask(Pages[PageChanged], {
-                                    Type = "ImageDownload",
-                                    Link = Pages[PageChanged].Link,
-                                    Table = Pages[PageChanged],
-                                    Index = "Image"
-                                })
-                            else
-                                ParserManager.getPageImage(Chapters[current_chapter].Manga.ParserID, Pages[PageChanged][1], Pages[PageChanged])
-                            end
-                        end
-                    end
-                    PageChanged = nil
-                end
             end
         end
         local page = Pages[Pages.Page]
@@ -411,6 +405,10 @@ function Reader.draw()
                 local Width = Font.getTextWidth(FONT16, loading)
                 Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
             end
+        end
+        local page = Pages[Pages.Page]
+        if page and page.Path then
+            Font.print(FONT16, 0, 0, page.Path, Color.new(255, 0, 0))
         end
         if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
             local Counter = Pages.Page .. "/" .. Pages.Count

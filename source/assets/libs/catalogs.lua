@@ -18,6 +18,7 @@ local Results = {}
 local abs, ceil, floor, max, min = math.abs, math.ceil, math.floor, math.max, math.min
 
 StartSearch = false
+
 local function freeMangaImage(manga)
     if manga and manga.ImageDownload then
         Threads.remove(manga)
@@ -27,6 +28,7 @@ local function freeMangaImage(manga)
         manga.ImageDownload = nil
     end
 end
+
 local function UpdateMangas()
     if Slider.V == 0 and Timer.getTime(TouchTimer) > 200 then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
