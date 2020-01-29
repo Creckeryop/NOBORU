@@ -59,8 +59,17 @@ function Threads.update()
             elseif Task.Type == "Image" then
                 if System.doesFileExist(Task.Path) then
                     local handle = System.openFile(Task.Path, FREAD)
-                    bytes = bytes + System.sizeFile(handle)
+                    local image_size = System.sizeFile(handle)
+                    bytes = bytes + image_size
                     System.closeFile(handle)
+                    if image_size < 100 then
+                        Task.Type = Task.Link and "ImageDownlad" or Task.Type
+                        if Task.Type == "ImageDownload" then
+                            error("Redownloading file")
+                        elseif Task.Type == "Image" then
+                            error("File is too small to be a picture")
+                        end
+                    end
                     local Width, Height = System.getPictureResolution(Task.Path)
                     Console.write(Width .. "x" .. Height .. " Image got")
                     if GetTextureMemoryUsed() + bit32.band(bit32.bor(Width, 7), bit32.bnot(7)) * Height * 4 > 96 * 1024 * 1024 then
@@ -185,45 +194,22 @@ function Threads.isDownloadRunning()
     return System.getAsyncState() == 0 or #Order ~= 0 or Task ~= nil
 end
 
-function Threads.DownloadString(Link)
-    repeat until System.getAsyncState() ~= 0
+function Threads.netActionUnSafe(foo)
     if not net_inited then
         Network.init()
-        local content = Network.requestString(Link)
+        local result = foo()
         Network.term()
-        return content
+        return result
     else
-        return Network.requestString(Link)
+        return foo()
     end
 end
 
-function Threads.DownloadFile(Link, Path)
+function Threads.netActionSafe(foo)
     repeat until System.getAsyncState() ~= 0
-    if not net_inited then
-        Network.init()
-        Network.downloadFile(Link, Path)
-        Network.term()
-    else
-        Network.downloadFile(Link, Path)
-    end
+    return Threads.netActionUnSafe(foo)
 end
 
-function Threads.DownloadImage(Link)
-    repeat until System.getAsyncState() ~= 0
-    local Image
-    if not net_inited then
-        Network.init()
-        Network.downloadFile(Link, IMAGE_CACHE_PATH)
-        Image = Image:new(Graphics.loadImage(IMAGE_CACHE_PATH), FILTER_LINEAR)
-        System.deleteFile(IMAGE_CACHE_PATH)
-        Network.term()
-    else
-        Network.downloadFile(Link, IMAGE_CACHE_PATH)
-        Image = Image:new(Graphics.loadImage(IMAGE_CACHE_PATH), FILTER_LINEAR)
-        System.deleteFile(IMAGE_CACHE_PATH)
-    end
-    return Image
-end
 local function taskcheck(T)
     local task = T
     if task.Type == "FileDownload" then
@@ -236,7 +222,7 @@ local function taskcheck(T)
     return false
 end
 local function taskete(UniqueKey, T, foo)
-    if UniqueKey and uniques[UniqueKey] and taskcheck(T) then
+    if UniqueKey and uniques[UniqueKey] and taskcheck(T) or not UniqueKey then
         return false
     end
     local newTask = {

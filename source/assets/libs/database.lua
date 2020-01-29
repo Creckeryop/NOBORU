@@ -15,21 +15,42 @@ end
 
 ---@param manga table
 ---Adds `manga` to database
-function Database.add(manga)
-    local UniqueKey = manga.ParserID..manga.Link
+function Database.add(manga, chapters)
+    local UniqueKey = manga.ParserID .. manga.Link
     if not base[UniqueKey] then
         base[#base + 1] = manga
         base[UniqueKey] = #base
-        UniqueKey = UniqueKey:gsub("%p","")
-        System.createDirectory("ux0:data/noboru/books/"..UniqueKey)
-        Threads.insertTask(tostring(manga).."coverDownload",{
+        UniqueKey = UniqueKey:gsub("%p", "")
+        base[#base].Path = UniqueKey .. "/cover.img"
+        System.createDirectory("ux0:data/noboru/books/" .. UniqueKey)
+        Database.updateChapters(base[#base], chapters)
+        Threads.insertTask(tostring(manga) .. "coverDownload", {
             Type = "FileDownload",
-            Path = "books/"..UniqueKey.."/cover.img",
-            Link = manga.ImageLink,
-            OnComplete = function()
-                manga.Path = "books/"..UniqueKey.."/cover.img"
-            end
+            Path = "books/" .. UniqueKey .. "/cover.img",
+            Link = manga.ImageLink
         })
+    end
+end
+
+function Database.updateChapters(manga, chapters)
+    local UniqueKey = manga.ParserID .. manga.Link
+    local n = base[UniqueKey]
+    if n then
+        local chaps = {}
+        for i = 1, #chapters do
+            chaps[i] = {}
+            for k, v in pairs(chapters[i]) do
+                if k == "Manga" then
+                    chaps[i][k] = "10101010101010"
+                else
+                    chaps[i][k] = v
+                end
+            end
+        end
+        local fh = System.openFile("ux0:data/noboru/books/" .. UniqueKey:gsub("%p", "") .. "/chapter_info.lua", FCREATE)
+        local save_data = table.serialize(chaps, "chapters")
+        System.writeFile(fh, save_data, save_data:len())
+        System.closeFile(fh)
     end
 end
 
@@ -42,26 +63,43 @@ end
 ---@param manga table
 ---Removes `manga` from database
 function Database.remove(manga)
-    local UniqueKey = manga.ParserID..manga.Link
+    local UniqueKey = manga.ParserID .. manga.Link
     if base[UniqueKey] then
         local n = base[UniqueKey]
         table.remove(base, n)
+        manga.Path = nil
         base[UniqueKey] = nil
-        UniqueKey = UniqueKey:gsub("%p","")
-        deleteFolder("ux0:data/noboru/books/"..UniqueKey)
+        RemoveDirectory("ux0:data/noboru/books/" .. UniqueKey:gsub("%p", ""))
         for i = n, #base do
             base[base[i].ParserID .. base[i].Link] = base[base[i].ParserID .. base[i].Link] - 1
         end
     end
 end
 
+---@param manga table
+function Database.getChapters(manga)
+    local UniqueKey = manga.ParserID .. manga.Link
+    local n = base[UniqueKey]
+    if n then
+        local chapters_path = "ux0:data/noboru/books/" .. UniqueKey:gsub("%p", "") .. "/chapter_info.lua"
+        if System.doesFileExist(chapters_path) then
+            local f = System.openFile(chapters_path, FREAD)
+            local cs = load("local " .. System.readFile(f, System.sizeFile(f)):gsub("\"10101010101010\"","...") .. " return chapters")(base[n])
+            System.closeFile(f)
+            return cs
+        end
+    end
+    return {}
+end
+
 ---Saves database to `ux0:data/noboru/save.dat`
 function Database.save()
     local manga_table = {}
     for k, v in ipairs(base) do
+        local UniqueKey = v.ParserID .. v.Link
         manga_table[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
         manga_table[k].Data = v.Data
-        manga_table[k].Path = v.Path
+        manga_table[k].Path = UniqueKey:gsub("%p", "") .. "/cover.img"
         manga_table[v.ParserID .. v.Link] = k
     end
     local save = table.serialize(manga_table, "base")
@@ -78,13 +116,6 @@ function Database.load()
     if System.doesFileExist("ux0:data/noboru/save.dat") then
         local f = System.openFile("ux0:data/noboru/save.dat", FREAD)
         base = load("local " .. System.readFile(f, System.sizeFile(f)) .. " return base")()
-        for k, v in ipairs(base) do
-            if v.Path then
-                if not System.doesFileExist("ux0:data/noboru/books/"..v.Path) then
-                    v.Path = nil
-                end
-            end
-        end
         System.closeFile(f)
     end
 end

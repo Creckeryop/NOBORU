@@ -59,6 +59,7 @@ end
 local control_timer = Timer.new()
 local time_space = 400
 local item_selected = 0
+local is_chapter_loaded = false
 
 function Details.setManga(manga, x, y)
     if manga and x and y then
@@ -71,8 +72,12 @@ function Details.setManga(manga, x, y)
         mode = "START"
         point = Point_t(x, y)
         old_fade = 1
-        if GetParserByID(manga.ParserID) then
+        if Threads.netActionUnSafe(Network.isWifiEnabled) then
             ParserManager.getChaptersAsync(manga, Chapters)
+            is_chapter_loaded = false
+        else
+            Chapters = Database.getChapters(manga)
+            is_chapter_loaded = true
         end
         is_notification_showed = false
         center = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
@@ -113,7 +118,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
                 Database.remove(Manga)
                 Notifications.push(Language[LANG].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
             else
-                Database.add(Manga)
+                Database.add(Manga, Chapters)
                 Notifications.push(Language[LANG].NOTIFICATIONS.ADDED_TO_LIBRARY)
             end
             Database.save()
@@ -205,6 +210,12 @@ function Details.update()
             Slider.Y = Slider.Y + (item_selected * 70 - 272 - Slider.Y) / 8
         end
         scrollUpdate()
+        if not is_chapter_loaded and not ParserManager.check(Chapters) then
+            is_chapter_loaded = true
+            if #Chapters > 0 then
+                Database.updateChapters(Chapters[1].Manga, Chapters)
+            end
+        end
     end
 end
 
