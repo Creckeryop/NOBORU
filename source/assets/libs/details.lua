@@ -224,7 +224,7 @@ function Details.draw()
         local M = old_fade * fade
         local Alpha = 255 * M
 
-        Graphics.fillRect(0, 900, 90, 544, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(0, 920, 90, 544, Color.new(0, 0, 0, Alpha))
 
         local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
@@ -248,7 +248,7 @@ function Details.draw()
             end
             y = y + 70
         end
-        Graphics.fillRect(900, 960, 90, 544, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
 
         local text, color = Language[LANG].DETAILS.ADD_TO_LIBRARY, BLUE
 
@@ -274,10 +274,10 @@ function Details.draw()
         if item_selected ~= 0 then
             y = shift - Slider.Y + item_selected * 70
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000)))
-            Graphics.fillEmptyRect(281, 900, y + 1, y + 69, RED)
-            Graphics.fillEmptyRect(282, 899, y + 2, y + 68, RED)
-            Graphics.fillEmptyRect(281, 900, y + 1, y + 69, SELECTED_RED)
-            Graphics.fillEmptyRect(282, 899, y + 2, y + 68, SELECTED_RED)
+            Graphics.fillEmptyRect(281, 920, y + 1, y + 69, RED)
+            Graphics.fillEmptyRect(282, 919, y + 2, y + 68, RED)
+            Graphics.fillEmptyRect(281, 920, y + 1, y + 69, SELECTED_RED)
+            Graphics.fillEmptyRect(282, 919, y + 2, y + 68, SELECTED_RED)
         end
 
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
@@ -289,7 +289,7 @@ function Details.draw()
 
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 70 / 454
-            Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92))
+            Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
             Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, BLUE)
         end
     end

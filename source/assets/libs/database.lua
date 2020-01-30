@@ -92,6 +92,10 @@ function Database.getChapters(manga)
     return {}
 end
 
+function Database.loadChapter(manga)
+    
+end
+
 ---Saves database to `ux0:data/noboru/save.dat`
 function Database.save()
     local manga_table = {}
