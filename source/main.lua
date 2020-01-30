@@ -25,6 +25,7 @@ dofile("app0:assets/libs/debug.lua")
 dofile("app0:assets/libs/cache.lua")
 
 Database.load()
+Cache.load()
 Menu.setMode("LIBRARY")
 Panel.show()
 

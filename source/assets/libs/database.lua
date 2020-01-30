@@ -47,7 +47,11 @@ function Database.updateChapters(manga, chapters)
                 end
             end
         end
-        local fh = System.openFile("ux0:data/noboru/books/" .. UniqueKey:gsub("%p", "") .. "/chapter_info.lua", FCREATE)
+        local chapter_path = "ux0:data/noboru/books/" .. UniqueKey:gsub("%p", "") .. "/chapter_info.lua"
+        if System.doesFileExist(chapter_path) then
+            System.deleteFile(chapter_path)
+        end
+        local fh = System.openFile(chapter_path, FCREATE)
         local save_data = table.serialize(chaps, "chapters")
         System.writeFile(fh, save_data, save_data:len())
         System.closeFile(fh)

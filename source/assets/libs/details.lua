@@ -66,6 +66,7 @@ function Details.setManga(manga)
         ms = 50 * string.len(manga.Name)
         dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
         Chapters = {}
+        Slider.Y = -50
         DetailsSelector:resetSelected()
         mode = "START"
         old_fade = 1
@@ -187,18 +188,15 @@ function Details.draw()
     if mode ~= "END" then
         local M = old_fade * fade
         local Alpha = 255 * M
-        
         Graphics.fillRect(0, 920, 90, 544, Color.new(0, 0, 0, Alpha))
-        
         local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
         local RED = Color.new(137, 30, 43, Alpha)
-        
         local start = math.max(1, math.floor(Slider.Y / 70) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 70
-        
+        local width = Font.getTextWidth(FONT16, "Saved")
         for i = start, math.min(#Chapters, start + 8) do
             if y < 544 then
                 Graphics.fillRect(280, 920, y, y + 69, BLUE)
@@ -207,29 +205,26 @@ function Details.draw()
                 if i == Slider.ItemID then
                     Graphics.fillRect(280, 920, y, y + 69, Color.new(0, 0, 0, 32))
                 end
+                if Cache.check(Chapters[i]) then
+                    Font.print(FONT16, 920-width-10, y + 45, "Saved", WHITE)
+                end
             else
                 break
             end
             y = y + 70
         end
         Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
-        
         local text, color = Language[LANG].DETAILS.ADD_TO_LIBRARY, BLUE
-        
         if Database.check(Manga) then
             color = RED
             text = Language[LANG].DETAILS.REMOVE_FROM_LIBRARY
         end
-        
         Graphics.fillRect(20, 260, shift + 420, shift + 479, color)
-        
         if textures_16x16.Triangle and textures_16x16.Triangle.e then
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
         Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 448 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
-        
         Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
-        
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[LANG].WARNINGS.NO_CHAPTERS)
@@ -243,14 +238,11 @@ function Details.draw()
             Graphics.fillEmptyRect(281, 920, y + 1, y + 69, SELECTED_RED)
             Graphics.fillEmptyRect(282, 919, y + 2, y + 68, SELECTED_RED)
         end
-        
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
-        
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
-        
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 70 / 454
             Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
