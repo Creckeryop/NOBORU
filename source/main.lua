@@ -22,6 +22,7 @@ dofile("app0:assets/libs/menu.lua")
 dofile("app0:assets/libs/panel.lua")
 dofile("app0:assets/libs/notifications.lua")
 dofile("app0:assets/libs/debug.lua")
+dofile("app0:assets/libs/cache.lua")
 
 Database.load()
 Menu.setMode("LIBRARY")
@@ -95,6 +96,7 @@ local function update()
         Panel.update()
         Threads.update()
         ParserManager.update()
+        Cache.update()
     end
     if fade > 0 then
         fade = fade - fade / 8

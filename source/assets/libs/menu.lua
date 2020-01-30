@@ -40,6 +40,7 @@ function Menu.input(oldpad, pad, oldtouch, touch)
         end
         if touch.x and not oldtouch.x and touch.x < 250 then
             if touch.y < 97 then
+                _ = _
             elseif touch.y < 157 then
                 Menu.setMode("LIBRARY")
             elseif touch.y < 200 then

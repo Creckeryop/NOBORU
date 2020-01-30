@@ -94,7 +94,7 @@ local function changePage(page)
                         Table = Pages[p],
                         Index = "Image",
                         Path = string.format("cache/%s.image", p),
-                        OnComplete = function ()
+                        OnComplete = function()
                             tab.Path = string.format("cache/%s.image", p)
                         end
                     })
@@ -251,7 +251,7 @@ function Reader.update()
             for i = 1, #chapter.Pages do
                 Pages[i] = {
                     chapter.Pages[i],
-                    Path = chapter.Pathes and chapter.Pathes[i],
+                    Path = chapter.Pages[i].Path,
                     x = 0,
                     y = 0
                 }
@@ -409,7 +409,7 @@ function Reader.draw()
         --[[
         local page = Pages[Pages.Page]
         if page and page.Path then
-            Font.print(FONT16, 0, 0, page.Path, Color.new(255, 0, 0))
+        Font.print(FONT16, 0, 0, page.Path, Color.new(255, 0, 0))
         end--]]
         if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
             local Counter = Pages.Page .. "/" .. Pages.Count
@@ -438,7 +438,11 @@ function Reader.loadChapter(chapter)
         Page = 0
     }
     collectgarbage("collect")
-    ParserManager.prepareChapter(Chapters[chapter], Chapters[chapter].Pages)
+    if Cache.check(Chapters[chapter]) then
+        Chapters[chapter].Pages = Cache.getChapter(Chapters[chapter])
+    else
+        ParserManager.prepareChapter(Chapters[chapter], Chapters[chapter].Pages)
+    end
 end
 
 function Reader.load(chapters, num)

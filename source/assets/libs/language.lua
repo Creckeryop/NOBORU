@@ -1,15 +1,15 @@
 Language = {
     RUS = {
         APP = {
-            LIBRARY     = "БИБЛИОТЕКА",
-            CATALOGS    = "КАТАЛОГИ",
-            SETTINGS    = "НАСТРОЙКИ",
-            SEARCH      = "Поиск"
+            LIBRARY = "БИБЛИОТЕКА",
+            CATALOGS = "КАТАЛОГИ",
+            SETTINGS = "НАСТРОЙКИ",
+            SEARCH = "Поиск"
         },
         PARSERS = {
-            RUS     = "Русский",
-            ENG     = "Английский",
-            DIF     = "Разные"
+            RUS = "Русский",
+            ENG = "Английский",
+            DIF = "Разные"
         },
         WARNINGS = {
             NO_CHAPTERS = "Нет глав"
@@ -42,15 +42,15 @@ Language = {
     },
     ENG = {
         APP = {
-            LIBRARY     = "LIBRARY",
-            CATALOGS    = "CATALOGS",
-            SETTINGS    = "SETTINGS",
-            SEARCH      = "Search"
+            LIBRARY = "LIBRARY",
+            CATALOGS = "CATALOGS",
+            SETTINGS = "SETTINGS",
+            SEARCH = "Search"
         },
         PARSERS = {
-            RUS     = "Russian",
-            ENG     = "English",
-            DIF     = "Different"
+            RUS = "Russian",
+            ENG = "English",
+            DIF = "Different"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"

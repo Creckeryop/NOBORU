@@ -156,7 +156,7 @@ function Threads.update()
             if Task == nil then
                 if TempTask.OnComplete then
                     TempTask.OnComplete()
-                    Console.write("OnComplete executing for "..TempTask.Type.. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
+                    Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
                 end
             end
         else
@@ -221,6 +221,7 @@ local function taskcheck(T)
     end
     return false
 end
+
 local function taskete(UniqueKey, T, foo)
     if UniqueKey and uniques[UniqueKey] and taskcheck(T) or not UniqueKey then
         return false

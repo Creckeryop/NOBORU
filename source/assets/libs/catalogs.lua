@@ -1,7 +1,6 @@
 Catalogs = {}
 local Slider = Slider()
 local TOUCH = TOUCH()
-Slider.Y = -10
 
 local Parser = nil
 local TouchTimer = Timer.new()
@@ -14,6 +13,7 @@ local searchData = ""
 local DownloadedImage = {}
 local page = 1
 local Results = {}
+local Parsers = {}
 
 local abs, ceil, floor, max, min = math.abs, math.ceil, math.floor, math.max, math.min
 
@@ -33,15 +33,15 @@ local function freeMangaImage(manga)
 end
 
 local function loadMangaImage(manga)
-    if manga.Path and System.doesFileExist("ux0:data/noboru/books/"..manga.Path) then
+    if manga.Path and System.doesFileExist("ux0:data/noboru/books/" .. manga.Path) then
         Threads.addTask(manga, {
             Type = "Image",
-            Path = "books/"..manga.Path,
+            Path = "books/" .. manga.Path,
             Table = manga,
             Index = "Image"
         })
     else
-        local UniquePath = Database.check(manga) and manga.Path and ("books/"..manga.Path) or nil
+        local UniquePath = Database.check(manga) and manga.Path and ("books/" .. manga.Path) or nil
         Threads.addTask(manga, {
             Type = "ImageDownload",
             Link = manga.ImageLink,
@@ -103,8 +103,6 @@ local function selectParser(index)
         Catalogs.setMode("MANGA")
     end
 end
-
-local Parsers = {}
 
 function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
@@ -193,6 +191,14 @@ end
 
 function Catalogs.update()
     Parsers = GetParserList()
+    
+    if abs(Slider.V) < 1 then
+        Slider.V = 0
+    else
+        Slider.Y = Slider.Y + Slider.V
+        Slider.V = Slider.V / 1.12
+    end
+    
     if mode == "MANGA" or mode == "LIBRARY" then
         UpdateMangas()
         if ParserManager.check(Results) then
@@ -201,7 +207,7 @@ function Catalogs.update()
             Loading.setMode("NONE")
         end
         if mode == "MANGA" then
-            Panel.set {
+            Panel.set{
                 "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
                 ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
                 Square = getMangaMode == "POPULAR" and Language[LANG].PANEL.MODE_POPULAR or getMangaMode == "LATEST" and Language[LANG].PANEL.MODE_LATEST or getMangaMode == "SEARCH" and string.format(Language[LANG].PANEL.MODE_SEARCHING, searchData),
@@ -211,66 +217,17 @@ function Catalogs.update()
                 Cross = Language[LANG].PANEL.SELECT
             }
         elseif mode == "LIBRARY" then
-            Panel.set {
+            Panel.set{
                 "L\\R", "DPad", "Cross",
                 ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
                 DPad = Language[LANG].PANEL.CHOOSE,
                 Cross = Language[LANG].PANEL.SELECT
             }
         end
-    elseif mode == "PARSERS" then
-        Panel.set {
-            "L\\R", "Triangle", "DPad", "Cross",
-            ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
-            Triangle = Language[LANG].PANEL.UPDATE,
-            DPad = Language[LANG].PANEL.CHOOSE,
-            Cross = Language[LANG].PANEL.SELECT
-        }
-    end
-
-    Slider.Y = Slider.Y + Slider.V
-    Slider.V = Slider.V / 1.12
-
-    if abs(Slider.V) < 1 then
-        Slider.V = 0
-    end
-    if mode == "LIBRARY" or mode == "MANGA" then
         local item = MangaSelector:getSelected()
-        if item~=0 then
-            Slider.Y = Slider.Y + (math.floor((item-1)/4) * (MANGA_HEIGHT+10)+MANGA_HEIGHT/2 - 232 - Slider.Y) / 8
+        if item ~= 0 then
+            Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 10) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
         end
-    elseif mode == "PARSERS" then
-        local item = ParserSelector:getSelected()
-        if item~=0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
-        end
-    end
-    if StartSearch then
-        if Keyboard.getState() == FINISHED then
-            local data = Keyboard.getInput()
-            Console.write('Searching for "' .. data .. '"')
-            if data:gsub("%s", "") ~= "" then
-                Catalogs.terminate()
-                searchData = data
-                getMangaMode = "SEARCH"
-                Notifications.push(string.format(Language[LANG].NOTIFICATIONS.SEARCHING, data))
-            end
-            StartSearch = false
-            Keyboard.clear()
-        elseif Keyboard.getState() == CANCELED then
-            StartSearch = false
-            Keyboard.clear()
-        end
-    end
-    if mode == "PARSERS" then
-        if Slider.Y < -10 then
-            Slider.Y = -10
-            Slider.V = 0
-        elseif Slider.Y > ceil(#Parsers) * 75 - 514 then
-            Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
-            Slider.V = 0
-        end
-    elseif mode == "MANGA" or mode == "LIBRARY" then
         if Slider.Y < 0 then
             Slider.Y = 0
             Slider.V = 0
@@ -288,6 +245,42 @@ function Catalogs.update()
         end
         if mode == "LIBRARY" and #Results ~= #Database.getMangaList() then
             Results = Database.getMangaList()
+        end
+    elseif mode == "PARSERS" then
+        Panel.set{
+            "L\\R", "Triangle", "DPad", "Cross",
+            ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
+            Triangle = Language[LANG].PANEL.UPDATE,
+            DPad = Language[LANG].PANEL.CHOOSE,
+            Cross = Language[LANG].PANEL.SELECT
+        }
+        local item = ParserSelector:getSelected()
+        if item ~= 0 then
+            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
+        end
+        if Slider.Y < -10 then
+            Slider.Y = -10
+            Slider.V = 0
+        elseif Slider.Y > ceil(#Parsers) * 75 - 514 then
+            Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
+            Slider.V = 0
+        end
+    end
+    
+    if StartSearch then
+        if Keyboard.getState() == FINISHED then
+            local data = Keyboard.getInput()
+            Console.write('Searching for "' .. data .. '"')
+            if data:gsub("%s", "") ~= "" then
+                Catalogs.terminate()
+                searchData = data
+                getMangaMode = "SEARCH"
+                Notifications.push(string.format(Language[LANG].NOTIFICATIONS.SEARCHING, data))
+            end
+        end
+        if Keyboard.getState() ~= RUNNING then
+            StartSearch = false
+            Keyboard.clear()
         end
     end
 end
@@ -318,14 +311,14 @@ function Catalogs.draw()
         if item ~= 0 then
             y = item * 75 - Slider.Y
             local SELECTED_RED = Color.new(255, 255, 255, 150 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 800)))
-            for i=0,2 do
-                Graphics.fillEmptyRect(264+i, 946-i, y-i, y-74+i, Color.new(20, 20, 230))
-                Graphics.fillEmptyRect(264+i, 946-i, y-i, y-74+i, SELECTED_RED)
+            for i = 0, 2 do
+                Graphics.fillEmptyRect(264 + i, 946 - i, y - i, y - 74 + i, Color.new(20, 20, 230))
+                Graphics.fillEmptyRect(264 + i, 946 - i, y - i, y - 74 + i, SELECTED_RED)
             end
         end
         local elements_count = #Parsers
         if elements_count > 0 then
-            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))        
+            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
             if elements_count > 7 then
                 local h = #Parsers * 75 / 524
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
@@ -341,9 +334,9 @@ function Catalogs.draw()
             local x = 610 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 10) + MANGA_WIDTH / 2
             local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + 12
             local SELECTED_RED = Color.new(255, 255, 255, 150 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 800)))
-            for i=0,4 do
-                Graphics.fillEmptyRect(x-MANGA_WIDTH/2+i, x+MANGA_WIDTH/2-i, y-MANGA_HEIGHT/2+i, y+MANGA_HEIGHT/2-i, Color.new(20, 20, 230))
-                Graphics.fillEmptyRect(x-MANGA_WIDTH/2+i, x+MANGA_WIDTH/2-i, y-MANGA_HEIGHT/2+i, y+MANGA_HEIGHT/2-i, SELECTED_RED)
+            for i = 0, 4 do
+                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i, Color.new(20, 20, 230))
+                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i, SELECTED_RED)
             end
         end
         if #Results > 4 then

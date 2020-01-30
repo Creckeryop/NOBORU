@@ -10,7 +10,7 @@ function Selector:new(up, down, left, right)
     local dright = right or 3
     local control_timer = Timer.new()
     local time_space = 400
-
+    
     function p:input(sourcecount, upper, oldpad, pad, touch_x)
         if touch_x ~= nil then
             selected_item = 0
@@ -52,16 +52,16 @@ function Selector:new(up, down, left, right)
             end
         end
     end
-
+    
     function p:getSelected()
         return selected_item
     end
-
+    
     function p:resetSelected()
         selected_item = 0
     end
-
-    setmetatable (p, self)
+    
+    setmetatable(p, self)
     self.__index = self
     return p
 end
