@@ -13,7 +13,6 @@ local fade = 0
 local old_fade = 1
 
 local point = Point_t(0, 0)
-local center = Point_t(0, 0)
 
 local ms = 0
 local dif = 0
@@ -56,21 +55,19 @@ local animationUpdate = function()
     end
 end
 
-local control_timer = Timer.new()
-local time_space = 400
-local item_selected = 0
+local DetailsSelector = Selector:new(-1, 1, -3, 3)
+
 local is_chapter_loaded = false
 
-function Details.setManga(manga, x, y)
-    if manga and x and y then
+function Details.setManga(manga)
+    if manga then
         Panel.hide()
         Manga = manga
         ms = 50 * string.len(manga.Name)
         dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
         Chapters = {}
-        item_selected = 0
+        DetailsSelector:resetSelected()
         mode = "START"
-        point = Point_t(x, y)
         old_fade = 1
         if Threads.netActionUnSafe(Network.isWifiEnabled) then
             ParserManager.getChaptersAsync(manga, Chapters)
@@ -80,17 +77,28 @@ function Details.setManga(manga, x, y)
             is_chapter_loaded = true
         end
         is_notification_showed = false
-        center = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
+        point = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
         Timer.reset(animation_timer)
         Timer.reset(name_timer)
+    end
+end
+
+local function press_add_to_library()
+    if Manga then
+        if Database.check(Manga) then
+            Database.remove(Manga)
+            Notifications.push(Language[LANG].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
+        else
+            Database.add(Manga, Chapters)
+            Notifications.push(Language[LANG].NOTIFICATIONS.ADDED_TO_LIBRARY)
+        end
+        Database.save()
     end
 end
 
 function Details.input(oldpad, pad, oldtouch, touch)
     if mode == "START" then
         if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
-            item_selected = 0
-            time_space = 400
             TOUCH.MODE = TOUCH.READ
             Slider.TouchY = touch.y
         elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
@@ -104,59 +112,16 @@ function Details.input(oldpad, pad, oldtouch, touch)
             end
             TOUCH.MODE = TOUCH.NONE
         end
-        local AddToLibrary = false
-        if oldtouch.x and oldtouch.x < 260 and not touch.x then
+        DetailsSelector:input(#Chapters, math.floor((Slider.Y - 20 + 90) / 70), oldpad, pad, touch.x)
+        if oldtouch.x and not touch.x then
             if oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 420 and oldtouch.y < 475 then
-                AddToLibrary = true
+                press_add_to_library()
             end
-        end
-        if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
-            AddToLibrary = true
-        end
-        if Manga and AddToLibrary then
-            if Database.check(Manga) then
-                Database.remove(Manga)
-                Notifications.push(Language[LANG].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
-            else
-                Database.add(Manga, Chapters)
-                Notifications.push(Language[LANG].NOTIFICATIONS.ADDED_TO_LIBRARY)
-            end
-            Database.save()
-        end
-        if Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)) then
-            if (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_RIGHT) or Controls.check(pad, SCE_CTRL_LEFT)) then
-                if item_selected == 0 then
-                    item_selected = math.floor((Slider.Y - 20 + 90) / 70)
-                elseif item_selected ~= 0 then
-                    if Controls.check(pad, SCE_CTRL_DOWN) then
-                        item_selected = item_selected + 1
-                    elseif Controls.check(pad, SCE_CTRL_UP) then
-                        item_selected = item_selected - 1
-                    elseif Controls.check(pad, SCE_CTRL_RIGHT) then
-                        item_selected = item_selected + 3
-                    elseif Controls.check(pad, SCE_CTRL_LEFT) then
-                        item_selected = item_selected - 3
-                    end
-                end
-                if #Chapters > 0 then
-                    if item_selected <= 0 then
-                        item_selected = 1
-                    elseif item_selected > #Chapters then
-                        item_selected = #Chapters
-                    end
-                else
-                    item_selected = 0
-                end
-                if time_space > 50 then
-                    time_space = math.max(50, time_space / 2)
-                end
-                Slider.V = 0
-                Timer.reset(control_timer)
-            else
-                time_space = 400
-            end
+        elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+            press_add_to_library()
         end
         if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
+            local item_selected = DetailsSelector.getSelected()
             if item_selected ~= 0 then
                 if Chapters[item_selected] then
                     Catalogs.shrink()
@@ -206,6 +171,7 @@ function Details.update()
         else
             Loading.setMode("NONE")
         end
+        local item_selected = DetailsSelector.getSelected()
         if item_selected ~= 0 then
             Slider.Y = Slider.Y + (item_selected * 70 - 272 - Slider.Y) / 8
         end
@@ -270,7 +236,7 @@ function Details.draw()
             is_notification_showed = true
             Notifications.push(Language[LANG].WARNINGS.NO_CHAPTERS)
         end
-
+        local item_selected = DetailsSelector.getSelected()
         if item_selected ~= 0 then
             y = shift - Slider.Y + item_selected * 70
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000)))
@@ -281,7 +247,7 @@ function Details.draw()
         end
 
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
-        DrawManga(point.x + (center.x - point.x) * M, point.y + (center.y - point.y) * M, Manga, 1 + M / 4)
+        DrawManga(point.x, point.y + 544* (1-M), Manga, 1 + M / 4)
 
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)

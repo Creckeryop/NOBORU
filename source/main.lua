@@ -8,6 +8,7 @@ Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo)
 Graphics.termBlend()
 
 dofile("app0:assets/libs/utils.lua")
+dofile("app0:assets/libs/selector.lua")
 dofile("app0:assets/libs/console.lua")
 dofile("app0:assets/libs/language.lua")
 dofile("app0:assets/libs/globals.lua")
