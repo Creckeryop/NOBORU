@@ -13,8 +13,8 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 * Adding manga to library
 * Loading longpages (webmanga) without downscaling (thanks to my [piclib](https://github.com/Creckeryop/piclib))
 * Multilanguage
+* Reading without network (Offline mode)
 ## TODO:
-* Offline mode
 * Settings
 * Caching info about last readed chapters (to make continue function)
 * Add more parsers
@@ -22,7 +22,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 * History
 * More languages
 ### Requirements:
-* At least 50-60 MB memory (for online reading) or more (for offline reading)
+* At least 10-20 MB memory (for online reading) or more (for offline reading)
 ## Compile
 	Execute `build.bat`
 ## Credits:
