@@ -119,11 +119,7 @@ function ParserManager.loadPageImage(parserID, Link, Table, id, Insert)
                 Type = "ImageDownload",
                 Link = Table.Link,
                 Table = Table,
-                Index = "Image",
-                Path = string.format("cache/%s.image", id),
-                OnComplete = function()
-                    Table.Path = string.format("cache/%s.image", id)
-                end
+                Index = "Image"
             })
         end,
         Table = Table

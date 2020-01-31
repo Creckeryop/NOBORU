@@ -2,6 +2,7 @@ Cache = {}
 local Keys = {}
 local Order = {}
 local Task = nil
+local Downloading = {}
 
 local function key(chapter)
     return string.gsub(chapter.Manga.ParserID .. chapter.Manga.Link .. chapter.Link, "%p", "")
@@ -14,12 +15,21 @@ function Cache.update()
         Task.F = coroutine.create(Task.F)
     else
         if coroutine.status(Task.F) ~= "dead" then
-            local _, precentage, safe = coroutine.resume(Task.F)
+            local _, msg, page, page_count = coroutine.resume(Task.F)
             if _ then
-                Task.status = precentage
+                if msg then
+                    if msg == "update_count" then
+                        Task.page = page
+                        Task.page_count = page_count
+                    end
+                    if Task.Destroy then
+                        Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+                        Task = nil
+                    end
+                end
             end
         else
-            Notifications.push("Done!")
+            Notifications.push(string.format(Language[LANG].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
             Task = nil
         end
     end
@@ -30,27 +40,29 @@ function Cache.download(chapter)
     if not System.doesDirExist("ux0:data/noboru/cache/" .. k) then
         System.createDirectory("ux0:data/noboru/cache/" .. k)
     end
-    Order[#Order + 1] = {
+    Downloading[k] = {
         Key = k,
+        MangaName = chapter.Manga.Name,
+        ChapterName = chapter.Name,
         F = function()
             local t = {}
             ParserManager.prepareChapter(chapter, t)
             while ParserManager.check(t) do
-                coroutine.yield(0)
+                coroutine.yield("update_count", 0, 0)
             end
             local parser = GetParserByID(chapter.Manga.ParserID)
             for i = 1, #t do
-                coroutine.yield(i / #t)
+                coroutine.yield("update_count", i, #t)
                 local result = {}
                 parser:loadChapterPage(t[i], result)
-                coroutine.yield(i / #t)
+                coroutine.yield(false)
                 Threads.insertTask(result, {
                     Type = "FileDownload",
                     Link = result.Link,
                     Path = string.format("cache/%s/%s.image", k, i)
                 })
                 while Threads.check(result) do
-                    coroutine.yield(i / #t)
+                    coroutine.yield(false)
                 end
             end
             local fh = System.openFile("ux0:data/noboru/cache/" .. k .. "/done.txt", FCREATE)
@@ -58,12 +70,66 @@ function Cache.download(chapter)
             System.closeFile(fh)
             Keys[k] = true
             Cache.save()
+            Downloading[k] = nil
         end
     }
+    Order[#Order + 1] = Downloading[k]
+    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name,chapter.Name))
+end
+
+local function stop(key)
+    if Downloading[key] then
+        if Downloading[key] == Task then
+            Downloading[key].Destroy = true
+            RemoveDirectory("ux0:data/noboru/cache/"..key)
+        else
+            for i, v in ipairs(Order) do
+                if v == Downloading[key] then
+                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, Order[i].MangaName, Order[i].ChapterName))
+                    table.remove(Order, i)
+                    break
+                end
+            end
+        end
+        Downloading[key] = nil
+    end
+end
+
+function Cache.stop(chapter)
+    if chapter then stop(key(chapter)) end
+end
+
+function Cache.stopByListItem(item)
+    if item.Key then stop(item.Key) end
+end
+
+function Cache.delete(chapter)
+    local k = key(chapter)
+    if Keys[k] then
+        RemoveDirectory("ux0:data/noboru/cache/"..k)
+        Keys[k] = nil
+        Cache.save()
+        Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CHAPTER_REMOVE, k))
+    end
+end
+
+function Cache.getDownloadingList()
+    local list = {}
+    if Task~=nil then
+        list[#list+1] = { Manga = Task.MangaName, Chapter = Task.ChapterName, page = Task.page or 0, page_count = Task.page_count or 0, Key = Task.Key }
+    end
+    for i = 1, #Order do
+        list[#list+1] = { Manga = Order[i].MangaName, Chapter = Order[i].ChapterName, page = 0, page_count = 0, Key = Order[i].Key }
+    end
+    return list
 end
 
 function Cache.check(chapter)
     return Keys[key(chapter)] == true
+end
+
+function Cache.is_downloading(chapter)
+    return Downloading[key(chapter)]
 end
 
 function Cache.getChapter(chapter)
@@ -108,6 +174,8 @@ function Cache.load()
                 else
                     Notifications.push("cache_error " .. k)
                 end
+            else
+                Notifications.push("cache_error " .. k)
             end
         end
         System.closeFile(fh)

@@ -21,6 +21,7 @@ StartSearch = false
 
 local MangaSelector = Selector:new(-4, 4, -1, 1)
 local ParserSelector = Selector:new(-1, 1, -3, 3)
+local DownloadSelector = Selector:new(-1, 1, -3, 3)
 
 local function freeMangaImage(manga)
     if manga and manga.ImageDownload then
@@ -142,6 +143,12 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
             selectParser(ParserSelector:getSelected())
         end
+    elseif mode == "DOWNLOAD" then
+        local list = Cache.getDownloadingList()
+        DownloadSelector:input(#list, max(1, floor((Slider.Y - 10) / 75)), oldpad, pad, touch.x)
+        if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
+            Cache.stopByListItem(list[DownloadSelector:getSelected()])
+        end
     end
     if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
         TOUCH.MODE = TOUCH.READ
@@ -152,6 +159,14 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                 if mode == "PARSERS" then
                     if oldtouch.x > 265 and oldtouch.x < 945 then
                         selectParser(floor((Slider.Y - 10 + oldtouch.y) / 75) + 1)
+                    end
+                elseif mode == "DOWNLOAD" then
+                    if oldtouch.x > 265 and oldtouch.x < 945 then
+                        local list = Cache.getDownloadingList()
+                        local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+                        if list[id] then
+                            Cache.stopByListItem(list[id])
+                        end
                     end
                 elseif mode == "MANGA" or mode == "LIBRARY" then
                     local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
@@ -190,7 +205,6 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 end
 
 function Catalogs.update()
-    Parsers = GetParserList()
     
     if abs(Slider.V) < 1 then
         Slider.V = 0
@@ -247,6 +261,7 @@ function Catalogs.update()
             Results = Database.getMangaList()
         end
     elseif mode == "PARSERS" then
+        Parsers = GetParserList()
         Panel.set{
             "L\\R", "Triangle", "DPad", "Cross",
             ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
@@ -265,8 +280,27 @@ function Catalogs.update()
             Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
             Slider.V = 0
         end
+    elseif mode == "DOWNLOAD" then
+        local list = Cache.getDownloadingList()
+        Panel.set{
+            "L\\R", "DPad", "Cross",
+            ["L\\R"] = Language[LANG].PANEL.CHANGE_SECTION,
+            DPad = Language[LANG].PANEL.CHOOSE,
+            Cross = Language[LANG].PANEL.CANCEL
+        }
+        local item = DownloadSelector:getSelected()
+        if item ~= 0 then
+            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
+        end
+        if Slider.Y < -10 then
+            Slider.Y = -10
+            Slider.V = 0
+        elseif Slider.Y > ceil(#list) * 75 - 514 then
+            Slider.Y = max(-10, ceil(#list) * 75 - 514)
+            Slider.V = 0
+        end
     end
-    
+
     if StartSearch then
         if Keyboard.getState() == FINISHED then
             local data = Keyboard.getInput()
@@ -324,6 +358,42 @@ function Catalogs.draw()
                 Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
             end
         end
+    elseif mode == "DOWNLOAD" then
+        local list = Cache.getDownloadingList()
+        local start = max(1, floor((Slider.Y - 10) / 75))
+        local y = start * 75 - Slider.Y
+        for i = start, min(#list, start + 9) do
+            local task = list[i]
+            Graphics.fillRect(264, 946, y - 75, y, Color.new(0, 0, 0, 32))
+            Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+            Font.print(FONT20, 275, y - 70, task.Manga, COLOR_BLACK)
+            Font.print(FONT16, 275, y - 44, task.Chapter, COLOR_BLACK)
+            if task.page_count > 0 then
+                local text_counter = task.page.."/"..task.page_count
+                local w = Font.getTextWidth(FONT16,text_counter)
+                Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w)*task.page/task.page_count,y-20,y-8,Color.new(42, 152, 220))
+                Graphics.fillEmptyRect(270 + 10 + w, 940,y - 20,y-8,COLOR_BLACK)
+                Font.print(FONT16, 275, y - 24, text_counter, COLOR_BLACK)
+            end
+            y = y + 75
+        end
+        local item = DownloadSelector:getSelected()
+        if item ~= 0 then
+            y = item * 75 - Slider.Y
+            local SELECTED_RED = Color.new(255, 255, 255, 150 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 800)))
+            for i = 0, 2 do
+                Graphics.fillEmptyRect(264 + i, 946 - i, y - i, y - 74 + i, Color.new(20, 20, 230))
+                Graphics.fillEmptyRect(264 + i, 946 - i, y - i, y - 74 + i, SELECTED_RED)
+            end
+        end
+        local elements_count = #list
+        if elements_count > 0 then
+            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
+            if elements_count > 7 then
+                local h = #list * 75 / 524
+                Graphics.fillRect(955, 960, Slider.Y / h, (Slider.Y + 524) / h, COLOR_BLACK)
+            end
+        end
     elseif mode == "MANGA" or mode == "LIBRARY" then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
         for i = start, min(#Results, start + 15) do
@@ -365,10 +435,11 @@ function Catalogs.terminate()
     getMangaMode = "POPULAR"
 end
 
----@param new_mode string | '"PARSERS"' | '"MANGA"' | '"LIBRARY"'
+---@param new_mode string | '"PARSERS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
 function Catalogs.setMode(new_mode)
     mode = new_mode
     MangaSelector:resetSelected()
     ParserSelector:resetSelected()
+    DownloadSelector:resetSelected()
     Catalogs.terminate()
 end

@@ -121,5 +121,16 @@ function Database.load()
         local f = System.openFile("ux0:data/noboru/save.dat", FREAD)
         base = load("local " .. System.readFile(f, System.sizeFile(f)) .. " return base")()
         System.closeFile(f)
+        for k, v in ipairs(base) do
+            if System.doesFileExist("ux0:data/noboru/books/"..v.Path) then
+                local fh = System.openFile("ux0:data/noboru/books/"..v.Path, FREAD)
+                local image_size = System.sizeFile(fh)
+                System.closeFile(fh)
+                if image_size < 100 then
+                    System.deleteFile("ux0:data/noboru/books/"..v.Path)
+                    Notifications.push("image_error "..v.Path)
+                end
+            end
+        end
     end
 end

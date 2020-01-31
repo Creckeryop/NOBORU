@@ -14,6 +14,9 @@ local old_fade = 1
 
 local point = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
 
+local cross = Image:new(Graphics.loadImage("app0:assets/images/cross.png"))
+local dwnld = Image:new(Graphics.loadImage("app0:assets/images/download.png"))
+
 local ms = 0
 local dif = 0
 
@@ -134,7 +137,15 @@ function Details.input(oldpad, pad, oldtouch, touch)
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local item = Chapters[DetailsSelector.getSelected()]
             if item then
-                Cache.download(item)
+                if not Cache.check(item) then
+                    if Cache.is_downloading(item) then
+                        Cache.stop(item)
+                    else
+                        Cache.download(item)
+                    end
+                else
+                    Cache.delete(item)
+                end
             end
         end
         local new_itemID = 0
@@ -196,7 +207,6 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 70) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 70
-        local width = Font.getTextWidth(FONT16, "Saved")
         for i = start, math.min(#Chapters, start + 8) do
             if y < 544 then
                 Graphics.fillRect(280, 920, y, y + 69, BLUE)
@@ -206,7 +216,19 @@ function Details.draw()
                     Graphics.fillRect(280, 920, y, y + 69, Color.new(0, 0, 0, 32))
                 end
                 if Cache.check(Chapters[i]) then
-                    Font.print(FONT16, 920-width-10, y + 45, "Saved", WHITE)
+                    Graphics.drawRotateImage(920-32, y+34, cross.e, 0)
+                else
+                    local t = Cache.is_downloading(Chapters[i])
+                    if t then
+                        local text = "0%"
+                        if t.page_count and t.page_count > 0 then
+                            text = math.ceil(100 * t.page / t.page_count).."%"
+                        end
+                        local width = Font.getTextWidth(FONT20,text)
+                        Font.print(FONT20, 920-32-width/2, y + 21, text, COLOR_WHITE)
+                    else
+                        Graphics.drawRotateImage(920-32, y+34, dwnld.e, 0)
+                    end
                 end
             else
                 break

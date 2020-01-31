@@ -92,11 +92,7 @@ local function changePage(page)
                         Type = "ImageDownload",
                         Link = Pages[p].Link,
                         Table = Pages[p],
-                        Index = "Image",
-                        Path = string.format("cache/%s.image", p),
-                        OnComplete = function()
-                            tab.Path = string.format("cache/%s.image", p)
-                        end
+                        Index = "Image"
                     })
                 else
                     ParserManager.loadPageImage(Chapters[current_chapter].Manga.ParserID, Pages[p][1], Pages[p], p, true)
