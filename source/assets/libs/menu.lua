@@ -90,8 +90,8 @@ function Menu.draw()
     Graphics.fillRect(255, 960, 0, 544, Color.new(245, 245, 245))
     Font.print(FONT30, 30, 107, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 167, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
-    Font.print(FONT30, 30, 419, Language[LANG].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
-    Font.print(FONT30, 30, 472, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    Font.print(FONT30, 30, 408, Language[LANG].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
+    Font.print(FONT30, 30, 468, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
     if Details.getFade() ~= 1 then
         if mode == "CATALOGS" or mode == "LIBRARY" or mode == "DOWNLOAD" then
             Catalogs.draw()

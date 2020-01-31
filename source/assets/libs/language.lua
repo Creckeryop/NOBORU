@@ -31,7 +31,8 @@ Language = {
             START_DOWNLOAD = "%s: %s загрузка началась!",
             END_DOWNLOAD = "%s: %s загрузка завершена!",
             CANCEL_DOWNLOAD = "%s: %s загрузка прервана!",
-            CHAPTER_REMOVE = "%s удалено!"
+            CHAPTER_REMOVE = "%s удалено!",
+            NET_PROBLEM = "Возникли проблемы с интернетом!"
         },
         PANEL = {
             BACK = "Назад",
@@ -78,7 +79,8 @@ Language = {
             START_DOWNLOAD = "%s: %s downloading started!",
             END_DOWNLOAD = "%s: %s successfuly downloaded!",
             CANCEL_DOWNLOAD = "%s: %s download is canceled!",
-            CHAPTER_REMOVE = "%s deleted!"
+            CHAPTER_REMOVE = "%s deleted!",
+            NET_PROBLEM = "There is problems with connection!"
         },
         PANEL = {
             BACK = "Back",

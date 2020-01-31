@@ -115,11 +115,12 @@ function Details.input(oldpad, pad, oldtouch, touch)
                     end
                 else
                     local item = Chapters[id]
+                    local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
                     if item then
                         if not Cache.check(item) then
                             if Cache.is_downloading(item) then
                                 Cache.stop(item)
-                            else
+                            elseif connection then
                                 Cache.download(item)
                             end
                         else
@@ -150,12 +151,13 @@ function Details.input(oldpad, pad, oldtouch, touch)
             Panel.show()
             old_fade = fade
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+            local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
             local item = Chapters[DetailsSelector.getSelected()]
             if item then
                 if not Cache.check(item) then
                     if Cache.is_downloading(item) then
                         Cache.stop(item)
-                    else
+                    elseif connection then
                         Cache.download(item)
                     end
                 else
@@ -222,6 +224,7 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 70) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 70
+        local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
         for i = start, math.min(#Chapters, start + 8) do
             if y < 544 then
                 Graphics.fillRect(280, 920, y, y + 69, BLUE)

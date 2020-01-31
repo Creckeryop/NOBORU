@@ -29,14 +29,29 @@ function Threads.update()
     if not Task then
         Task = table.remove(Order, 1)
         if Task.Type == "StringRequest" then
-            Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+            if Task.Link then
+                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+            else
+                Console.error("No Link given or internet connection problem")
+                Task = nil
+            end
         elseif Task.Type == "FileDownload" or Task.Type == "ImageDownload" then
             if System.doesFileExist(Task.Path) then
                 System.deleteFile(Task.Path)
             end
-            Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
-            if Task.Type == "ImageDownload" then
-                Task.Type = "Image"
+            if Task.Link then
+                if Task.Path then
+                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+                    if Task.Type == "ImageDownload" then
+                        Task.Type = "Image"
+                    end
+                else
+                    Console.error("No Path given")
+                    Task = nil
+                end
+            else
+                Console.error("No Link given or internet connection problem")
+                Task = nil
             end
         elseif Task.Type == "Skip" then
             Task = nil

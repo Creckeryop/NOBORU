@@ -27,6 +27,9 @@ function Cache.update()
                         Task = nil
                     end
                 end
+            else
+                Console.error("Unknown error with cache: "..msg)
+                Task = nil
             end
         else
             Notifications.push(string.format(Language[LANG].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
@@ -46,7 +49,14 @@ function Cache.download(chapter)
         ChapterName = chapter.Name,
         F = function()
             local t = {}
-            ParserManager.prepareChapter(chapter, t)
+            local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+            if connection then
+                ParserManager.prepareChapter(chapter, t)
+            else
+                Notifications.push(Language[LANG].NOTIFICATIONS.NET_PROBLEM)
+                Downloading[k] = nil
+                return
+            end
             while ParserManager.check(t) do
                 coroutine.yield("update_count", 0, 0)
             end
