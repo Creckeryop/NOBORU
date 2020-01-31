@@ -1,4 +1,5 @@
-LANG = "RUS"
+local language_now = System.getLanguage()
+LANG = language_now == 8 and "RUS" or "ENG"
 
 local logo = Graphics.loadImage("app0:assets/images/logo.png")
 

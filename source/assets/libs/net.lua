@@ -190,6 +190,7 @@ function Threads.clear()
     Task.Index = "Garbadge"
 end
 
+---Gives boolean that is any task is running
 function Threads.isDownloadRunning()
     return System.getAsyncState() == 0 or #Order ~= 0 or Task ~= nil
 end
