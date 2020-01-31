@@ -5,6 +5,8 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 ```diff
 - There is a lot of problems with performance, i don't think i can solve 'em all
 ```
+### Requirements:
+* At least 10-20 MB memory (for online reading) or more (for offline reading)
 ## Features:
 * Browsing manga sites
 * Searchinge
@@ -21,11 +23,27 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 * Vertical reading mode
 * History
 * More languages
-### Requirements:
-* At least 10-20 MB memory (for online reading) or more (for offline reading)
+## FAQ:
+<b>Q</b>: I found bug that ...<br>
+<b>A</b>: You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file<br>
+<br>
+<b>Q</b>: Is it safe to use?<br>
+<b>A</b>: I'm really don't know, but i use safe eboot.bin(App have access only to `app0:` and `ux0:data`, so no important files will be removed)<br>
+<br>
+<b>Q</b>: How to view debug console?<br>
+<b>A</b>: DPAD_LEFT + START<br>
+<br>
+<b>Q</b>: App crashes with...<br>
+<b>A</b>: Again create issue [here](https://github.com/Creckeryop/NOBORU/issues)<br>
+<br>
+<b>Q</b>: Reader doesn't load some images<br>
+<b>A</b>: Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page)<br>
+<br>
+<b>Q</b>: I downloaded app and can't see any parsers<br>
+<b>A</b>: Press Triangle to update parser list, so if that won't help create issue [here](https://github.com/Creckeryop/NOBORU/issues)<br>
 ## Compile
 	Execute `build.bat`
 ## Credits:
-[Rinnegatamante](https://github.com/Rinnegatamante) - lpp-vita
+[Rinnegatamante](https://github.com/Rinnegatamante) - [LuaPlayerPlus_Vita](https://github.com/Rinnegatamante/lpp-vita)
 <br>[VitaSDK](https://github.com/vitasdk) - vitaSDK
-<br>[xerpi](https://github.com/xerpi) - vita2d
+<br>[xerpi](https://github.com/xerpi) - [libvita2d](https://github.com/xerpi/libvita2d)
