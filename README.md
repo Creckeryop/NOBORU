@@ -34,7 +34,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 <b>A</b>: DPAD_LEFT + START<br>
 <br>
 <b>Q</b>: App crashes with...<br>
-<b>A</b>: Again create issue [here](https://github.com/Creckeryop/NOBORU/issues)<br>
+<b>A</b>: Again, create issue [here](https://github.com/Creckeryop/NOBORU/issues)<br>
 <br>
 <b>Q</b>: Reader doesn't load some images<br>
 <b>A</b>: Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page)<br>
