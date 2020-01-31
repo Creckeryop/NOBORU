@@ -13,7 +13,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 * Adding manga to library
 * Loading longpages (webmanga) without downscaling (thanks to my [piclib](https://github.com/Creckeryop/piclib))
 * Multilanguage
-* Reading without network (Offline mode)
+* Reading without network (Offline mode !!Don't forget to add manga in library!!)
 ## TODO:
 * Settings
 * Caching info about last readed chapters (to make continue function)
