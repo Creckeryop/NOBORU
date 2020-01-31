@@ -13,7 +13,7 @@ function Selector:new(up, down, left, right)
     
     function p:input(sourcecount, upper, oldpad, pad, touch_x)
         if selected_item > sourcecount then
-            selected_item = 0
+            selected_item = sourcecount
         end
         if touch_x ~= nil then
             selected_item = 0

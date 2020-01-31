@@ -107,10 +107,25 @@ function Details.input(oldpad, pad, oldtouch, touch)
         elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
             if TOUCH.MODE == TOUCH.READ and oldtouch.x > 320 and oldtouch.x < 900 and oldtouch.y > 90 then
                 local id = math.floor((Slider.Y + oldtouch.y - 20) / 70)
-                if Chapters[id] then
-                    Catalogs.shrink()
-                    Reader.load(Chapters, id)
-                    AppMode = READER
+                if oldtouch.x < 800 then
+                    if Chapters[id] then
+                        Catalogs.shrink()
+                        Reader.load(Chapters, id)
+                        AppMode = READER
+                    end
+                else
+                    local item = Chapters[id]
+                    if item then
+                        if not Cache.check(item) then
+                            if Cache.is_downloading(item) then
+                                Cache.stop(item)
+                            else
+                                Cache.download(item)
+                            end
+                        else
+                            Cache.delete(item)
+                        end
+                    end
                 end
             end
             TOUCH.MODE = TOUCH.NONE
@@ -259,6 +274,7 @@ function Details.draw()
             Graphics.fillEmptyRect(282, 919, y + 2, y + 68, RED)
             Graphics.fillEmptyRect(281, 920, y + 1, y + 69, SELECTED_RED)
             Graphics.fillEmptyRect(282, 919, y + 2, y + 68, SELECTED_RED)
+            Graphics.drawImage(899, y+5, textures_16x16.Square.e)
         end
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)

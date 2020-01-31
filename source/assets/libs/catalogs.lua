@@ -192,6 +192,11 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             if GetParserList()[id] then
                 new_itemID = id
             end
+        elseif mode == "DOWNLOAD" then
+            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+            if Cache.getDownloadingList()[id] then
+                new_itemID = id
+            end
         end
     end
     if Slider.ItemID > 0 and new_itemID > 0 and Slider.ItemID ~= new_itemID then
@@ -374,6 +379,9 @@ function Catalogs.draw()
                 Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w)*task.page/task.page_count,y-20,y-8,Color.new(42, 152, 220))
                 Graphics.fillEmptyRect(270 + 10 + w, 940,y - 20,y-8,COLOR_BLACK)
                 Font.print(FONT16, 275, y - 24, text_counter, COLOR_BLACK)
+            end
+            if Slider.ItemID == i then
+                Graphics.fillRect(265, 945, y - 74, y, Color.new(0, 0, 0, 32))
             end
             y = y + 75
         end
