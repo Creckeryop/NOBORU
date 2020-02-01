@@ -364,7 +364,7 @@ function Reader.update()
                         page.min_Zoom = page.Zoom
                         if page.Width * page.Zoom >= 544 then
                             page.y = 272 + i * (272 + page.Width * page.Zoom / 2)
-                            page.y = 10000000
+                            page.y = page.Width * page.Zoom/2
                         end
                     else
                         page.Mode = "Vertical"
@@ -436,21 +436,23 @@ function Reader.update()
         local page = Pages[Pages.Page]
         if orientation == "Horizontal" then
             if page.Zoom then
-                if page.y - page.Height / 2 * page.Zoom > 0 then
+                if page.Height * page.Zoom < 544 then
+                    page.y = 272
+                elseif page.y - page.Height / 2 * page.Zoom > 0 then
                     page.y = page.Height / 2 * page.Zoom
                 elseif page.y + page.Height / 2 * page.Zoom < 544 then
                     page.y = 544 - page.Height / 2 * page.Zoom
                 end
-                if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width > 960 then
-                    if page.Zoom * page.Width <= 960 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
+                if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
+                    if page.Zoom * page.Width < 960 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
+                        page.x = 480
                         pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
-                    end
-                    if page.x - page.Width / 2 * page.Zoom >= 0 then
+                    elseif page.x - page.Width / 2 * page.Zoom >= 0 then
                         page.x = page.Width / 2 * page.Zoom
-                        pageMode = bit32.bor(pageMode, PAGE_LEFT)
+                        pageMode = PAGE_LEFT
                     elseif page.x + page.Width / 2 * page.Zoom <= 960 then
                         page.x = 960 - page.Width / 2 * page.Zoom
-                        pageMode = bit32.bor(pageMode, PAGE_RIGHT)
+                        pageMode = PAGE_RIGHT
                     else
                         pageMode = PAGE_NONE
                     end
@@ -470,16 +472,16 @@ function Reader.update()
                 elseif page.x + page.Height / 2 * page.Zoom < 960 then
                     page.x = 960 - page.Height / 2 * page.Zoom
                 end
-                if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width > 544 then
+                if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width >= 544 then
                     if page.Zoom * page.Width <= 544 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
+                        page.y = 272
                         pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
-                    end
-                    if page.y - page.Width / 2 * page.Zoom >= 0 then
+                    elseif page.y - page.Width / 2 * page.Zoom >= 0 then
                         page.y = page.Width / 2 * page.Zoom
-                        pageMode = bit32.bor(pageMode, PAGE_LEFT)
+                        pageMode = PAGE_LEFT
                     elseif page.y + page.Width / 2 * page.Zoom <= 544 then
                         page.y = 544 - page.Width / 2 * page.Zoom
-                        pageMode = bit32.bor(pageMode, PAGE_RIGHT)
+                        pageMode = PAGE_RIGHT
                     else
                         pageMode = PAGE_NONE
                     end
@@ -549,11 +551,18 @@ function Reader.draw()
                         Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
                         Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, math.pi / 2, page.Zoom, page.Zoom)
                     end
+                    Console.write(pageMode)
                 end
             elseif page then
-                local loading = Language[LANG].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                local Width = Font.getTextWidth(FONT16, loading)
-                Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
+                if orientation == "Horizontal" then
+                    local loading = Language[LANG].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+                    local Width = Font.getTextWidth(FONT16, loading)
+                    Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
+                elseif orientation == "Vertical" then
+                    local loading = Language[LANG].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+                    local Width = Font.getTextWidth(FONT16, loading)
+                    Font.print(FONT16, 960 / 2 - Width / 2, 272 + offset.y + 544 * i - 10, loading, COLOR_BLACK)
+                end
             end
         end
         --[[
