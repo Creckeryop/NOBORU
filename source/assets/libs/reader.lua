@@ -551,7 +551,6 @@ function Reader.draw()
                         Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
                         Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, math.pi / 2, page.Zoom, page.Zoom)
                     end
-                    Console.write(pageMode)
                 end
             elseif page then
                 if orientation == "Horizontal" then
