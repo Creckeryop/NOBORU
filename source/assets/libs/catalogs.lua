@@ -210,14 +210,12 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 end
 
 function Catalogs.update()
-    
     if abs(Slider.V) < 1 then
         Slider.V = 0
     else
         Slider.Y = Slider.Y + Slider.V
         Slider.V = Slider.V / 1.12
     end
-    
     if mode == "MANGA" or mode == "LIBRARY" then
         UpdateMangas()
         if ParserManager.check(Results) then
@@ -305,7 +303,6 @@ function Catalogs.update()
             Slider.V = 0
         end
     end
-    
     if StartSearch then
         if Keyboard.getState() == FINISHED then
             local data = Keyboard.getInput()
@@ -349,11 +346,11 @@ function Catalogs.draw()
         local item = ParserSelector:getSelected()
         if item ~= 0 then
             y = item * 75 - Slider.Y
-            local SELECTED_RED = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+            local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, Color.new(65, 105, 226))
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
             end
         end
         local elements_count = #Parsers
@@ -377,7 +374,7 @@ function Catalogs.draw()
             if task.page_count > 0 then
                 local text_counter = task.page .. "/" .. task.page_count
                 local w = Font.getTextWidth(FONT16, text_counter)
-                Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * task.page / task.page_count, y - 20, y - 8, Color.new(65, 105, 226))
+                Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * task.page / task.page_count, y - 20, y - 8, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(270 + 10 + w, 940, y - 20, y - 8, COLOR_BLACK)
                 Font.print(FONT16, 275, y - 24, text_counter, COLOR_BLACK)
             end
@@ -389,11 +386,11 @@ function Catalogs.draw()
         local item = DownloadSelector:getSelected()
         if item ~= 0 then
             y = item * 75 - Slider.Y
-            local SELECTED_RED = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+            local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, Color.new(65, 105, 226))
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
             end
         end
         local elements_count = #list
@@ -413,11 +410,11 @@ function Catalogs.draw()
         if item ~= 0 then
             local x = 610 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 10) + MANGA_WIDTH / 2
             local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + 12
-            local SELECTED_RED = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+            local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 3 do
-                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, Color.new(65, 105, 226))
-                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
             end
         end
         if #Results > 4 then

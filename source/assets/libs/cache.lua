@@ -4,10 +4,16 @@ local Order = {}
 local Task = nil
 local Downloading = {}
 
+---Path to cache folder
+local FOLDER = "ux0:data/noboru/cache/"
+
+---@return string
+---Creates key for a chapter from it's Manga's `parserID`, `Link` and chapter `Link`
 local function key(chapter)
     return string.gsub(chapter.Manga.ParserID .. chapter.Manga.Link .. chapter.Link, "%p", "")
 end
 
+---Updates Cache things
 function Cache.update()
     if #Order == 0 and Task == nil then return end
     if not Task then
@@ -15,20 +21,17 @@ function Cache.update()
         Task.F = coroutine.create(Task.F)
     else
         if coroutine.status(Task.F) ~= "dead" then
-            local _, msg, page, page_count = coroutine.resume(Task.F)
+            local _, msg, var1, var2 = coroutine.resume(Task.F)
             if _ then
-                if msg then
-                    if msg == "update_count" then
-                        Task.page = page
-                        Task.page_count = page_count
-                    end
-                    if Task.Destroy then
-                        Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
-                        Task = nil
-                    end
+                if Task.Destroy and msg then
+                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+                    Task = nil
+                elseif msg == "update_count" then
+                    Task.page = var1
+                    Task.page_count = var2
                 end
             else
-                Console.error("Unknown error with cache: "..msg)
+                Console.error("Unknown error with cache: " .. msg)
                 Task = nil
             end
         else
@@ -38,10 +41,12 @@ function Cache.update()
     end
 end
 
-function Cache.download(chapter)
+---@param chapter table
+---Creates task for downloading `chapter`
+function Cache.downloadChapter(chapter)
     local k = key(chapter)
-    if not System.doesDirExist("ux0:data/noboru/cache/" .. k) then
-        System.createDirectory("ux0:data/noboru/cache/" .. k)
+    if not System.doesDirExist(FOLDER .. k) then
+        System.createDirectory(FOLDER .. k)
     end
     Downloading[k] = {
         Key = k,
@@ -69,13 +74,13 @@ function Cache.download(chapter)
                 Threads.insertTask(result, {
                     Type = "FileDownload",
                     Link = result.Link,
-                    Path = string.format("cache/%s/%s.image", k, i)
+                    Path = "cache/"..k.."/"..i..".image"
                 })
                 while Threads.check(result) do
                     coroutine.yield(false)
                 end
             end
-            local fh = System.openFile("ux0:data/noboru/cache/" .. k .. "/done.txt", FCREATE)
+            local fh = System.openFile(FOLDER .. k .. "/done.txt", FCREATE)
             System.writeFile(fh, #t, string.len(#t))
             System.closeFile(fh)
             Keys[k] = true
@@ -84,86 +89,113 @@ function Cache.download(chapter)
         end
     }
     Order[#Order + 1] = Downloading[k]
-    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name,chapter.Name))
+    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
 end
 
+---@return boolean
+---Gives info if download is running
 function Cache.is_download_running()
-    return Task~=nil or #Order > 0
+    return Task ~= nil or #Order > 0
 end
 
+---@param key string
+---Stops task by it's key
 local function stop(key)
     if Downloading[key] then
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
-            RemoveDirectory("ux0:data/noboru/cache/"..key)
+            RemoveDirectory(FOLDER .. key)
         else
-            for i, v in ipairs(Order) do
+            local new_order = {}
+            for _, v in ipairs(Order) do
                 if v == Downloading[key] then
-                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, Order[i].MangaName, Order[i].ChapterName))
-                    table.remove(Order, i)
-                    break
+                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
+                else
+                    new_order[#new_order + 1] = v
                 end
             end
+            Order = new_order
         end
         Downloading[key] = nil
     end
 end
 
+---@param chapter table
+---Stops `chapter` downloading
 function Cache.stop(chapter)
     if chapter then stop(key(chapter)) end
 end
 
+---@param item table
+---Stops `chapter` downloading by List item from `Cache.getDownloadingList` function
 function Cache.stopByListItem(item)
-    if item.Key then stop(item.Key) end
+    if item then stop(item.Key) end
 end
 
+---@param chapter table
+---Deletes cache of downloaded chapter
 function Cache.delete(chapter)
     local k = key(chapter)
     if Keys[k] then
-        RemoveDirectory("ux0:data/noboru/cache/"..k)
+        RemoveDirectory(FOLDER .. k)
         Keys[k] = nil
         Cache.save()
         Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CHAPTER_REMOVE, k))
     end
 end
 
+---@return table
+---Returns all active downloadings
 function Cache.getDownloadingList()
     local list = {}
-    if Task~=nil then
-        list[#list+1] = { Manga = Task.MangaName, Chapter = Task.ChapterName, page = Task.page or 0, page_count = Task.page_count or 0, Key = Task.Key }
-    end
-    for i = 1, #Order do
-        list[#list+1] = { Manga = Order[i].MangaName, Chapter = Order[i].ChapterName, page = 0, page_count = 0, Key = Order[i].Key }
+    Order[0] = Task
+    for i = Task and 0 or 1, #Order do
+        local task = Order[i]
+        list[#list + 1] = {
+            Manga = task.MangaName,
+            Chapter = task.ChapterName,
+            page = task.page or 0,
+            page_count = task.page_count or 0,
+            Key = task.Key
+        }
     end
     return list
 end
 
+---@param chapter table
+---@return boolean
+---Gives `true` if chapter is downloaded
 function Cache.check(chapter)
     return Keys[key(chapter)] == true
 end
 
+
+---@param chapter table
+---@return boolean
+---Gives `true` if chapter is downloading
 function Cache.is_downloading(chapter)
     return Downloading[key(chapter)]
 end
 
+
+---@param chapter table
+---@return table
+---Gives table with all pathes to cached images
 function Cache.getChapter(chapter)
     local k = key(chapter)
+    local table = {Done = true}
     if Keys[k] then
-        local pathes = {}
-        local pages = #System.listDirectory("ux0:data/noboru/cache/" .. k) - 1
+        local pages = #System.listDirectory(FOLDER .. k) - 1
         for i = 1, pages do
-            pathes[i] = {
+            table[i] = {
                 Path = "cache/" .. k .. "/" .. i .. ".image"
             }
         end
-        pathes.Done = true
-        return pathes
     end
-    return {
-        Done = true
-    }
+    return table
 end
 
+---Saves cache changes
 function Cache.save()
     if System.doesFileExist("ux0:data/noboru/c.c") then
         System.deleteFile("ux0:data/noboru/c.c")
@@ -174,22 +206,26 @@ function Cache.save()
     System.closeFile(fh)
 end
 
+---Loads cache changes
 function Cache.load()
+    Keys = {}
     if System.doesFileExist("ux0:data/noboru/c.c") then
         local fh = System.openFile("ux0:data/noboru/c.c", FREAD)
-        local keys = load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Keys")()
-        for k, _ in pairs(keys) do
-            if System.doesFileExist("ux0:data/noboru/cache/" .. k .. "/done.txt") then
-                local fh_2 = System.openFile("ux0:data/noboru/cache/" .. k .. "/done.txt", FREAD)
-                local pages = System.readFile(fh_2, System.sizeFile(fh_2))
-                System.closeFile(fh_2)
-                if tonumber(pages) == #System.listDirectory("ux0:data/noboru/cache/" .. k) - 1 then
-                    Keys[k] = true
+        local suc, keys = pcall(load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Keys"))
+        if suc then
+            for k, _ in pairs(keys) do
+                if System.doesFileExist(FOLDER .. k .. "/done.txt") then
+                    local fh_2 = System.openFile(FOLDER .. k .. "/done.txt", FREAD)
+                    local pages = System.readFile(fh_2, System.sizeFile(fh_2))
+                    System.closeFile(fh_2)
+                    if tonumber(pages) == #System.listDirectory(FOLDER .. k) - 1 then
+                        Keys[k] = true
+                    else
+                        Notifications.push("cache_error " .. k)
+                    end
                 else
                     Notifications.push("cache_error " .. k)
                 end
-            else
-                Notifications.push("cache_error " .. k)
             end
         end
         System.closeFile(fh)

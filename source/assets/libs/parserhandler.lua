@@ -180,7 +180,7 @@ function ParserManager.updateParserList(Table, Insert)
                         dofile(path2row)
                     end)
                     if not suc then
-                        Console.error(string.format("Cant load %s:%s", path2row, err))
+                        Console.error("Cant load "..path2row..":"..err)
                     end
                 end
             end

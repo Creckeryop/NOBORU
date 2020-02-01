@@ -88,7 +88,10 @@ function Database.getChapters(manga)
         local chapters_path = "ux0:data/noboru/books/" .. UniqueKey:gsub("%p", "") .. "/chapter_info.lua"
         if System.doesFileExist(chapters_path) then
             local f = System.openFile(chapters_path, FREAD)
-            local cs = load("local " .. System.readFile(f, System.sizeFile(f)):gsub("\"10101010101010\"", "...") .. " return chapters")(base[n])
+            local suc, cs = pcall(load("local " .. System.readFile(f, System.sizeFile(f)):gsub("\"10101010101010\"", "...") .. " return chapters"), base[n])
+            if not suc then
+                cs = {}
+            end
             System.closeFile(f)
             return cs
         end

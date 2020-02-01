@@ -107,7 +107,7 @@ local function press_download(item)
             if Cache.is_downloading(item) then
                 Cache.stop(item)
             elseif connection then
-                Cache.download(item)
+                Cache.downloadChapter(item)
             end
         else
             Cache.delete(item)
@@ -129,7 +129,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
             TOUCH.MODE = TOUCH.READ
             Slider.TouchY = touch.y
         elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
-            if TOUCH.MODE == TOUCH.READ and oldtouch.x > 320 and oldtouch.x < 900 and oldtouch.y > 90 then
+            if TOUCH.MODE == TOUCH.READ and oldtouch.x > 320 and oldtouch.x < 920 and oldtouch.y > 90 then
                 local id = math.floor((Slider.Y + oldtouch.y - 20) / 70)
                 if oldtouch.x < 850 then
                     press_manga(id)

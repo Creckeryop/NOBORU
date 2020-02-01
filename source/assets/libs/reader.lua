@@ -34,6 +34,7 @@ local Chapters = {}
 local current_chapter = 1
 
 local function scale(dZoom, Page)
+    if math.abs(1-dZoom) < 0.008 then return end
     local old_Zoom = Page.Zoom
     Page.Zoom = Page.Zoom * dZoom
     if Page.Zoom < Page.min_Zoom then
@@ -443,8 +444,8 @@ function Reader.update()
                 elseif page.y + page.Height / 2 * page.Zoom < 544 then
                     page.y = 544 - page.Height / 2 * page.Zoom
                 end
-                if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
-                    if page.Zoom * page.Width < 960 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
+                if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width > 960 then
+                    if page.Zoom * page.Width <= 960 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
                         page.x = 480
                         pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
                     elseif page.x - page.Width / 2 * page.Zoom >= 0 then
@@ -472,7 +473,7 @@ function Reader.update()
                 elseif page.x + page.Height / 2 * page.Zoom < 960 then
                     page.x = 960 - page.Height / 2 * page.Zoom
                 end
-                if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width >= 544 then
+                if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width > 544 then
                     if page.Zoom * page.Width <= 544 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
                         page.y = 272
                         pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
@@ -564,11 +565,6 @@ function Reader.draw()
                 end
             end
         end
-        --[[
-        local page = Pages[Pages.Page]
-        if page and page.Path then
-        Font.print(FONT16, 0, 0, page.Path, Color.new(255, 0, 0))
-        end--]]
         if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
             local Counter = Pages.Page .. "/" .. Pages.Count
             local Width = Font.getTextWidth(FONT16, Counter) + 20

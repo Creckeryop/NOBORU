@@ -1,5 +1,7 @@
 Notifications = {}
-
+---@param str string
+---@return table
+---Breaks text into lines
 local function to_lines(str)
     if str:sub(-1)~="\n" then
         str = str.."\n"

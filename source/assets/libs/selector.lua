@@ -1,16 +1,11 @@
 --@class Selector
 Selector = {}
 
-function Selector:new(up, down, left, right)
+function Selector:new(dup, ddown, dleft, dright)
     local p = {}
     local selected_item = 0
-    local dup = up or -1
-    local ddown = down or 1
-    local dleft = left or -3
-    local dright = right or 3
     local control_timer = Timer.new()
     local time_space = 400
-    
     function p:input(sourcecount, upper, oldpad, pad, touch_x)
         if selected_item > sourcecount then
             selected_item = sourcecount
@@ -19,7 +14,7 @@ function Selector:new(up, down, left, right)
             selected_item = 0
             time_space = 400
         elseif Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)) then
-            if Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_RIGHT) or Controls.check(pad, SCE_CTRL_LEFT) then
+            if Controls.check(pad, SCE_CTRL_DOWN + SCE_CTRL_UP + SCE_CTRL_LEFT + SCE_CTRL_RIGHT) then
                 if selected_item == 0 then
                     selected_item = upper
                 elseif selected_item ~= 0 then
@@ -55,15 +50,12 @@ function Selector:new(up, down, left, right)
             end
         end
     end
-    
     function p:getSelected()
         return selected_item
     end
-    
     function p:resetSelected()
         selected_item = 0
     end
-    
     setmetatable(p, self)
     self.__index = self
     return p

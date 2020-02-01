@@ -36,6 +36,7 @@ USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML
 COLOR_WHITE = Color.new(255, 255, 255)
 COLOR_BLACK = Color.new(0, 0, 0)
 COLOR_GRAY = Color.new(128, 128, 128)
+COLOR_ROYAL_BLUE = Color.new(65, 105, 226)
 
 FONT16 = Font.load("app0:roboto.ttf")
 FONT12 = Font.load("app0:roboto.ttf")
