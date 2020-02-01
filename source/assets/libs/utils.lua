@@ -193,6 +193,7 @@ function table.show(t, name, indent)
     addtocart(t, name, indent)
     return cart .. autoref
 end
+
 function table.serialize(t, name)
     local format = string.format
     local concat = table.concat
