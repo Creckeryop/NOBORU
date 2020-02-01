@@ -99,6 +99,30 @@ local function press_add_to_library()
     end
 end
 
+local function press_download(item)
+    local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+    item = Chapters[item]
+    if item then
+        if not Cache.check(item) then
+            if Cache.is_downloading(item) then
+                Cache.stop(item)
+            elseif connection then
+                Cache.download(item)
+            end
+        else
+            Cache.delete(item)
+        end
+    end
+end
+
+local function press_manga(item)
+    if Chapters[item] then
+        Catalogs.shrink()
+        Reader.load(Chapters, item)
+        AppMode = READER
+    end
+end
+
 function Details.input(oldpad, pad, oldtouch, touch)
     if mode == "START" then
         if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
@@ -107,26 +131,10 @@ function Details.input(oldpad, pad, oldtouch, touch)
         elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
             if TOUCH.MODE == TOUCH.READ and oldtouch.x > 320 and oldtouch.x < 900 and oldtouch.y > 90 then
                 local id = math.floor((Slider.Y + oldtouch.y - 20) / 70)
-                if oldtouch.x < 800 then
-                    if Chapters[id] then
-                        Catalogs.shrink()
-                        Reader.load(Chapters, id)
-                        AppMode = READER
-                    end
+                if oldtouch.x < 850 then
+                    press_manga(id)
                 else
-                    local item = Chapters[id]
-                    local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
-                    if item then
-                        if not Cache.check(item) then
-                            if Cache.is_downloading(item) then
-                                Cache.stop(item)
-                            elseif connection then
-                                Cache.download(item)
-                            end
-                        else
-                            Cache.delete(item)
-                        end
-                    end
+                    press_download(id)
                 end
             end
             TOUCH.MODE = TOUCH.NONE
@@ -137,12 +145,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             press_add_to_library()
         elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
-            local item = DetailsSelector.getSelected()
-            if Chapters[item] then
-                Catalogs.shrink()
-                Reader.load(Chapters, item)
-                AppMode = READER
-            end
+            press_manga(DetailsSelector.getSelected())
         elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
             mode = "WAIT"
             Loading.setMode("NONE")
@@ -151,19 +154,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
             Panel.show()
             old_fade = fade
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
-            local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
-            local item = Chapters[DetailsSelector.getSelected()]
-            if item then
-                if not Cache.check(item) then
-                    if Cache.is_downloading(item) then
-                        Cache.stop(item)
-                    elseif connection then
-                        Cache.download(item)
-                    end
-                else
-                    Cache.delete(item)
-                end
-            end
+            press_download(DetailsSelector.getSelected())
         end
         local new_itemID = 0
         if TOUCH.MODE == TOUCH.READ then
@@ -272,12 +263,13 @@ function Details.draw()
         local item = DetailsSelector.getSelected()
         if item ~= 0 then
             y = shift - Slider.Y + item * 70
-            local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000)))
-            Graphics.fillEmptyRect(281, 920, y + 1, y + 69, RED)
-            Graphics.fillEmptyRect(282, 919, y + 2, y + 68, RED)
-            Graphics.fillEmptyRect(281, 920, y + 1, y + 69, SELECTED_RED)
-            Graphics.fillEmptyRect(282, 919, y + 2, y + 68, SELECTED_RED)
-            Graphics.drawImage(899, y+5, textures_16x16.Square.e)
+            local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+            local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
+            for i = ks, ks+1 do
+                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i+4, y + 65 - i + 1, Color.new(255, 0, 51))
+                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i+4, y + 65 - i + 1, SELECTED_RED)
+            end
+            Graphics.drawImage(899-ks, y+5+ks, textures_16x16.Square.e)
         end
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
