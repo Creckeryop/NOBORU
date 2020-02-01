@@ -10,7 +10,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 ## Features:
 * Browsing manga sites
 * Searchinge
-* Reading manga
+* Reading manga (with Vertical or Horizontal mode!)
 * MultiTouch, Swipes and other touch things
 * Adding manga to library
 * Loading longpages (webmanga) without downscaling (thanks to my [piclib](https://github.com/Creckeryop/piclib))
@@ -20,7 +20,6 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 * Settings
 * Caching info about last readed chapters (to make continue function)
 * Add more parsers
-* Vertical reading mode
 * History
 * More languages
 ## FAQ:
