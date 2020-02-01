@@ -1,5 +1,16 @@
 Notifications = {}
 
+local function to_lines(str)
+    if str:sub(-1)~="\n" then
+        str = str.."\n"
+    end
+    local lines = {}
+    for line in str:gmatch("(.-)\n") do
+        lines[#lines+1] = line
+    end
+    return lines
+end
+
 ---Order of notification messages
 local order = {}
 
@@ -12,7 +23,7 @@ local easing = EaseInOutCubic
 ---@param message string
 ---Adds notification with given message that will be shown on screen
 function Notifications.push(message)
-    order[#order + 1] = message
+    order[#order + 1] = to_lines(message)
 end
 
 local animation_timer = Timer.new()
@@ -38,8 +49,13 @@ function Notifications.draw()
         fade = 1 - (time - 1300) / 500
     end
     fade = easing(fade)
-    local width = (Font.getTextWidth(FONT20, notification) + 20) / 2
-    local height = Font.getTextHeight(FONT20, notification) + 10
-    Graphics.fillRect(480 - width, 480 + width, 544 - 100 * fade, 544 - 100 * fade + height, Color.new(20, 20, 20, 255 * fade))
-    Font.print(FONT20, 480 - width + 10, 544 - 100 * fade + 2, notification, Color.new(255, 255, 255, 255 * fade))
+    local NEW_WHITE = Color.new(255, 255, 255, 255 * fade)
+    local NEW_GRAY = Color.new(20, 20, 20, 255 * fade)
+    local y = 0
+    for i, v in ipairs(notification) do
+        local width = (Font.getTextWidth(FONT20, v) + 20) / 2
+        Graphics.fillRect(480 - width, 480 + width, 544 - 100 * fade + y, 544 - 100 * fade + y + 30, NEW_GRAY)
+        Font.print(FONT20, 480 - width + 10, 544 - 100 * fade + y + 2, v, NEW_WHITE)
+        y = y + 30
+    end
 end
