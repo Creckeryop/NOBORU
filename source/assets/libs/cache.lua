@@ -87,6 +87,10 @@ function Cache.download(chapter)
     Notifications.push(string.format(Language[LANG].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name,chapter.Name))
 end
 
+function Cache.is_download_running()
+    return Task~=nil or #Order > 0
+end
+
 local function stop(key)
     if Downloading[key] then
         if Downloading[key] == Task then

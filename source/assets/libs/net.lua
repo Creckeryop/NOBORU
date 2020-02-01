@@ -27,6 +27,18 @@ function Threads.update()
         return
     end
     if not Task then
+        local new_order = {}
+        for _, v in ipairs(Order) do
+            if v.Type == "Skip" then
+                Console.write("NET: Skip", Color.new(255, 255, 0))
+            else
+                new_order[#new_order + 1] = v
+            end
+        end
+        Order = new_order
+        if #Order == 0 then
+            return
+        end
         Task = table.remove(Order, 1)
         if Task.Type == "StringRequest" then
             if Task.Link then
@@ -53,9 +65,6 @@ function Threads.update()
                 Console.error("No Link given or internet connection problem")
                 Task = nil
             end
-        elseif Task.Type == "Skip" then
-            Task = nil
-            Console.write("NET: Skip", Color.new(255, 255, 0))
         end
         if Task then
             Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))

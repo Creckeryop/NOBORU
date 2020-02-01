@@ -76,7 +76,7 @@ local button_a = {
     ["DOWNLOAD"] = 1,
     ["SETTINGS"] = 1
 }
-
+local download_led = 0
 function Menu.draw()
     for k, v in pairs(button_a) do
         if k == mode then
@@ -91,6 +91,12 @@ function Menu.draw()
     Font.print(FONT30, 30, 107, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 167, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 408, Language[LANG].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
+    if Cache.is_download_running() then
+        download_led = math.min(download_led + 0.1,1)
+    else
+        download_led = math.max(download_led - 0.1,0)
+    end
+    Graphics.fillCircle(15, 428, 6, Color.new(65, 105, 226, 255*download_led-160*download_led*math.abs(math.sin(Timer.getTime(GlobalTimer)/1000))))
     Font.print(FONT30, 30, 468, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
     if Details.getFade() ~= 1 then
         if mode == "CATALOGS" or mode == "LIBRARY" or mode == "DOWNLOAD" then
