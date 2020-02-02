@@ -1,11 +1,23 @@
 Language = {
-    RUS = {
+    Russian = {
         APP = {
             LIBRARY = "БИБЛИОТЕКА",
             CATALOGS = "КАТАЛОГИ",
             SETTINGS = "НАСТРОЙКИ",
-            DOWNLOAD = "СКАЧИВАНИЕ",
+            DOWNLOAD = "ЗАГРУЗКИ",
             SEARCH = "Поиск"
+        },
+        SETTINGS = {
+            Language = "Язык",
+            ClearChapters = "Очистить сохраненные главы",
+            ShowNSFW = "Показывать пр0н парсеры",
+            ClearLibrary = "Очистить библиотеку",
+            ReaderOrientation = "Ориентация читалки по умолчанию",
+            Space = "Памяти занято"
+        },
+        NSFW = {
+            [true] = "Показывать",
+            [false] = "Не показывать"
         },
         PARSERS = {
             RUS = "Русский",
@@ -18,7 +30,9 @@ Language = {
         READER = {
             PREPARING_PAGES = "Подготовка страниц",
             LOADING_PAGE = "Загрузка страницы",
-            LOADING_SEGMENT = "Загрузка сегмента страницы"
+            LOADING_SEGMENT = "Загрузка сегмента страницы",
+            Horizontal = "Горизонтальная",
+            Vertical = "Вертикальная"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Добавить в библиотеку",
@@ -32,7 +46,9 @@ Language = {
             END_DOWNLOAD = "%s: %s\nзагрузка завершена!",
             CANCEL_DOWNLOAD = "%s: %s\nзагрузка прервана!",
             CHAPTER_REMOVE = "%s удалено!",
-            NET_PROBLEM = "Возникли проблемы с интернетом!"
+            NET_PROBLEM = "Возникли проблемы с интернетом!",
+            CHAPTERS_CLEARED = "Сохраненые главы удалены!",
+            LIBRARY_CLEARED = "Библиотека очищена!"
         },
         PANEL = {
             BACK = "Назад",
@@ -47,13 +63,25 @@ Language = {
             CANCEL = "Отменить"
         }
     },
-    ENG = {
+    English = {
         APP = {
             LIBRARY = "LIBRARY",
             CATALOGS = "CATALOGS",
             SETTINGS = "SETTINGS",
-            DOWNLOAD = "DOWNLOAD",
+            DOWNLOAD = "DOWNLOADS",
             SEARCH = "Search"
+        },
+        SETTINGS = {
+            Language = "Language",
+            ClearChapters = "Clear saved chapters",
+            ShowNSFW = "Show NSFW parsers",
+            ClearLibrary = "Clear library",
+            ReaderOrientation = "Standart reader orientation",
+            Space = "Memory used"
+        },
+        NSFW = {
+            [true] = "Show",
+            [false] = "Don't show"
         },
         PARSERS = {
             RUS = "Russian",
@@ -66,7 +94,9 @@ Language = {
         READER = {
             PREPARING_PAGES = "Preparing pages",
             LOADING_PAGE = "Loading page",
-            LOADING_SEGMENT = "Loading segment"
+            LOADING_SEGMENT = "Loading segment",
+            Horizontal = "Horizontal",
+            Vertical = "Vertical"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Add to library",
@@ -80,7 +110,9 @@ Language = {
             END_DOWNLOAD = "%s: %s\nsuccessfuly downloaded!",
             CANCEL_DOWNLOAD = "%s: %s\ndownload is canceled!",
             CHAPTER_REMOVE = "%s deleted!",
-            NET_PROBLEM = "There is problems with connection!"
+            NET_PROBLEM = "There is problems with connection!",
+            CHAPTERS_CLEARED = "All saved chapters are cleared!",
+            LIBRARY_CLEARED = "Library cleared!"
         },
         PANEL = {
             BACK = "Back",
@@ -96,3 +128,23 @@ Language = {
         }
     }
 }
+LanguageNames = {
+    Russian = {
+        Russian = "Русский",
+        English = "Английский",
+        Default = "Системный"
+    },
+    English = {
+        Russian = "Russian",
+        English = "English",
+        Default = "System"
+    }
+}
+local language_now = System.getLanguage()
+if language_now == 8 then
+    Language.Default = Language.Russian
+    LanguageNames.Default = LanguageNames.Russian
+else
+    Language.Default = Language.English
+    LanguageNames.Default = LanguageNames.English
+end

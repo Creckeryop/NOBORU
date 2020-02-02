@@ -111,6 +111,12 @@ function table.serialize(t, name)
                 else
                     P[#P + 1] = serialize(v, '['..k..']')
                 end
+            elseif type(v) == "boolean" then
+                if type(k) == "string" then
+                    P[#P + 1] = '["'..k..'"]='..tostring(v)..''
+                else
+                    P[#P + 1] = '['..k..']='..tostring(v)..''
+                end
             else
                 if type(k) == "string" then
                     P[#P + 1] = '["'..k..'"]="'..tostring(v)..'"'
@@ -272,7 +278,7 @@ end
 function RemoveDirectory(path)
     if System.doesDirExist(path) then
         for k, v in ipairs(System.listDirectory(path)) do
-            if v.is_directory then
+            if v.directory then
                 RemoveDirectory(path .. "/" .. v.name)
             else
                 System.deleteFile(path .. "/" .. v.name)

@@ -53,17 +53,23 @@ function GetParserList()
     updated = false
     local list = {}
     for _, v in pairs(parserTable) do
-        list[#list + 1] = v
+        if Settings.NSFW and v.NSFW or not v.NSFW then
+            list[#list + 1] = v
+        end
     end
     cachedList = list
     return list
+end
+
+function ChangeNSFW()
+    updated = true
 end
 
 function ClearParsers()
     if System.doesDirExist("ux0:data/noboru/parsers") then
         local list = System.listDirectory("ux0:/data/noboru/parsers")
         for _, v in ipairs(list) do
-            if not v.is_directory then
+            if not v.directory then
                 System.deleteFile("ux0:data/noboru/parsers/" .. v.name)
             end
         end

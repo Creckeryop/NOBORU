@@ -22,6 +22,7 @@ Slider = function()
         ItemID = 0
     }
 end
+dofile("app0:assets/libs/settings.lua")
 dofile("app0:assets/libs/database.lua")
 dofile("app0:assets/libs/image.lua")
 dofile("app0:assets/libs/parser.lua")
@@ -37,6 +38,7 @@ COLOR_WHITE = Color.new(255, 255, 255)
 COLOR_BLACK = Color.new(0, 0, 0)
 COLOR_GRAY = Color.new(128, 128, 128)
 COLOR_ROYAL_BLUE = Color.new(65, 105, 226)
+COLOR_CRIMSON = Color.new(137, 30, 43)
 
 FONT16 = Font.load("app0:roboto.ttf")
 FONT12 = Font.load("app0:roboto.ttf")

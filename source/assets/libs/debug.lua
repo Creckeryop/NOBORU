@@ -2,7 +2,7 @@ Debug = {}
 
 local DEBUG_MODE = false
 
-local function memToStr(bytes, name)
+function MemToStr(bytes, name)
     local str = "Bytes"
     if bytes > 1024 then
         bytes = bytes / 1024
@@ -29,11 +29,11 @@ function Debug.draw()
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
         Font.print(FONT16, 0, 0, "TASKS " .. Threads.getTasksNum(), COLOR_WHITE)
-        local mem_net = memToStr(Threads.getMemoryDownloaded(), "NET")
+        local mem_net = MemToStr(Threads.getMemoryDownloaded(), "NET")
         Font.print(FONT16, 720 - Font.getTextWidth(FONT16, mem_net) / 2, 0, mem_net, Color.new(0, 255, 0))
-        local mem_var = memToStr(collectgarbage("count") * 1024, "VAR")
+        local mem_var = MemToStr(collectgarbage("count") * 1024, "VAR")
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, mem_var) / 2, 0, mem_var, Color.new(255, 128, 0))
-        local mem_gpu = memToStr(GetTextureMemoryUsed(), "GPU")
+        local mem_gpu = MemToStr(GetTextureMemoryUsed(), "GPU")
         Font.print(FONT16, 240 - Font.getTextWidth(FONT16, mem_gpu) / 2, 0, mem_gpu, Color.new(0, 0, 255))
         Console.draw()
     end

@@ -16,6 +16,8 @@ function Menu.setMode(new_mode)
         Catalogs.setMode("PARSERS")
     elseif new_mode == "DOWNLOAD" then
         Catalogs.setMode("DOWNLOAD")
+    elseif new_mode == "SETTINGS" then
+        Catalogs.setMode("SETTINGS")
     end
     mode = new_mode
 end
@@ -55,18 +57,14 @@ function Menu.input(oldpad, pad, oldtouch, touch)
                 Menu.setMode("DOWNLOAD")
             end
         end
-        if mode == "CATALOGS" or mode == "LIBRARY" or mode == "DOWNLOAD" then
-            Catalogs.input(oldpad, pad, oldtouch, touch)
-        end
+        Catalogs.input(oldpad, pad, oldtouch, touch)
     else
         Details.input(oldpad, pad, oldtouch, touch)
     end
 end
 
 function Menu.update()
-    if mode == "CATALOGS" or mode == "LIBRARY" or mode=="DOWNLOAD" then
-        Catalogs.update()
-    end
+    Catalogs.update()
     Details.update()
 end
 
@@ -88,20 +86,18 @@ function Menu.draw()
     Screen.clear(Color.new(0, 0, 0))
     Graphics.drawImage(0, 0, logoSmall)
     Graphics.fillRect(255, 960, 0, 544, Color.new(245, 245, 245))
-    Font.print(FONT30, 30, 107, Language[LANG].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
-    Font.print(FONT30, 30, 167, Language[LANG].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
-    Font.print(FONT30, 30, 408, Language[LANG].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
+    Font.print(FONT30, 30, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
+    Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
+    Font.print(FONT30, 30, 408, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
     if Cache.is_download_running() then
         download_led = math.min(download_led + 0.1,1)
     else
         download_led = math.max(download_led - 0.1,0)
     end
     Graphics.fillCircle(15, 428, 6, Color.new(65, 105, 226, 255*download_led-160*download_led*math.abs(math.sin(Timer.getTime(GlobalTimer)/1000))))
-    Font.print(FONT30, 30, 468, Language[LANG].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
     if Details.getFade() ~= 1 then
-        if mode == "CATALOGS" or mode == "LIBRARY" or mode == "DOWNLOAD" then
-            Catalogs.draw()
-        end
+        Catalogs.draw()
     end
     Details.draw()
 end

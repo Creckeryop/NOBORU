@@ -24,7 +24,7 @@ function Cache.update()
             local _, msg, var1, var2 = coroutine.resume(Task.F)
             if _ then
                 if Task.Destroy and msg then
-                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+                    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
                     Task = nil
                 elseif msg == "update_count" then
                     Task.page = var1
@@ -35,12 +35,12 @@ function Cache.update()
                 Task = nil
             end
         else
-            Notifications.push(string.format(Language[LANG].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
+            Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
             Task = nil
         end
     end
 end
-
+local notify = true
 ---@param chapter table
 ---Creates task for downloading `chapter`
 function Cache.downloadChapter(chapter)
@@ -58,7 +58,7 @@ function Cache.downloadChapter(chapter)
             if connection then
                 ParserManager.prepareChapter(chapter, t)
             else
-                Notifications.push(Language[LANG].NOTIFICATIONS.NET_PROBLEM)
+                Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
                 Downloading[k] = nil
                 return
             end
@@ -89,7 +89,7 @@ function Cache.downloadChapter(chapter)
         end
     }
     Order[#Order + 1] = Downloading[k]
-    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
+    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
 end
 
 ---@return boolean
@@ -109,7 +109,9 @@ local function stop(key)
             local new_order = {}
             for _, v in ipairs(Order) do
                 if v == Downloading[key] then
-                    Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
+                    if notify then
+                        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
+                    end
                 else
                     new_order[#new_order + 1] = v
                 end
@@ -140,9 +142,10 @@ function Cache.delete(chapter)
         RemoveDirectory(FOLDER .. k)
         Keys[k] = nil
         Cache.save()
-        Notifications.push(string.format(Language[LANG].NOTIFICATIONS.CHAPTER_REMOVE, k))
+        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
     end
 end
+
 
 ---@return table
 ---Returns all active downloadings
@@ -211,7 +214,7 @@ function Cache.load()
     Keys = {}
     if System.doesFileExist("ux0:data/noboru/c.c") then
         local fh = System.openFile("ux0:data/noboru/c.c", FREAD)
-        local suc, keys = pcall(load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Keys"))
+        local suc, keys = pcall(function() return load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Keys")() end)
         if suc then
             for k, _ in pairs(keys) do
                 if System.doesFileExist(FOLDER .. k .. "/done.txt") then
@@ -231,4 +234,18 @@ function Cache.load()
         System.closeFile(fh)
         Cache.save()
     end
+end
+
+---Clears all cache
+function Cache.clear()
+    notify = false
+    for _, v in ipairs(Cache.getDownloadingList()) do
+        Cache.stopByListItem(v)
+    end
+    notify = true
+    RemoveDirectory("ux0:data/noboru/cache")
+    System.createDirectory("ux0:data/noboru/cache")
+    Keys = {}
+    Cache.save()
+    Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
 end

@@ -1,6 +1,3 @@
-local language_now = System.getLanguage()
-LANG = language_now == 8 and "RUS" or "ENG"
-
 local logo = Graphics.loadImage("app0:assets/images/logo.png")
 
 Graphics.initBlend()
@@ -25,6 +22,7 @@ dofile("app0:assets/libs/notifications.lua")
 dofile("app0:assets/libs/debug.lua")
 dofile("app0:assets/libs/cache.lua")
 
+Settings:load()
 Database.load()
 Cache.load()
 Menu.setMode("LIBRARY")

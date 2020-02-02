@@ -58,7 +58,7 @@ local animationUpdate = function()
     end
 end
 
-local DetailsSelector = Selector:new(-1, 1, -3, 3)
+local DetailsSelector = Selector:new(-1, 1, -3, 3, function () return math.floor((Slider.Y - 20 + 90) / 70) end)
 
 local is_chapter_loaded = false
 
@@ -90,10 +90,10 @@ local function press_add_to_library()
     if Manga then
         if Database.check(Manga) then
             Database.remove(Manga)
-            Notifications.push(Language[LANG].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
+            Notifications.push(Language[Settings.Language].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
         else
             Database.add(Manga, Chapters)
-            Notifications.push(Language[LANG].NOTIFICATIONS.ADDED_TO_LIBRARY)
+            Notifications.push(Language[Settings.Language].NOTIFICATIONS.ADDED_TO_LIBRARY)
         end
         Database.save()
     end
@@ -139,8 +139,8 @@ function Details.input(oldpad, pad, oldtouch, touch)
             end
             TOUCH.MODE = TOUCH.NONE
         end
-        DetailsSelector:input(#Chapters, math.floor((Slider.Y - 20 + 90) / 70), oldpad, pad, touch.x)
-        if oldtouch.x and not touch.x and oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 420 and oldtouch.y < 475 then
+        DetailsSelector:input(#Chapters, oldpad, pad, touch.x)
+        if oldtouch.x and not touch.x and oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 416 and oldtouch.y < 475 then
             press_add_to_library()
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             press_add_to_library()
@@ -215,7 +215,6 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 70) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 70
-        local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
         for i = start, math.min(#Chapters, start + 8) do
             if y < 544 then
                 Graphics.fillRect(280, 920, y, y + 69, BLUE)
@@ -245,20 +244,20 @@ function Details.draw()
             y = y + 70
         end
         Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
-        local text, color = Language[LANG].DETAILS.ADD_TO_LIBRARY, BLUE
+        local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
         if Database.check(Manga) then
             color = RED
-            text = Language[LANG].DETAILS.REMOVE_FROM_LIBRARY
+            text = Language[Settings.Language].DETAILS.REMOVE_FROM_LIBRARY
         end
-        Graphics.fillRect(20, 260, shift + 420, shift + 479, color)
+        Graphics.fillRect(20, 260, shift + 416, shift + 475, color)
         if textures_16x16.Triangle and textures_16x16.Triangle.e then
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
-        Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 448 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
+        Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
         Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
-            Notifications.push(Language[LANG].WARNINGS.NO_CHAPTERS)
+            Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
         end
         local item = DetailsSelector.getSelected()
         if item ~= 0 then

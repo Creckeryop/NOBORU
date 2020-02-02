@@ -161,7 +161,7 @@ function ParserManager.updateParserList(Table, Insert)
                 Table = file,
                 Index = "string"
             })
-            while not file.string do
+            while Threads.check(file) do
                 coroutine.yield(false)
             end
             for link, name in file.string:gmatch('href="([^"]-.lua)">(.-)<') do
@@ -176,9 +176,7 @@ function ParserManager.updateParserList(Table, Insert)
                     coroutine.yield(false)
                 end
                 if System.doesFileExist(path2row) then
-                    local suc, err = pcall(function()
-                        dofile(path2row)
-                    end)
+                    local suc, err = pcall(dofile,path2row)
                     if not suc then
                         Console.error("Cant load "..path2row..":"..err)
                     end
