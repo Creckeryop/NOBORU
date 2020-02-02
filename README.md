@@ -29,6 +29,11 @@ You can simply delete `noboru` folder to reset all settings
 * Caching info about last readed chapters (to make continue function)
 * History
 * More languages
+## Screenshots:
+![s1](/res/screenshot1.png)
+![s2](/res/screenshot2.png)
+![s3](/res/screenshot3.png)
+![s4](/res/screenshot4.png)
 ## FAQ:
 <b>Q</b>: I found bug that ...<br>
 <b>A</b>: You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file<br>
