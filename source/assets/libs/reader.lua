@@ -350,7 +350,6 @@ function Reader.update()
                     if page.Width > page.Height then
                         page.Mode = "Horizontal"
                         page.Zoom = 544 / page.Height
-                        page.min_Zoom = page.Zoom
                         if page.Width * page.Zoom >= 960 then
                             page.x = 480 + i * (480 + page.Width * page.Zoom / 2)
                             page.x = 10000000
@@ -358,8 +357,8 @@ function Reader.update()
                     else
                         page.Mode = "Vertical"
                         page.Zoom = 960 / page.Width
-                        page.min_Zoom = page.Zoom / 2
                     end
+                    page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
                     page.y = page.Zoom * page.Height / 2
                 elseif orientation == "Vertical" then
                     page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
@@ -367,7 +366,6 @@ function Reader.update()
                     if page.Width > page.Height then
                         page.Mode = "Horizontal"
                         page.Zoom = 960 / page.Height
-                        page.min_Zoom = page.Zoom
                         if page.Width * page.Zoom >= 544 then
                             page.y = 272 + i * (272 + page.Width * page.Zoom / 2)
                             page.y = page.Width * page.Zoom/2
@@ -375,8 +373,8 @@ function Reader.update()
                     else
                         page.Mode = "Vertical"
                         page.Zoom = 544 / page.Width
-                        page.min_Zoom = page.Zoom / 2
                     end
+                    page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
                     page.x = -page.Zoom * page.Height / 2
                 end
             end

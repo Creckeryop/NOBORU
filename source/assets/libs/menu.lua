@@ -10,15 +10,7 @@ local mode
 ---Sets menu mode
 function Menu.setMode(new_mode)
     if mode == new_mode then return end
-    if new_mode == "LIBRARY" then
-        Catalogs.setMode("LIBRARY")
-    elseif new_mode == "CATALOGS" then
-        Catalogs.setMode("PARSERS")
-    elseif new_mode == "DOWNLOAD" then
-        Catalogs.setMode("DOWNLOAD")
-    elseif new_mode == "SETTINGS" then
-        Catalogs.setMode("SETTINGS")
-    end
+    Catalogs.setMode(new_mode)
     mode = new_mode
 end
 

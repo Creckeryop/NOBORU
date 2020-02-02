@@ -5,7 +5,7 @@ local TOUCH = TOUCH()
 local Parser = nil
 local TouchTimer = Timer.new()
 
-local mode = "PARSERS"
+local mode = "CATALOGS"
 
 local getMangaMode = "POPULAR"
 local searchData = ""
@@ -134,7 +134,7 @@ SettingSelector:xaction(selectSetting)
 function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
-            mode = "PARSERS"
+            mode = "CATALOGS"
             Catalogs.terminate()
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local new_mode = getMangaMode == "POPULAR" and Parser.getLatestManga and "LATEST" or "POPULAR"
@@ -149,7 +149,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                 StartSearch = true
             end
         end
-    elseif mode == "PARSERS" then
+    elseif mode == "CATALOGS" then
         if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             ParserManager.updateParserList(Parsers)
         end
@@ -161,7 +161,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     end
     if mode == "MANGA" or mode == "LIBRARY" then
         MangaSelector:input(#Results, oldpad, pad, touch.x)
-    elseif mode == "PARSERS" then
+    elseif mode == "CATALOGS" then
         ParserSelector:input(#Parsers, oldpad, pad, touch.x)
     elseif mode == "DOWNLOAD" then
         DownloadSelector:input(#Cache.getDownloadingList(), oldpad, pad, touch.x)
@@ -174,7 +174,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
         if oldtouch.x then
             if TOUCH.MODE == TOUCH.READ then
-                if mode == "PARSERS" then
+                if mode == "CATALOGS" then
                     if oldtouch.x > 265 and oldtouch.x < 945 then
                         selectParser(floor((Slider.Y - 10 + oldtouch.y) / 75) + 1)
                     end
@@ -213,7 +213,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     if TOUCH.MODE == TOUCH.READ then
         if abs(Slider.V) > 0.1 or abs(Slider.TouchY - touch.y) > 10 then
             TOUCH.MODE = TOUCH.SLIDE
-        elseif mode == "PARSERS" and oldtouch.x > 265 and oldtouch.x < 945 then
+        elseif mode == "CATALOGS" and oldtouch.x > 265 and oldtouch.x < 945 then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
             if GetParserList()[id] then
                 new_itemID = id
@@ -294,7 +294,7 @@ function Catalogs.update()
         if mode == "LIBRARY" and #Results ~= #Database.getMangaList() then
             Results = Database.getMangaList()
         end
-    elseif mode == "PARSERS" then
+    elseif mode == "CATALOGS" then
         Parsers = GetParserList()
         Panel.set{
             "L\\R", "Triangle", "DPad", "Cross",
@@ -374,7 +374,7 @@ end
 function Catalogs.draw()
     Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
     local scroll_height
-    if mode == "PARSERS" then
+    if mode == "CATALOGS" then
         local start = max(1, floor((Slider.Y - 10) / 75))
         local y = start * 75 - Slider.Y
         for i = start, min(#Parsers, start + 9) do
@@ -544,7 +544,7 @@ function Catalogs.terminate()
     getMangaMode = "POPULAR"
 end
 
----@param new_mode string | '"PARSERS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
+---@param new_mode string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
 function Catalogs.setMode(new_mode)
     mode = new_mode
     cache_space = nil
