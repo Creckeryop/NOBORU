@@ -34,6 +34,7 @@ You can simply delete `noboru` folder to reset all settings
 ![s2](/res/screenshot2.png)
 ![s3](/res/screenshot3.png)
 ![s4](/res/screenshot4.png)
+![s5](/res/screenshot5.png)
 ## FAQ:
 <b>Q</b>: I found bug that ...<br>
 <b>A</b>: You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file<br>
