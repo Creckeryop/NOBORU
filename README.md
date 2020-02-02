@@ -7,6 +7,15 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 ```
 ### Requirements:
 * At least 10-20 MB memory (for online reading) or more (for offline reading)
+### Data structure:
+```
+ux0:data/noboru/books/ - folder that holds library saved manga info
+ux0:data/noboru/cache/ - folder that holds chapters saved
+ux0:data/noboru/parsers/ - folder for parsers
+ux0:data/noboru/save.dat - library save
+ux0:data/noboru/settings.ini - application settings
+```
+You can simply delete `noboru` folder to reset all settings
 ## Features:
 * Browsing manga sites
 * Searchinge
