@@ -17,7 +17,6 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 * Multilanguage
 * Reading without network (Offline mode !!Don't forget to add manga in library!!)
 ## TODO:
-* Settings
 * Caching info about last readed chapters (to make continue function)
 * Add more parsers
 * History
