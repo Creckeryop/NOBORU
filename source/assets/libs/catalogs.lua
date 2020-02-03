@@ -144,6 +144,8 @@ local function selectSetting(index)
                 Settings:clearCache()
                 sure_clear_cache = 0
             end
+        elseif item == "ShowAuthor" then
+            Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING.."\nhttps://github.com/Creckeryop/NOBORU")
         end
         if item ~= "ClearChapters" then
             sure_clear_chapters = 0
@@ -571,6 +573,10 @@ function Catalogs.draw()
                 if sure_clear_all_cache > 0 then
                     Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                 end
+            elseif task == "ShowAuthor" then
+                Font.print(FONT16, 275, y - 44, "@creckeryop", COLOR_ROYAL_BLUE)
+            elseif task == "ShowVersion" then
+                Font.print(FONT16, 275, y - 44, Settings.Version, COLOR_GRAY)
             end
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, 0x20000000)

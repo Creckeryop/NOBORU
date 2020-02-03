@@ -2,7 +2,8 @@ Settings = {
     Language = "Default",
     NSFW = false,
     Orientation = "Horizontal",
-    ZoomReader = "Smart"
+    ZoomReader = "Smart",
+    Version = 0.1
 }
 
 function Settings:load()
@@ -14,6 +15,7 @@ function Settings:load()
             self.NSFW = set.NSFW or self.NSFW
             self.Orientation = set.Orientation or self.Orientation
             self.ZoomReader = set.ZoomReader or self.ZoomReader
+            self.Version = set.Version or self.Version
         end
     end
     self:save()
@@ -43,7 +45,9 @@ function Settings:list()
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
-        "ClearChapters"
+        "ClearChapters",
+        "ShowVersion",
+        "ShowAuthor"
     }
 end
 

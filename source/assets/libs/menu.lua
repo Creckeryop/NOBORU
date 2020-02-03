@@ -45,7 +45,7 @@ function Menu.input(oldpad, pad, oldtouch, touch)
                 Menu.setMode("LIBRARY")
             elseif touch.y < 200 then
                 Menu.setMode("CATALOGS")
-            elseif touch.y < 260 then
+            elseif touch.y < 270 then
                 Menu.setMode("HISTORY")
             elseif touch.y > 460 then
                 Menu.setMode("SETTINGS")

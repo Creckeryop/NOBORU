@@ -17,6 +17,8 @@ Language = {
             ClearAllCache = "Очистить ВЕСЬ кэш",
             ReaderOrientation = "Ориентация читалки по умолчанию",
             ZoomReader = "Масштабирование читалки",
+            ShowAuthor = "Разработчик",
+            ShowVersion = "Версия",
             Space = "Памяти занято",
             PressAgainToAccept = "Нажмите ещё раз чтобы подтвердить"
         },
@@ -57,7 +59,8 @@ Language = {
             NET_PROBLEM = "Возникли проблемы с интернетом!",
             CHAPTERS_CLEARED = "Сохраненые главы удалены!",
             LIBRARY_CLEARED = "Библиотека очищена!",
-            CACHE_CLEARED = "Кэш очищен!"
+            CACHE_CLEARED = "Кэш очищен!",
+            DEVELOPER_THING = "Поставь звезду на Github!"
         },
         PANEL = {
             BACK = "Назад",
@@ -91,6 +94,8 @@ Language = {
             ClearAllCache = "Clear all cache",
             ReaderOrientation = "Standart reader orientation",
             ZoomReader = "Reader scaling",
+            ShowAuthor = "Developer",
+            ShowVersion = "App version",
             Space = "Memory used",
             PressAgainToAccept = "Press again to accept"
         },
@@ -131,7 +136,8 @@ Language = {
             NET_PROBLEM = "There is problems with connection!",
             CHAPTERS_CLEARED = "All saved chapters are cleared!",
             LIBRARY_CLEARED = "Library cleared!",
-            CACHE_CLEARED = "Cache has been cleared!"
+            CACHE_CLEARED = "Cache has been cleared!",
+            DEVELOPER_THING = "Start app on Github!"
         },
         PANEL = {
             BACK = "Back",
