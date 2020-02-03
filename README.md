@@ -1,4 +1,6 @@
 # NOBORU
+![GitHub All Releases](https://img.shields.io/github/downloads/Creckeryop/NOBORU/total?color=red)
+<br>
 <img src="/res/logo.png" width="50%" height="50%"><br>
 App for PSVita to read manga or comic<br>
 All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBORU-parsers">this repo</a>
