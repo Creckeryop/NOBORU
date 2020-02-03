@@ -260,7 +260,7 @@ function Details.draw()
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
         Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
-        Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+        --Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
