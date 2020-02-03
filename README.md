@@ -31,6 +31,8 @@ You can simply delete `noboru` folder to reset all settings
 ## TODO:
 * Caching info about last readed chapters (to make continue function)
 * More languages
+* Add Japanese type of controlls (swap x with o)
+* Add option to cache images of current reading chapter (it will boost loading of pages you suddenly skipped)
 ## Screenshots:
 ![s1](/res/screenshot1.png)
 ![s2](/res/screenshot2.png)
