@@ -63,12 +63,12 @@ if not System.doesDirExist("ux0:data/noboru") then
     System.createDirectory("ux0:data/noboru")
 end
 
-if not System.doesDirExist("ux0:data/noboru/cache") then
-    System.createDirectory("ux0:data/noboru/cache")
+if not System.doesDirExist("ux0:data/noboru/chapters") then
+    System.createDirectory("ux0:data/noboru/chapters")
 end
 
-if not System.doesDirExist("ux0:data/noboru/books") then
-    System.createDirectory("ux0:data/noboru/books")
+if not System.doesDirExist("ux0:data/noboru/cache") then
+    System.createDirectory("ux0:data/noboru/cache")
 end
 
 if System.doesDirExist("ux0:data/noboru/parsers") then

@@ -24,7 +24,12 @@ function Settings:save()
         System.deleteFile("ux0:data/noboru/settings.ini")
     end
     local fh = System.openFile("ux0:data/noboru/settings.ini", FCREATE)
-    local set = table.serialize(self, "Settings")
+    local set = table.serialize({
+        Language = self.Language,
+        NSFW = self.NSFW,
+        Orientation = self.Orientation,
+        ZoomReader = self.ZoomReader
+    }, "Settings")
     System.writeFile(fh, set, set:len())
     System.closeFile(fh)
 end
@@ -36,6 +41,8 @@ function Settings:list()
         "ReaderOrientation",
         "ZoomReader",
         "ClearLibrary",
+        "ClearCache",
+        "ClearAllCache",
         "ClearChapters"
     }
 end
@@ -62,7 +69,7 @@ function Settings:nextLanguage()
 end
 
 function Settings:clearChapters()
-    Cache.clear()
+    ChapterSaver.clear()
 end
 
 function Settings:changeNSFW()
@@ -74,6 +81,16 @@ end
 function Settings:clearLibrary()
     Database.clear()
     Notifications.push(Language[Settings.Language].NOTIFICATIONS.LIBRARY_CLEARED)
+end
+
+function Settings:clearCache()
+    Cache.clear()
+    Notifications.push(Language[Settings.Language].NOTIFICATIONS.CACHE_CLEARED)
+end
+
+function Settings:clearAllCache()
+    Cache.clear("all")
+    Notifications.push(Language[Settings.Language].NOTIFICATIONS.CACHE_CLEARED)
 end
 
 function Settings:changeOrientation()

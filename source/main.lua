@@ -20,11 +20,14 @@ loadlib("menu")
 loadlib("panel")
 loadlib("notifications")
 loadlib("debug")
+loadlib("chsaver")
 loadlib("cache")
 
 Settings:load()
-Database.load()
 Cache.load()
+Cache.loadHistory()
+Database.load()
+ChapterSaver.load()
 Menu.setMode("LIBRARY")
 Panel.show()
 
@@ -96,7 +99,7 @@ local function update()
         Panel.update()
         Threads.update()
         ParserManager.update()
-        Cache.update()
+        ChapterSaver.update()
     end
     if fade > 0 then
         fade = fade - fade / 8

@@ -77,7 +77,7 @@ function Details.setManga(manga)
             ParserManager.getChaptersAsync(manga, Chapters)
             is_chapter_loaded = false
         else
-            Chapters = Database.getChapters(manga)
+            Chapters = Cache.loadChapters(manga)
             is_chapter_loaded = true
         end
         is_notification_showed = false
@@ -92,10 +92,10 @@ local function press_add_to_library()
             Database.remove(Manga)
             Notifications.push(Language[Settings.Language].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
         else
-            Database.add(Manga, Chapters)
+            Database.add(Manga)
+            Cache.addManga(Manga)
             Notifications.push(Language[Settings.Language].NOTIFICATIONS.ADDED_TO_LIBRARY)
         end
-        Database.save()
     end
 end
 
@@ -103,21 +103,25 @@ local function press_download(item)
     local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
     item = Chapters[item]
     if item then
-        if not Cache.check(item) then
-            if Cache.is_downloading(item) then
-                Cache.stop(item)
+        if not ChapterSaver.check(item) then
+            if ChapterSaver.is_downloading(item) then
+                ChapterSaver.stop(item)
             elseif connection then
-                Cache.downloadChapter(item)
+                ChapterSaver.downloadChapter(item)
             end
         else
-            Cache.delete(item)
+            ChapterSaver.delete(item)
         end
+        Cache.addManga(item.Manga, Chapters)
+        Cache.makeHistory(item.Manga)
     end
 end
 
 local function press_manga(item)
     if Chapters[item] then
         Catalogs.shrink()
+        Cache.addManga(Manga)
+        Cache.makeHistory(Manga)
         Reader.load(Chapters, item)
         AppMode = READER
     end
@@ -197,7 +201,9 @@ function Details.update()
         if not is_chapter_loaded and not ParserManager.check(Chapters) then
             is_chapter_loaded = true
             if #Chapters > 0 then
-                Database.updateChapters(Chapters[1].Manga, Chapters)
+                if Cache.isCached(Chapters[1].Manga) then
+                    Cache.saveChapters(Chapters[1].Manga, Chapters)
+                end
             end
         end
     end
@@ -223,10 +229,10 @@ function Details.draw()
                 if i == Slider.ItemID then
                     Graphics.fillRect(280, 920, y, y + 69, Color.new(0, 0, 0, 32))
                 end
-                if Cache.check(Chapters[i]) then
+                if ChapterSaver.check(Chapters[i]) then
                     Graphics.drawRotateImage(920 - 32, y + 34, cross.e, 0)
                 else
-                    local t = Cache.is_downloading(Chapters[i])
+                    local t = ChapterSaver.is_downloading(Chapters[i])
                     if t then
                         local text = "0%"
                         if t.page_count and t.page_count > 0 then

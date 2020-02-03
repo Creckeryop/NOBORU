@@ -5,6 +5,7 @@ Language = {
             CATALOGS = "КАТАЛОГИ",
             SETTINGS = "НАСТРОЙКИ",
             DOWNLOAD = "ЗАГРУЗКИ",
+            HISTORY = "ИСТОРИЯ",
             SEARCH = "Поиск"
         },
         SETTINGS = {
@@ -12,6 +13,8 @@ Language = {
             ClearChapters = "Очистить сохраненные главы",
             ShowNSFW = "Показывать пр0н парсеры",
             ClearLibrary = "Очистить библиотеку",
+            ClearCache = "Очистить кэш для неотслеживаемых манг",
+            ClearAllCache = "Очистить ВЕСЬ кэш",
             ReaderOrientation = "Ориентация читалки по умолчанию",
             ZoomReader = "Масштабирование читалки",
             Space = "Памяти занято",
@@ -53,7 +56,8 @@ Language = {
             CHAPTER_REMOVE = "%s удалено!",
             NET_PROBLEM = "Возникли проблемы с интернетом!",
             CHAPTERS_CLEARED = "Сохраненые главы удалены!",
-            LIBRARY_CLEARED = "Библиотека очищена!"
+            LIBRARY_CLEARED = "Библиотека очищена!",
+            CACHE_CLEARED = "Кэш очищен!"
         },
         PANEL = {
             BACK = "Назад",
@@ -65,7 +69,8 @@ Language = {
             CHOOSE = "Сменить выделенное",
             CHANGE_SECTION = "Сменить меню",
             UPDATE = "Обновить",
-            CANCEL = "Отменить"
+            CANCEL = "Отменить",
+            DELETE = "Удалить"
         }
     },
     English = {
@@ -74,6 +79,7 @@ Language = {
             CATALOGS = "CATALOGS",
             SETTINGS = "SETTINGS",
             DOWNLOAD = "DOWNLOADS",
+            HISTORY = "HISTORY",
             SEARCH = "Search"
         },
         SETTINGS = {
@@ -81,6 +87,8 @@ Language = {
             ClearChapters = "Clear saved chapters",
             ShowNSFW = "Show NSFW parsers",
             ClearLibrary = "Clear library",
+            ClearCache = "Clear all cache that created for not tracked manga",
+            ClearAllCache = "Clear all cache",
             ReaderOrientation = "Standart reader orientation",
             ZoomReader = "Reader scaling",
             Space = "Memory used",
@@ -122,7 +130,8 @@ Language = {
             CHAPTER_REMOVE = "%s deleted!",
             NET_PROBLEM = "There is problems with connection!",
             CHAPTERS_CLEARED = "All saved chapters are cleared!",
-            LIBRARY_CLEARED = "Library cleared!"
+            LIBRARY_CLEARED = "Library cleared!",
+            CACHE_CLEARED = "Cache has been cleared!"
         },
         PANEL = {
             BACK = "Back",
@@ -134,7 +143,8 @@ Language = {
             CHOOSE = "Choose",
             CHANGE_SECTION = "Change section",
             UPDATE = "Update",
-            CANCEL = "Cancel"
+            CANCEL = "Cancel",
+            DELETE = "Delete"
         }
     }
 }

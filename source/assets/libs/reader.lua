@@ -627,8 +627,8 @@ function Reader.loadChapter(chapter)
         Page = 0
     }
     collectgarbage("collect")
-    if Cache.check(Chapters[chapter]) then
-        Chapters[chapter].Pages = Cache.getChapter(Chapters[chapter])
+    if ChapterSaver.check(Chapters[chapter]) then
+        Chapters[chapter].Pages = ChapterSaver.getChapter(Chapters[chapter])
     else
         ParserManager.prepareChapter(Chapters[chapter], Chapters[chapter].Pages)
     end

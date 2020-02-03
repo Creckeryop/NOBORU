@@ -1,6 +1,6 @@
 Threads = {}
 
-local IMAGE_CACHE_PATH = "ux0:data/noboru/cache.img"
+local IMAGE_CACHE_PATH = "ux0:data/noboru/chapters.img"
 
 local Order = {}
 local Task = nil

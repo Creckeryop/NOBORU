@@ -10,7 +10,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 ### Data structure:
 ```
 ux0:data/noboru/books/ - folder that holds library saved manga info
-ux0:data/noboru/cache/ - folder that holds chapters saved
+ux0:data/noboru/chapters/ - folder that holds chapters saved
 ux0:data/noboru/parsers/ - folder for parsers
 ux0:data/noboru/save.dat - library save
 ux0:data/noboru/settings.ini - application settings
@@ -24,10 +24,9 @@ You can simply delete `noboru` folder to reset all settings
 * Adding manga to library
 * Loading longpages (webmanga) without downscaling (thanks to my [piclib](https://github.com/Creckeryop/piclib))
 * Multilanguage
-* Reading without network (Offline mode !!Don't forget to add manga in library!!)
+* Reading without network (Offline mode !!Don't forget to add manga in library!! (you can also check `History` tab))
 ## TODO:
 * Caching info about last readed chapters (to make continue function)
-* History
 * More languages
 ## Screenshots:
 ![s1](/res/screenshot1.png)

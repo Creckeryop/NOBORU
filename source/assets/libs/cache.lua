@@ -1,251 +1,202 @@
 Cache = {}
-local Keys = {}
-local Order = {}
-local Task = nil
-local Downloading = {}
 
----Path to cache folder
-local FOLDER = "ux0:data/noboru/cache/"
+local data = {}
+local history = {}
 
----@return string
----Creates key for a chapter from it's Manga's `parserID`, `Link` and chapter `Link`
-local function key(chapter)
-    return string.gsub(chapter.Manga.ParserID .. chapter.Manga.Link .. chapter.Link, "%p", "")
+local function get_key(Manga)
+    return (Manga.ParserID .. Manga.Link):gsub("%p", "")
 end
 
----Updates Cache things
-function Cache.update()
-    if #Order == 0 and Task == nil then return end
-    if not Task then
-        Task = table.remove(Order, 1)
-        Task.F = coroutine.create(Task.F)
-    else
-        if coroutine.status(Task.F) ~= "dead" then
-            local _, msg, var1, var2 = coroutine.resume(Task.F)
-            if _ then
-                if Task.Destroy and msg then
-                    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
-                    Task = nil
-                elseif msg == "update_count" then
-                    Task.page = var1
-                    Task.page_count = var2
-                end
-            else
-                Console.error("Unknown error with cache: " .. msg)
-                Task = nil
-            end
-        else
-            Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
-            Task = nil
+function Cache.addManga(Manga, Chapters)
+    local key = get_key(Manga)
+    if not data[key] then
+        data[key] = Manga
+        Manga.Path = "cache/" .. key .. "/cover.image"
+        if not System.doesDirExist("ux0:data/noboru/cache/" .. key) then
+            System.createDirectory("ux0:data/noboru/cache/" .. key)
         end
-    end
-end
-local notify = true
----@param chapter table
----Creates task for downloading `chapter`
-function Cache.downloadChapter(chapter)
-    local k = key(chapter)
-    if not System.doesDirExist(FOLDER .. k) then
-        System.createDirectory(FOLDER .. k)
-    end
-    Downloading[k] = {
-        Key = k,
-        MangaName = chapter.Manga.Name,
-        ChapterName = chapter.Name,
-        F = function()
-            local t = {}
-            local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
-            if connection then
-                ParserManager.prepareChapter(chapter, t)
-            else
-                Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
-                Downloading[k] = nil
-                return
-            end
-            while ParserManager.check(t) do
-                coroutine.yield("update_count", 0, 0)
-            end
-            local parser = GetParserByID(chapter.Manga.ParserID)
-            for i = 1, #t do
-                coroutine.yield("update_count", i, #t)
-                local result = {}
-                parser:loadChapterPage(t[i], result)
-                coroutine.yield(false)
-                Threads.insertTask(result, {
-                    Type = "FileDownload",
-                    Link = result.Link,
-                    Path = "cache/" .. k .. "/" .. i .. ".image"
-                })
-                while Threads.check(result) do
-                    coroutine.yield(false)
-                end
-            end
-            local fh = System.openFile(FOLDER .. k .. "/done.txt", FCREATE)
-            System.writeFile(fh, #t, string.len(#t))
-            System.closeFile(fh)
-            Keys[k] = true
-            Cache.save()
-            Downloading[k] = nil
+        if System.doesFileExist("ux0:data/noboru/cache/" .. key .. "/cover.image") then
+            System.deleteFile("ux0:data/noboru/cache/" .. key .. "/cover.image")
         end
-    }
-    Order[#Order + 1] = Downloading[k]
-    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
-end
-
----@return boolean
----Gives info if download is running
-function Cache.is_download_running()
-    return Task ~= nil or #Order > 0
-end
-
----@param key string
----Stops task by it's key
-local function stop(key)
-    if Downloading[key] then
-        if Downloading[key] == Task then
-            Downloading[key].Destroy = true
-            RemoveDirectory(FOLDER .. key)
-        else
-            local new_order = {}
-            for _, v in ipairs(Order) do
-                if v == Downloading[key] then
-                    if notify then
-                        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
-                    end
-                else
-                    new_order[#new_order + 1] = v
-                end
-            end
-            Order = new_order
+        if Chapters then
+            Cache.saveChapters(Manga, Chapters)
         end
-        Downloading[key] = nil
-    end
-end
-
----@param chapter table
----Stops `chapter` downloading
-function Cache.stop(chapter)
-    if chapter then stop(key(chapter)) end
-end
-
----@param item table
----Stops `chapter` downloading by List item from `Cache.getDownloadingList` function
-function Cache.stopByListItem(item)
-    if item then stop(item.Key) end
-end
-
----@param chapter table
----Deletes cache of downloaded chapter
-function Cache.delete(chapter)
-    local k = key(chapter)
-    if Keys[k] then
-        RemoveDirectory(FOLDER .. k)
-        Keys[k] = nil
+        Threads.insertTask(tostring(Manga) .. "coverDownload", {
+            Type = "FileDownload",
+            Path = "cache/" .. key .. "/cover.image",
+            Link = Manga.ImageLink
+        })
         Cache.save()
-        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
     end
 end
 
-
----@return table
----Returns all active downloadings
-function Cache.getDownloadingList()
-    local list = {}
-    Order[0] = Task
-    for i = Task and 0 or 1, #Order do
-        local task = Order[i]
-        list[#list + 1] = {
-            Manga = task.MangaName,
-            Chapter = task.ChapterName,
-            page = task.page or 0,
-            page_count = task.page_count or 0,
-            Key = task.Key
-        }
-    end
-    return list
-end
-
----@param chapter table
----@return boolean
----Gives `true` if chapter is downloaded
-function Cache.check(chapter)
-    return Keys[key(chapter)] == true
-end
-
-
----@param chapter table
----@return boolean
----Gives `true` if chapter is downloading
-function Cache.is_downloading(chapter)
-    return Downloading[key(chapter)]
-end
-
-
----@param chapter table
----@return table
----Gives table with all pathes to cached images
-function Cache.getChapter(chapter)
-    local k = key(chapter)
-    local table = {Done = true}
-    if Keys[k] then
-        local pages = #System.listDirectory(FOLDER .. k) - 1
-        for i = 1, pages do
-            table[i] = {
-                Path = "cache/" .. k .. "/" .. i .. ".image"
-            }
+local updated = false
+function Cache.makeHistory(Manga)
+    local key = get_key(Manga)
+    for i, v in ipairs(history) do
+        if v == key then
+            table.remove(history, i)
+            break
         end
     end
-    return table
+    table.insert(history, 1, key)
+    Cache.saveHistory()
+    updated = true
 end
 
----Saves cache changes
-function Cache.save()
-    if System.doesFileExist("ux0:data/noboru/c.c") then
-        System.deleteFile("ux0:data/noboru/c.c")
+function Cache.removeHistory(Manga)
+    local key = get_key(Manga)
+    for i, v in ipairs(history) do
+        if v == key then
+            table.remove(history, i)
+            break
+        end
     end
-    local fh = System.openFile("ux0:data/noboru/c.c", FCREATE)
-    local save_data = table.serialize(Keys, "Keys")
-    System.writeFile(fh, save_data, save_data:len())
+    Cache.saveHistory()
+    updated = true
+end
+
+local cached_history = {}
+function Cache.getHistory()
+    if updated then
+        local new_history = {}
+        for k, v in ipairs(history) do
+            if data[v] then
+                new_history[#new_history + 1] = data[v]
+            end
+        end
+        updated = false
+        cached_history = new_history
+    end
+    return cached_history
+end
+
+function Cache.saveHistory()
+    if System.doesFileExist("ux0:data/noboru/cache/history.dat") then
+        System.deleteFile("ux0:data/noboru/cache/history.dat")
+    end
+    local fh = System.openFile("ux0:data/noboru/cache/history.dat", FCREATE)
+    local serialized_history = "local "..table.serialize(history, "history").."\nreturn history"
+    System.writeFile(fh, serialized_history, serialized_history:len())
     System.closeFile(fh)
 end
 
----Loads cache changes
-function Cache.load()
-    Keys = {}
-    if System.doesFileExist("ux0:data/noboru/c.c") then
-        local fh = System.openFile("ux0:data/noboru/c.c", FREAD)
-        local suc, keys = pcall(function() return load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Keys")() end)
+function Cache.loadHistory()
+    if System.doesFileExist("ux0:data/noboru/cache/history.dat") then
+        local fh = System.openFile("ux0:data/noboru/cache/history.dat", FREAD)
+        local suc, new_history = pcall(function() return load(System.readFile(fh, System.sizeFile(fh)))() end)
+        System.closeFile(fh)
         if suc then
-            for k, _ in pairs(keys) do
-                if System.doesFileExist(FOLDER .. k .. "/done.txt") then
-                    local fh_2 = System.openFile(FOLDER .. k .. "/done.txt", FREAD)
-                    local pages = System.readFile(fh_2, System.sizeFile(fh_2))
-                    System.closeFile(fh_2)
-                    if tonumber(pages) == #System.listDirectory(FOLDER .. k) - 1 then
-                        Keys[k] = true
-                    else
-                        Notifications.push("cache_error " .. k)
+            history = new_history
+        end
+    end
+    Cache.saveHistory()
+    updated = true
+end
+
+function Cache.isCached(Manga)
+    return Manga and data[get_key(Manga)]~=nil or false
+end
+
+function Cache.saveChapters(Manga, Chapters)
+    local key = get_key(Manga)
+    local path = "ux0:data/noboru/cache/" .. key .. "/chapters.dat"
+    if System.doesFileExist(path) then
+        System.deleteFile(path)
+    end
+    local chlist = {}
+    for i = 1, #Chapters do
+        chlist[i] = {}
+        for k, v in pairs(Chapters[i]) do
+            chlist[i][k] = k == "Manga" and "10101010101010" or v
+        end
+    end
+    local fh = System.openFile(path, FCREATE)
+    local serialized_chlist = "local " .. table.serialize(chlist, "chlist") .. "\nreturn chlist"
+    System.writeFile(fh, serialized_chlist, serialized_chlist:len())
+    System.closeFile(fh)
+end
+
+function Cache.loadChapters(Manga)
+    local key = get_key(Manga)
+    if data[key] then
+        if System.doesFileExist("ux0:data/noboru/cache/" .. key .. "/chapters.dat") then
+            local fh = System.openFile("ux0:data/noboru/cache/" .. key .. "/chapters.dat", FREAD)
+            local suc, new_chlist = pcall(function() return load(System.readFile(fh, System.sizeFile(fh)):gsub("\"10101010101010\"","..."))(data[key]) end)
+            System.closeFile(fh)
+            if suc then
+                return new_chlist
+            else
+                Console.error(new_chlist)
+            end
+        end
+    end
+    return {}
+end
+
+function Cache.load()
+    data = {}
+    if System.doesFileExist("ux0:data/noboru/cache/info.txt") then
+        local fh = System.openFile("ux0:data/noboru/cache/info.txt", FREAD)
+        local suc, new_data = pcall(function() return load(System.readFile(fh, System.sizeFile(fh)))() end)
+        if suc then
+            for k, v in pairs(new_data) do
+                if System.doesDirExist("ux0:data/noboru/cache/" .. k) then
+                    local f = System.openFile("ux0:data/noboru/" .. v.Path, FREAD)
+                    local image_size = System.sizeFile(f)
+                    System.closeFile(f)
+                    if image_size < 100 then
+                        System.deleteFile("ux0:data/noboru/" .. v.Path)
+                        Notifications.push("image_error " .. v.Path)
                     end
-                else
-                    Notifications.push("cache_error " .. k)
+                    data[k] = v
                 end
             end
         end
-        System.closeFile(fh)
-        Cache.save()
     end
+    Cache.save()
 end
 
----Clears all cache
-function Cache.clear()
-    notify = false
-    for _, v in ipairs(Cache.getDownloadingList()) do
-        Cache.stopByListItem(v)
+function Cache.save()
+    if System.doesFileExist("ux0:data/noboru/cache/info.txt") then
+        System.deleteFile("ux0:data/noboru/cache/info.txt")
     end
-    notify = true
-    RemoveDirectory("ux0:data/noboru/cache")
-    System.createDirectory("ux0:data/noboru/cache")
-    Keys = {}
+    local fh = System.openFile("ux0:data/noboru/cache/info.txt", FCREATE)
+    local save_data = {}
+    for k, v in pairs(data) do
+        save_data[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
+        save_data[k].Data = v.Data
+        save_data[k].Path = "cache/" .. k .. "/cover.image"
+    end
+    local serialized_data = "local " .. table.serialize(save_data, "data") .. "\nreturn data"
+    System.writeFile(fh, serialized_data, serialized_data:len())
+    System.closeFile(fh)
+end
+
+function Cache.clear(mode)
+    mode = mode or "notlibrary"
+    if mode == "notlibrary" then
+        local d = System.listDirectory("ux0:data/noboru/cache")
+        for k, v in ipairs(d) do
+            if not Database.checkByKey(v.name) and v.directory then
+                RemoveDirectory("ux0:data/noboru/cache/"..v.name)
+                data[v.name] = nil
+            end
+        end
+        local new_history = {}
+        for i=1, #history do
+            if data[history[i]] then
+                new_history[#new_history+1] = history[i]
+            end
+        end
+        history = new_history
+    elseif mode == "all" then
+        RemoveDirectory("ux0:data/noboru/cache")
+        System.createDirectory("ux0:data/noboru/cache")
+        data = {}
+        history = {}
+    end
+    Cache.saveHistory()
+    updated = true
     Cache.save()
-    Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
 end
