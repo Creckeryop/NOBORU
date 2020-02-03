@@ -102,20 +102,38 @@ local function selectParser(index)
 end
 
 local cache_space
+local sure_clear_library
+local sure_clear_cache
 local function selectSetting(index)
     local item = Settings:list()[index]
     if item then
         if item == "Language" then
             Settings:nextLanguage()
         elseif item == "ClearChapters" then
-            Settings:clearChapters()
-            cache_space = nil
+            sure_clear_cache = sure_clear_cache + 1
+            if sure_clear_cache == 2 then
+                Settings:clearChapters()
+                cache_space = nil
+                sure_clear_cache = 0
+            end
         elseif item == "ShowNSFW" then
             Settings:changeNSFW()
         elseif item == "ClearLibrary" then
-            Settings:clearLibrary()
+            sure_clear_library = sure_clear_library + 1
+            if sure_clear_library == 2 then
+                Settings:clearLibrary()
+                sure_clear_library = 0
+            end
         elseif item == "ReaderOrientation" then
             Settings:changeOrientation()
+        elseif item == "ZoomReader" then
+            Settings:changeZoom()
+        end
+        if item ~= "ClearChapters" then
+            sure_clear_cache = 0
+        end
+        if item ~= "ClearLibrary" then
+            sure_clear_library = 0
         end
     end
 end
@@ -475,10 +493,19 @@ function Catalogs.draw()
                     get_space_dir("ux0:data/noboru/cache")
                 end
                 Font.print(FONT16, 275, y - 44, MemToStr(cache_space,Language[Settings.Language].SETTINGS.Space), COLOR_GRAY)
+                if sure_clear_cache > 0 then
+                    Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
+                end
             elseif task == "ReaderOrientation" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_GRAY)
             elseif task == "ShowNSFW" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
+            elseif task == "ZoomReader" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_GRAY)
+            elseif task == "ClearLibrary" then
+                if sure_clear_library > 0 then
+                    Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
+                end
             end
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, 0x20000000)
@@ -548,6 +575,8 @@ end
 function Catalogs.setMode(new_mode)
     mode = new_mode
     cache_space = nil
+    sure_clear_library = 0
+    sure_clear_cache = 0
     MangaSelector:resetSelected()
     ParserSelector:resetSelected()
     DownloadSelector:resetSelected()

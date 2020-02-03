@@ -347,32 +347,64 @@ function Reader.update()
                 if orientation == "Horizontal" then
                     page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
                     Console.write("Added " .. Pages.Page + i)
-                    if page.Width > page.Height then
-                        page.Mode = "Horizontal"
-                        page.Zoom = 544 / page.Height
-                        if page.Width * page.Zoom >= 960 then
-                            page.x = 480 + i * (480 + page.Width * page.Zoom / 2)
-                            page.x = 10000000
+                    if Settings.ZoomReader == "Smart" then
+                        if page.Width > page.Height then
+                            page.Mode = "Horizontal"
+                            page.Zoom = 544 / page.Height
+                            if page.Width * page.Zoom >= 960 then
+                                page.x = 480 + i * (480 + page.Width * page.Zoom / 2)
+                                page.x = 10000000
+                            end
+                        else
+                            page.Mode = "Vertical"
+                            page.Zoom = 960 / page.Width
                         end
-                    else
-                        page.Mode = "Vertical"
+                    elseif Settings.ZoomReader == "Width" then
+                        if page.Width > page.Height then
+                            page.Mode = "Horizontal"
+                        else
+                            page.Mode = "Vertical"
+                        end
                         page.Zoom = 960 / page.Width
+                    elseif Settings.ZoomReader == "Height" then
+                        if page.Width > page.Height then
+                            page.Mode = "Horizontal"
+                        else
+                            page.Mode = "Vertical"
+                        end
+                        page.Zoom = 544 / page.Height
                     end
                     page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
                     page.y = page.Zoom * page.Height / 2
                 elseif orientation == "Vertical" then
                     page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
                     Console.write("Added " .. Pages.Page + i)
-                    if page.Width > page.Height then
-                        page.Mode = "Horizontal"
-                        page.Zoom = 960 / page.Height
-                        if page.Width * page.Zoom >= 544 then
-                            page.y = 272 + i * (272 + page.Width * page.Zoom / 2)
-                            page.y = page.Width * page.Zoom/2
+                    if Settings.ZoomReader == "Smart" then
+                        if page.Width > page.Height then
+                            page.Mode = "Horizontal"
+                            page.Zoom = 960 / page.Height
+                            if page.Width * page.Zoom >= 544 then
+                                page.y = 272 + i * (272 + page.Width * page.Zoom / 2)
+                                page.y = page.Width * page.Zoom/2
+                            end
+                        else
+                            page.Mode = "Vertical"
+                            page.Zoom = 544 / page.Width
                         end
-                    else
-                        page.Mode = "Vertical"
+                    elseif Settings.ZoomReader == "Width" then
+                        if page.Width > page.Height then
+                            page.Mode = "Horizontal"
+                        else
+                            page.Mode = "Vertical"
+                        end
                         page.Zoom = 544 / page.Width
+                    elseif Settings.ZoomReader == "Height" then
+                        if page.Width > page.Height then
+                            page.Mode = "Horizontal"
+                        else
+                            page.Mode = "Vertical"
+                        end
+                        page.Zoom = 960 / page.Height
                     end
                     page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
                     page.x = -page.Zoom * page.Height / 2

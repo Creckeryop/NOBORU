@@ -13,7 +13,9 @@ Language = {
             ShowNSFW = "Показывать пр0н парсеры",
             ClearLibrary = "Очистить библиотеку",
             ReaderOrientation = "Ориентация читалки по умолчанию",
-            Space = "Памяти занято"
+            ZoomReader = "Масштабирование читалки",
+            Space = "Памяти занято",
+            PressAgainToAccept = "Нажмите ещё раз чтобы подтвердить"
         },
         NSFW = {
             [true] = "Показывать",
@@ -32,7 +34,10 @@ Language = {
             LOADING_PAGE = "Загрузка страницы",
             LOADING_SEGMENT = "Загрузка сегмента страницы",
             Horizontal = "Горизонтальная",
-            Vertical = "Вертикальная"
+            Vertical = "Вертикальная",
+            Smart = "Умное",
+            Height = "По высоте",
+            Width = "По ширине"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Добавить в библиотеку",
@@ -77,7 +82,9 @@ Language = {
             ShowNSFW = "Show NSFW parsers",
             ClearLibrary = "Clear library",
             ReaderOrientation = "Standart reader orientation",
-            Space = "Memory used"
+            ZoomReader = "Reader scaling",
+            Space = "Memory used",
+            PressAgainToAccept = "Press again to accept"
         },
         NSFW = {
             [true] = "Show",
@@ -96,7 +103,10 @@ Language = {
             LOADING_PAGE = "Loading page",
             LOADING_SEGMENT = "Loading segment",
             Horizontal = "Horizontal",
-            Vertical = "Vertical"
+            Vertical = "Vertical",
+            Smart = "Smart",
+            Height = "Height",
+            Width = "Width"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Add to library",

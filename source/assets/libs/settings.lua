@@ -1,7 +1,8 @@
 Settings = {
     Language = "Default",
     NSFW = false,
-    Orientation = "Horizontal"
+    Orientation = "Horizontal",
+    ZoomReader = "Smart"
 }
 
 function Settings:load()
@@ -12,6 +13,7 @@ function Settings:load()
             self.Language = set.Language or self.Language
             self.NSFW = set.NSFW or self.NSFW
             self.Orientation = set.Orientation or self.Orientation
+            self.ZoomReader = set.ZoomReader or self.ZoomReader
         end
     end
     self:save()
@@ -28,7 +30,14 @@ function Settings:save()
 end
 
 function Settings:list()
-    return {"Language", "ShowNSFW", "ReaderOrientation", "ClearLibrary", "ClearChapters"}
+    return {
+        "Language",
+        "ShowNSFW",
+        "ReaderOrientation",
+        "ZoomReader",
+        "ClearLibrary",
+        "ClearChapters"
+    }
 end
 
 function Settings:nextLanguage()
@@ -59,6 +68,7 @@ end
 function Settings:changeNSFW()
     ChangeNSFW()
     self.NSFW = not self.NSFW
+    self:save()
 end
 
 function Settings:clearLibrary()
@@ -68,4 +78,10 @@ end
 
 function Settings:changeOrientation()
     Settings.Orientation = Settings.Orientation == "Vertical" and "Horizontal" or "Vertical"
+    self:save()
+end
+
+function Settings:changeZoom()
+    self.ZoomReader = self.ZoomReader == "Smart" and "Height" or self.ZoomReader == "Height" and "Width" or "Smart"
+    self:save()
 end
