@@ -101,31 +101,31 @@ function table.serialize(t, name)
         for k, v in pairs(_t) do
             if type(v) == "string" then
                 if type(k) == "string" then
-                    P[#P + 1] = '["'..k..'"]="'..v:gsub("\\","\\\\")..'"'
+                    P[#P + 1] = '["' .. k .. '"]="' .. v:gsub("\\", "\\\\") .. '"'
                 else
-                    P[#P + 1] = '['..k..']="'..v:gsub("\\","\\\\")..'"'
+                    P[#P + 1] = '[' .. k .. ']="' .. v:gsub("\\", "\\\\") .. '"'
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then
-                    P[#P + 1] = serialize(v, '["'..k..'"]')
+                    P[#P + 1] = serialize(v, '["' .. k .. '"]')
                 else
-                    P[#P + 1] = serialize(v, '['..k..']')
+                    P[#P + 1] = serialize(v, '[' .. k .. ']')
                 end
             elseif type(v) == "boolean" then
                 if type(k) == "string" then
-                    P[#P + 1] = '["'..k..'"]='..tostring(v)..''
+                    P[#P + 1] = '["' .. k .. '"]=' .. tostring(v) .. ''
                 else
-                    P[#P + 1] = '['..k..']='..tostring(v)..''
+                    P[#P + 1] = '[' .. k .. ']=' .. tostring(v) .. ''
                 end
             else
                 if type(k) == "string" then
-                    P[#P + 1] = '["'..k..'"]="'..tostring(v)..'"'
+                    P[#P + 1] = '["' .. k .. '"]="' .. tostring(v) .. '"'
                 else
-                    P[#P + 1] = '['..k..']="'..tostring(v)..'"'
+                    P[#P + 1] = '[' .. k .. ']="' .. tostring(v) .. '"'
                 end
             end
         end
-        return _name .." = {"..concat(P,", ").."}"
+        return _name .. " = {" .. concat(P, ", ") .. "}"
     end
     return serialize(t, name)
 end

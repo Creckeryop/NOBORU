@@ -35,7 +35,7 @@ local Chapters = {}
 local current_chapter = 1
 
 local function scale(dZoom, Page)
-    if math.abs(1-dZoom) < 0.008 or not Page.Zoom then return end
+    if math.abs(1 - dZoom) < 0.008 or not Page.Zoom then return end
     local old_Zoom = Page.Zoom
     Page.Zoom = Page.Zoom * dZoom
     if Page.Zoom < Page.min_Zoom then
@@ -124,7 +124,7 @@ local function changeOrientation()
     else
         orientation = "Vertical"
     end
-    for i=1,#Pages do
+    for i = 1, #Pages do
         Pages[i].Zoom = nil
     end
 end
@@ -337,7 +337,7 @@ function Reader.update()
         if not Pages[Pages.Page] then
             return
         end
-        if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and Pages.PrevPage > 0 and Pages.PrevPage <= #Pages and (offset.x == 0 and orientation=="Horizontal" or offset.y == 0 and orientation == "Vertical") then
+        if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and Pages.PrevPage > 0 and Pages.PrevPage <= #Pages and (offset.x == 0 and orientation == "Horizontal" or offset.y == 0 and orientation == "Vertical") then
             deletePageImage(Pages.PrevPage)
         end
         for i = -1, 1 do
@@ -385,7 +385,7 @@ function Reader.update()
                             page.Zoom = 960 / page.Height
                             if page.Width * page.Zoom >= 544 then
                                 page.y = 272 + i * (272 + page.Width * page.Zoom / 2)
-                                page.y = page.Width * page.Zoom/2
+                                page.y = page.Width * page.Zoom / 2
                             end
                         else
                             page.Mode = "Vertical"
@@ -422,7 +422,7 @@ function Reader.update()
                 velX = velX * 0.9
             end
         elseif touchMode == TOUCH_SWIPE then
-            if orientation=="Horizontal" then
+            if orientation == "Horizontal" then
                 offset.x = offset.x + velX
                 if offset.x > 0 and Pages.Page == 1 and current_chapter == 1 then
                     offset.x = 0
@@ -441,7 +441,7 @@ function Reader.update()
             end
         end
         if touchMode ~= TOUCH_SWIPE then
-            if orientation=="Horizontal" then
+            if orientation == "Horizontal" then
                 offset.x = offset.x / 1.3
                 if math.abs(offset.x) < 1 then
                     offset.x = 0

@@ -29,7 +29,7 @@ function Parser:new(Name, Link, Lang, ID)
     }
     setmetatable(p, self)
     self.__index = self
-    local message = 'Parser "'..Name..'" '..(parserTable[ID] and "Updated!" or "Loaded!")..'!'
+    local message = 'Parser "' .. Name .. '" ' .. (parserTable[ID] and "Updated!" or "Loaded!") .. '!'
     Console.write(message)
     parserTable[ID] = p
     updated = true

@@ -74,7 +74,7 @@ function Cache.downloadChapter(chapter)
                 Threads.insertTask(result, {
                     Type = "FileDownload",
                     Link = result.Link,
-                    Path = "cache/"..k.."/"..i..".image"
+                    Path = "cache/" .. k .. "/" .. i .. ".image"
                 })
                 while Threads.check(result) do
                     coroutine.yield(false)

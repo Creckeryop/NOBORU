@@ -3,12 +3,12 @@ Notifications = {}
 ---@return table
 ---Breaks text into lines
 local function to_lines(str)
-    if str:sub(-1)~="\n" then
-        str = str.."\n"
+    if str:sub(-1) ~= "\n" then
+        str = str .. "\n"
     end
     local lines = {}
     for line in str:gmatch("(.-)\n") do
-        lines[#lines+1] = line
+        lines[#lines + 1] = line
     end
     return lines
 end

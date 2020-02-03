@@ -58,7 +58,7 @@ local animationUpdate = function()
     end
 end
 
-local DetailsSelector = Selector:new(-1, 1, -3, 3, function () return math.floor((Slider.Y - 20 + 90) / 70) end)
+local DetailsSelector = Selector:new(-1, 1, -3, 3, function() return math.floor((Slider.Y - 20 + 90) / 70) end)
 
 local is_chapter_loaded = false
 
@@ -224,18 +224,18 @@ function Details.draw()
                     Graphics.fillRect(280, 920, y, y + 69, Color.new(0, 0, 0, 32))
                 end
                 if Cache.check(Chapters[i]) then
-                    Graphics.drawRotateImage(920-32, y+34, cross.e, 0)
+                    Graphics.drawRotateImage(920 - 32, y + 34, cross.e, 0)
                 else
                     local t = Cache.is_downloading(Chapters[i])
                     if t then
                         local text = "0%"
                         if t.page_count and t.page_count > 0 then
-                            text = math.ceil(100 * t.page / t.page_count).."%"
+                            text = math.ceil(100 * t.page / t.page_count) .. "%"
                         end
-                        local width = Font.getTextWidth(FONT20,text)
-                        Font.print(FONT20, 920-32-width/2, y + 21, text, COLOR_WHITE)
+                        local width = Font.getTextWidth(FONT20, text)
+                        Font.print(FONT20, 920 - 32 - width / 2, y + 21, text, COLOR_WHITE)
                     else
-                        Graphics.drawRotateImage(920-32, y+34, dwnld.e, 0)
+                        Graphics.drawRotateImage(920 - 32, y + 34, dwnld.e, 0)
                     end
                 end
             else
@@ -264,11 +264,11 @@ function Details.draw()
             y = shift - Slider.Y + item * 70
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
-            for i = ks, ks+1 do
-                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i+4, y + 65 - i + 1, Color.new(255, 0, 51))
-                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i+4, y + 65 - i + 1, SELECTED_RED)
+            for i = ks, ks + 1 do
+                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 65 - i + 1, Color.new(255, 0, 51))
+                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 65 - i + 1, SELECTED_RED)
             end
-            Graphics.drawImage(899-ks, y+5+ks, textures_16x16.Square.e)
+            Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
         end
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)

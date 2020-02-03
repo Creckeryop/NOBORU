@@ -172,8 +172,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             ParserManager.updateParserList(Parsers)
         end
     elseif mode == "SETTINGS" then
-
-    end
+        
+        end
     if touch.x or pad ~= 0 then
         Timer.reset(TouchTimer)
     end
@@ -405,7 +405,7 @@ function Catalogs.draw()
             if parser.NSFW then
                 Font.print(FONT16, 280 + Font.getTextWidth(FONT26, parser.Name), y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
             end
-            local link_text = parser.Link.."/"
+            local link_text = parser.Link .. "/"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, Color.new(128, 128, 128))
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, Color.new(0, 0, 0, 32))
@@ -482,9 +482,9 @@ function Catalogs.draw()
                         local d = System.listDirectory(dir)
                         for _, v in ipairs(d) do
                             if v.directory then
-                                get_space_dir(dir.."/"..v.name)
+                                get_space_dir(dir .. "/" .. v.name)
                             else
-                                local fh = System.openFile(dir.."/"..v.name, FREAD)
+                                local fh = System.openFile(dir .. "/" .. v.name, FREAD)
                                 cache_space = cache_space + System.sizeFile(fh)
                                 System.closeFile(fh)
                             end
@@ -492,7 +492,7 @@ function Catalogs.draw()
                     end
                     get_space_dir("ux0:data/noboru/cache")
                 end
-                Font.print(FONT16, 275, y - 44, MemToStr(cache_space,Language[Settings.Language].SETTINGS.Space), COLOR_GRAY)
+                Font.print(FONT16, 275, y - 44, MemToStr(cache_space, Language[Settings.Language].SETTINGS.Space), COLOR_GRAY)
                 if sure_clear_cache > 0 then
                     Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                 end
