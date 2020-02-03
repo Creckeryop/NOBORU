@@ -230,6 +230,12 @@ function ChapterSaver.load()
                     Notifications.push("chapters_error " .. k)
                 end
             end
+            local dir_list = System.listDirectory("ux0:data/noboru/chapters")
+            for k, v in ipairs(dir_list) do
+                if not Keys[v.name] and v.directory then
+                    RemoveDirectory("ux0:data/noboru/chapters/"..v.name)
+                end
+            end
         end
         System.closeFile(fh)
         ChapterSaver.save()

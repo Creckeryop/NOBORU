@@ -425,7 +425,7 @@ function Catalogs.update()
         end
     end
 end
-
+local download_bar = 0
 function Catalogs.draw()
     Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
     local scroll_height
@@ -477,9 +477,12 @@ function Catalogs.draw()
             if task.page_count > 0 then
                 local text_counter = task.page .. "/" .. task.page_count
                 local w = Font.getTextWidth(FONT16, text_counter)
-                Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * task.page / task.page_count, y - 20, y - 8, COLOR_ROYAL_BLUE)
+                download_bar = download_bar + (task.page / task.page_count - download_bar) / 32
+                Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * download_bar, y - 20, y - 8, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(270 + 10 + w, 940, y - 20, y - 8, COLOR_BLACK)
                 Font.print(FONT16, 275, y - 24, text_counter, COLOR_BLACK)
+            elseif i == 1 then
+                download_bar = 0
             end
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, 0x20000000)

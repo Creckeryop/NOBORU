@@ -103,6 +103,8 @@ local function press_download(item)
     local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
     item = Chapters[item]
     if item then
+        Cache.addManga(Manga, Chapters)
+        Cache.makeHistory(Manga)
         if not ChapterSaver.check(item) then
             if ChapterSaver.is_downloading(item) then
                 ChapterSaver.stop(item)
@@ -112,8 +114,6 @@ local function press_download(item)
         else
             ChapterSaver.delete(item)
         end
-        Cache.addManga(item.Manga, Chapters)
-        Cache.makeHistory(item.Manga)
     end
 end
 
