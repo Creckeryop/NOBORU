@@ -34,6 +34,7 @@ Language = {
             ENG = "Английский",
             ESP = "Испанский",
             PRT = "Португальский",
+            FRA = "Французский",
             DIF = "Разные"
         },
         WARNINGS = {
@@ -116,6 +117,7 @@ Language = {
             ENG = "English",
             ESP = "Spanish",
             PRT = "Portuguese",
+            FRA = "French",
             DIF = "Different"
         },
         WARNINGS = {
