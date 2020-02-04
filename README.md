@@ -31,6 +31,7 @@ You can simply delete `noboru` folder to reset all settings
 * Multilanguage
 * Reading without network (Offline mode !!Don't forget to add manga in library!! (you can also check `History` tab))
 ## TODO:
+* AutoUpdater
 * Caching info about last readed chapters (to make continue function)
 * More languages
 * Add option to cache images of current reading chapter (it will boost loading of pages you suddenly skipped)
