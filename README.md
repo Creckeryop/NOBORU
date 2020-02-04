@@ -33,6 +33,7 @@ You can simply delete `noboru` folder to reset all settings
 * More languages
 * Add Japanese type of controlls (swap x with o)
 * Add option to cache images of current reading chapter (it will boost loading of pages you suddenly skipped)
+* Transform &#XXXX; to unicode symbols
 ## Screenshots:
 ![s1](/res/screenshot1.png)
 ![s2](/res/screenshot2.png)
