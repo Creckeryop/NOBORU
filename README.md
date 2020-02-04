@@ -1,5 +1,7 @@
 # NOBORU
-![GitHub All Releases](https://img.shields.io/github/downloads/Creckeryop/NOBORU/total?color=red)
+![GitHub All Releases](https://img.shields.io/github/downloads/Creckeryop/NOBORU/total)
+![GitHub](https://img.shields.io/github/license/Creckeryop/NOBORU)
+![GitHub top language](https://img.shields.io/github/languages/top/Creckeryop/NOBORU)
 <br>
 <img src="/res/logo.png" width="50%" height="50%"><br>
 App for PSVita to read manga or comic<br>
