@@ -146,6 +146,8 @@ local function selectSetting(index)
             end
         elseif item == "ShowAuthor" then
             Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING.."\nhttps://github.com/Creckeryop/NOBORU")
+        elseif item == "SwapXO" then
+            Settings:swapXO()
         end
         if item ~= "ClearChapters" then
             sure_clear_chapters = 0
@@ -577,6 +579,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, "@creckeryop", COLOR_ROYAL_BLUE)
             elseif task == "ShowVersion" then
                 Font.print(FONT16, 275, y - 44, Settings.Version, COLOR_GRAY)
+            elseif task == "SwapXO" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
             end
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, 0x20000000)

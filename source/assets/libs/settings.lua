@@ -3,8 +3,11 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.1
+    Version = 0.15,
+    KeyType = "EU"
 }
+local cross = SCE_CTRL_CROSS
+local circle = SCE_CTRL_CIRCLE
 
 function Settings:load()
     if System.doesFileExist("ux0:data/noboru/settings.ini") then
@@ -16,6 +19,9 @@ function Settings:load()
             self.Orientation = set.Orientation or self.Orientation
             self.ZoomReader = set.ZoomReader or self.ZoomReader
             self.Version = set.Version or self.Version
+            self.KeyType = set.KeyType or self.KeyType
+            SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
+            SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
         end
     end
     self:save()
@@ -30,7 +36,9 @@ function Settings:save()
         Language = self.Language,
         NSFW = self.NSFW,
         Orientation = self.Orientation,
-        ZoomReader = self.ZoomReader
+        ZoomReader = self.ZoomReader,
+        Version = self.Version,
+        KeyType = self.KeyType
     }, "Settings")
     System.writeFile(fh, set, set:len())
     System.closeFile(fh)
@@ -42,6 +50,7 @@ function Settings:list()
         "ShowNSFW",
         "ReaderOrientation",
         "ZoomReader",
+        "SwapXO",
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
@@ -104,5 +113,12 @@ end
 
 function Settings:changeZoom()
     self.ZoomReader = self.ZoomReader == "Smart" and "Height" or self.ZoomReader == "Height" and "Width" or "Smart"
+    self:save()
+end
+
+function Settings:swapXO()
+    self.KeyType = self.KeyType == "EU" and "JP" or "EU"
+    SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
+    SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
     self:save()
 end

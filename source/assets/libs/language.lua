@@ -17,9 +17,12 @@ Language = {
             ClearAllCache = "Очистить ВЕСЬ кэш",
             ReaderOrientation = "Ориентация читалки по умолчанию",
             ZoomReader = "Масштабирование читалки",
+            SwapXO = "Сменить раскладку",
             ShowAuthor = "Разработчик",
             ShowVersion = "Версия",
             Space = "Памяти занято",
+            EU = "Европейская",
+            JP = "Японская",
             PressAgainToAccept = "Нажмите ещё раз чтобы подтвердить"
         },
         NSFW = {
@@ -29,6 +32,8 @@ Language = {
         PARSERS = {
             RUS = "Русский",
             ENG = "Английский",
+            ESP = "Испанский",
+            PRT = "Португальский",
             DIF = "Разные"
         },
         WARNINGS = {
@@ -94,9 +99,12 @@ Language = {
             ClearAllCache = "Clear all cache",
             ReaderOrientation = "Standart reader orientation",
             ZoomReader = "Reader scaling",
+            SwapXO = "Change KeyType",
             ShowAuthor = "Developer",
             ShowVersion = "App version",
             Space = "Memory used",
+            EU = "Europe",
+            JP = "Japan",
             PressAgainToAccept = "Press again to accept"
         },
         NSFW = {
@@ -106,6 +114,8 @@ Language = {
         PARSERS = {
             RUS = "Russian",
             ENG = "English",
+            ESP = "Spanish",
+            PRT = "Portuguese",
             DIF = "Different"
         },
         WARNINGS = {

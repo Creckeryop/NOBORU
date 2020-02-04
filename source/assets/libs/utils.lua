@@ -251,6 +251,25 @@ function AnsiToUtf8(s)
     return table.concat(r)
 end
 
+function u8c(code)
+    if code <= 0x7F then
+        return char(code)
+    elseif code <= 0x7FF then
+		return char(0xC0 + math.floor(code / 0x40), 0x80 + (code % 0x40))
+    elseif code <= 0xFFFF then
+		return char(0xE0 + math.floor(code / 0x1000), 0x80 + (math.floor(code / 0x40) % 0x40), 0x80 + (code % 0x40))
+	elseif code <= 0x10FFFF then
+		local b3= 0x80 + (code % 0x40)
+		code = math.floor(code / 0x40)
+		local b2= 0x80 + (code % 0x40)
+		code = math.floor(code / 0x40)
+		local b1= 0x80 + (code % 0x40)
+		code = math.floor(code / 0x40)
+		local b0= 0xF0 + code;
+		return char(b0, b1, b2, b3)
+	end
+end
+
 function Setmt__gc(t, mt)
     local prox = newproxy(true)
     getmetatable(prox).__gc = function()

@@ -54,7 +54,13 @@ function Panel.draw()
     local x = 20
     for _, v in ipairs(hints) do
         if textures_16x16[v] then
-            Graphics.drawImage(x, 526 + y, textures_16x16[v].e)
+            if v == "Cross" and Settings.KeyType == "JP" then
+                Graphics.drawImage(x, 526 + y, textures_16x16.Circle.e)
+            elseif v == "Circle" and Settings.KeyType == "JP" then
+                Graphics.drawImage(x, 526 + y, textures_16x16.Cross.e)
+            else
+                Graphics.drawImage(x, 526 + y, textures_16x16[v].e)
+            end
             x = x + 20
         else
             Font.print(FONT12, x, 526 + y, v, COLOR_BLACK)
