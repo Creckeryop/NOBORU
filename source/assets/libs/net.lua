@@ -113,7 +113,7 @@ function Threads.update()
                             Console.write(Task.Image.Parts)
                             Task.Type = "ImageLoadTable"
                         else
-                            Graphics.loadImageAsync(Task.Path)
+                            Graphics.loadPartImageAsync(Task.Path,0,0,Width,Height)
                             Task.Type = "ImageLoad"
                         end
                     end

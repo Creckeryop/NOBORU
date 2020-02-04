@@ -142,12 +142,14 @@ function Cache.load()
         if suc then
             for k, v in pairs(new_data) do
                 if System.doesDirExist("ux0:data/noboru/cache/" .. k) then
-                    local f = System.openFile("ux0:data/noboru/" .. v.Path, FREAD)
-                    local image_size = System.sizeFile(f)
-                    System.closeFile(f)
-                    if image_size < 100 then
-                        System.deleteFile("ux0:data/noboru/" .. v.Path)
-                        Notifications.push("image_error " .. v.Path)
+                    if System.doesFileExist("ux0:data/noboru/"..v.Path) then
+                        local f = System.openFile("ux0:data/noboru/" .. v.Path, FREAD)
+                        local image_size = System.sizeFile(f)
+                        System.closeFile(f)
+                        if image_size < 100 then
+                            System.deleteFile("ux0:data/noboru/" .. v.Path)
+                            Notifications.push("image_error " .. v.Path)
+                        end
                     end
                     data[k] = v
                 end
