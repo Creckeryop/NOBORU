@@ -3,7 +3,7 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.15,
+    Version = 0.17,
     KeyType = "EU"
 }
 local cross = SCE_CTRL_CROSS
@@ -18,7 +18,6 @@ function Settings:load()
             self.NSFW = set.NSFW or self.NSFW
             self.Orientation = set.Orientation or self.Orientation
             self.ZoomReader = set.ZoomReader or self.ZoomReader
-            self.Version = set.Version or self.Version
             self.KeyType = set.KeyType or self.KeyType
             SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
             SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
@@ -37,7 +36,6 @@ function Settings:save()
         NSFW = self.NSFW,
         Orientation = self.Orientation,
         ZoomReader = self.ZoomReader,
-        Version = self.Version,
         KeyType = self.KeyType
     }, "Settings")
     System.writeFile(fh, set, set:len())
