@@ -2,6 +2,7 @@
 ![GitHub All Releases](https://img.shields.io/github/downloads/Creckeryop/NOBORU/total)
 ![GitHub](https://img.shields.io/github/license/Creckeryop/NOBORU)
 ![GitHub top language](https://img.shields.io/github/languages/top/Creckeryop/NOBORU)
+[![VitaDB](https://img.shields.io/badge/Vita-DB-blue)](https://vitadb.rinnegatamante.it/#/info/534)
 <br>
 <img src="/res/logo.png" width="50%" height="50%"><br>
 App for PSVita to read manga or comic<br>
