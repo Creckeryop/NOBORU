@@ -53,20 +53,22 @@ function Panel.draw()
     Graphics.drawImage(0, 524 + y, LUA_PANEL)
     local x = 20
     for _, v in ipairs(hints) do
-        if textures_16x16[v] then
-            if v == "Cross" and Settings.KeyType == "JP" then
-                Graphics.drawImage(x, 526 + y, textures_16x16.Circle.e)
-            elseif v == "Circle" and Settings.KeyType == "JP" then
-                Graphics.drawImage(x, 526 + y, textures_16x16.Cross.e)
+        if hints[v] then
+            if textures_16x16[v] then
+                if v == "Cross" and Settings.KeyType == "JP" then
+                    Graphics.drawImage(x, 526 + y, textures_16x16.Circle.e)
+                elseif v == "Circle" and Settings.KeyType == "JP" then
+                    Graphics.drawImage(x, 526 + y, textures_16x16.Cross.e)
+                else
+                    Graphics.drawImage(x, 526 + y, textures_16x16[v].e)
+                end
+                x = x + 20
             else
-                Graphics.drawImage(x, 526 + y, textures_16x16[v].e)
+                Font.print(FONT12, x, 526 + y, v, COLOR_BLACK)
+                x = x + Font.getTextWidth(FONT12, v) + 5
             end
-            x = x + 20
-        else
-            Font.print(FONT12, x, 526 + y, v, COLOR_BLACK)
-            x = x + Font.getTextWidth(FONT12, v) + 5
+            Font.print(FONT12, x, 526 + y, hints[v], COLOR_BLACK)
+            x = x + Font.getTextWidth(FONT12, hints[v]) + 10
         end
-        Font.print(FONT12, x, 526 + y, hints[v], COLOR_BLACK)
-        x = x + Font.getTextWidth(FONT12, hints[v]) + 10
     end
 end
