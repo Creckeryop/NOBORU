@@ -106,6 +106,7 @@ local sure_clear_library
 local sure_clear_chapters
 local sure_clear_all_cache
 local sure_clear_cache
+local sure_update
 local function selectSetting(index)
     local item = Settings:list()[index]
     if item then
@@ -148,6 +149,14 @@ local function selectSetting(index)
             Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING.."\nhttps://github.com/Creckeryop/NOBORU")
         elseif item == "SwapXO" then
             Settings:swapXO()
+        elseif item == "CheckUpdate" then
+            sure_update = sure_update + 1
+            if sure_update == 2 then
+                Settings:updateApp()
+                sure_update = 0
+            else
+                Settings:checkUpdate()
+            end
         end
         if item ~= "ClearChapters" then
             sure_clear_chapters = 0
@@ -160,6 +169,9 @@ local function selectSetting(index)
         end
         if item ~= "ClearLibrary" then
             sure_clear_library = 0
+        end
+        if item ~= "CheckUpdate" then
+            sure_update = 0
         end
     end
 end
@@ -581,6 +593,11 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Settings.Version, COLOR_GRAY)
             elseif task == "SwapXO" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
+            elseif task == "CheckUpdate" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.LatestVersion..Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
+                if sure_update > 0 then
+                    Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToUpdate.." "..Settings.LateVersion, COLOR_GRAY)
+                end
             end
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, 0x20000000)
@@ -655,6 +672,7 @@ function Catalogs.setMode(new_mode)
     sure_clear_chapters = 0
     sure_clear_cache = 0
     sure_clear_all_cache = 0
+    sure_update = 0
     MangaSelector:resetSelected()
     ParserSelector:resetSelected()
     DownloadSelector:resetSelected()

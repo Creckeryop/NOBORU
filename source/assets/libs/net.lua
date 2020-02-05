@@ -65,6 +65,19 @@ function Threads.update()
                 Console.error("No Link given or internet connection problem")
                 Task = nil
             end
+        elseif Task.Type == "UnZip" then
+            if Task.DestPath then
+                RemoveDirectory(Task.DestPath)
+                if Task.Path then
+                    System.extractZipAsync(Task.Path, Task.DestPath)
+                else
+                    Console.error("No Path given")
+                    Task = nil
+                end
+            else
+                Console.error("No DestPath given")
+                Task = nil
+            end
         end
         if Task then
             Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
@@ -210,8 +223,10 @@ end
 function Threads.clear()
     Order = {}
     uniques = {}
-    Task.Table = Trash
-    Task.Index = "Garbadge"
+    if Task ~= nil then
+        Task.Table = Trash
+        Task.Index = "Garbadge"
+    end
 end
 
 ---Gives boolean that is any task is running
@@ -256,6 +271,7 @@ local function taskete(UniqueKey, T, foo)
         Link = T.Link,
         Table = T.Table,
         Index = T.Index,
+        DestPath = T.DestPath,
         OnComplete = T.OnComplete,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
         Retry = 3,

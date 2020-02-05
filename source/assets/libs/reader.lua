@@ -29,7 +29,7 @@ local max_Zoom = 3
 local offset = Point_t(0, 0)
 local touchTemp = Point_t(0, 0)
 
-local orientation = Settings.Orientation
+local orientation
 
 local Chapters = {}
 local current_chapter = 1

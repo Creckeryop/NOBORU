@@ -1,2 +1,4 @@
-# Executables
 *.vpk
+*.elf
+*.velf
+*.o

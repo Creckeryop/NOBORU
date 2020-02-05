@@ -22,10 +22,6 @@ Slider = function()
         ItemID = 0
     }
 end
-loadlib("settings")
-loadlib("database")
-loadlib("image")
-loadlib("parser")
 
 
 LUA_GRADIENT = Graphics.loadImage("app0:assets/images/gradient.png")
@@ -71,22 +67,6 @@ if not System.doesDirExist("ux0:data/noboru/cache") then
     System.createDirectory("ux0:data/noboru/cache")
 end
 
-if System.doesDirExist("ux0:data/noboru/parsers") then
-    local path = "ux0:data/noboru/parsers/"
-    local files = System.listDirectory(path)
-    for _, file in pairs(files) do
-        if not file.directory then
-            local suc, err = pcall(function()
-                dofile(path .. file.name)
-            end)
-            if not suc then
-                Console.error("Cant load " .. path .. ":" .. err)
-            end
-        end
-    end
-else
-    System.createDirectory("ux0:data/noboru/parsers")
-end
 
 ---@param Name string
 ---@param Link string

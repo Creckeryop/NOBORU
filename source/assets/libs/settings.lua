@@ -3,12 +3,59 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.17,
+    Version = 0.20,
+    LateVersion = 0.20,
     KeyType = "EU"
 }
 local cross = SCE_CTRL_CROSS
 local circle = SCE_CTRL_CIRCLE
 
+local function cpy_file(source_path, dest_path)
+    local fh1 = System.openFile(source_path, FREAD)
+    local fh2 = System.openFile(dest_path, FCREATE)
+    local contentFh1 = System.readFile(fh1, System.sizeFile(fh1))
+    System.writeFile(fh2, contentFh1, contentFh1:len())
+    System.closeFile(fh1)
+    System.closeFile(fh2)
+end
+local function UpdateApp()
+    local notify = Notifications~=nil
+    if System.doesFileExist("ux0:data/noboru/NOBORU.vpk") then
+        local fh = System.openFile("ux0:data/noboru/NOBORU.vpk", FREAD)
+        if System.sizeFile(fh) < 1000 then
+            System.closeFile(fh)
+            System.deleteFile("ux0:data/noboru/NOBORU.vpk")
+            if notify then
+                Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
+            end
+            return
+        end
+        System.closeFile(fh)
+        RemoveDirectory("ux0:data/noboru/NOBORU")
+        if notify then
+            Notifications.push(Language[Settings.Language].SETTINGS.UnzipingVPK)
+        end
+        Threads.insertTask("ExtractingApp", {
+            Type = "UnZip",
+            DestPath = "ux0:data/noboru/NOBORU",
+            Path = "NOBORU.vpk",
+            OnComplete = function ()
+                System.deleteFile("ux0:data/noboru/NOBORU.vpk")
+                RemoveDirectory("ux0:data/noboru/pkg")
+                System.createDirectory("ux0:data/noboru/pkg")
+                System.createDirectory("ux0:data/noboru/pkg/sce_sys")
+                cpy_file("app0:updater/eboot.bin", "ux0:data/noboru/pkg/eboot.bin")
+                cpy_file("app0:updater/param.sfo", "ux0:data/noboru/pkg/sce_sys/param.sfo")
+                System.installApp("ux0:data/noboru/pkg")
+                RemoveDirectory("ux0:data/noboru/pkg")
+                System.launchApp("NOBORUPDT")
+            end
+        })
+    end
+    if notify and not Threads.check("ExtractingApp") then
+        Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
+    end
+end
 function Settings:load()
     if System.doesFileExist("ux0:data/noboru/settings.ini") then
         local fh = System.openFile("ux0:data/noboru/settings.ini", FREAD)
@@ -54,6 +101,7 @@ function Settings:list()
         "ClearAllCache",
         "ClearChapters",
         "ShowVersion",
+        "CheckUpdate",
         "ShowAuthor"
     }
 end
@@ -119,4 +167,42 @@ function Settings:swapXO()
     SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
     SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
     self:save()
+end
+local last_vpk_link
+local changes
+function Settings:checkUpdate()
+    local file = {}
+    Threads.insertTask("CheckLatestVersion", {
+        Type = "StringRequest",
+        Link = "https://github.com/Creckeryop/NOBORU/releases/latest",
+        Table = file,
+        Index = "string",
+        OnComplete = function ()
+            local content = file.string or ""
+            Settings.LateVersion, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
+            changes = content:match('markdown%-body">%s-(.-)</div>'):gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n+%s+",""):gsub("%s+$","")
+            if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
+                Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
+                Changes.load(changes)
+            end
+        end
+    })
+end
+
+function Settings:updateApp()
+    if Threads.netActionUnSafe(Network.isWifiEnabled) then
+        if last_vpk_link then
+            Notifications.push(Language[Settings.Language].SETTINGS.PleaseWait)
+            Threads.insertTask("DownloadAppUpdate",{
+                Type = "FileDownload",
+                Link = "https://github.com"..last_vpk_link,
+                Path = "NOBORU.vpk",
+                OnComplete = function ()
+                    UpdateApp()
+                end
+            })
+        end
+    else
+        Notifications.push(Language[Settings.Language].SETTINGS.NoConnection)
+    end
 end

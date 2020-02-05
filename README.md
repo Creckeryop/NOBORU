@@ -32,7 +32,6 @@ You can simply delete `noboru` folder to reset all settings
 * Multilanguage
 * Reading without network (Offline mode !!Don't forget to add manga in library!! (you can also check `History` tab))
 ## TODO:
-* AutoUpdater
 * Settings for parserlist (sorting by languages or else, hide some)
 * Caching info about last readed chapters (to make continue function)
 * More languages
@@ -48,7 +47,7 @@ You can simply delete `noboru` folder to reset all settings
 <b>A</b>: You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file<br>
 <br>
 <b>Q</b>: Is it safe to use?<br>
-<b>A</b>: I'm really don't know, but i use safe eboot.bin(App have access only to `app0:` and `ux0:data`, so no important files will be removed)<br>
+<b>A</b>: I'm really don't know, i don't visit any of not NOBORU app folders<br>
 <br>
 <b>Q</b>: How to view debug console?<br>
 <b>A</b>: DPAD_LEFT + START<br>

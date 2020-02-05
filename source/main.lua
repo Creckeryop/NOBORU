@@ -6,6 +6,7 @@ Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo)
 Graphics.termBlend()
 
 loadlib("utils")
+loadlib("changes")
 loadlib("selector")
 loadlib("console")
 loadlib("language")
@@ -13,7 +14,10 @@ loadlib("globals")
 loadlib("loading")
 loadlib("net")
 loadlib("parserhandler")
-loadlib("reader")
+loadlib("settings")
+loadlib("database")
+loadlib("image")
+loadlib("parser")
 loadlib("catalogs")
 loadlib("details")
 loadlib("menu")
@@ -22,6 +26,24 @@ loadlib("notifications")
 loadlib("debug")
 loadlib("chsaver")
 loadlib("cache")
+loadlib("reader")
+
+if System.doesDirExist("ux0:data/noboru/parsers") then
+    local path = "ux0:data/noboru/parsers/"
+    local files = System.listDirectory(path)
+    for _, file in pairs(files) do
+        if not file.directory then
+            local suc, err = pcall(function()
+                dofile(path .. file.name)
+            end)
+            if not suc then
+                Console.error("Cant load " .. path .. ":" .. err)
+            end
+        end
+    end
+else
+    System.createDirectory("ux0:data/noboru/parsers")
+end
 
 Settings:load()
 Cache.load()
@@ -30,6 +52,7 @@ Database.load()
 ChapterSaver.load()
 Menu.setMode("LIBRARY")
 Panel.show()
+Settings:checkUpdate()
 
 MENU = 0
 READER = 1
@@ -66,7 +89,21 @@ local fade = 1
 local function input()
     oldpad, pad = pad, Controls.read()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
-
+    if Changes.isActive() then
+        if touch.x or pad~=0 then
+            Changes.close()
+        end
+        oldpad = 0
+        pad = 0
+        touch.x = nil
+        touch.y = nil
+        touch2.x = nil
+        touch2.y = nil
+        oldtouch.x = nil
+        oldtouch.y = nil
+        oldtouch2.x = nil
+        oldtouch2.y = nil
+    end
     if touch2.x and AppMode ~= READER then
         TouchLock = true
     elseif not touch.x then
@@ -100,6 +137,7 @@ local function update()
         Threads.update()
         ParserManager.update()
         ChapterSaver.update()
+        Changes.update()
     end
     if fade > 0 then
         fade = fade - fade / 8
@@ -129,6 +167,8 @@ local function draw()
     if fade > 0 then
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 255 * fade))
         Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo, Color.new(255, 255, 255, 255 * fade))
+    else
+        Changes.draw()
     end
     Graphics.termBlend()
     Screen.flip()
