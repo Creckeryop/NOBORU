@@ -3,10 +3,10 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.20,
-    LateVersion = 0.20,
+    Version = 0.21,
     KeyType = "EU"
 }
+Settings.LateVersion = Settings.Version
 local cross = SCE_CTRL_CROSS
 local circle = SCE_CTRL_CIRCLE
 
@@ -179,8 +179,11 @@ function Settings:checkUpdate()
         Index = "string",
         OnComplete = function ()
             local content = file.string or ""
-            Settings.LateVersion, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
-            changes = content:match('markdown%-body">%s-(.-)</div>'):gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n+%s+",""):gsub("%s+$","")
+            local late
+            late, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
+            Settings.LateVersion = late or Settings.LateVersion
+            local body = content:match('markdown%-body">%s-(.-)</div>') or ""
+            changes = body:gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n+%s+",""):gsub("%s+$","")
             if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
                 Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
                 Changes.load(changes)
