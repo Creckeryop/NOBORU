@@ -24,7 +24,8 @@ ux0:data/noboru/settings.ini - application settings
 You can simply delete `noboru` folder to reset all settings
 ## Features:
 * Browsing manga sites
-* Searchinge
+* Searching
+* Build-in updater
 * Reading manga (with Vertical or Horizontal mode!)
 * MultiTouch, Swipes and other touch things
 * Adding manga to library
