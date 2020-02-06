@@ -190,18 +190,122 @@ Language = {
             CANCEL = "Cancel",
             DELETE = "Delete"
         }
+    },
+	Spanish = {
+        APP = {
+            LIBRARY = "LIBRERIA",
+            CATALOGS = "CATALOGO",
+            SETTINGS = "AJUSTES",
+            DOWNLOAD = "DESCARGAS",
+            HISTORY = "HISTORIAL",
+            SEARCH = "Buscar"
+        },
+        SETTINGS = {
+            Language = "Lenguaje:",
+            ClearChapters = "Eliminar capitulos guardados",
+            ShowNSFW = "Mostrar servidores NSFW:",
+            ClearLibrary = "Limpiar libreria",
+            ClearCache = "Eliminar la cache de los mangas que no sigo",
+            ClearAllCache = "Eliminar toda la cache",
+            ReaderOrientation = "Orientacion de lectura:",
+            ZoomReader = "Escala de lectura:",
+            SwapXO = "Cambiar tipo de letra:",
+            ShowAuthor = "Autor",
+            ShowVersion = "Version de la APP",
+            CheckUpdate = "Buscar actualizaciones",
+            LatestVersion = "Ultima version:",
+            PleaseWait = "Espere, por favor",
+            FailedToUpdate = "Fallo la actualizacion",
+            NoConnection = "No hay conexion",
+            UnzipingVPK = "Extrayendo vpk para instalar",
+            Space = "Memoria usada",
+            ReaderDirection = "Direccion de lectura:",
+            VersionIsUpToDate = "La version esta al dia",
+            EU = "Europe",
+            JP = "Japan",
+            PressAgainToAccept = "Presiona renuevo para aceptar.",
+            PressAgainToUpdate = "Presiona renuevo para actualizar a:"
+        },
+        NSFW = {
+            [true] = "Mostrar",
+            [false] = "No mostrar"
+        },
+        PARSERS = {
+            RUS = "Ruso",
+            ENG = "Ingles",
+            ESP = "Espanol",
+            PRT = "Portugues",
+            FRA = "Frances",
+            JAP = "Japones",
+            DIF = "Diferentes"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "No hay capitulos"
+        },
+        READER = {
+            PREPARING_PAGES = "Preparando paginas",
+            LOADING_PAGE = "Cargando paginas",
+            LOADING_SEGMENT = "Cargando segmentos",
+            Horizontal = "Horizontal",
+            Vertical = "Vertical",
+            Smart = "Inteligente",
+            Height = "Alto",
+            Width = "Ancho",
+            LEFT = "Derecha a izquierda",
+            RIGHT = "Izquierda a derecha"
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "Añadir a la libreria",
+            REMOVE_FROM_LIBRARY = "Eliminar de la libreria"
+        },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "Añadir a la libreria",
+            REMOVED_FROM_LIBRARY = "Eliminar de la libreria",
+            SEARCHING = 'Buscando "%s"',
+            START_DOWNLOAD = "%s: %s\nla descargando!",
+            END_DOWNLOAD = "%s: %s\ndescargado con exito!",
+            CANCEL_DOWNLOAD = "%s: %s\nla descaga se ha cancelado!",
+            CHAPTER_REMOVE = "%s eliminado!",
+            NET_PROBLEM = "Hay problemas con la conexion!",
+            CHAPTERS_CLEARED = "Todos los capitulos guardados, han sido eliminados!",
+            LIBRARY_CLEARED = "La libreria ha sido eliminada!",
+            CACHE_CLEARED = "La cache ha sido eliminada!",
+            DEVELOPER_THING = "Inicia la app de Github!",
+            NEW_UPDATE_AVAILABLE = "Nueva actualizacion disponible"
+        },
+        PANEL = {
+            BACK = "Volver",
+            MODE_POPULAR = "Modo: Populares",
+            MODE_LATEST = "Modo: Recientes",
+            MODE_SEARCHING = 'Modo: Buscando "%s"',
+            SEARCH = "Buscar",
+            SELECT = "Seleccionar",
+            CHOOSE = "Escoger",
+            CHANGE_SECTION = "Cambiar seccion",
+            UPDATE = "Actualizar",
+            CANCEL = "Cancelar",
+            DELETE = "Eliminar"
+        }
     }
 }
 LanguageNames = {
     Russian = {
         Russian = "Русский",
         English = "Английский",
+		Spanish = "Spanish",
         Default = "Системный"
     },
     English = {
         Russian = "Russian",
         English = "English",
+		Spanish = "Spanish",
         Default = "System"
+    },
+    Spanish = {
+        Russian = "Ruso",
+        English = "Ingles",
+		Spanish = "Espanol",
+        Default = "Sistema"
     }
 }
 local language_now = System.getLanguage()
