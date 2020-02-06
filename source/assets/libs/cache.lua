@@ -122,7 +122,10 @@ function Cache.loadChapters(Manga)
     if data[key] then
         if System.doesFileExist("ux0:data/noboru/cache/" .. key .. "/chapters.dat") then
             local fh = System.openFile("ux0:data/noboru/cache/" .. key .. "/chapters.dat", FREAD)
-            local suc, new_chlist = pcall(function() return load(System.readFile(fh, System.sizeFile(fh)):gsub("\"10101010101010\"","..."))(data[key]) end)
+            local suc, new_chlist = pcall(function()
+                local content = System.readFile(fh, System.sizeFile(fh))
+                return load(content:gsub("\"10101010101010\"","..."))(data[key])
+            end)
             System.closeFile(fh)
             if suc then
                 return new_chlist

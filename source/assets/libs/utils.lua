@@ -101,9 +101,9 @@ function table.serialize(t, name)
         for k, v in pairs(_t) do
             if type(v) == "string" then
                 if type(k) == "string" then
-                    P[#P + 1] = '["' .. k .. '"]="' .. v:gsub("\\", "\\\\") .. '"'
+                    P[#P + 1] = '["' .. k .. '"]="' .. v:gsub("\\", "\\\\"):gsub("\"","\\\"") .. '"'
                 else
-                    P[#P + 1] = '[' .. k .. ']="' .. v:gsub("\\", "\\\\") .. '"'
+                    P[#P + 1] = '[' .. k .. ']="' .. v:gsub("\\", "\\\\"):gsub("\"","\\\"") .. '"'
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then

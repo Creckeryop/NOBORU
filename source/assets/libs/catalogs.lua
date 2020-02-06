@@ -152,11 +152,17 @@ local function selectSetting(index)
         elseif item == "CheckUpdate" then
             sure_update = sure_update + 1
             if sure_update == 2 then
-                Settings:updateApp()
+                if tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
+                    Settings:updateApp()
+                else
+                    Notifications.push(Language[Settings.Language].SETTINGS.VersionIsUpToDate)
+                end
                 sure_update = 0
             else
                 Settings:checkUpdate()
             end
+        elseif item == "ReaderDirection" then
+            Settings:changeReaderDirection()
         end
         if item ~= "ClearChapters" then
             sure_clear_chapters = 0
@@ -591,6 +597,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, "@creckeryop", COLOR_ROYAL_BLUE)
             elseif task == "ShowVersion" then
                 Font.print(FONT16, 275, y - 44, Settings.Version, COLOR_GRAY)
+            elseif task == "ReaderDirection" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.ReaderDirection], COLOR_GRAY)
             elseif task == "SwapXO" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
             elseif task == "CheckUpdate" then

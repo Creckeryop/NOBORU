@@ -3,8 +3,9 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.21,
-    KeyType = "EU"
+    Version = 0.25,
+    KeyType = "EU",
+    ReaderDirection = "RIGHT"
 }
 Settings.LateVersion = Settings.Version
 local cross = SCE_CTRL_CROSS
@@ -65,6 +66,7 @@ function Settings:load()
             self.NSFW = set.NSFW or self.NSFW
             self.Orientation = set.Orientation or self.Orientation
             self.ZoomReader = set.ZoomReader or self.ZoomReader
+            self.ReaderDirection = set.ReaderDirection or self.ReaderDirection
             self.KeyType = set.KeyType or self.KeyType
             SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
             SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
@@ -83,7 +85,8 @@ function Settings:save()
         NSFW = self.NSFW,
         Orientation = self.Orientation,
         ZoomReader = self.ZoomReader,
-        KeyType = self.KeyType
+        KeyType = self.KeyType,
+        ReaderDirection = self.ReaderDirection
     }, "Settings")
     System.writeFile(fh, set, set:len())
     System.closeFile(fh)
@@ -95,6 +98,7 @@ function Settings:list()
         "ShowNSFW",
         "ReaderOrientation",
         "ZoomReader",
+        "ReaderDirection",
         "SwapXO",
         "ClearLibrary",
         "ClearCache",
@@ -162,6 +166,11 @@ function Settings:changeZoom()
     self:save()
 end
 
+function Settings:changeReaderDirection()
+    self.ReaderDirection = self.ReaderDirection == "LEFT" and "RIGHT" or "LEFT"
+    self:save()
+end
+
 function Settings:swapXO()
     self.KeyType = self.KeyType == "EU" and "JP" or "EU"
     SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
@@ -171,25 +180,29 @@ end
 local last_vpk_link
 local changes
 function Settings:checkUpdate()
-    local file = {}
-    Threads.insertTask("CheckLatestVersion", {
-        Type = "StringRequest",
-        Link = "https://github.com/Creckeryop/NOBORU/releases/latest",
-        Table = file,
-        Index = "string",
-        OnComplete = function ()
-            local content = file.string or ""
-            local late
-            late, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
-            Settings.LateVersion = late or Settings.LateVersion
-            local body = content:match('markdown%-body">%s-(.-)</div>') or ""
-            changes = body:gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n+%s+",""):gsub("%s+$","")
-            if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
-                Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
-                Changes.load(changes)
+    if Threads.netActionUnSafe(Network.isWifiEnabled) then
+        local file = {}
+        Threads.insertTask("CheckLatestVersion", {
+            Type = "StringRequest",
+            Link = "https://github.com/Creckeryop/NOBORU/releases/latest",
+            Table = file,
+            Index = "string",
+            OnComplete = function ()
+                local content = file.string or ""
+                local late
+                late, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
+                Settings.LateVersion = late or Settings.LateVersion
+                local body = content:match('markdown%-body">%s-(.-)</div>') or ""
+                changes = body:gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n+%s+",""):gsub("%s+$","")
+                if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
+                    Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
+                    Changes.load(changes)
+                end
             end
-        end
-    })
+        })
+    else
+        Notifications.push(Language[Settings.Language].SETTINGS.NoConnection)
+    end
 end
 
 function Settings:updateApp()

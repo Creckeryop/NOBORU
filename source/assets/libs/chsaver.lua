@@ -10,7 +10,7 @@ local FOLDER = "ux0:data/noboru/chapters/"
 ---@return string
 ---Creates key for a chapter from it's Manga's `parserID`, `Link` and chapter `Link`
 local function key(chapter)
-    return string.gsub(chapter.Manga.ParserID .. chapter.Manga.Link .. chapter.Link, "%p", "")
+    return string.gsub(chapter.Manga.ParserID .. chapter.Manga.Link, "%p", "").."_"..string.gsub(chapter.Link,"%p","")
 end
 
 ---Updates Cache things
@@ -40,7 +40,9 @@ function ChapterSaver.update()
         end
     end
 end
+
 local notify = true
+
 ---@param chapter table
 ---Creates task for downloading `chapter`
 function ChapterSaver.downloadChapter(chapter)
