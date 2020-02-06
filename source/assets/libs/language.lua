@@ -1,3 +1,4 @@
+--Spanish translation created by SamuEDL98
 Language = {
     Russian = {
         APP = {
@@ -11,28 +12,29 @@ Language = {
         SETTINGS = {
             Language = "Язык",
             ClearChapters = "Очистить сохраненные главы",
-            ShowNSFW = "Показывать пр0н парсеры",
+            ShowNSFW = "Показывать контент для взрослых",
             ClearLibrary = "Очистить библиотеку",
             ClearCache = "Очистить кэш для неотслеживаемых манг",
             ClearAllCache = "Очистить ВЕСЬ кэш",
             ReaderOrientation = "Ориентация читалки по умолчанию",
-            ZoomReader = "Масштабирование читалки",
+            ZoomReader = "Масштабирование страниц манги",
             SwapXO = "Сменить раскладку",
             ShowAuthor = "Разработчик",
             ShowVersion = "Версия",
-            CheckUpdate = "Проверить обновление",
+            CheckUpdate = "Проверить на обновления",
             LatestVersion = "Последняя версия:",
-            PleaseWait = "Пожалуйста подождите",
+            PleaseWait = "Пожалуйста, подождите",
             FailedToUpdate = "Не получилось обновить приложение",
             NoConnection = "Нет соединения",
+            CurrentVersionIs = "Текущая версия:",
             UnzipingVPK = "Извлечение установочного файла",
             ReaderDirection = "Направление чтения манги",
             VersionIsUpToDate = "У вас уже стоит последняя версия",
             Space = "Памяти занято",
             EU = "Европейская",
             JP = "Японская",
-            PressAgainToAccept = "Нажмите ещё раз чтобы подтвердить",
-            PressAgainToUpdate = "Нажмите ещё раз чтобы обновиться до:"
+            PressAgainToAccept = "Нажмите ещё раз, чтобы подтвердить",
+            PressAgainToUpdate = "Нажмите ещё раз, чтобы обновиться до:"
         },
         NSFW = {
             [true] = "Показывать",
@@ -48,7 +50,7 @@ Language = {
             DIF = "Разные"
         },
         WARNINGS = {
-            NO_CHAPTERS = "Нет глав"
+            NO_CHAPTERS = "Главы не найдены"
         },
         READER = {
             PREPARING_PAGES = "Подготовка страниц",
@@ -73,7 +75,7 @@ Language = {
             START_DOWNLOAD = "%s: %s\nзагрузка началась!",
             END_DOWNLOAD = "%s: %s\nзагрузка завершена!",
             CANCEL_DOWNLOAD = "%s: %s\nзагрузка прервана!",
-            CHAPTER_REMOVE = "%s удалено!",
+            CHAPTER_REMOVE = 'Кэш-глава "%s" удалена!',
             NET_PROBLEM = "Возникли проблемы с интернетом!",
             CHAPTERS_CLEARED = "Сохраненые главы удалены!",
             LIBRARY_CLEARED = "Библиотека очищена!",
@@ -88,7 +90,7 @@ Language = {
             MODE_SEARCHING = 'Режим: Поиск "%s"',
             SEARCH = "Поиск",
             SELECT = "Выбрать",
-            CHOOSE = "Сменить выделенное",
+            CHOOSE = "Сменить выделение",
             CHANGE_SECTION = "Сменить меню",
             UPDATE = "Обновить",
             CANCEL = "Отменить",
@@ -122,6 +124,7 @@ Language = {
             FailedToUpdate = "Failed to update app",
             NoConnection = "No connection",
             UnzipingVPK = "Extracting vpk to install",
+            CurrentVersionIs = "Current version is:",
             Space = "Memory used",
             ReaderDirection = "Manga reading direction",
             VersionIsUpToDate = "Your version is up to date",
@@ -221,6 +224,7 @@ Language = {
             Space = "Memoria usada",
             ReaderDirection = "Direccion de lectura:",
             VersionIsUpToDate = "La version esta al dia",
+            CurrentVersionIs = "La version actual es:",
             EU = "Europeo",
             JP = "Japones",
             PressAgainToAccept = "Presiona renuevo para aceptar.",
@@ -288,30 +292,35 @@ Language = {
         }
     }
 }
+
 LanguageNames = {
     Russian = {
         Russian = "Русский",
         English = "Английский",
-		Spanish = "Spanish",
+        Spanish = "Испанский",
         Default = "Системный"
     },
     English = {
         Russian = "Russian",
         English = "English",
-		Spanish = "Spanish",
+        Spanish = "Spanish",
         Default = "System"
     },
     Spanish = {
         Russian = "Ruso",
-		English = "Ingles",
-		Spanish = "Espanol",
+        English = "Ingles",
+        Spanish = "Espanol",
         Default = "Sistema"
     }
 }
+
 local language_now = System.getLanguage()
 if language_now == 8 then
     Language.Default = Language.Russian
     LanguageNames.Default = LanguageNames.Russian
+elseif language_now == 3 then
+    Language.Default = Language.Spanish
+    LanguageNames.Default = LanguageNames.Spanish
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
