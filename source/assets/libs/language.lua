@@ -201,7 +201,7 @@ Language = {
             SEARCH = "Buscar"
         },
         SETTINGS = {
-            Language = "Lenguaje:",
+            Language = "Idioma:",
             ClearChapters = "Eliminar capitulos guardados",
             ShowNSFW = "Mostrar servidores NSFW:",
             ClearLibrary = "Limpiar libreria",
@@ -209,7 +209,7 @@ Language = {
             ClearAllCache = "Eliminar toda la cache",
             ReaderOrientation = "Orientacion de lectura:",
             ZoomReader = "Escala de lectura:",
-            SwapXO = "Cambiar tipo de letra:",
+            SwapXO = "Cambiar KeyType:",
             ShowAuthor = "Autor",
             ShowVersion = "Version de la APP",
             CheckUpdate = "Buscar actualizaciones",
@@ -221,8 +221,8 @@ Language = {
             Space = "Memoria usada",
             ReaderDirection = "Direccion de lectura:",
             VersionIsUpToDate = "La version esta al dia",
-            EU = "Europe",
-            JP = "Japan",
+            EU = "Europeo",
+            JP = "Japones",
             PressAgainToAccept = "Presiona renuevo para aceptar.",
             PressAgainToUpdate = "Presiona renuevo para actualizar a:"
         },
@@ -303,7 +303,7 @@ LanguageNames = {
     },
     Spanish = {
         Russian = "Ruso",
-        English = "Ingles",
+		English = "Ingles",
 		Spanish = "Espanol",
         Default = "Sistema"
     }
