@@ -220,11 +220,11 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             end
             if Controls.check(pad, SCE_CTRL_RTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_RTRIGGER)) then
                 swipe("LEFT")
-                buttonTimeSpace = math.max(buttonTimeSpace / 2, 100)
+                buttonTimeSpace = math.max(buttonTimeSpace / 2, 50)
                 Timer.reset(buttonTimer)
             elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_LTRIGGER)) then
                 swipe("RIGHT")
-                buttonTimeSpace = math.max(buttonTimeSpace / 2, 100)
+                buttonTimeSpace = math.max(buttonTimeSpace / 2, 50)
                 Timer.reset(buttonTimer)
             elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
                 changeOrientation()
@@ -475,32 +475,32 @@ function Reader.update()
             if orientation == "Horizontal" then
                 offset.x = offset.x + velX
                 if offset.x > 0 then
-                    if dir == "LEFT" and not Pages[Pages.Page - 1] then
+                    if dir == "RIGHT" and not Pages[Pages.Page - 1] then
                         offset.x = 0
-                    elseif dir == "RIGHT" and Pages.Page == #Pages then
+                    elseif dir == "LEFT" and not Pages[Pages.Page - 1] then
                         offset.x = 0
                     end
                 end
                 if offset.x < 0 then
-                    if dir == "RIGHT" and not Pages[Pages.Page - 1] then
+                    if dir == "LEFT" and Pages.Page == #Pages then
                         offset.x = 0
-                    elseif dir == "LEFT" and Pages.Page == #Pages then
+                    elseif dir == "RIGHT" and Pages.Page == #Pages then
                         offset.x = 0
                     end
                 end
             elseif orientation == "Vertical" then
                 offset.y = offset.y + velY
                 if offset.y > 0 then
-                    if dir == "LEFT" and not Pages[Pages.Page - 1] then
+                    if dir == "RIGHT" and not Pages[Pages.Page - 1] then
                         offset.y = 0
-                    elseif dir == "RIGHT" and Pages.Page == #Pages then
+                    elseif dir == "LEFT" and not Pages[Pages.Page - 1] then
                         offset.y = 0
                     end
                 end
                 if offset.y < 0 then
-                    if dir == "RIGHT" and not Pages[Pages.Page - 1] then
+                    if dir == "LEFT" and Pages.Page == #Pages then
                         offset.y = 0
-                    elseif dir == "LEFT" and Pages.Page == #Pages then
+                    elseif dir == "RIGHT" and Pages.Page == #Pages then
                         offset.y = 0
                     end
                 end
