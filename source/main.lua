@@ -95,14 +95,7 @@ local function input()
         end
         oldpad = 0
         pad = 0
-        touch.x = nil
-        touch.y = nil
-        touch2.x = nil
-        touch2.y = nil
-        oldtouch.x = nil
-        oldtouch.y = nil
-        oldtouch2.x = nil
-        oldtouch2.y = nil
+        TouchLock = true
     end
     if touch2.x and AppMode ~= READER then
         TouchLock = true

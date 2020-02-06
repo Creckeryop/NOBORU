@@ -3,14 +3,13 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.26,
+    Version = 0.27,
     KeyType = "EU",
     ReaderDirection = "RIGHT"
 }
 Settings.LateVersion = Settings.Version
 local cross = SCE_CTRL_CROSS
 local circle = SCE_CTRL_CIRCLE
-
 local function cpy_file(source_path, dest_path)
     local fh1 = System.openFile(source_path, FREAD)
     local fh2 = System.openFile(dest_path, FCREATE)
@@ -35,6 +34,7 @@ local function UpdateApp()
         RemoveDirectory("ux0:data/noboru/NOBORU")
         if notify then
             Notifications.push(Language[Settings.Language].SETTINGS.UnzipingVPK)
+            Notifications.push(Language[Settings.Language].SETTINGS.PleaseWait, 60000)
         end
         Threads.insertTask("ExtractingApp", {
             Type = "UnZip",
@@ -62,7 +62,7 @@ function Settings:load()
         local fh = System.openFile("ux0:data/noboru/settings.ini", FREAD)
         local suc, set = pcall(function() return load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Settings")() end)
         if suc then
-            self.Language = set.Language or self.Language
+            self.Language = Language[set.Language] and set.Language or self.Language
             self.NSFW = set.NSFW or self.NSFW
             self.Orientation = set.Orientation or self.Orientation
             self.ZoomReader = set.ZoomReader or self.ZoomReader
@@ -179,7 +179,7 @@ function Settings:swapXO()
 end
 local last_vpk_link
 local changes
-function Settings:checkUpdate()
+function Settings:checkUpdate(showMessage)
     if Threads.netActionUnSafe(Network.isWifiEnabled) then
         local file = {}
         Threads.insertTask("CheckLatestVersion", {
@@ -192,11 +192,14 @@ function Settings:checkUpdate()
                 local late
                 late, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
                 Settings.LateVersion = late or Settings.LateVersion
-                local body = content:match('markdown%-body">%s-(.-)</div>') or ""
-                changes = body:gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n+%s+",""):gsub("%s+$","")
+                local body = content:match('markdown%-body">(.-)</div>') or ""
+                changes = body:gsub("\n+%s-(%S)","\n%1"):gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n",""):gsub("%s+$","") or ""
                 if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
-                    Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
-                    Changes.load(changes)
+                    if showMessage then
+                        Changes.load(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE..": "..Settings.LateVersion.."\n"..Language[Settings.Language].SETTINGS.CurrentVersionIs..Settings.Version.."\n\n".. changes)
+                    else
+                        Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
+                    end
                 end
             end
         })
