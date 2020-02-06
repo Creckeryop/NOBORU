@@ -38,7 +38,7 @@ You can simply delete `noboru` folder to reset all settings
 * More languages
 * Add option to cache images of current reading chapter (it will boost loading of pages you suddenly skipped)
 ## Known issues:
-<b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading
+<b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading<br>
 <b>Advice</b> Please don't shut vita screen untill blue LED turns off. I hope i'll find better solution
 ## Screenshots:
 ![s1](/res/screenshot1.png)
