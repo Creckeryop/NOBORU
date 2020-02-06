@@ -35,7 +35,7 @@ local Chapters = {}
 local current_chapter = 1
 
 local function scale(dZoom, Page)
-    if math.abs(1 - dZoom) < 0.008 or not Page.Zoom then return end
+    if math.abs(1 - dZoom) < 0.005 or not Page.Zoom then return end
     local old_Zoom = Page.Zoom
     Page.Zoom = Page.Zoom * dZoom
     if Page.Zoom < Page.min_Zoom then
@@ -75,10 +75,11 @@ local function changePage(page)
     end
     local prev_page = Pages.Page
     Pages.Page = page
+    Pages.PrevPage = prev_page
     if Pages[Pages.Page].Link == "LoadNext" or Pages[Pages.Page].Link == "LoadPrev" then
         return true
     end
-    local o = {math.sign(-prev_page + page), 0}
+    local o = {math.sign(page - prev_page), 0}
     for k = 1, #o do
         local p = page + o[k]
         if p > 0 and p <= #Pages then
@@ -135,15 +136,14 @@ local buttonTimeSpace = 800
 ---@param direction string | '"LEFT"' | '"RIGHT"'
 ---Turns the page according to the `direction`
 local function swipe(direction)
-    Pages.PrevPage = Pages.Page
     if orientation == "Horizontal" then
         if direction == "LEFT" then
             if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
                 offset.x = 960 + offset.x
                 local page = Pages[Pages.Page - 1]
                 if page and page.Zoom then
-                    if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
-                        page.x = -page.Width * page.Zoom / 2
+                    if page.Zoom * page.Width >= 960 then
+                        page.x = -480 + (960 - page.Width * page.Zoom) / 2
                     else
                         page.x = -480
                     end
@@ -154,8 +154,8 @@ local function swipe(direction)
                 offset.x = -960 + offset.x
                 local page = Pages[Pages.Page + 1]
                 if page and page.Zoom then
-                    if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width >= 960 then
-                        page.x = 960 + page.Width * page.Zoom / 2
+                    if page.Zoom * page.Width >= 960 then
+                        page.x = 960 + 480 - (960 - page.Width * page.Zoom) / 2
                     else
                         page.x = 960 + 480
                     end
@@ -168,8 +168,8 @@ local function swipe(direction)
                 offset.y = 544 + offset.y
                 local page = Pages[Pages.Page - 1]
                 if page and page.Zoom then
-                    if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width >= 544 then
-                        page.y = -page.Width * page.Zoom / 2
+                    if page.Zoom * page.Width >= 544 then
+                        page.y = -272 + (544 - page.Width * page.Zoom) / 2
                     else
                         page.y = -272
                     end
@@ -180,8 +180,8 @@ local function swipe(direction)
                 offset.y = -544 + offset.y
                 local page = Pages[Pages.Page + 1]
                 if page and page.Zoom then
-                    if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width >= 544 then
-                        page.y = 544 + page.Width * page.Zoom / 2
+                    if page.Zoom * page.Width >= 544 then
+                        page.y = 544 + 272 - (544 - page.Width * page.Zoom) / 2
                     else
                         page.y = 544 + 272
                     end
@@ -192,49 +192,6 @@ local function swipe(direction)
 end
 
 function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
-    if STATE == STATE_READING then
-        if Pages[Pages.Page].Zoom then
-            local x, y = Controls.readLeftAnalog()
-            x = x - 127
-            y = y - 127
-            if math.abs(x) > 20 then
-                Pages[Pages.Page].x = Pages[Pages.Page].x - 30 * (x - 20 * math.sign(x)) / 110
-            end
-            if math.abs(y) > 20 then
-                Pages[Pages.Page].y = Pages[Pages.Page].y - 30 * (y - 20 * math.sign(y)) / 110
-            end
-            if Controls.check(pad, SCE_CTRL_UP) then
-                Pages[Pages.Page].y = Pages[Pages.Page].y + 20
-            elseif Controls.check(pad, SCE_CTRL_DOWN) then
-                Pages[Pages.Page].y = Pages[Pages.Page].y - 20
-            end
-            if Controls.check(pad, SCE_CTRL_LEFT) then
-                Pages[Pages.Page].x = Pages[Pages.Page].x + 20
-            elseif Controls.check(pad, SCE_CTRL_RIGHT) then
-                Pages[Pages.Page].x = Pages[Pages.Page].x - 20
-            end
-        end
-        if math.abs(offset.x) < 80 then
-            if not Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(pad, SCE_CTRL_LTRIGGER) then
-                buttonTimeSpace = 800
-            end
-            if Controls.check(pad, SCE_CTRL_RTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_RTRIGGER)) then
-                swipe("LEFT")
-                buttonTimeSpace = math.max(buttonTimeSpace / 2, 50)
-                Timer.reset(buttonTimer)
-            elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_LTRIGGER)) then
-                swipe("RIGHT")
-                buttonTimeSpace = math.max(buttonTimeSpace / 2, 50)
-                Timer.reset(buttonTimer)
-            elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
-                changeOrientation()
-            elseif Controls.check(pad, SCE_CTRL_SQUARE) then
-                scale(0.95, Pages[Pages.Page])
-            elseif Controls.check(pad, SCE_CTRL_TRIANGLE) then
-                scale(1.05, Pages[Pages.Page])
-            end
-        end
-    end
     if Controls.check(pad, SCE_CTRL_CIRCLE) then
         for i = 1, #Pages do
             Threads.remove(Pages[i])
@@ -246,69 +203,103 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         collectgarbage("collect")
         AppMode = MENU
     end
-    if touch.y and oldtouch.y then
-        if touchMode ~= TOUCH_MULTI then
-            if touchMode == TOUCH_IDLE then
-                touchTemp.x = touch.x
-                touchTemp.y = touch.y
-                touchMode = TOUCH_READ
-            end
-            velX = touch.x - oldtouch.x
-            velY = touch.y - oldtouch.y
-        end
+    if STATE == STATE_READING and Pages[Pages.Page] then
         local page = Pages[Pages.Page]
-        if Touch2.x and OldTouch2.x and page.Zoom then
-            touchMode = TOUCH_MULTI
-            local old_Zoom = page.Zoom
-            local center = {
-                x = (touch.x + Touch2.x) / 2,
-                y = (touch.y + Touch2.y) / 2
-            }
-            local n = (math.sqrt((touch.x - Touch2.x) * (touch.x - Touch2.x) + (touch.y - Touch2.y) * (touch.y - Touch2.y)) / math.sqrt((oldtouch.x - OldTouch2.x) * (oldtouch.x - OldTouch2.x) + (oldtouch.y - OldTouch2.y) * (oldtouch.y - OldTouch2.y)))
-            scale(n, page)
-            n = page.Zoom / old_Zoom
-            page.y = page.y - (center.y - 272) * (n - 1)
-            page.x = page.x - (center.x - 480) * (n - 1)
+        if page.Zoom then
+            local x, y = Controls.readLeftAnalog()
+            x = x - 127
+            y = y - 127
+            if math.abs(x) > 20 then
+                page.x = page.x - 30 * (x - 20 * math.sign(x)) / 110
+            end
+            if math.abs(y) > 20 then
+                page.y = page.y - 30 * (y - 20 * math.sign(y)) / 110
+            end
+            if Controls.check(pad, SCE_CTRL_UP) then
+                page.y = page.y + 20
+            elseif Controls.check(pad, SCE_CTRL_DOWN) then
+                page.y = page.y - 20
+            end
+            if Controls.check(pad, SCE_CTRL_LEFT) then
+                page.x = page.x + 20
+            elseif Controls.check(pad, SCE_CTRL_RIGHT) then
+                page.x = page.x - 20
+            end
         end
-    else
-        if touchMode == TOUCH_SWIPE then
-            Pages.PrevPage = Pages.Page
-            if orientation == "Horizontal" then
-                if offset.x > 90 then
+        if math.abs(offset.x) < 80 and math.abs(offset.y) < 80  then
+            if not (Controls.check(pad, SCE_CTRL_RTRIGGER) or Controls.check(pad, SCE_CTRL_LTRIGGER)) then
+                buttonTimeSpace = 800
+            end
+            if Controls.check(pad, SCE_CTRL_RTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_RTRIGGER)) then
+                swipe("LEFT")
+                buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
+                Timer.reset(buttonTimer)
+            elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_LTRIGGER)) then
+                swipe("RIGHT")
+                buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
+                Timer.reset(buttonTimer)
+            elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
+                changeOrientation()
+            elseif Controls.check(pad, SCE_CTRL_SQUARE) then
+                scale(0.95, page)
+            elseif Controls.check(pad, SCE_CTRL_TRIANGLE) then
+                scale(1.05, page)
+            end
+        end
+        if touch.y and oldtouch.y then
+            if touchMode ~= TOUCH_MULTI then
+                if touchMode == TOUCH_IDLE then
+                    touchTemp.x = touch.x
+                    touchTemp.y = touch.y
+                    touchMode = TOUCH_READ
+                end
+                velX = touch.x - oldtouch.x
+                velY = touch.y - oldtouch.y
+            end
+            if Touch2.x and OldTouch2.x and page.Zoom then
+                touchMode = TOUCH_MULTI
+                local old_Zoom = page.Zoom
+                local center = {
+                    x = (touch.x + Touch2.x) / 2,
+                    y = (touch.y + Touch2.y) / 2
+                }
+                local n = (math.sqrt((touch.x - Touch2.x) * (touch.x - Touch2.x) + (touch.y - Touch2.y) * (touch.y - Touch2.y)) / math.sqrt((oldtouch.x - OldTouch2.x) * (oldtouch.x - OldTouch2.x) + (oldtouch.y - OldTouch2.y) * (oldtouch.y - OldTouch2.y)))
+                scale(n, page)
+                n = page.Zoom / old_Zoom
+                page.y = page.y - (center.y - 272) * (n - 1)
+                page.x = page.x - (center.x - 480) * (n - 1)
+            end
+        else
+            if touchMode == TOUCH_SWIPE then
+                if offset.x > 90 or offset.y > 90 then
                     swipe("RIGHT")
-                elseif offset.x < -90 then
+                elseif offset.x < -90 or offset.y < -90 then
                     swipe("LEFT")
+                end
+                velX = 0
+                velY = 0
+                pageMode = PAGE_NONE
+            end
+            touchMode = TOUCH_IDLE
+        end
+        if touchMode == TOUCH_READ then
+            if orientation == "Horizontal" then
+                local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
+                if len > 10 then
+                    if not page.Zoom or (page.Height * page.Zoom < 545 or math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
+                        touchMode = TOUCH_SWIPE
+                    else
+                        touchMode = TOUCH_MOVE
+                    end
                 end
             elseif orientation == "Vertical" then
-                if offset.y > 90 then
-                    swipe("RIGHT")
-                elseif offset.y < -90 then
-                    swipe("LEFT")
-                end
-            end
-            velX = 0
-            velY = 0
-            pageMode = PAGE_NONE
-        end
-        touchMode = TOUCH_IDLE
-    end
-    if touchMode == TOUCH_READ then
-        if orientation == "Horizontal" then
-            local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
-            if len > 10 then
-                if math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 2 and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
-                    touchMode = TOUCH_SWIPE
-                else
-                    touchMode = TOUCH_MOVE
-                end
-            end
-        elseif orientation == "Vertical" then
-            local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
-            if len > 10 then
-                if math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 2 and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
-                    touchMode = TOUCH_SWIPE
-                else
-                    touchMode = TOUCH_MOVE
+                local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
+                if len > 10 then
+                    if not page.Zoom or (page.Height * page.Zoom < 961 or math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
+                        touchMode = TOUCH_SWIPE
+                    else
+                        touchMode = TOUCH_MOVE
+                    end
                 end
             end
         end
@@ -355,6 +346,7 @@ function Reader.update()
                         y = 0
                     }
                 end
+                Pages.Page = 0
                 changePage(1)
             elseif Settings.ReaderDirection == "LEFT" then
                 if current_chapter < #Chapters then
@@ -371,6 +363,7 @@ function Reader.update()
                         y = 0
                     }
                 end
+                Pages.Page = Pages.Count + 1
                 changePage(Pages.Count)
             end
         end
@@ -381,7 +374,7 @@ function Reader.update()
         if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and Pages.PrevPage > 0 and Pages.PrevPage <= #Pages and (offset.x == 0 and orientation == "Horizontal" or offset.y == 0 and orientation == "Vertical") then
             deletePageImage(Pages.PrevPage)
         end
-        local o = Settings.ReaderDirection == "LEFT" and {1,-1,0} or {-1,1,0}
+        local o = Settings.ReaderDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
         for _, i in ipairs(o) do
             local page = Pages[Pages.Page + i]
             if page and not page.Zoom and page.Image then
@@ -391,72 +384,59 @@ function Reader.update()
                     Console.write("Added " .. Pages.Page + i)
                     if Settings.ZoomReader == "Smart" then
                         if page.Width > page.Height then
-                            page.Mode = "Horizontal"
                             page.Zoom = 544 / page.Height
                             if page.Width * page.Zoom >= 960 then
-                                if Settings.direction == "LEFT" then
-                                    page.x = page.x+(960 - page.Width * page.Zoom) / 2
+                                if i == 0 then
+                                    if Pages.PrevPage > Pages.Page then
+                                        page.x = page.x + (960 - page.Width * page.Zoom) / 2
+                                    elseif Pages.PrevPage < Pages.Page then
+                                        page.x = page.x - (960 - page.Width * page.Zoom) / 2
+                                    end
                                 else
-                                    page.x = page.x-(960 - page.Width * page.Zoom) / 2
+                                    page.x = page.x - i * (960 - page.Width * page.Zoom) / 2
                                 end
                             end
                         else
-                            page.Mode = "Vertical"
                             page.Zoom = 960 / page.Width
                         end
                     elseif Settings.ZoomReader == "Width" then
-                        if page.Width > page.Height then
-                            page.Mode = "Horizontal"
-                        else
-                            page.Mode = "Vertical"
-                        end
                         page.Zoom = 960 / page.Width
                     elseif Settings.ZoomReader == "Height" then
-                        if page.Width > page.Height then
-                            page.Mode = "Horizontal"
-                        else
-                            page.Mode = "Vertical"
-                        end
                         page.Zoom = 544 / page.Height
                     end
                     page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
-                    page.y = page.Zoom * page.Height / 2
+                    if page.Zoom * page.Height > 544 then
+                        page.y = page.Zoom * page.Height / 2
+                    end
                 elseif orientation == "Vertical" then
                     page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
                     Console.write("Added " .. Pages.Page + i)
                     if Settings.ZoomReader == "Smart" then
                         if page.Width > page.Height then
-                            page.Mode = "Horizontal"
                             page.Zoom = 960 / page.Height
                             if page.Width * page.Zoom >= 544 then
-                                --page.y = 272 + i * (272 + page.Width * page.Zoom / 2)
-                                if Settings.direction == "LEFT" then
-                                    page.y = page.y+(544 - page.Width * page.Zoom) / 2
+                                if i == 0 then
+                                    if Pages.PrevPage > Pages.Page then
+                                        page.y = page.y + (544 - page.Width * page.Zoom) / 2
+                                    elseif Pages.PrevPage < Pages.Page then
+                                        page.y = page.y - (544 - page.Width * page.Zoom) / 2
+                                    end
                                 else
-                                    page.y = page.y-(544 - page.Width * page.Zoom) / 2
+                                    page.y = page.y - i * (544 - page.Width * page.Zoom) / 2
                                 end
                             end
                         else
-                            page.Mode = "Vertical"
                             page.Zoom = 544 / page.Width
                         end
                     elseif Settings.ZoomReader == "Width" then
-                        if page.Width > page.Height then
-                            page.Mode = "Horizontal"
-                        else
-                            page.Mode = "Vertical"
-                        end
                         page.Zoom = 544 / page.Width
                     elseif Settings.ZoomReader == "Height" then
-                        if page.Width > page.Height then
-                            page.Mode = "Horizontal"
-                        else
-                            page.Mode = "Vertical"
-                        end
                         page.Zoom = 960 / page.Height
                     end
                     page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
-                    page.x = -page.Zoom * page.Height / 2
+                    if page.Zoom * page.Height > 960 then
+                        page.x = 960 - (page.Zoom * page.Height) / 2
+                    end
                 end
             end
         end
@@ -471,67 +451,37 @@ function Reader.update()
                 velX = velX * 0.9
             end
         elseif touchMode == TOUCH_SWIPE then
-            local dir = Settings.ReaderDirection
             if orientation == "Horizontal" then
                 offset.x = offset.x + velX
-                if offset.x > 0 then
-                    if dir == "RIGHT" and not Pages[Pages.Page - 1] then
-                        offset.x = 0
-                    elseif dir == "LEFT" and not Pages[Pages.Page - 1] then
-                        offset.x = 0
-                    end
-                end
-                if offset.x < 0 then
-                    if dir == "LEFT" and Pages.Page == #Pages then
-                        offset.x = 0
-                    elseif dir == "RIGHT" and Pages.Page == #Pages then
-                        offset.x = 0
-                    end
+                if offset.x > 0 and not Pages[Pages.Page - 1] then
+                    offset.x = 0
+                elseif offset.x < 0 and Pages.Page == #Pages then
+                    offset.x = 0
                 end
             elseif orientation == "Vertical" then
                 offset.y = offset.y + velY
-                if offset.y > 0 then
-                    if dir == "RIGHT" and not Pages[Pages.Page - 1] then
-                        offset.y = 0
-                    elseif dir == "LEFT" and not Pages[Pages.Page - 1] then
-                        offset.y = 0
-                    end
-                end
-                if offset.y < 0 then
-                    if dir == "LEFT" and Pages.Page == #Pages then
-                        offset.y = 0
-                    elseif dir == "RIGHT" and Pages.Page == #Pages then
-                        offset.y = 0
-                    end
+                if offset.y > 0 and not Pages[Pages.Page - 1] then
+                    offset.y = 0
+                elseif offset.y < 0 and Pages.Page == #Pages then
+                    offset.y = 0
                 end
             end
         end
         if touchMode ~= TOUCH_SWIPE then
-            if orientation == "Horizontal" then
-                offset.x = offset.x / 1.3
-                if math.abs(offset.x) < 1 then
-                    offset.x = 0
-                    if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadNext" then
-                        Reader.loadChapter(current_chapter + 1)
-                        return
-                    end
-                    if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadPrev" then
-                        Reader.loadChapter(current_chapter - 1)
-                        return
-                    end
+            local dir = 'x'
+            if orientation == "Vertical" then
+                dir = 'y'
+            end
+            offset[dir] = offset[dir] / 1.3
+            if math.abs(offset[dir]) < 1 then
+                offset[dir] = 0
+                if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadNext" then
+                    Reader.loadChapter(current_chapter + 1)
+                    return
                 end
-            elseif orientation == "Vertical" then
-                offset.y = offset.y / 1.3
-                if math.abs(offset.y) < 1 then
-                    offset.y = 0
-                    if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadNext" then
-                        Reader.loadChapter(current_chapter + 1)
-                        return
-                    end
-                    if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadPrev" then
-                        Reader.loadChapter(current_chapter - 1)
-                        return
-                    end
+                if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadPrev" then
+                    Reader.loadChapter(current_chapter - 1)
+                    return
                 end
             end
         end
@@ -545,25 +495,30 @@ function Reader.update()
                 elseif page.y + page.Height / 2 * page.Zoom < 544 then
                     page.y = 544 - page.Height / 2 * page.Zoom
                 end
-                if (page.Mode ~= "Horizontal" and page.Zoom >= 960 / page.Width) or page.Zoom * page.Width > 960 then
-                    if page.Zoom * page.Width <= 960 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
-                        page.x = 480
-                        pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
-                    elseif page.x - page.Width / 2 * page.Zoom >= 0 then
+                if page.Zoom * page.Width > 961 then
+                    if page.x - page.Width / 2 * page.Zoom >= 0 then
                         page.x = page.Width / 2 * page.Zoom
-                        pageMode = PAGE_LEFT
+                        if Pages[Pages.Page - 1] then
+                            pageMode = PAGE_LEFT
+                        else
+                            pageMode = PAGE_NONE
+                        end
                     elseif page.x + page.Width / 2 * page.Zoom <= 960 then
                         page.x = 960 - page.Width / 2 * page.Zoom
-                        pageMode = PAGE_RIGHT
+                        if Pages.Page ~= #Pages then
+                            pageMode = PAGE_RIGHT
+                        else
+                            pageMode = PAGE_NONE
+                        end
                     else
                         pageMode = PAGE_NONE
                     end
                 else
                     page.x = 480
-                    pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
+                    pageMode = PAGE_LEFT + PAGE_RIGHT
                 end
             else
-                pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
+                pageMode = PAGE_LEFT + PAGE_RIGHT
             end
         elseif orientation == "Vertical" then
             if page.Zoom then
@@ -574,25 +529,30 @@ function Reader.update()
                 elseif page.x + page.Height / 2 * page.Zoom < 960 then
                     page.x = 960 - page.Height / 2 * page.Zoom
                 end
-                if (page.Mode ~= "Horizontal" and page.Zoom >= 544 / page.Width) or page.Zoom * page.Width > 544 then
-                    if page.Zoom * page.Width <= 544 or page.Zoom == page.min_Zoom and page.Mode ~= "Horizontal" then
-                        page.y = 272
-                        pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
-                    elseif page.y - page.Width / 2 * page.Zoom >= 0 then
+                if page.Zoom * page.Width > 545 then
+                    if page.y - page.Width / 2 * page.Zoom >= 0 then
                         page.y = page.Width / 2 * page.Zoom
-                        pageMode = PAGE_LEFT
+                        if Pages[Pages.Page - 1] then
+                            pageMode = PAGE_LEFT
+                        else
+                            pageMode = PAGE_NONE
+                        end
                     elseif page.y + page.Width / 2 * page.Zoom <= 544 then
                         page.y = 544 - page.Width / 2 * page.Zoom
-                        pageMode = PAGE_RIGHT
+                        if Pages.Page ~= #Pages then
+                            pageMode = PAGE_RIGHT
+                        else
+                            pageMode = PAGE_NONE
+                        end
                     else
                         pageMode = PAGE_NONE
                     end
                 else
                     page.y = 272
-                    pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
+                    pageMode = PAGE_LEFT + PAGE_RIGHT
                 end
             else
-                pageMode = bit32.bor(PAGE_LEFT, PAGE_RIGHT)
+                pageMode = PAGE_LEFT + PAGE_RIGHT
             end
         end
     end
@@ -616,7 +576,7 @@ function Reader.draw()
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_BLACK)
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_BLACK)
     elseif STATE == STATE_READING then
-        local o = Settings.ReaderDirection == "LEFT" and {1,-1,0} or {-1,1,0}
+        local o = Settings.ReaderDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
         for _, i in ipairs(o) do
             local page = Pages[Pages.Page + i]
             if page and page.Image then
@@ -670,7 +630,7 @@ function Reader.draw()
         if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
             local Counter = Pages.Page .. "/" .. Pages.Count
             if Settings.ReaderDirection == "LEFT" then
-                Counter = (Pages.Count-Pages.Page+1).."/"..Pages.Count
+                Counter = (Pages.Count - Pages.Page + 1) .. "/" .. Pages.Count
             end
             local Width = Font.getTextWidth(FONT16, Counter) + 20
             Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT16, Counter) + 4, Color.new(0, 0, 0, 128))
