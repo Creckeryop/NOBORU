@@ -3,7 +3,7 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.27,
+    Version = 0.28,
     KeyType = "EU",
     ReaderDirection = "RIGHT"
 }
