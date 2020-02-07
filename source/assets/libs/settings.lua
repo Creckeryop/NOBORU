@@ -57,17 +57,40 @@ local function UpdateApp()
         Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
     end
 end
+local function is(p, t)
+    if not p then
+        return false
+    end
+    for _, v in pairs(t) do
+        if p == v then
+            return true
+        end
+    end
+    return false
+end
 function Settings:load()
     if System.doesFileExist("ux0:data/noboru/settings.ini") then
         local fh = System.openFile("ux0:data/noboru/settings.ini", FREAD)
         local suc, set = pcall(function() return load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Settings")() end)
         if suc then
-            self.Language = Language[set.Language] and set.Language or self.Language
-            self.NSFW = set.NSFW or self.NSFW
-            self.Orientation = set.Orientation or self.Orientation
-            self.ZoomReader = set.ZoomReader or self.ZoomReader
-            self.ReaderDirection = set.ReaderDirection or self.ReaderDirection
-            self.KeyType = set.KeyType or self.KeyType
+            if set.Language and Language[set.Language] then
+                self.Language = set.Language
+            end
+            if is(set.NSFW, {true, false}) then
+                self.NSFW = set.NSFW
+            end
+            if is(set.Orientation, {"Horizontal", "Vertical"}) then
+                self.Orientation = set.Orientation
+            end
+            if is(set.Orientation, {"Width", "Height", "Smart"}) then
+                self.ZoomReader = set.ZoomReader
+            end
+            if is(set.ReaderDirection, {"LEFT", "RIGHT"}) then
+                self.ReaderDirection = set.ReaderDirection or self.ReaderDirection
+            end
+            if is(set.KeyType, {"JP", "EU"}) then
+                self.KeyType = set.KeyType
+            end
             SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
             SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
         end
