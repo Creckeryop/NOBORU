@@ -38,6 +38,7 @@ You can simply delete `noboru` folder to reset all settings
 * Option to hide not downloaded chapters in offline mode
 * Notify user if no space left
 * More languages
+* Sort chapters by 1->N or N->1
 * Add option to cache images of current reading chapter (it will boost loading of pages you suddenly skipped)
 ## Known issues:
 <b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading<br>
