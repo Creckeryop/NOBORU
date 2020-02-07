@@ -159,7 +159,7 @@ local function selectSetting(index)
                 end
                 sure_update = 0
             else
-                Settings:checkUpdate()
+                Settings:checkUpdate(true)
             end
         elseif item == "ReaderDirection" then
             Settings:changeReaderDirection()
@@ -603,8 +603,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
             elseif task == "CheckUpdate" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.LatestVersion..Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
-                if sure_update > 0 then
-                    Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToUpdate.." "..Settings.LateVersion, COLOR_GRAY)
+                if sure_update > 0 and Settings.LateVersion and tonumber(Settings.Version) < tonumber(Settings.LateVersion) then
+                    Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToUpdate..Settings.LateVersion, COLOR_GRAY)
                 end
             end
             if Slider.ItemID == i then

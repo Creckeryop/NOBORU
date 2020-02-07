@@ -76,7 +76,7 @@ function Cache.saveHistory()
         System.deleteFile("ux0:data/noboru/cache/history.dat")
     end
     local fh = System.openFile("ux0:data/noboru/cache/history.dat", FCREATE)
-    local serialized_history = "local "..table.serialize(history, "history").."\nreturn history"
+    local serialized_history = "local " .. table.serialize(history, "history") .. "\nreturn history"
     System.writeFile(fh, serialized_history, serialized_history:len())
     System.closeFile(fh)
 end
@@ -95,7 +95,7 @@ function Cache.loadHistory()
 end
 
 function Cache.isCached(Manga)
-    return Manga and data[get_key(Manga)]~=nil or false
+    return Manga and data[get_key(Manga)] ~= nil or false
 end
 
 function Cache.saveChapters(Manga, Chapters)
@@ -124,7 +124,7 @@ function Cache.loadChapters(Manga)
             local fh = System.openFile("ux0:data/noboru/cache/" .. key .. "/chapters.dat", FREAD)
             local suc, new_chlist = pcall(function()
                 local content = System.readFile(fh, System.sizeFile(fh))
-                return load(content:gsub("\"10101010101010\"","..."))(data[key])
+                return load(content:gsub("\"10101010101010\"", "..."))(data[key])
             end)
             System.closeFile(fh)
             if suc then
@@ -145,7 +145,7 @@ function Cache.load()
         if suc then
             for k, v in pairs(new_data) do
                 if System.doesDirExist("ux0:data/noboru/cache/" .. k) then
-                    if System.doesFileExist("ux0:data/noboru/"..v.Path) then
+                    if System.doesFileExist("ux0:data/noboru/" .. v.Path) then
                         local f = System.openFile("ux0:data/noboru/" .. v.Path, FREAD)
                         local image_size = System.sizeFile(f)
                         System.closeFile(f)
@@ -184,14 +184,14 @@ function Cache.clear(mode)
         local d = System.listDirectory("ux0:data/noboru/cache")
         for k, v in ipairs(d) do
             if not Database.checkByKey(v.name) and v.directory then
-                RemoveDirectory("ux0:data/noboru/cache/"..v.name)
+                RemoveDirectory("ux0:data/noboru/cache/" .. v.name)
                 data[v.name] = nil
             end
         end
         local new_history = {}
-        for i=1, #history do
+        for i = 1, #history do
             if data[history[i]] then
-                new_history[#new_history+1] = history[i]
+                new_history[#new_history + 1] = history[i]
             end
         end
         history = new_history

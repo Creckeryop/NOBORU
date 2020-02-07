@@ -120,7 +120,7 @@ end
 local function press_manga(item)
     if Chapters[item] then
         Catalogs.shrink()
-        Cache.addManga(Manga)
+        Cache.addManga(Manga, Chapters)
         Cache.makeHistory(Manga)
         Reader.load(Chapters, item)
         AppMode = READER
@@ -199,9 +199,9 @@ function Details.update()
         end
         scrollUpdate()
         if not is_chapter_loaded and not ParserManager.check(Chapters) then
-            is_chapter_loaded = true
             if #Chapters > 0 then
                 if Cache.isCached(Chapters[1].Manga) then
+                    is_chapter_loaded = true
                     Cache.saveChapters(Chapters[1].Manga, Chapters)
                 end
             end
