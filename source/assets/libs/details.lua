@@ -343,7 +343,7 @@ function Details.draw()
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
-        Font.print(FONT16, 40, 80 * M - 5, Manga.RawLink, GRAY)
+        Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454
             Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
