@@ -13,6 +13,8 @@ local function key(chapter)
     return string.gsub(chapter.Manga.ParserID .. chapter.Manga.Link, "%p", "").."_"..string.gsub(chapter.Link,"%p","")
 end
 
+ChapterSaver.getKey = key
+
 ---Updates Cache things
 function ChapterSaver.update()
     if #Order == 0 and Task == nil then return end
@@ -73,13 +75,36 @@ function ChapterSaver.downloadChapter(chapter)
                 local result = {}
                 parser:loadChapterPage(t[i], result)
                 coroutine.yield(false)
-                Threads.insertTask(result, {
-                    Type = "FileDownload",
-                    Link = result.Link,
-                    Path = "chapters/" .. k .. "/" .. i .. ".image"
-                })
-                while Threads.check(result) do
-                    coroutine.yield(false)
+                local retry = 0
+                while retry < 3 do
+                    Threads.insertTask(result, {
+                        Type = "FileDownload",
+                        Link = result.Link,
+                        Path = "chapters/" .. k .. "/" .. i .. ".image"
+                    })
+                    while Threads.check(result) do
+                        coroutine.yield(false)
+                    end
+                    if System.doesFileExist("ux0:data/noboru/chapters/"..k.."/"..i..".image") then
+                        local size = System.getPictureResolution("ux0:data/noboru/chapters/"..k.."/"..i..".image")
+                        if not size or size <= 0 then
+                            Console.error("error loading picture for "..k.." "..i)
+                            retry = retry + 1
+                            if retry < 3 then
+                                Console.error("retrying")
+                            end
+                        else
+                            break
+                        end
+                    else
+                        retry = retry + 1
+                    end
+                end
+                if retry == 3 then
+                    Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
+                    RemoveDirectory("ux0:data/noboru/chapters/"..k)
+                    Downloading[k] = nil
+                    return
                 end
             end
             local fh = System.openFile(FOLDER .. k .. "/done.txt", FCREATE)
@@ -223,17 +248,34 @@ function ChapterSaver.load()
                     local fh_2 = System.openFile(FOLDER .. k .. "/done.txt", FREAD)
                     local pages = System.readFile(fh_2, System.sizeFile(fh_2))
                     System.closeFile(fh_2)
-                    if tonumber(pages) == #System.listDirectory(FOLDER .. k) - 1 then
-                        Keys[k] = true
+                    local lDir = System.listDirectory(FOLDER .. k)
+                    if tonumber(pages) == #lDir - 1 then
+                        local count = 0
+                        for i = 1, #lDir do
+                            local width = System.getPictureResolution(FOLDER .. k.."/"..lDir[i].name)
+                            if not width or width <=0 then
+                                count = count + 1
+                                if count == 2 then
+                                    RemoveDirectory("ux0:data/noboru/chapters/"..k)
+                                    Notifications.push("chapters_error_wrong_image\n" .. k)
+                                    break
+                                end
+                            end
+                        end
+                        if count < 2 then
+                            Keys[k] = true
+                        end
                     else
-                        Notifications.push("chapters_error " .. k)
+                        RemoveDirectory("ux0:data/noboru/chapters/"..k)
+                        Notifications.push("chapters_error\n" .. k)
                     end
                 else
-                    Notifications.push("chapters_error " .. k)
+                    RemoveDirectory("ux0:data/noboru/chapters/"..k)
+                    Notifications.push("chapters_error\n" .. k)
                 end
             end
             local dir_list = System.listDirectory("ux0:data/noboru/chapters")
-            for k, v in ipairs(dir_list) do
+            for _, v in ipairs(dir_list) do
                 if not Keys[v.name] and v.directory then
                     RemoveDirectory("ux0:data/noboru/chapters/"..v.name)
                 end

@@ -2,10 +2,13 @@ Cache = {}
 
 local data = {}
 local history = {}
+local bookmarks = {}
 
 local function get_key(Manga)
     return (Manga.ParserID .. Manga.Link):gsub("%p", "")
 end
+
+Cache.getKey = get_key
 
 function Cache.addManga(Manga, Chapters)
     local key = get_key(Manga)
@@ -28,6 +31,60 @@ function Cache.addManga(Manga, Chapters)
         })
         Cache.save()
     end
+end
+
+---@param Chapter table
+---@param mode integer | boolean
+function Cache.setBookmark(Chapter, mode)
+    local mkey = get_key(Chapter.Manga)
+    local key = Chapter.Link:gsub("%p","")
+    if not bookmarks[mkey] then
+        bookmarks[mkey] = {}
+    end
+    bookmarks[mkey][key] = mode
+    if System.doesFileExist("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat") then
+        System.deleteFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat")
+    end
+    local fh = System.openFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat", FCREATE)
+    local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
+    System.writeFile(fh, serialized_bookmarks, serialized_bookmarks:len())
+    System.closeFile(fh)
+end
+
+function Cache.getBookmark(Chapter)
+    local mkey = get_key(Chapter.Manga)
+    local key = Chapter.Link:gsub("%p","")
+    return bookmarks[mkey] and bookmarks[mkey][key]
+end
+
+function Cache.saveBookmarks(Manga)
+    local mkey = get_key(Manga)
+    if System.doesDirExist("ux0:data/noboru/cache/"..mkey) then
+        if System.doesFileExist("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat") then
+            System.deleteFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat")
+        end
+        local fh = System.openFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat", FCREATE)
+        local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
+        System.writeFile(fh, serialized_bookmarks, serialized_bookmarks:len())
+        System.closeFile(fh)
+    end
+end
+
+function Cache.loadBookmarks(Manga)
+    local mkey = get_key(Manga)
+    if System.doesFileExist("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat") then
+        local fh = System.openFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat", FREAD)
+        local suc, new_bookmarks = pcall(function() return load(System.readFile(fh, System.sizeFile(fh)))() end)
+        System.closeFile(fh)
+        if suc then
+            bookmarks[mkey] = new_bookmarks
+        end
+    end
+end
+
+function Cache.BookmarksLoaded(Manga)
+    local mkey = get_key(Manga)
+    return bookmarks[mkey]~=nil
 end
 
 local updated = false
@@ -60,7 +117,7 @@ local cached_history = {}
 function Cache.getHistory()
     if updated then
         local new_history = {}
-        for k, v in ipairs(history) do
+        for _, v in ipairs(history) do
             if data[v] then
                 new_history[#new_history + 1] = data[v]
             end
