@@ -282,9 +282,9 @@ Language = {
         DETAILS = {
             ADD_TO_LIBRARY = "Añadir a la libreria",
             REMOVE_FROM_LIBRARY = "Eliminar de la librería",
-            PAGE = "Page : ",
-            CONTINUE = "Continue : ",
-            START = "Start reading"
+            PAGE = "Página : ",
+            CONTINUE = "Continuar : ",
+            START = "Comenzar lectura"
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Añadir a la librería",
