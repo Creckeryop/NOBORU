@@ -106,7 +106,6 @@ local function stop(key)
     if Downloading[key] then
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
-            RemoveDirectory(FOLDER .. key)
         else
             local new_order = {}
             for _, v in ipairs(Order) do
@@ -121,6 +120,7 @@ local function stop(key)
             Order = new_order
         end
         Downloading[key] = nil
+        RemoveDirectory(FOLDER .. key)
     end
 end
 

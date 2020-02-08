@@ -151,10 +151,12 @@ function Cache.load()
                         System.closeFile(f)
                         if image_size < 100 then
                             System.deleteFile("ux0:data/noboru/" .. v.Path)
-                            Notifications.push("image_error " .. v.Path)
+                            Notifications.push("image_error\n" .. v.Path)
                         end
                     end
                     data[k] = v
+                else
+                    Notifications.push("cache_error\n" .. k)
                 end
             end
         end
