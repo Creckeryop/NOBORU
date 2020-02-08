@@ -35,7 +35,6 @@ You can simply delete `noboru` folder to reset all settings
 ## TODO:
 * Settings for parserlist (sorting by languages or else, hide some)
 * Caching info about last readed chapters (to make continue function)
-* Option to hide not downloaded chapters in offline mode
 * Notify user if no space left
 * More languages
 * Sort chapters by 1->N or N->1
