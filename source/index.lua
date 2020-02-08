@@ -14,6 +14,7 @@ if System.checkApp("NOBORUPDT") then
     System.removeApp("NOBORUPDT")
     r_dir("ux0:data/noboru/NOBORU")
 end
+System.removeApp = nil
 local df = dofile
 function loadlib(str)
     df("app0:assets/libs/"..str..".lua")
