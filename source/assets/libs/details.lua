@@ -36,8 +36,8 @@ local scrollUpdate = function()
     if Slider.Y < -20 then
         Slider.Y = -20
         Slider.V = 0
-    elseif Slider.Y > (#Chapters * 70 - 464) then
-        Slider.Y = math.max(-20, #Chapters * 70 - 464)
+    elseif Slider.Y > (#Chapters * 80 - 464) then
+        Slider.Y = math.max(-20, #Chapters * 80 - 464)
         Slider.V = 0
     end
 end
@@ -58,10 +58,26 @@ local animationUpdate = function()
     end
 end
 
-local DetailsSelector = Selector:new(-1, 1, -3, 3, function() return math.floor((Slider.Y - 20 + 90) / 70) end)
+local DetailsSelector = Selector:new(-1, 1, -3, 3, function() return math.floor((Slider.Y - 20 + 90) / 80) end)
 
-local is_chapter_loaded = false
+local is_chapter_loaded_offline = false
 
+local ContinueChapter
+
+local function updateContinueManga(Manga)
+    ContinueChapter = 0
+    if #Chapters > 0 then
+        for i = 1, #Chapters do
+            local bookmark = Cache.getBookmark(Chapters[i])
+            if bookmark == true then
+                ContinueChapter = i
+            else
+                ContinueChapter = i
+                break
+            end
+        end
+    end
+end
 function Details.setManga(manga)
     if manga then
         Panel.hide()
@@ -73,12 +89,16 @@ function Details.setManga(manga)
         DetailsSelector:resetSelected()
         mode = "START"
         old_fade = 1
+        ContinueChapter = nil
+        if Cache.isCached(Manga) and not Cache.BookmarksLoaded(Manga) then
+            Cache.loadBookmarks(Manga)
+        end
         if Threads.netActionUnSafe(Network.isWifiEnabled) then
             ParserManager.getChaptersAsync(manga, Chapters)
-            is_chapter_loaded = false
+            is_chapter_loaded_offline = false
         else
             Chapters = Cache.loadChapters(manga)
-            is_chapter_loaded = true
+            is_chapter_loaded_offline = true
         end
         is_notification_showed = false
         Timer.reset(animation_timer)
@@ -124,6 +144,7 @@ local function press_manga(item)
         Cache.makeHistory(Manga)
         Reader.load(Chapters, item)
         AppMode = READER
+        ContinueChapter = nil
     end
 end
 
@@ -133,19 +154,31 @@ function Details.input(oldpad, pad, oldtouch, touch)
             TOUCH.MODE = TOUCH.READ
             Slider.TouchY = touch.y
         elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
-            if TOUCH.MODE == TOUCH.READ and oldtouch.x and oldtouch.x > 320 and oldtouch.x < 920 and oldtouch.y > 90 then
-                local id = math.floor((Slider.Y + oldtouch.y - 20) / 70)
-                if oldtouch.x < 850 then
-                    press_manga(id)
-                else
-                    press_download(id)
+            if TOUCH.MODE == TOUCH.READ and oldtouch.x then
+                if oldtouch.x > 320 and oldtouch.x < 920 and oldtouch.y > 90 then
+                    local id = math.floor((Slider.Y + oldtouch.y - 20) / 80)
+                    if oldtouch.x < 850 then
+                        press_manga(id)
+                    else
+                        press_download(id)
+                    end
                 end
             end
             TOUCH.MODE = TOUCH.NONE
         end
         DetailsSelector:input(#Chapters, oldpad, pad, touch.x)
-        if oldtouch.x and not touch.x and oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 416 and oldtouch.y < 475 then
-            press_add_to_library()
+        if oldtouch.x and not touch.x then
+            if oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 416 and oldtouch.y < 475 then
+                press_add_to_library()
+            elseif oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 480 then
+                if ContinueChapter then
+                    if ContinueChapter > 0 then
+                        press_manga(ContinueChapter)
+                    else
+                        press_manga(1)
+                    end
+                end
+            end
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             press_add_to_library()
         elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
@@ -159,6 +192,14 @@ function Details.input(oldpad, pad, oldtouch, touch)
             old_fade = fade
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             press_download(DetailsSelector.getSelected())
+        elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
+            if ContinueChapter then
+                if ContinueChapter > 0 then
+                    press_manga(ContinueChapter)
+                else
+                    press_manga(1)
+                end
+            end
         end
         local new_itemID = 0
         if TOUCH.MODE == TOUCH.READ then
@@ -166,7 +207,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
                 TOUCH.MODE = TOUCH.SLIDE
             else
                 if oldtouch.x > 320 and oldtouch.x < 900 then
-                    local id = math.floor((Slider.Y - 20 + oldtouch.y) / 70)
+                    local id = math.floor((Slider.Y - 20 + oldtouch.y) / 80)
                     if Chapters[id] then
                         new_itemID = id
                     end
@@ -195,16 +236,19 @@ function Details.update()
         end
         local item_selected = DetailsSelector.getSelected()
         if item_selected ~= 0 then
-            Slider.Y = Slider.Y + (item_selected * 70 - 272 - Slider.Y) / 8
+            Slider.Y = Slider.Y + (item_selected * 80 - 272 - Slider.Y) / 8
         end
         scrollUpdate()
-        if not is_chapter_loaded and not ParserManager.check(Chapters) then
+        if not is_chapter_loaded_offline and not ParserManager.check(Chapters) then
             if #Chapters > 0 then
                 if Cache.isCached(Chapters[1].Manga) then
-                    is_chapter_loaded = true
+                    is_chapter_loaded_offline = true
                     Cache.saveChapters(Chapters[1].Manga, Chapters)
                 end
             end
+        end
+        if AppMode == MENU and not ContinueChapter and not ParserManager.check(Chapters) then
+            updateContinueManga(Manga)
         end
     end
 end
@@ -217,20 +261,28 @@ function Details.draw()
         local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
+        local DARKER_BLUE = Color.new(20, 24, 40, Alpha)
         local RED = Color.new(137, 30, 43, Alpha)
-        local start = math.max(1, math.floor(Slider.Y / 70) + 1)
+        local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
-        local y = shift - Slider.Y + start * 70
+        local y = shift - Slider.Y + start * 80
         for i = start, math.min(#Chapters, start + 8) do
             if y < 544 then
-                Graphics.fillRect(280, 920, y, y + 69, BLUE)
-                Font.print(FONT16, 290, y + 24, Chapters[i].Name, WHITE)
-                Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 69, BLUE)
+                local bookmark = Cache.getBookmark(Chapters[i])
+                local blue = bookmark == true and DARKER_BLUE or BLUE
+                Graphics.fillRect(280, 920, y, y + 79, blue)
+                if bookmark~=nil and bookmark~=true then
+                    Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE..bookmark, WHITE)
+                    Font.print(FONT16, 290, y + 18, Chapters[i].Name, WHITE)
+                else
+                    Font.print(FONT16, 290, y + 30, Chapters[i].Name, WHITE)
+                end
+                Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, blue)
                 if i == Slider.ItemID then
-                    Graphics.fillRect(280, 920, y, y + 69, Color.new(0, 0, 0, 32))
+                    Graphics.fillRect(280, 920, y, y + 79, Color.new(0, 0, 0, 32))
                 end
                 if ChapterSaver.check(Chapters[i]) then
-                    Graphics.drawRotateImage(920 - 32, y + 34, cross.e, 0)
+                    Graphics.drawRotateImage(920 - 32, y + 40, cross.e, 0)
                 else
                     local t = ChapterSaver.is_downloading(Chapters[i])
                     if t then
@@ -239,15 +291,15 @@ function Details.draw()
                             text = math.ceil(100 * t.page / t.page_count) .. "%"
                         end
                         local width = Font.getTextWidth(FONT20, text)
-                        Font.print(FONT20, 920 - 32 - width / 2, y + 21, text, COLOR_WHITE)
+                        Font.print(FONT20, 920 - 32 - width / 2, y + 26, text, COLOR_WHITE)
                     else
-                        Graphics.drawRotateImage(920 - 32, y + 34, dwnld.e, 0)
+                        Graphics.drawRotateImage(920 - 32, y + 40, dwnld.e, 0)
                     end
                 end
             else
                 break
             end
-            y = y + 70
+            y = y + 80
         end
         Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
         local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
@@ -260,19 +312,30 @@ function Details.draw()
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
         Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
-        --Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+        if ContinueChapter then
+            if #Chapters > 0 then
+                Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+                local continue_txt = Language[Settings.Language].DETAILS.START
+                if ContinueChapter > 0 and (ContinueChapter == 1 and Cache.getBookmark(Chapters[ContinueChapter]) or ContinueChapter~=1) then
+                    continue_txt = Language[Settings.Language].DETAILS.CONTINUE..ContinueChapter
+                end
+                local width = Font.getTextWidth(FONT20, continue_txt)
+                local height = Font.getTextHeight(FONT20, continue_txt)
+                Font.print(FONT20, 140-width/2, shift + 505-height/2, continue_txt, WHITE)
+            end
+        end
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
         end
         local item = DetailsSelector.getSelected()
         if item ~= 0 then
-            y = shift - Slider.Y + item * 70
+            y = shift - Slider.Y + item * 80
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 65 - i + 1, Color.new(255, 0, 51))
-                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 65 - i + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 75 - i + 1, Color.new(255, 0, 51))
+                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 75 - i + 1, SELECTED_RED)
             end
             Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
         end
@@ -282,7 +345,7 @@ function Details.draw()
         Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         if mode == "START" and #Chapters > 5 then
-            local h = #Chapters * 70 / 454
+            local h = #Chapters * 80 / 454
             Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
             Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, BLUE)
         end

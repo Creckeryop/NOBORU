@@ -115,7 +115,7 @@ function ParserManager.loadPageImage(parserID, Link, Table, id, Insert)
         F = function()
             parser:loadChapterPage(Link, Table)
             coroutine.yield(true)
-            Threads.insertTask(Table, {
+            ;(Insert and Threads.insertTask or Threads.addTask)(Table, {
                 Type = "ImageDownload",
                 Link = Table.Link,
                 Table = Table,

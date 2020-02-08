@@ -95,19 +95,18 @@ function Threads.update()
                 end
             elseif Task.Type == "Image" then
                 if System.doesFileExist(Task.Path) then
-                    local handle = System.openFile(Task.Path, FREAD)
-                    local image_size = System.sizeFile(handle)
-                    bytes = bytes + image_size
-                    System.closeFile(handle)
-                    if image_size < 100 then
-                        Task.Type = Task.Link and "ImageDownlad" or Task.Type
+                    local Width, Height = System.getPictureResolution(Task.Path)
+                    if not Width or Width < 0 then
+                        Task.Type = Task.Link and "ImageDownload" or Task.Type
                         if Task.Type == "ImageDownload" then
                             error("Redownloading file")
                         elseif Task.Type == "Image" then
-                            error("File is too small to be a picture")
+                            Console.error("File you loading isn't picture")
+                            uniques[Task.UniqueKey] = nil
+                            Task = nil
+                            return
                         end
                     end
-                    local Width, Height = System.getPictureResolution(Task.Path)
                     Console.write(Width .. "x" .. Height .. " Image got")
                     if GetTextureMemoryUsed() + bit32.band(bit32.bor(Width, 7), bit32.bnot(7)) * Height * 4 > 96 * 1024 * 1024 then
                         Console.error("No enough memory to load image")

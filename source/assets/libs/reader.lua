@@ -29,6 +29,8 @@ local max_Zoom = 3
 local offset = Point_t(0, 0)
 local touchTemp = Point_t(0, 0)
 
+local StartPage
+
 local orientation
 
 local Chapters = {}
@@ -79,7 +81,7 @@ local function changePage(page)
     if Pages[Pages.Page].Link == "LoadNext" or Pages[Pages.Page].Link == "LoadPrev" then
         return true
     end
-    local o = {math.sign(page - prev_page), 0}
+    local o = {0}
     for k = 1, #o do
         local p = page + o[k]
         if p > 0 and p <= #Pages then
@@ -193,6 +195,20 @@ end
 
 function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
     if Controls.check(pad, SCE_CTRL_CIRCLE) then
+        if Pages.Page > 0 then
+            local bookmark
+            if Settings.ReaderDirection == "LEFT" then
+                bookmark = Pages.Count - Pages.Page + 1
+            elseif Settings.ReaderDirection == "RIGHT" then
+                bookmark = Pages.Page
+            end
+            if bookmark == 1 then
+                bookmark = nil
+            elseif bookmark == Pages.Count then
+                bookmark = true
+            end
+            Cache.setBookmark(Chapters[current_chapter], bookmark)
+        end
         for i = 1, #Pages do
             Threads.remove(Pages[i])
         end
@@ -226,7 +242,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 page.x = page.x - 20
             end
         end
-        if math.abs(offset.x) < 80 and math.abs(offset.y) < 80  then
+        if math.abs(offset.x) < 80 and math.abs(offset.y) < 80 then
             if not (Controls.check(pad, SCE_CTRL_RTRIGGER) or Controls.check(pad, SCE_CTRL_LTRIGGER)) then
                 buttonTimeSpace = 800
             end
@@ -332,6 +348,10 @@ function Reader.update()
                 end
             end
             if Settings.ReaderDirection == "RIGHT" then
+                StartPage = StartPage and StartPage > 0 and StartPage <= Pages.Count and StartPage or StartPage == false and -1 or nil
+                if StartPage == -1 then
+                    StartPage = false
+                end
                 if current_chapter ~= 1 then
                     Pages[0] = {
                         Link = "LoadPrev",
@@ -346,9 +366,22 @@ function Reader.update()
                         y = 0
                     }
                 end
-                Pages.Page = 0
-                changePage(1)
+                if StartPage then
+                    Pages.Page = StartPage - 1
+                    changePage(StartPage)
+                elseif StartPage == false then
+                    Pages.Page = Pages.Count + 1
+                    changePage(Pages.Count)
+                else
+                    Pages.Page = 0
+                    changePage(1)
+                end
+                StartPage = nil
             elseif Settings.ReaderDirection == "LEFT" then
+                StartPage = StartPage and StartPage > 0 and StartPage <= Pages.Count and StartPage or StartPage == false and -1 or nil
+                if StartPage == -1 then
+                    StartPage = false
+                end
                 if current_chapter < #Chapters then
                     Pages[0] = {
                         Link = "LoadNext",
@@ -363,16 +396,49 @@ function Reader.update()
                         y = 0
                     }
                 end
-                Pages.Page = Pages.Count + 1
-                changePage(Pages.Count)
+                if StartPage then
+                    Pages.Page = Pages.Count - StartPage + 2
+                    changePage(Pages.Count + 1 - StartPage)
+                elseif StartPage == false then
+                    Pages.Page = 0
+                    changePage(1)
+                else
+                    Pages.Page = Pages.Count + 1
+                    changePage(Pages.Count)
+                end
+                StartPage = nil
             end
         end
     elseif STATE == STATE_READING then
         if not Pages[Pages.Page] then
             return
         end
-        if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and Pages.PrevPage > 0 and Pages.PrevPage <= #Pages and (offset.x == 0 and orientation == "Horizontal" or offset.y == 0 and orientation == "Vertical") then
-            deletePageImage(Pages.PrevPage)
+        if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and ((offset.x >= 0 and Pages.PrevPage > Pages.Page or offset.x <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Horizontal" or (offset.y >= 0 and Pages.PrevPage > Pages.Page or offset.y <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Vertical") then
+            if Pages.PrevPage > 0 and Pages.PrevPage <= #Pages then
+                deletePageImage(Pages.PrevPage)
+            end
+            local p = Pages.Page + math.sign(Pages.Page - Pages.PrevPage)
+            if p > 0 and p <= #Pages then
+                if not Pages[p].Image and not (Pages[p].Link == "LoadPrev" or Pages[p].Link == "LoadNext") then
+                    if Pages[p].Path then
+                        Threads.addTask(Pages[p], {
+                            Type = "Image",
+                            Path = Pages[p].Path,
+                            Table = Pages[p],
+                            Index = "Image"
+                        })
+                    elseif Pages[p].Link then
+                        Threads.addTask(Pages[p], {
+                            Type = "ImageDownload",
+                            Link = Pages[p].Link,
+                            Table = Pages[p],
+                            Index = "Image"
+                        })
+                    else
+                        ParserManager.loadPageImage(Chapters[current_chapter].Manga.ParserID, Pages[p][1], Pages[p], p, false)
+                    end
+                end
+            end
         end
         local o = Settings.ReaderDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
         for _, i in ipairs(o) do
@@ -476,10 +542,13 @@ function Reader.update()
             if math.abs(offset[dir]) < 1 then
                 offset[dir] = 0
                 if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadNext" then
+                    Cache.setBookmark(Chapters[current_chapter], true)
                     Reader.loadChapter(current_chapter + 1)
                     return
                 end
                 if Pages[Pages.Page] and Pages[Pages.Page].Link == "LoadPrev" then
+                    Cache.setBookmark(Chapters[current_chapter], nil)
+                    StartPage = false
                     Reader.loadChapter(current_chapter - 1)
                     return
                 end
@@ -601,7 +670,7 @@ function Reader.draw()
                             elseif orientation == "Vertical" then
                                 local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                                 local Width = Font.getTextWidth(FONT16, loading)
-                                Font.print(FONT16, offset.x - Width + page.x - ((k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom), offset.y + 272, loading, COLOR_BLACK)
+                                Font.print(FONT16, offset.x - Width + page.x - ((k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom), offset.y + 272 + 544 * i, loading, COLOR_BLACK)
                             end
                         end
                     end
@@ -667,5 +736,9 @@ end
 function Reader.load(chapters, num)
     orientation = Settings.Orientation
     Chapters = chapters
+    StartPage = Cache.getBookmark(chapters[num])
+    if StartPage == true or StartPage == nil then
+        StartPage = 1
+    end
     Reader.loadChapter(num)
 end

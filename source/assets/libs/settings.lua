@@ -3,9 +3,10 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.28,
+    Version = 0.30,
     KeyType = "EU",
-    ReaderDirection = "RIGHT"
+    ReaderDirection = "RIGHT",
+    HideInOffline = true
 }
 Settings.LateVersion = Settings.Version
 local cross = SCE_CTRL_CROSS
@@ -18,6 +19,7 @@ local function cpy_file(source_path, dest_path)
     System.closeFile(fh1)
     System.closeFile(fh2)
 end
+
 local function UpdateApp()
     local notify = Notifications~=nil
     if System.doesFileExist("ux0:data/noboru/NOBORU.vpk") then
@@ -57,19 +59,47 @@ local function UpdateApp()
         Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
     end
 end
+
+local function is(p, t)
+    if p == nil then
+        return false
+    end
+    for _, v in pairs(t) do
+        if p == v then
+            return true
+        end
+    end
+    return false
+end
+
 function Settings:load()
     if System.doesFileExist("ux0:data/noboru/settings.ini") then
         local fh = System.openFile("ux0:data/noboru/settings.ini", FREAD)
         local suc, set = pcall(function() return load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Settings")() end)
         if suc then
-            self.Language = Language[set.Language] and set.Language or self.Language
-            self.NSFW = set.NSFW or self.NSFW
-            self.Orientation = set.Orientation or self.Orientation
-            self.ZoomReader = set.ZoomReader or self.ZoomReader
-            self.ReaderDirection = set.ReaderDirection or self.ReaderDirection
-            self.KeyType = set.KeyType or self.KeyType
+            if set.Language and Language[set.Language] then
+                self.Language = set.Language
+            end
+            if is(set.NSFW, {true, false}) then
+                self.NSFW = set.NSFW
+            end
+            if is(set.Orientation, {"Horizontal", "Vertical"}) then
+                self.Orientation = set.Orientation
+            end
+            if is(set.Orientation, {"Width", "Height", "Smart"}) then
+                self.ZoomReader = set.ZoomReader
+            end
+            if is(set.ReaderDirection, {"LEFT", "RIGHT"}) then
+                self.ReaderDirection = set.ReaderDirection or self.ReaderDirection
+            end
+            if is(set.KeyType, {"JP", "EU"}) then
+                self.KeyType = set.KeyType
+            end
             SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
             SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
+            if is(set.HideInOffline, {true, false}) then
+                self.HideInOffline = set.HideInOffline
+            end
         end
     end
     self:save()
@@ -86,7 +116,8 @@ function Settings:save()
         Orientation = self.Orientation,
         ZoomReader = self.ZoomReader,
         KeyType = self.KeyType,
-        ReaderDirection = self.ReaderDirection
+        ReaderDirection = self.ReaderDirection,
+        HideInOffline = self.HideInOffline
     }, "Settings")
     System.writeFile(fh, set, set:len())
     System.closeFile(fh)
@@ -100,6 +131,7 @@ function Settings:list()
         "ZoomReader",
         "ReaderDirection",
         "SwapXO",
+        "HideInOffline",
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
@@ -177,6 +209,12 @@ function Settings:swapXO()
     SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
     self:save()
 end
+
+function Settings:hideChapsOffline()
+    self.HideInOffline = not self.HideInOffline
+    self:save()
+end
+
 local last_vpk_link
 local changes
 function Settings:checkUpdate(showMessage)
