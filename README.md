@@ -33,8 +33,8 @@ You can simply delete `noboru` folder to reset all settings
 * Multilanguage
 * Reading without network (Offline mode !!Don't forget to add manga in library!! (you can also check `History` tab))
 ## TODO:
+* CBZ, CBR(don't think i will add cbr) or folder with images import support
 * Settings for parserlist (sorting by languages or else, hide some)
-* Caching info about last readed chapters (to make continue function)
 * Notify user if no space left
 * More languages
 * Sort chapters by 1->N or N->1
