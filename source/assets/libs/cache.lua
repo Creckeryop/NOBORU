@@ -45,6 +45,7 @@ function Cache.setBookmark(Chapter, mode)
     if System.doesFileExist("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat") then
         System.deleteFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat")
     end
+    Cache.addManga(Chapter.Manga)
     local fh = System.openFile("ux0:data/noboru/cache/"..mkey.."/bookmarks.dat", FCREATE)
     local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
     System.writeFile(fh, serialized_bookmarks, serialized_bookmarks:len())
