@@ -29,6 +29,7 @@ Language = {
             CurrentVersionIs = "Текущая версия:",
             UnzipingVPK = "Извлечение установочного файла",
             ReaderDirection = "Направление чтения манги",
+            HideInOffline = "Показывать только загруженные главы в офлайне",
             VersionIsUpToDate = "У вас уже стоит последняя версия",
             Space = "Памяти занято",
             EU = "Европейская",
@@ -39,6 +40,10 @@ Language = {
         NSFW = {
             [true] = "Показывать",
             [false] = "Не показывать"
+        },
+        YORN = {
+            [true] = "Да",
+            [false] = "Нет"
         },
         PARSERS = {
             RUS = "Русский",
@@ -123,6 +128,7 @@ Language = {
             PleaseWait = "Please wait",
             FailedToUpdate = "Failed to update app",
             NoConnection = "No connection",
+            HideInOffline = "Show only downloaded chapters in offline",
             UnzipingVPK = "Extracting vpk to install",
             CurrentVersionIs = "Current version is:",
             Space = "Memory used",
@@ -136,6 +142,10 @@ Language = {
         NSFW = {
             [true] = "Show",
             [false] = "Don't show"
+        },
+        YORN = {
+            [true] = "Yes",
+            [false] = "No"
         },
         PARSERS = {
             RUS = "Russian",
@@ -221,6 +231,7 @@ Language = {
 			FailedToUpdate = "Fallo la actualización",
 			NoConnection = "No hay conexión",
 			UnzipingVPK = "Extrayendo vpk para instalar",
+            HideInOffline = "Show only downloaded chapters in offline",
 			Space = "Memoria usada",
 			ReaderDirection = "Dirección de lectura:",
 			VersionIsUpToDate = "La versión esta al día",
@@ -233,6 +244,10 @@ Language = {
         NSFW = {
             [true] = "Mostrar",
             [false] = "No mostrar"
+        },
+        YORN = {
+            [true] = "Si",
+            [false] = "No"
         },
         PARSERS = {
 			RUS = "Ruso",

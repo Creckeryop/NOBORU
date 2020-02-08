@@ -5,7 +5,8 @@ Settings = {
     ZoomReader = "Smart",
     Version = 0.28,
     KeyType = "EU",
-    ReaderDirection = "RIGHT"
+    ReaderDirection = "RIGHT",
+    HideInOffline = true
 }
 Settings.LateVersion = Settings.Version
 local cross = SCE_CTRL_CROSS
@@ -18,6 +19,7 @@ local function cpy_file(source_path, dest_path)
     System.closeFile(fh1)
     System.closeFile(fh2)
 end
+
 local function UpdateApp()
     local notify = Notifications~=nil
     if System.doesFileExist("ux0:data/noboru/NOBORU.vpk") then
@@ -57,8 +59,9 @@ local function UpdateApp()
         Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
     end
 end
+
 local function is(p, t)
-    if not p then
+    if p == nil then
         return false
     end
     for _, v in pairs(t) do
@@ -68,6 +71,7 @@ local function is(p, t)
     end
     return false
 end
+
 function Settings:load()
     if System.doesFileExist("ux0:data/noboru/settings.ini") then
         local fh = System.openFile("ux0:data/noboru/settings.ini", FREAD)
@@ -93,6 +97,9 @@ function Settings:load()
             end
             SCE_CTRL_CROSS = self.KeyType == "JP" and circle or cross
             SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
+            if is(set.HideInOffline, {true, false}) then
+                self.HideInOffline = set.HideInOffline
+            end
         end
     end
     self:save()
@@ -109,7 +116,8 @@ function Settings:save()
         Orientation = self.Orientation,
         ZoomReader = self.ZoomReader,
         KeyType = self.KeyType,
-        ReaderDirection = self.ReaderDirection
+        ReaderDirection = self.ReaderDirection,
+        HideInOffline = self.HideInOffline
     }, "Settings")
     System.writeFile(fh, set, set:len())
     System.closeFile(fh)
@@ -123,6 +131,7 @@ function Settings:list()
         "ZoomReader",
         "ReaderDirection",
         "SwapXO",
+        "HideInOffline",
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
@@ -200,6 +209,12 @@ function Settings:swapXO()
     SCE_CTRL_CIRCLE = self.KeyType == "JP" and cross or circle
     self:save()
 end
+
+function Settings:hideChapsOffline()
+    self.HideInOffline = not self.HideInOffline
+    self:save()
+end
+
 local last_vpk_link
 local changes
 function Settings:checkUpdate(showMessage)

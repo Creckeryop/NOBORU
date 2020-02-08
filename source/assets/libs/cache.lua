@@ -128,7 +128,15 @@ function Cache.loadChapters(Manga)
             end)
             System.closeFile(fh)
             if suc then
-                return new_chlist
+                if Settings.HideInOffline then
+                    local t = {}
+                    for _, chapter in ipairs(new_chlist) do
+                        t[#t + 1] = ChapterSaver.check(chapter) and chapter or nil
+                    end
+                    return t
+                else
+                    return new_chlist
+                end
             else
                 Console.error(new_chlist)
             end
