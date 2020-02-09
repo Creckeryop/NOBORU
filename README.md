@@ -72,3 +72,4 @@ You can simply delete `noboru` folder to reset all settings
 [Rinnegatamante](https://github.com/Rinnegatamante) - [LuaPlayerPlus_Vita](https://github.com/Rinnegatamante/lpp-vita)
 <br>[VitaSDK](https://github.com/vitasdk) - vitaSDK
 <br>[xerpi](https://github.com/xerpi) - [libvita2d](https://github.com/xerpi/libvita2d)
+<br>[theFloW](https://github.com/theOfficialFlow) - [VitaShell](https://github.com/TheOfficialFloW/VitaShell) for some functions
