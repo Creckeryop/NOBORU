@@ -90,8 +90,12 @@ function Details.setManga(manga)
         mode = "START"
         old_fade = 1
         ContinueChapter = nil
-        if Cache.isCached(Manga) and not Cache.BookmarksLoaded(Manga) then
-            Cache.loadBookmarks(Manga)
+        if Cache.isCached(Manga) then
+            if not Cache.BookmarksLoaded(Manga) then
+                Cache.loadBookmarks(Manga)
+            end
+        elseif Database.check(Manga) then
+            Cache.addManga(Manga, Chapters)
         end
         if Threads.netActionUnSafe(Network.isWifiEnabled) then
             ParserManager.getChaptersAsync(manga, Chapters)

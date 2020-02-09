@@ -3,7 +3,7 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.31,
+    Version = 0.32,
     KeyType = "EU",
     ReaderDirection = "RIGHT",
     HideInOffline = true
@@ -233,11 +233,11 @@ function Settings:checkUpdate(showMessage)
                 local body = content:match('markdown%-body">(.-)</div>') or ""
                 changes = body:gsub("\n+%s-(%S)","\n%1"):gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n",""):gsub("%s+$","") or ""
                 if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
-                    if showMessage then
+                    --if showMessage then
                         Changes.load(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." : "..Settings.LateVersion.."\n"..Language[Settings.Language].SETTINGS.CurrentVersionIs..Settings.Version.."\n\n".. changes)
-                    else
+                    --else
                         Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
-                    end
+                    --end
                 end
             end
         })
