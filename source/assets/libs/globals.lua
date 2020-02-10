@@ -23,7 +23,6 @@ Slider = function()
     }
 end
 
-
 LUA_GRADIENT = Graphics.loadImage("app0:assets/images/gradient.png")
 LUA_GRADIENTH = Graphics.loadImage("app0:assets/images/gradientH.png")
 LUA_PANEL = Graphics.loadImage("app0:assets/images/panel.png")
@@ -48,6 +47,9 @@ Font.setPixelSizes(FONT26, 26)
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT12, 12)
 
+local doesDirExist = System.doesDirExist
+local createDirectory = System.createDirectory
+
 MANGA_WIDTH = 160
 MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
 
@@ -55,16 +57,16 @@ GlobalTimer = Timer.new()
 
 PI = 3.14159265359
 
-if not System.doesDirExist("ux0:data/noboru") then
-    System.createDirectory("ux0:data/noboru")
+if not doesDirExist("ux0:data/noboru") then
+    createDirectory("ux0:data/noboru")
 end
 
-if not System.doesDirExist("ux0:data/noboru/chapters") then
-    System.createDirectory("ux0:data/noboru/chapters")
+if not doesDirExist("ux0:data/noboru/chapters") then
+    createDirectory("ux0:data/noboru/chapters")
 end
 
-if not System.doesDirExist("ux0:data/noboru/cache") then
-    System.createDirectory("ux0:data/noboru/cache")
+if not doesDirExist("ux0:data/noboru/cache") then
+    createDirectory("ux0:data/noboru/cache")
 end
 
 

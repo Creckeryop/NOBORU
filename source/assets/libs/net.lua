@@ -14,6 +14,14 @@ local net_inited = false
 local bytes = 0
 local uniques = {}
 
+local getAsyncResult = System.getAsyncResult
+local closeFile = System.closeFile
+local deleteFile = System.deleteFile
+local openFile = System.openFile
+local sizeFile = System.sizeFile
+local doesFileExist = System.doesFileExist
+local rem_dir = RemoveDirectory
+
 function Threads.update()
     if net_inited and not Task and #Order == 0 then
         Network.term()
@@ -42,18 +50,18 @@ function Threads.update()
         Task = table.remove(Order, 1)
         if Task.Type == "StringRequest" then
             if Task.Link then
-                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4)
             else
                 Console.error("No Link given or internet connection problem")
                 Task = nil
             end
         elseif Task.Type == "FileDownload" or Task.Type == "ImageDownload" then
-            if System.doesFileExist(Task.Path) then
-                System.deleteFile(Task.Path)
+            if doesFileExist(Task.Path) then
+                deleteFile(Task.Path)
             end
             if Task.Link then
                 if Task.Path then
-                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie)
+                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4)
                     if Task.Type == "ImageDownload" then
                         Task.Type = "Image"
                     end
@@ -67,7 +75,7 @@ function Threads.update()
             end
         elseif Task.Type == "UnZip" then
             if Task.DestPath then
-                RemoveDirectory(Task.DestPath)
+                rem_dir(Task.DestPath)
                 if Task.Path then
                     System.extractZipAsync(Task.Path, Task.DestPath)
                 else
@@ -88,13 +96,13 @@ function Threads.update()
             Trash.Type = Task.Type
             Trash.Link = Task.Link
             if Task.Type == "StringRequest" then
-                Task.Table[Task.Index] = System.getAsyncResult() or ""
+                Task.Table[Task.Index] = getAsyncResult() or ""
                 bytes = bytes + Task.Table[Task.Index]:len()
                 if Task.Table[Task.Index]:len() < 100 then
                     Console.write("NET:" .. Task.Table[Task.Index])
                 end
             elseif Task.Type == "Image" then
-                if System.doesFileExist(Task.Path) then
+                if doesFileExist(Task.Path) then
                     local Width, Height = System.getPictureResolution(Task.Path)
                     if not Width or Width < 0 then
                         Task.Type = Task.Link and "ImageDownload" or Task.Type
@@ -125,7 +133,7 @@ function Threads.update()
                             Console.write(Task.Image.Parts)
                             Task.Type = "ImageLoadTable"
                         else
-                            Graphics.loadPartImageAsync(Task.Path,0,0,Width,Height)
+                            Graphics.loadPartImageAsync(Task.Path, 0, 0, Width, Height)
                             Task.Type = "ImageLoad"
                         end
                     end
@@ -135,8 +143,8 @@ function Threads.update()
                 end
                 return
             elseif Task.Type == "ImageLoad" then
-                if System.doesFileExist(Task.Path) then
-                    Task.Table[Task.Index] = Image:new(System.getAsyncResult(), FILTER_LINEAR)
+                if doesFileExist(Task.Path) then
+                    Task.Table[Task.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
                 end
             elseif Task.Type == "ImageLoadTable" then
                 if not Task.Image.i then
@@ -149,11 +157,11 @@ function Threads.update()
                 elseif Task.Image.i < Task.Image.Parts then
                     Task.Image.i = Task.Image.i + 1
                     if Task.Table[Task.Index] == Trash.Garbadge then
-                        Trash.Garbadge = Image:new(System.getAsyncResult())
+                        Trash.Garbadge = Image:new(getAsyncResult())
                         Trash.Type = "ImageLoadTable2"
                         return
                     end
-                    Task.Table[Task.Index][Task.Image.i] = Image:new(System.getAsyncResult(), FILTER_LINEAR)
+                    Task.Table[Task.Index][Task.Image.i] = Image:new(getAsyncResult(), FILTER_LINEAR)
                     if not Task.Table[Task.Index][Task.Image.i] then
                         error("error with part function")
                     else
@@ -177,9 +185,9 @@ function Threads.update()
                 end
                 return
             elseif Task.Type == "FileDownload" then
-                local handle = System.openFile(Task.Path, FREAD)
-                bytes = bytes + System.sizeFile(handle)
-                System.closeFile(handle)
+                local handle = openFile(Task.Path, FREAD)
+                bytes = bytes + sizeFile(handle)
+                closeFile(handle)
             elseif Task.Type == "Skip" then
                 Console.error("WOW HOW THAT HAPPENED?")
             end
@@ -271,6 +279,10 @@ local function taskete(UniqueKey, T, foo)
         Table = T.Table,
         Index = T.Index,
         DestPath = T.DestPath,
+        Header1 = T.Header1 or "",
+        Header2 = T.Header2 or "",
+        Header3 = T.Header3 or "",
+        Header4 = T.Header4 or "",
         OnComplete = T.OnComplete,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
         Retry = 3,

@@ -3,37 +3,59 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.32,
+    Version = 0.33,
     KeyType = "EU",
     ReaderDirection = "RIGHT",
     HideInOffline = true
 }
+
 Settings.LateVersion = Settings.Version
+
 local cross = SCE_CTRL_CROSS
 local circle = SCE_CTRL_CIRCLE
-local function cpy_file(source_path, dest_path)
-    local fh1 = System.openFile(source_path, FREAD)
-    local fh2 = System.openFile(dest_path, FCREATE)
-    local contentFh1 = System.readFile(fh1, System.sizeFile(fh1))
-    System.writeFile(fh2, contentFh1, contentFh1:len())
-    System.closeFile(fh1)
-    System.closeFile(fh2)
+local writeFile = System.writeFile
+local closeFile = System.closeFile
+local deleteFile = System.deleteFile
+local openFile = System.openFile
+local readFile = System.readFile
+local sizeFile = System.sizeFile
+local doesFileExist = System.doesFileExist
+local createDirectory = System.createDirectory
+local rem_dir = RemoveDirectory
+
+local AppIsUpdating = false
+
+function Settings:isAppUpdating()
+    return AppIsUpdating
 end
 
+local function cpy_file(source_path, dest_path)
+    local fh1 = openFile(source_path, FREAD)
+    local fh2 = openFile(dest_path, FCREATE)
+    local contentFh1 = readFile(fh1, sizeFile(fh1))
+    writeFile(fh2, contentFh1, contentFh1:len())
+    closeFile(fh1)
+    closeFile(fh2)
+end
+
+local installApp = System.installApp
+local launchApp = System.launchApp
+
 local function UpdateApp()
-    local notify = Notifications~=nil
-    if System.doesFileExist("ux0:data/noboru/NOBORU.vpk") then
-        local fh = System.openFile("ux0:data/noboru/NOBORU.vpk", FREAD)
-        if System.sizeFile(fh) < 1000 then
-            System.closeFile(fh)
-            System.deleteFile("ux0:data/noboru/NOBORU.vpk")
+    local notify = Notifications ~= nil
+    if doesFileExist("ux0:data/noboru/NOBORU.vpk") then
+        local fh = openFile("ux0:data/noboru/NOBORU.vpk", FREAD)
+        if sizeFile(fh) < 1000 then
+            closeFile(fh)
+            deleteFile("ux0:data/noboru/NOBORU.vpk")
             if notify then
                 Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
+                AppIsUpdating = false
             end
             return
         end
-        System.closeFile(fh)
-        RemoveDirectory("ux0:data/noboru/NOBORU")
+        closeFile(fh)
+        rem_dir("ux0:data/noboru/NOBORU")
         if notify then
             Notifications.push(Language[Settings.Language].SETTINGS.UnzipingVPK)
             Notifications.push(Language[Settings.Language].SETTINGS.PleaseWait, 60000)
@@ -42,21 +64,23 @@ local function UpdateApp()
             Type = "UnZip",
             DestPath = "ux0:data/noboru/NOBORU",
             Path = "NOBORU.vpk",
-            OnComplete = function ()
-                System.deleteFile("ux0:data/noboru/NOBORU.vpk")
-                RemoveDirectory("ux0:data/noboru/pkg")
-                System.createDirectory("ux0:data/noboru/pkg")
-                System.createDirectory("ux0:data/noboru/pkg/sce_sys")
+            OnComplete = function()
+                deleteFile("ux0:data/noboru/NOBORU.vpk")
+                rem_dir("ux0:data/noboru/pkg")
+                createDirectory("ux0:data/noboru/pkg")
+                createDirectory("ux0:data/noboru/pkg/sce_sys")
                 cpy_file("app0:updater/eboot.bin", "ux0:data/noboru/pkg/eboot.bin")
                 cpy_file("app0:updater/param.sfo", "ux0:data/noboru/pkg/sce_sys/param.sfo")
-                System.installApp("ux0:data/noboru/pkg")
-                RemoveDirectory("ux0:data/noboru/pkg")
-                System.launchApp("NOBORUPDT")
+                installApp("ux0:data/noboru/pkg")
+                rem_dir("ux0:data/noboru/pkg")
+                launchApp("NOBORUPDT")
+                AppIsUpdating = false
             end
         })
     end
     if notify and not Threads.check("ExtractingApp") then
         Notifications.push(Language[Settings.Language].SETTINGS.FailedToUpdate)
+        AppIsUpdating = false
     end
 end
 
@@ -73,9 +97,9 @@ local function is(p, t)
 end
 
 function Settings:load()
-    if System.doesFileExist("ux0:data/noboru/settings.ini") then
-        local fh = System.openFile("ux0:data/noboru/settings.ini", FREAD)
-        local suc, set = pcall(function() return load("local " .. System.readFile(fh, System.sizeFile(fh)) .. " return Settings")() end)
+    if doesFileExist("ux0:data/noboru/settings.ini") then
+        local fh = openFile("ux0:data/noboru/settings.ini", FREAD)
+        local suc, set = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")() end)
         if suc then
             if set.Language and Language[set.Language] then
                 self.Language = set.Language
@@ -106,10 +130,10 @@ function Settings:load()
 end
 
 function Settings:save()
-    if System.doesFileExist("ux0:data/noboru/settings.ini") then
-        System.deleteFile("ux0:data/noboru/settings.ini")
+    if doesFileExist("ux0:data/noboru/settings.ini") then
+        deleteFile("ux0:data/noboru/settings.ini")
     end
-    local fh = System.openFile("ux0:data/noboru/settings.ini", FCREATE)
+    local fh = openFile("ux0:data/noboru/settings.ini", FCREATE)
     local set = table.serialize({
         Language = self.Language,
         NSFW = self.NSFW,
@@ -119,27 +143,59 @@ function Settings:save()
         ReaderDirection = self.ReaderDirection,
         HideInOffline = self.HideInOffline
     }, "Settings")
-    System.writeFile(fh, set, set:len())
-    System.closeFile(fh)
+    writeFile(fh, set, set:len())
+    closeFile(fh)
 end
 
-function Settings:list()
-    return {
-        "Language",
+local set_list = {
+    "Language", "Catalogs", "Reader", "Data", "Controls", "About",
+    Catalogs = {
         "ShowNSFW",
+        "HideInOffline"
+    },
+    Reader = {
         "ReaderOrientation",
         "ZoomReader",
-        "ReaderDirection",
-        "SwapXO",
-        "HideInOffline",
+        "ReaderDirection"
+    },
+    Data = {
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
-        "ClearChapters",
+        "ClearChapters"
+    },
+    About = {
         "ShowVersion",
         "CheckUpdate",
-        "ShowAuthor"
+        "ShowAuthor",
+    },
+    Controls = {
+        "SwapXO"
     }
+}
+
+local set_list_tab = set_list
+
+function Settings:list()
+    return set_list_tab
+end
+
+function Settings:isTab(mode)
+    return set_list[mode] ~= nil
+end
+
+function Settings:setTab(mode)
+    if set_list[mode] then
+        set_list_tab = set_list[mode]
+    end
+end
+
+function Settings:inTab()
+    return set_list_tab ~= set_list
+end
+
+function Settings:back()
+    set_list_tab = set_list
 end
 
 function Settings:nextLanguage()
@@ -225,19 +281,19 @@ function Settings:checkUpdate(showMessage)
             Link = "https://github.com/Creckeryop/NOBORU/releases/latest",
             Table = file,
             Index = "string",
-            OnComplete = function ()
+            OnComplete = function()
                 local content = file.string or ""
                 local late
                 late, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
                 Settings.LateVersion = late or Settings.LateVersion
                 local body = content:match('markdown%-body">(.-)</div>') or ""
-                changes = body:gsub("\n+%s-(%S)","\n%1"):gsub("<li>"," * "):gsub("<[^>]->",""):gsub("\n\n","\n"):gsub("^\n",""):gsub("%s+$","") or ""
+                changes = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
                 if Settings.LateVersion and Settings.Version and tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
                     --if showMessage then
-                        Changes.load(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." : "..Settings.LateVersion.."\n"..Language[Settings.Language].SETTINGS.CurrentVersionIs..Settings.Version.."\n\n".. changes)
+                    Changes.load(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. Settings.LateVersion .. "\n" .. Language[Settings.Language].SETTINGS.CurrentVersionIs .. Settings.Version .. "\n\n" .. changes)
                     --else
-                        Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE.." "..Settings.LateVersion)
-                    --end
+                    Notifications.push(Language[Settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " " .. Settings.LateVersion)
+                --end
                 end
             end
         })
@@ -249,12 +305,13 @@ end
 function Settings:updateApp()
     if Threads.netActionUnSafe(Network.isWifiEnabled) then
         if last_vpk_link then
+            AppIsUpdating = true
             Notifications.push(Language[Settings.Language].SETTINGS.PleaseWait)
-            Threads.insertTask("DownloadAppUpdate",{
+            Threads.insertTask("DownloadAppUpdate", {
                 Type = "FileDownload",
-                Link = "https://github.com"..last_vpk_link,
+                Link = "https://github.com" .. last_vpk_link,
                 Path = "NOBORU.vpk",
-                OnComplete = function ()
+                OnComplete = function()
                     UpdateApp()
                 end
             })

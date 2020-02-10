@@ -7,6 +7,8 @@ local Trash = {}
 
 local uniques = {}
 
+local doesFileExist = System.doesFileExist
+
 function ParserManager.update()
     if #Order == 0 and not Task then return end
     if not Task then
@@ -115,7 +117,7 @@ function ParserManager.loadPageImage(parserID, Link, Table, id, Insert)
         F = function()
             parser:loadChapterPage(Link, Table)
             coroutine.yield(true)
-            ;(Insert and Threads.insertTask or Threads.addTask)(Table, {
+            ; (Insert and Threads.insertTask or Threads.addTask)(Table, {
                 Type = "ImageDownload",
                 Link = Table.Link,
                 Table = Table,
@@ -175,7 +177,7 @@ function ParserManager.updateParserList(Table, Insert)
                 while Threads.check(link2row) do
                     coroutine.yield(false)
                 end
-                if System.doesFileExist(path2row) then
+                if doesFileExist(path2row) then
                     local suc, err = pcall(dofile, path2row)
                     if not suc then
                         Console.error("Cant load " .. path2row .. ":" .. err)

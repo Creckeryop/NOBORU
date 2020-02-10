@@ -22,16 +22,18 @@
 int launchAppByUriExit(const char *titleid) {
 	char uri[32];
 	sprintf(uri, "psgm:play?titleid=%s", titleid);
-  sceKernelDelayThread(250000);
-  sceAppMgrLaunchAppByUri(0xFFFFF, uri);
-  sceKernelExitProcess(0);
-  return 0;
+	sceKernelDelayThread(10000);
+	sceAppMgrLaunchAppByUri(0xFFFFF, uri);
+	sceKernelDelayThread(10000);
+	sceAppMgrLaunchAppByUri(0xFFFFF, uri);
+	sceKernelExitProcess(0);
+	return 0;
 }
 
 int main(int argc, const char *argv[]) {
-  // Destroy other apps
-  sceAppMgrDestroyOtherApp();
-  installPackage("ux0:data/noboru/NOBORU");
-  launchAppByUriExit("NOBOR0001");
-  return 0;
+	// Destroy other apps
+	sceAppMgrDestroyOtherApp();
+	installPackage("ux0:data/noboru/NOBORU");
+	launchAppByUriExit("NOBOR0001");
+	return 0;
 }

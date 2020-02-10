@@ -2,6 +2,9 @@ Catalogs = {}
 local Slider = Slider()
 local TOUCH = TOUCH()
 
+local doesFileExist = System.doesFileExist
+local listDirectory = System.listDirectory
+
 local Parser = nil
 local TouchTimer = Timer.new()
 
@@ -30,7 +33,7 @@ local function freeMangaImage(manga)
 end
 
 local function loadMangaImage(manga)
-    if manga.Path and System.doesFileExist("ux0:data/noboru/" .. manga.Path) then
+    if manga.Path and doesFileExist("ux0:data/noboru/" .. manga.Path) then
         Threads.addTask(manga, {
             Type = "Image",
             Path = manga.Path,
@@ -107,9 +110,18 @@ local sure_clear_chapters
 local sure_clear_all_cache
 local sure_clear_cache
 local sure_update
+
+
+local MangaSelector = Selector:new(-4, 4, -1, 1, function() return max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1) end)
+local ParserSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
+local DownloadSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
+local SettingSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 local function selectSetting(index)
     local item = Settings:list()[index]
-    if item then
+    if Settings:isTab(item) then
+        Settings:setTab(item)
+        SettingSelector:resetSelected()
+    elseif item then
         if item == "Language" then
             Settings:nextLanguage()
         elseif item == "ClearChapters" then
@@ -146,21 +158,11 @@ local function selectSetting(index)
                 sure_clear_cache = 0
             end
         elseif item == "ShowAuthor" then
-            Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING.."\nhttps://github.com/Creckeryop/NOBORU")
+            Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
         elseif item == "SwapXO" then
             Settings:swapXO()
         elseif item == "CheckUpdate" then
-            sure_update = sure_update + 1
-            if sure_update == 2 then
-                if tonumber(Settings.LateVersion) > tonumber(Settings.Version) then
-                    Settings:updateApp()
-                else
-                    Notifications.push(Language[Settings.Language].SETTINGS.VersionIsUpToDate)
-                end
-                sure_update = 0
-            else
-                Settings:checkUpdate(true)
-            end
+            Settings:checkUpdate()
         elseif item == "ReaderDirection" then
             Settings:changeReaderDirection()
         elseif item == "HideInOffline" then
@@ -184,10 +186,6 @@ local function selectSetting(index)
     end
 end
 
-local MangaSelector = Selector:new(-4, 4, -1, 1, function() return max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1) end)
-local ParserSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
-local DownloadSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
-local SettingSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 MangaSelector:xaction(selectManga)
 ParserSelector:xaction(selectParser)
 DownloadSelector:xaction(function(item)
@@ -223,6 +221,11 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             if item then
                 Cache.removeHistory(item)
             end
+        end
+    elseif mode == "SETTINGS" then
+        if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
+            Settings:back()
+            SettingSelector:resetSelected()
         end
     end
     if touch.x or pad ~= 0 then
@@ -415,10 +418,11 @@ function Catalogs.update()
     elseif mode == "SETTINGS" then
         local list = Settings:list()
         Panel.set{
-            "L\\R", "DPad", "Cross",
+            "L\\R", "DPad", "Circle", "Cross",
             ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
             DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.SELECT
+            Cross = Language[Settings.Language].PANEL.SELECT,
+            Circle = Settings:inTab() and Language[Settings.Language].PANEL.BACK
         }
         local item = SettingSelector:getSelected()
         if item ~= 0 then
@@ -536,21 +540,19 @@ function Catalogs.draw()
             local task = list[i]
             Graphics.fillRect(264, 946, y - 75, y, 0x20000000)
             Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
-            Font.print(FONT20, 275, y - 70, Language[Settings.Language].SETTINGS[task], COLOR_BLACK)
+            Font.print(FONT20, 275, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_BLACK)
             if task == "Language" then
                 Font.print(FONT16, 275, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_BLACK)
             elseif task == "ClearChapters" then
                 if chapters_space == nil then
                     chapters_space = 0
                     local function get_space_dir(dir)
-                        local d = System.listDirectory(dir)
+                        local d = listDirectory(dir)
                         for _, v in ipairs(d) do
                             if v.directory then
                                 get_space_dir(dir .. "/" .. v.name)
                             else
-                                local fh = System.openFile(dir .. "/" .. v.name, FREAD)
-                                chapters_space = chapters_space + System.sizeFile(fh)
-                                System.closeFile(fh)
+                                chapters_space = chapters_space + v.size
                             end
                         end
                     end
@@ -580,14 +582,12 @@ function Catalogs.draw()
                 if cache_space == nil then
                     cache_space = 0
                     local function get_space_dir(dir)
-                        local d = System.listDirectory(dir)
+                        local d = listDirectory(dir)
                         for _, v in ipairs(d) do
                             if v.directory then
                                 get_space_dir(dir .. "/" .. v.name)
                             else
-                                local fh = System.openFile(dir .. "/" .. v.name, FREAD)
-                                cache_space = cache_space + System.sizeFile(fh)
-                                System.closeFile(fh)
+                                cache_space = cache_space + v.size
                             end
                         end
                     end
@@ -606,10 +606,7 @@ function Catalogs.draw()
             elseif task == "SwapXO" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
             elseif task == "CheckUpdate" then
-                Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.LatestVersion..Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
-                if sure_update > 0 and Settings.LateVersion and tonumber(Settings.Version) < tonumber(Settings.LateVersion) then
-                    Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToUpdate..Settings.LateVersion, COLOR_GRAY)
-                end
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
             end
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 74, y, 0x20000000)

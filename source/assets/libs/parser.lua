@@ -14,6 +14,9 @@ Parser = {
 ---Local variable used in Parser functions
 local updated = false
 
+local listDirectory = System.listDirectory
+local doesDirExist = System.doesDirExist
+local deleteFile = System.deleteFile
 ---@param Name string
 ---@param Link string
 ---@param Lang string
@@ -66,11 +69,11 @@ function ChangeNSFW()
 end
 
 function ClearParsers()
-    if System.doesDirExist("ux0:data/noboru/parsers") then
-        local list = System.listDirectory("ux0:/data/noboru/parsers")
+    if doesDirExist("ux0:data/noboru/parsers") then
+        local list = listDirectory("ux0:/data/noboru/parsers")
         for _, v in ipairs(list) do
             if not v.directory then
-                System.deleteFile("ux0:data/noboru/parsers/" .. v.name)
+                deleteFile("ux0:data/noboru/parsers/" .. v.name)
             end
         end
     end

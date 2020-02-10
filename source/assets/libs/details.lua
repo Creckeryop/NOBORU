@@ -275,8 +275,8 @@ function Details.draw()
                 local bookmark = Cache.getBookmark(Chapters[i])
                 local blue = bookmark == true and DARKER_BLUE or BLUE
                 Graphics.fillRect(280, 920, y, y + 79, blue)
-                if bookmark~=nil and bookmark~=true then
-                    Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE..bookmark, WHITE)
+                if bookmark ~= nil and bookmark ~= true then
+                    Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, WHITE)
                     Font.print(FONT16, 290, y + 18, Chapters[i].Name, WHITE)
                 else
                     Font.print(FONT16, 290, y + 30, Chapters[i].Name, WHITE)
@@ -320,12 +320,12 @@ function Details.draw()
             if #Chapters > 0 then
                 Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
                 local continue_txt = Language[Settings.Language].DETAILS.START
-                if ContinueChapter > 0 and (ContinueChapter == 1 and Cache.getBookmark(Chapters[ContinueChapter]) or ContinueChapter~=1) then
-                    continue_txt = Language[Settings.Language].DETAILS.CONTINUE..ContinueChapter
+                if ContinueChapter > 0 and (ContinueChapter == 1 and Cache.getBookmark(Chapters[ContinueChapter]) or ContinueChapter ~= 1) then
+                    continue_txt = Language[Settings.Language].DETAILS.CONTINUE .. ContinueChapter
                 end
                 local width = Font.getTextWidth(FONT20, continue_txt)
                 local height = Font.getTextHeight(FONT20, continue_txt)
-                Font.print(FONT20, 140-width/2, shift + 505-height/2, continue_txt, WHITE)
+                Font.print(FONT20, 140 - width / 2, shift + 505 - height / 2, continue_txt, WHITE)
             end
         end
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then

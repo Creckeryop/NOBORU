@@ -32,7 +32,7 @@
 
 #define ntohl __builtin_bswap32
 
-extern void *_binary_source_head_bin_start, *_binary_source_head_bin_end , *_binary_source_head_bin_size;
+extern void *_binary_include_head_bin_start, *_binary_include_head_bin_end , *_binary_include_head_bin_size;
 
 int checkFileExist(const char *file) {
   SceUID fd = sceIoOpen(file, SCE_O_RDONLY, 0);
@@ -145,8 +145,8 @@ int generateHeadBin(const char * path){
   free(sfo_buffer);
 
   // Allocate head.bin buffer
-  uint8_t *head_bin = malloc((int)&_binary_source_head_bin_size);
-  memcpy(head_bin, (void *)&_binary_source_head_bin_start, (int)&_binary_source_head_bin_size);
+  uint8_t *head_bin = malloc((int)&_binary_include_head_bin_size);
+  memcpy(head_bin, (void *)&_binary_include_head_bin_start, (int)&_binary_include_head_bin_size);
 
   // Write full title id
   char full_title_id[48];
@@ -176,7 +176,7 @@ int generateHeadBin(const char * path){
   sceIoMkdir(paramFolder, 0777);
 
   // Write head.bin
-  WriteFile(HEAD_BIN, head_bin, (int)&_binary_source_head_bin_size);
+  WriteFile(HEAD_BIN, head_bin, (int)&_binary_include_head_bin_size);
 
   free(head_bin);
 

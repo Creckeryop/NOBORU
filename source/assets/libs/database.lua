@@ -4,6 +4,14 @@ Database = {}
 ---Local table that stores all mangas that is in database
 local base = {}
 
+local writeFile = System.writeFile
+local closeFile = System.closeFile
+local deleteFile = System.deleteFile
+local openFile = System.openFile
+local readFile = System.readFile
+local sizeFile = System.sizeFile
+local doesFileExist = System.doesFileExist
+
 local function get_key(Manga)
     return (Manga.ParserID .. Manga.Link):gsub("%p", "")
 end
@@ -32,6 +40,7 @@ end
 function Database.check(manga)
     return base[get_key(manga)] ~= nil
 end
+
 function Database.checkByKey(key)
     return base[key] ~= nil
 end
@@ -63,20 +72,20 @@ function Database.save()
         manga_table[key] = k
     end
     local save = "local " .. table.serialize(manga_table, "base") .. "\nreturn base"
-    if System.doesFileExist("ux0:data/noboru/save.dat") then
-        System.deleteFile("ux0:data/noboru/save.dat")
+    if doesFileExist("ux0:data/noboru/save.dat") then
+        deleteFile("ux0:data/noboru/save.dat")
     end
-    local f = System.openFile("ux0:data/noboru/save.dat", FCREATE)
-    System.writeFile(f, save, save:len())
-    System.closeFile(f)
+    local f = openFile("ux0:data/noboru/save.dat", FCREATE)
+    writeFile(f, save, save:len())
+    closeFile(f)
 end
 
 ---Loads database from `ux0:data/noboru/save.dat`
 function Database.load()
-    if System.doesFileExist("ux0:data/noboru/save.dat") then
-        local f = System.openFile("ux0:data/noboru/save.dat", FREAD)
-        local suc, new_base = pcall(function() return load(System.readFile(f, System.sizeFile(f)))() end)
-        System.closeFile(f)
+    if doesFileExist("ux0:data/noboru/save.dat") then
+        local f = openFile("ux0:data/noboru/save.dat", FREAD)
+        local suc, new_base = pcall(function() return load(readFile(f, sizeFile(f)))() end)
+        closeFile(f)
         if suc then
             base = new_base
         end

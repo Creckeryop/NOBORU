@@ -1,3 +1,7 @@
+local doesDirExist = System.doesDirExist
+local listDirectory = System.listDirectory
+local createDirectory = System.createDirectory
+
 local logo = Graphics.loadImage("app0:assets/images/logo.png")
 
 Graphics.initBlend()
@@ -28,9 +32,21 @@ loadlib("chsaver")
 loadlib("cache")
 loadlib("reader")
 
-if System.doesDirExist("ux0:data/noboru/parsers") then
+os = nil
+debug = nil
+package = nil
+require = nil
+RemoveDirectory = nil
+System = {
+    getLanguage = System.getLanguage,
+    extractZipAsync = System.extractZipAsync,
+    getAsyncState = System.getAsyncState,
+    getPictureResolution = System.getPictureResolution,
+}
+
+if doesDirExist("ux0:data/noboru/parsers") then
     local path = "ux0:data/noboru/parsers/"
-    local files = System.listDirectory(path)
+    local files = listDirectory(path)
     for _, file in pairs(files) do
         if not file.directory then
             local suc, err = pcall(function()
@@ -42,23 +58,8 @@ if System.doesDirExist("ux0:data/noboru/parsers") then
         end
     end
 else
-    System.createDirectory("ux0:data/noboru/parsers")
+    createDirectory("ux0:data/noboru/parsers")
 end
-
-Settings:load()
-Cache.load()
-Cache.loadHistory()
-Database.load()
-ChapterSaver.load()
-Menu.setMode("LIBRARY")
-Panel.show()
-Settings:checkUpdate()
-
-MENU = 0
-READER = 1
-AppMode = MENU
-
-local TouchLock = false
 
 local fonts = {
     FONT12,
@@ -67,13 +68,56 @@ local fonts = {
     FONT26,
     FONT30
 }
+
+local function preload_data()
+    for k, v in ipairs(fonts) do
+        coroutine.yield("Loading fonts "..k.."/"..#fonts)
+        Font.print(v, 0, 0, '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—', COLOR_BLACK)
+    end
+    coroutine.yield("Loading settings")
+    local suc, err = pcall(Settings.load, Settings)
+    if not suc then Console.error(err) end
+    coroutine.yield("Loading cache, checking existing data")
+    suc, err = pcall(Cache.load)
+    if not suc then Console.error(err) end
+    coroutine.yield("Loading history")
+    suc, err = pcall(Cache.loadHistory)
+    if not suc then Console.error(err) end
+    coroutine.yield("Loading library")
+    suc, err = pcall(Database.load)
+    if not suc then Console.error(err) end
+    coroutine.yield("Checking saved chapters")
+    suc, err = pcall(ChapterSaver.load)
+    if not suc then Console.error(err) end
+    Menu.setMode("LIBRARY")
+    Panel.show()
+    coroutine.yield("Checking for update")
+    suc, err = pcall(Settings.checkUpdate, Settings)
+    if not suc then Console.error(err) end
+end
+
+MENU = 0
+READER = 1
+AppMode = MENU
+
+local TouchLock = false
+
 Screen.flip()
 Screen.waitVblankStart()
-for k, v in ipairs(fonts) do
+local f = coroutine.create(preload_data)
+while coroutine.status(f)~="dead" do
     Graphics.initBlend()
     Screen.clear()
-    Font.print(v, 0, 0, '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—', COLOR_BLACK)
-    Font.print(FONT16, 0, 0, "Loading Fonts " .. k .. "/" .. #fonts, Color.new(100, 100, 100))
+    local _, text, prog = coroutine.resume(f)
+    if not _ then
+        Console.error(text)
+    end
+    if text then
+        Font.print(FONT16, 5, 518, text, Color.new(100, 100, 100))
+    end
+    if prog then
+        Graphics.fillRect(0, 960 * prog, 542, 544, COLOR_WHITE)
+    end
     Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo)
     Graphics.termBlend()
     Screen.flip()
@@ -91,10 +135,9 @@ local function input()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
     if Changes.isActive() then
         if touch.x or pad~=0 then
-            Changes.close()
+            oldpad = Changes.close(pad) or 0
         end
-        oldpad = 0
-        pad = 0
+        pad = oldpad
         TouchLock = true
     end
     if touch2.x and AppMode ~= READER then
@@ -154,20 +197,19 @@ local function draw()
         Reader.draw()
     end
     Loading.draw()
-    Notifications.draw()
-    Panel.draw()
-    Debug.draw()
     if fade > 0 then
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 255 * fade))
         Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo, Color.new(255, 255, 255, 255 * fade))
     else
         Changes.draw()
     end
+    Notifications.draw()
+    Panel.draw()
+    Debug.draw()
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()
 end
-
 while true do
     input()
     update()

@@ -1,3 +1,8 @@
+local doesDirExist = System.doesDirExist
+local listDirectory = System.listDirectory
+local deleteFile = System.deleteFile
+local deleteDirectory = System.deleteDirectory
+
 utf8ascii = {
     ["А"] = "%%C0",
     ["Б"] = "%%C1",
@@ -101,25 +106,25 @@ function table.serialize(t, name)
         for k, v in pairs(_t) do
             if type(v) == "string" then
                 if type(k) == "string" then
-                    P[#P + 1] = '["' .. k:gsub("\\","\\\\"):gsub("\"","\\\"") .. '"]="' .. v:gsub("\\", "\\\\"):gsub("\"","\\\"") .. '"'
+                    P[#P + 1] = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]="' .. v:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"'
                 else
-                    P[#P + 1] = '[' .. k .. ']="' .. v:gsub("\\", "\\\\"):gsub("\"","\\\"") .. '"'
+                    P[#P + 1] = '[' .. k .. ']="' .. v:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"'
                 end
             elseif type(v) == "table" then
                 if type(k) == "string" then
-                    P[#P + 1] = serialize(v, '["' .. k:gsub("\\","\\\\"):gsub("\"","\\\"") .. '"]')
+                    P[#P + 1] = serialize(v, '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]')
                 else
                     P[#P + 1] = serialize(v, '[' .. k .. ']')
                 end
             elseif type(v) == "boolean" or type(v) == "number" then
                 if type(k) == "string" then
-                    P[#P + 1] = '["' .. k:gsub("\\","\\\\"):gsub("\"","\\\"") .. '"]=' .. tostring(v) .. ''
+                    P[#P + 1] = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]=' .. tostring(v) .. ''
                 else
                     P[#P + 1] = '[' .. k .. ']=' .. tostring(v) .. ''
                 end
             else
                 if type(k) == "string" then
-                    P[#P + 1] = '["' .. k:gsub("\\","\\\\"):gsub("\"","\\\"") .. '"]="' .. tostring(v) .. '"'
+                    P[#P + 1] = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]="' .. tostring(v) .. '"'
                 else
                     P[#P + 1] = '[' .. k .. ']="' .. tostring(v) .. '"'
                 end
@@ -227,7 +232,9 @@ local a2u8 = {
     [190] = "\209\149",
     [191] = "\209\151"
 }
+
 local byte, char = string.byte, string.char
+
 function AnsiToUtf8(s)
     local r, b = {}
     for i = 1, s and s:len() or 0 do
@@ -255,19 +262,19 @@ function u8c(code)
     if code <= 0x7F then
         return char(code)
     elseif code <= 0x7FF then
-		return char(0xC0 + math.floor(code / 0x40), 0x80 + (code % 0x40))
+        return char(0xC0 + math.floor(code / 0x40), 0x80 + (code % 0x40))
     elseif code <= 0xFFFF then
-		return char(0xE0 + math.floor(code / 0x1000), 0x80 + (math.floor(code / 0x40) % 0x40), 0x80 + (code % 0x40))
-	elseif code <= 0x10FFFF then
-		local b3= 0x80 + (code % 0x40)
-		code = math.floor(code / 0x40)
-		local b2= 0x80 + (code % 0x40)
-		code = math.floor(code / 0x40)
-		local b1= 0x80 + (code % 0x40)
-		code = math.floor(code / 0x40)
-		local b0= 0xF0 + code;
-		return char(b0, b1, b2, b3)
-	end
+        return char(0xE0 + math.floor(code / 0x1000), 0x80 + (math.floor(code / 0x40) % 0x40), 0x80 + (code % 0x40))
+    elseif code <= 0x10FFFF then
+        local b3 = 0x80 + (code % 0x40)
+        code = math.floor(code / 0x40)
+        local b2 = 0x80 + (code % 0x40)
+        code = math.floor(code / 0x40)
+        local b1 = 0x80 + (code % 0x40)
+        code = math.floor(code / 0x40)
+        local b0 = 0xF0 + code;
+        return char(b0, b1, b2, b3)
+    end
 end
 
 function Setmt__gc(t, mt)
@@ -294,17 +301,19 @@ end
 
 ---@param path string
 ---DFS directory removing
+local r_dir
 function RemoveDirectory(path)
-    if System.doesDirExist(path) then
-        for k, v in ipairs(System.listDirectory(path)) do
+    if doesDirExist(path) then
+        for _, v in ipairs(listDirectory(path)) do
             if v.directory then
-                RemoveDirectory(path .. "/" .. v.name)
+                r_dir(path .. "/" .. v.name)
             else
-                System.deleteFile(path .. "/" .. v.name)
+                deleteFile(path .. "/" .. v.name)
                 Console.write("Delete " .. path .. "/" .. v.name)
             end
         end
-        System.deleteDirectory(path)
+        deleteDirectory(path)
         Console.write("Delete " .. path)
     end
 end
+r_dir = RemoveDirectory
