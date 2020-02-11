@@ -259,9 +259,9 @@ function ChapterSaver.load()
             for _, _ in pairs(keys) do
                 cnt = cnt + 1
             end
-            local i = 1
+            local cntr = 1
             for k, _ in pairs(keys) do
-                coroutine.yield("ChapterSaver: Checking " .. FOLDER .. k, i / cnt)
+                coroutine.yield("ChapterSaver: Checking " .. FOLDER .. k, cntr / cnt)
                 if doesFileExist(FOLDER .. k .. "/done.txt") then
                     local fh_2 = openFile(FOLDER .. k .. "/done.txt", FREAD)
                     local pages = readFile(fh_2, sizeFile(fh_2))
@@ -291,7 +291,7 @@ function ChapterSaver.load()
                     rem_dir("ux0:data/noboru/chapters/" .. k)
                     Notifications.push("chapters_error\n" .. k)
                 end
-                i = i + 1
+                cntr = cntr + 1
             end
             local dir_list = listDirectory("ux0:data/noboru/chapters")
             for _, v in ipairs(dir_list) do

@@ -54,6 +54,7 @@ function Cache.setBookmark(Chapter, mode)
         bookmarks[mkey] = {}
     end
     bookmarks[mkey][key] = mode
+    bookmarks[mkey].LatestBookmark = key
     if doesFileExist("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat") then
         deleteFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat")
     end
@@ -67,6 +68,11 @@ function Cache.getBookmark(Chapter)
     local mkey = get_key(Chapter.Manga)
     local key = Chapter.Link:gsub("%p", "")
     return bookmarks[mkey] and bookmarks[mkey][key]
+end
+
+function Cache.getLatestBookmark(Manga)
+    local mkey = get_key(Manga)
+    return bookmarks[mkey] and bookmarks[mkey].LatestBookmark
 end
 
 function Cache.saveBookmarks(Manga)

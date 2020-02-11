@@ -67,17 +67,25 @@ local ContinueChapter
 local function updateContinueManga(Manga)
     ContinueChapter = 0
     if #Chapters > 0 then
+        local Latest = Cache.getLatestBookmark(Manga)
         for i = 1, #Chapters do
             local bookmark = Cache.getBookmark(Chapters[i])
-            if bookmark == true then
-                ContinueChapter = i
-            else
-                ContinueChapter = i
+            local key = Chapters[i].Link:gsub("%p","")
+            if Latest == key then
+                if bookmark == true then
+                    ContinueChapter = i + 1
+                    if not Chapters[ContinueChapter] then
+                        ContinueChapter = i
+                    end
+                else
+                    ContinueChapter = i
+                end
                 break
             end
         end
     end
 end
+
 function Details.setManga(manga)
     if manga then
         Panel.hide()
