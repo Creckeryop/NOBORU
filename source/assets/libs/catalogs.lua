@@ -465,7 +465,7 @@ function Catalogs.draw()
         for i = first, last do
             local parser = Parsers[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 960, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
             end
             if i < #Parsers then
                 Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
@@ -501,7 +501,7 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 960, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
             end
             if i < #list then
                 Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
@@ -541,7 +541,7 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 960, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
             end
             if i < #list then
                 Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
