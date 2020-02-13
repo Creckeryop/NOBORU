@@ -53,6 +53,7 @@ function Threads.update()
                 Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4)
             else
                 Console.error("No Link given or internet connection problem")
+                uniques[Task.UniqueKey] = nil
                 Task = nil
             end
         elseif Task.Type == "FileDownload" or Task.Type == "ImageDownload" then
@@ -67,10 +68,12 @@ function Threads.update()
                     end
                 else
                     Console.error("No Path given")
+                    uniques[Task.UniqueKey] = nil
                     Task = nil
                 end
             else
                 Console.error("No Link given or internet connection problem")
+                uniques[Task.UniqueKey] = nil
                 Task = nil
             end
         elseif Task.Type == "UnZip" then
@@ -80,10 +83,12 @@ function Threads.update()
                     System.extractZipAsync(Task.Path, Task.DestPath)
                 else
                     Console.error("No Path given")
+                    uniques[Task.UniqueKey] = nil
                     Task = nil
                 end
             else
                 Console.error("No DestPath given")
+                uniques[Task.UniqueKey] = nil
                 Task = nil
             end
         end

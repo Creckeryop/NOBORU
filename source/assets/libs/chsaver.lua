@@ -39,6 +39,7 @@ function ChapterSaver.update()
             if _ then
                 if Task.Destroy and msg then
                     Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+                    Downloading[Task.Key] = nil
                     Task = nil
                 elseif msg == "update_count" then
                     Task.page = var1
@@ -46,10 +47,14 @@ function ChapterSaver.update()
                 end
             else
                 Console.error("Unknown error with saved chapters: " .. msg)
+                Downloading[Task.Key] = nil
                 Task = nil
             end
         else
-            Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
+            if not Task.Fail then
+                Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
+            end
+            Downloading[Task.Key] = nil
             Task = nil
         end
     end
@@ -76,6 +81,7 @@ function ChapterSaver.downloadChapter(chapter)
             else
                 Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
                 Downloading[k] = nil
+                Downloading[k].Fail = true
                 return
             end
             while ParserManager.check(t) do
@@ -111,11 +117,13 @@ function ChapterSaver.downloadChapter(chapter)
                     else
                         retry = retry + 1
                     end
+                    coroutine.yield(true)
                 end
                 if retry == 3 then
                     Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
                     rem_dir("ux0:data/noboru/chapters/" .. k)
                     Downloading[k] = nil
+                    Downloading[k].Fail = true
                     return
                 end
             end

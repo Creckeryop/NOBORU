@@ -273,7 +273,6 @@ function Details.draw()
         local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
-        local DARKER_BLUE = Color.new(20, 24, 40, Alpha)
         local RED = Color.new(137, 30, 43, Alpha)
         local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
