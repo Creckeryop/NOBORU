@@ -36,13 +36,16 @@ COLOR_LIGHT_GRAY = Color.new(192, 192, 192)
 COLOR_ROYAL_BLUE = Color.new(65, 105, 226)
 COLOR_CRIMSON = Color.new(137, 30, 43)
 
+BONT16 = Font.load("app0:robboto.ttf")
 FONT16 = Font.load("app0:roboto.ttf")
 FONT12 = Font.load("app0:roboto.ttf")
 FONT20 = Font.load("app0:roboto.ttf")
 FONT30 = Font.load("app0:roboto.ttf")
+BONT30 = Font.load("app0:robboto.ttf")
 FONT26 = Font.load("app0:roboto.ttf")
 
 Font.setPixelSizes(FONT30, 30)
+Font.setPixelSizes(BONT30, 30)
 Font.setPixelSizes(FONT26, 26)
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT12, 12)
@@ -162,9 +165,9 @@ function DrawManga(x, y, Manga, M)
             pcall(drawMangaName, Manga)
         else
             if Manga.PrintName.f then
-                Font.print(FONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))
+                Font.print(BONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))
             end
-            Font.print(FONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255, 255 * alpha))
+            Font.print(BONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255, 255 * alpha))
         end
     end
 end

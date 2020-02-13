@@ -325,6 +325,18 @@ end
 function Reader.update()
     if STATE == STATE_LOADING then
         if Chapters[current_chapter].Pages.Done then
+            if #Chapters[current_chapter].Pages == 0 then
+                Console.error("Error loading chapter")
+                ParserManager.clear()
+                collectgarbage("collect")
+                if Threads.netActionUnSafe(Network.isWifiEnabled) then
+                    Notifications.push("Unknown error (Parser's)")
+                else
+                    Notifications.push("Unknown error (No Connection?)")
+                end
+                AppMode = MENU
+                return
+            end
             STATE = STATE_READING
             local chapter = Chapters[current_chapter]
             Pages.Count = #chapter.Pages

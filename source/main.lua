@@ -66,7 +66,9 @@ local fonts = {
     FONT16,
     FONT20,
     FONT26,
-    FONT30
+    FONT30,
+    BONT30,
+    BONT16
 }
 
 local function preload_data()

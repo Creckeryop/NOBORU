@@ -91,7 +91,7 @@ function Details.setManga(manga)
         Panel.hide()
         Manga = manga
         ms = 50 * string.len(manga.Name)
-        dif = math.max(Font.getTextWidth(FONT30, manga.Name) - 920, 0)
+        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 920, 0)
         Chapters = {}
         Slider.Y = -50
         DetailsSelector:resetSelected()
@@ -281,17 +281,18 @@ function Details.draw()
         for i = start, math.min(#Chapters, start + 8) do
             if y < 544 then
                 local bookmark = Cache.getBookmark(Chapters[i])
-                local blue = bookmark == true and DARKER_BLUE or BLUE
-                Graphics.fillRect(280, 920, y, y + 79, blue)
                 if bookmark ~= nil and bookmark ~= true then
                     Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, WHITE)
-                    Font.print(FONT16, 290, y + 18, Chapters[i].Name, WHITE)
+                    Font.print(BONT16, 290, y + 18, Chapters[i].Name, WHITE)
                 else
-                    Font.print(FONT16, 290, y + 30, Chapters[i].Name, WHITE)
+                    Font.print(BONT16, 290, y + 30, Chapters[i].Name, WHITE)
                 end
-                Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, blue)
+                Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, Color.new(0, 0, 0, Alpha))
+                if i < #Chapters then
+                    Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
+                end
                 if i == Slider.ItemID then
-                    Graphics.fillRect(280, 920, y, y + 79, Color.new(0, 0, 0, 32))
+                    Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24*M))
                 end
                 if ChapterSaver.check(Chapters[i]) then
                     Graphics.drawRotateImage(920 - 32, y + 40, cross.e, 0)
@@ -346,20 +347,20 @@ function Details.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 75 - i + 1, Color.new(255, 0, 51))
-                Graphics.fillEmptyRect(284 + i, 916 - i + 1, y + i + 4, y + 75 - i + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
+                Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
             end
             Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
         end
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
-        Font.print(FONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
+        Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454
             Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
-            Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, BLUE)
+            Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
         end
     end
 end

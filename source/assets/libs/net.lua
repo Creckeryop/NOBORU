@@ -97,8 +97,8 @@ function Threads.update()
             Trash.Link = Task.Link
             if Task.Type == "StringRequest" then
                 Task.Table[Task.Index] = getAsyncResult() or ""
-                bytes = bytes + Task.Table[Task.Index]:len()
-                if Task.Table[Task.Index]:len() < 100 then
+                bytes = bytes + #Task.Table[Task.Index]
+                if #Task.Table[Task.Index] < 100 then
                     Console.write("NET:" .. Task.Table[Task.Index])
                 end
             elseif Task.Type == "Image" then

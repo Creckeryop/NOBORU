@@ -4,6 +4,7 @@ local TOUCH = TOUCH()
 
 local doesFileExist = System.doesFileExist
 local listDirectory = System.listDirectory
+local deleteFile = System.deleteFile
 
 local Parser = nil
 local TouchTimer = Timer.new()
@@ -33,7 +34,7 @@ local function freeMangaImage(manga)
 end
 
 local function loadMangaImage(manga)
-    if manga.Path and doesFileExist("ux0:data/noboru/" .. manga.Path) then
+    if manga.Path and doesFileExist("ux0:data/noboru/" .. manga.Path) and System.getPictureResolution("ux0:data/noboru/"..manga.Path) or -1 > 0 then
         Threads.addTask(manga, {
             Type = "Image",
             Path = manga.Path,
@@ -354,7 +355,7 @@ function Catalogs.update()
         end
         local item = MangaSelector:getSelected()
         if item ~= 0 then
-            Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 10) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
+            Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
         end
         if Slider.Y < 0 then
             Slider.Y = 0
@@ -458,12 +459,17 @@ function Catalogs.draw()
     Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
     local scroll_height
     if mode == "CATALOGS" then
-        local start = max(1, floor((Slider.Y - 10) / 75))
-        local y = start * 75 - Slider.Y
-        for i = start, min(#Parsers, start + 9) do
+        local first = max(1, floor((Slider.Y - 10) / 75))
+        local y = first * 75 - Slider.Y
+        local last = min(#Parsers, first + 9)
+        for i = first, last do
             local parser = Parsers[i]
-            Graphics.fillRect(264, 946, y - 75, y, Color.new(0, 0, 0, 32))
-            Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+            if Slider.ItemID == i then
+                Graphics.fillRect(255, 960, y - 76, y, Color.new(200, 200, 200))
+            end
+            if i < #Parsers then
+                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+            end
             Font.print(FONT26, 275, y - 70, parser.Name, COLOR_BLACK)
             local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
             Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
@@ -471,16 +477,12 @@ function Catalogs.draw()
                 Font.print(FONT16, 280 + Font.getTextWidth(FONT26, parser.Name), y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
             end
             local link_text = parser.Link .. "/"
-            Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, Color.new(128, 128, 128))
-            if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 74, y, Color.new(0, 0, 0, 32))
-            end
+            Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_GRAY)
             y = y + 75
         end
         local elements_count = #Parsers
-        if elements_count > 0 then
-            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
-            scroll_height = elements_count > 7 and #Parsers * 75 / 524 or nil
+        if elements_count > 7 then
+            scroll_height = elements_count * 75 / 524
         end
         local item = ParserSelector:getSelected()
         if item ~= 0 then
@@ -488,8 +490,8 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
     elseif mode == "DOWNLOAD" then
@@ -498,8 +500,12 @@ function Catalogs.draw()
         local y = start * 75 - Slider.Y
         for i = start, min(#list, start + 9) do
             local task = list[i]
-            Graphics.fillRect(264, 946, y - 75, y, 0x20000000)
-            Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+            if Slider.ItemID == i then
+                Graphics.fillRect(255, 960, y - 76, y, Color.new(200, 200, 200))
+            end
+            if i < #list then
+                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+            end
             Font.print(FONT20, 275, y - 70, task.Manga, COLOR_BLACK)
             Font.print(FONT16, 275, y - 44, task.Chapter, COLOR_BLACK)
             if task.page_count > 0 then
@@ -512,15 +518,11 @@ function Catalogs.draw()
             elseif i == 1 then
                 download_bar = 0
             end
-            if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 74, y, 0x20000000)
-            end
             y = y + 75
         end
         local elements_count = #list
-        if elements_count > 0 then
-            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
-            scroll_height = elements_count > 7 and #list * 75 / 524 or nil
+        if elements_count > 7 then
+            scroll_height =  elements_count * 75 / 524
         end
         local item = DownloadSelector:getSelected()
         if item ~= 0 then
@@ -528,8 +530,8 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
     elseif mode == "SETTINGS" then
@@ -538,8 +540,12 @@ function Catalogs.draw()
         local y = start * 75 - Slider.Y
         for i = start, min(#list, start + 9) do
             local task = list[i]
-            Graphics.fillRect(264, 946, y - 75, y, 0x20000000)
-            Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+            if Slider.ItemID == i then
+                Graphics.fillRect(255, 960, y - 76, y, Color.new(200, 200, 200))
+            end
+            if i < #list then
+                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+            end
             Font.print(FONT20, 275, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_BLACK)
             if task == "Language" then
                 Font.print(FONT16, 275, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_BLACK)
@@ -608,15 +614,11 @@ function Catalogs.draw()
             elseif task == "CheckUpdate" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
             end
-            if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 74, y, 0x20000000)
-            end
             y = y + 75
         end
         local elements_count = #list
-        if elements_count > 0 then
-            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
-            scroll_height = elements_count > 7 and #list * 75 / 524 or nil
+        if elements_count > 7 then
+            scroll_height = elements_count * 75 / 524
         end
         local item = SettingSelector:getSelected()
         if item ~= 0 then
@@ -624,8 +626,8 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
     elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
@@ -639,7 +641,7 @@ function Catalogs.draw()
             local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + 12
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
-            for i = ks, ks + 3 do
+            for i = ks + 1, ks + 3 do
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
             end

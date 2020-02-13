@@ -76,7 +76,7 @@ function Database.save()
         deleteFile("ux0:data/noboru/save.dat")
     end
     local f = openFile("ux0:data/noboru/save.dat", FCREATE)
-    writeFile(f, save, save:len())
+    writeFile(f, save, #save)
     closeFile(f)
 end
 

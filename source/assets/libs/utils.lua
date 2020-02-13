@@ -237,7 +237,7 @@ local byte, char = string.byte, string.char
 
 function AnsiToUtf8(s)
     local r, b = {}
-    for i = 1, s and s:len() or 0 do
+    for i = 1, s and #s or 0 do
         b = byte(s, i)
         if b < 128 then
             r[#r + 1] = char(b)

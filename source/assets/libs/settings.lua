@@ -3,7 +3,7 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.33,
+    Version = 0.34,
     KeyType = "EU",
     ReaderDirection = "RIGHT",
     HideInOffline = true
@@ -33,7 +33,7 @@ local function cpy_file(source_path, dest_path)
     local fh1 = openFile(source_path, FREAD)
     local fh2 = openFile(dest_path, FCREATE)
     local contentFh1 = readFile(fh1, sizeFile(fh1))
-    writeFile(fh2, contentFh1, contentFh1:len())
+    writeFile(fh2, contentFh1, #contentFh1)
     closeFile(fh1)
     closeFile(fh2)
 end
@@ -143,7 +143,7 @@ function Settings:save()
         ReaderDirection = self.ReaderDirection,
         HideInOffline = self.HideInOffline
     }, "Settings")
-    writeFile(fh, set, set:len())
+    writeFile(fh, set, #set)
     closeFile(fh)
 end
 

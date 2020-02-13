@@ -244,7 +244,7 @@ function ChapterSaver.save()
     end
     local fh = openFile("ux0:data/noboru/c.c", FCREATE)
     local save_data = table.serialize(Keys, "Keys")
-    writeFile(fh, save_data, save_data:len())
+    writeFile(fh, save_data, #save_data)
     closeFile(fh)
 end
 

@@ -60,7 +60,7 @@ function Cache.setBookmark(Chapter, mode)
     end
     local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FCREATE)
     local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
-    writeFile(fh, serialized_bookmarks, serialized_bookmarks:len())
+    writeFile(fh, serialized_bookmarks, #serialized_bookmarks)
     closeFile(fh)
 end
 
@@ -83,7 +83,7 @@ function Cache.saveBookmarks(Manga)
         end
         local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FCREATE)
         local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
-        writeFile(fh, serialized_bookmarks, serialized_bookmarks:len())
+        writeFile(fh, serialized_bookmarks, #serialized_bookmarks)
         closeFile(fh)
     end
 end
@@ -152,7 +152,7 @@ function Cache.saveHistory()
     end
     local fh = openFile("ux0:data/noboru/cache/history.dat", FCREATE)
     local serialized_history = "local " .. table.serialize(history, "history") .. "\nreturn history"
-    writeFile(fh, serialized_history, serialized_history:len())
+    writeFile(fh, serialized_history, #serialized_history)
     closeFile(fh)
 end
 
@@ -188,7 +188,7 @@ function Cache.saveChapters(Manga, Chapters)
     end
     local fh = openFile(path, FCREATE)
     local serialized_chlist = "local " .. table.serialize(chlist, "chlist") .. "\nreturn chlist"
-    writeFile(fh, serialized_chlist, serialized_chlist:len())
+    writeFile(fh, serialized_chlist, #serialized_chlist)
     closeFile(fh)
 end
 
@@ -266,7 +266,7 @@ function Cache.save()
         save_data[k].Path = "cache/" .. k .. "/cover.image"
     end
     local serialized_data = "local " .. table.serialize(save_data, "data") .. "\nreturn data"
-    writeFile(fh, serialized_data, serialized_data:len())
+    writeFile(fh, serialized_data, #serialized_data)
     closeFile(fh)
 end
 
