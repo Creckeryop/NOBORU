@@ -21,11 +21,11 @@ local rem_dir = RemoveDirectory
 
 ---@return string
 ---Creates key for a chapter from it's Manga's `parserID`, `Link` and chapter `Link`
-local function key(chapter)
+local function get_key(chapter)
     return (chapter.Manga.ParserID .. chapter.Manga.Link):gsub("%p", "") .. "_" .. chapter.Link:gsub("%p", "")
 end
 
-ChapterSaver.getKey = key
+ChapterSaver.getKey = get_key
 
 ---Updates Cache things
 function ChapterSaver.update()
@@ -65,7 +65,7 @@ local notify = true
 ---@param chapter table
 ---Creates task for downloading `chapter`
 function ChapterSaver.downloadChapter(chapter)
-    local k = key(chapter)
+    local k = get_key(chapter)
     if not doesDirExist(FOLDER .. k) then
         createDirectory(FOLDER .. k)
     end
@@ -139,6 +139,213 @@ function ChapterSaver.downloadChapter(chapter)
     Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
 end
 
+local getTime = System.getTime
+local getDate = System.getDate
+local function cpy_file(source_path, dest_path)
+    local fh1 = openFile(source_path, FREAD)
+    local fh2 = openFile(dest_path, FCREATE)
+    local contentFh1 = readFile(fh1, sizeFile(fh1))
+    writeFile(fh2, contentFh1, #contentFh1)
+    closeFile(fh1)
+    closeFile(fh2)
+end
+
+local listZip = System.listZip
+local extractFromZip = System.extractFromZip
+local rename = System.rename
+
+function ChapterSaver.importManga(path)
+    local h, mn, s = getTime()
+    local _, d, mo, y = getDate()
+    local Manga = CreateManga(path:match(".*/(.*)%..-$") or path:match(".*/(.-)$"), table.concat({h, mn, s, d, mo, y}, "A"), "", "IMPORTED", "local:book")
+    Downloading[path] = {
+        Key = path,
+        MangaName = Manga.Name,
+        ChapterName = "Importing"
+    }
+    local this = Downloading[path]
+    this.F = function()
+        if doesDirExist(path) then
+            local dir = listDirectory(path)
+            local new_dir = {}
+            local type
+            for _, f in ipairs(dir) do
+                local new_type
+                if f.directory then
+                    new_type = "folder"
+                elseif (System.getPictureResolution(path.."/"..f.name) or -1) > 0 then
+                    new_type = "image"
+                elseif f.name:find("%.cbz$") then
+                    new_type = "package"
+                elseif not f.name:find("%.txt$") then
+                    Notifications.push("ERROR: Unknown type of import pattern")
+                    Downloading[path] = nil
+                    return
+                end
+                if not type or new_type == type then
+                    type = new_type
+                    if new_type then
+                        new_dir[#new_dir + 1] = f
+                    end
+                else
+                    Notifications.push("ERROR: Unknown type of import pattern")
+                    Downloading[path] = nil
+                    return
+                end
+            end
+            dir = new_dir
+            table.sort(dir, function(a, b) return a.name < b.name end)
+            if type == "folder" then
+                local cover_loaded = false
+                for _, folder in ipairs(dir) do
+                    local images_found = nil
+                    for _, file in ipairs(listDirectory(path.."/"..folder.name)) do
+                        if (System.getPictureResolution(path.."/"..folder.name.."/"..file.name) or -1) <= 0 then
+                            Notifications.push("Bad Image found")
+                            Downloading[path] = nil
+                            return
+                        end
+                        images_found = true
+                    end
+                    if not images_found then
+                        Notifications.push("No Images found")
+                        Downloading[path] = nil
+                        return
+                    end
+                end
+                local Chapters = {}
+                Cache.addManga(Manga)
+                for _, folder in ipairs(dir) do
+                    local Chapter = {
+                        Name = folder.name,
+                        Link = table.concat({h, mn, s, d, mo, y, _}, "B"),
+                        Pages = {},
+                        Manga = Manga
+                    }
+                    Chapters[#Chapters + 1] = Chapter
+                    local subdir = listDirectory(path.."/"..folder.name)
+                    table.sort(subdir, function(a, b) return a.name < b.name end)
+                    local img_links = {}
+                    for _, f in ipairs(subdir) do
+                        if (System.getPictureResolution(path.."/"..folder.name.."/"..f.name) or -1) > 0 then
+                            img_links[#img_links + 1] = path.."/"..folder.name.."/"..f.name
+                        end
+                    end
+                    if not cover_loaded then
+                        cpy_file(img_links[1], "ux0:data/noboru/cache/"..Cache.getKey(Manga).."/cover.image")
+                        cover_loaded = true
+                    end
+                    img_links = table.concat(img_links, "\n")
+                    local k = get_key(Chapter)
+                    rem_dir(FOLDER..k)
+                    createDirectory(FOLDER..k)
+                    local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
+                    writeFile(fh, img_links, #img_links)
+                    closeFile(fh)
+                    Keys[k] = true
+                end
+                Cache.saveChapters(Manga, Chapters)
+                Database.add(Manga)
+                ChapterSaver.save()
+                Downloading[path] = nil
+            elseif type == "image" then
+                local img_links = {}
+                for _, f in ipairs(dir) do
+                    img_links[_] = path.."/"..f.name
+                end
+                local Chapter = {
+                    Name = Manga.Name,
+                    Link = table.concat({h, mn, s, d, mo, y}, "B"),
+                    Pages = {},
+                    Manga = Manga
+                }
+                Cache.addManga(Manga, {Chapter})
+                cpy_file(img_links[1], "ux0:data/noboru/cache/"..Cache.getKey(Manga).."/cover.image")
+                img_links = table.concat(img_links, "\n")
+                local k = get_key(Chapter)
+                rem_dir(FOLDER..k)
+                createDirectory(FOLDER..k)
+                local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
+                writeFile(fh, img_links, #img_links)
+                closeFile(fh)
+                Keys[k] = true
+                Database.add(Manga)
+                ChapterSaver.save()
+                Downloading[path] = nil
+            elseif type == "package" then
+                local cover_loaded = false
+                Cache.addManga(Manga)
+                local mk = Cache.getKey(Manga)
+                local Chapters = {}
+                for _, pack in ipairs(dir) do
+                    local Chapter = {
+                        Name = pack.name:match("(.*)%..-$"),
+                        Link = table.concat({h, mn, s, d, mo, y, _}, "B"),
+                        Pages = {},
+                        Manga = Manga
+                    }
+                    Chapters[#Chapters + 1] = Chapter
+                    if not cover_loaded then
+                        local zip_dir = listZip(path.."/"..pack.name) or {}
+                        table.sort(zip_dir, function(a, b) return a.name < b.name end)
+                        for _, file in ipairs(zip_dir) do
+                            Console.write(file.name)
+                            if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
+                                extractFromZip(path.."/"..pack.name, file.name, "ux0:data/noboru/cache/"..mk.."/cover.image")
+                                cover_loaded = true
+                                break
+                            end
+                        end
+                    end
+                    local k = get_key(Chapter)
+                    rem_dir(FOLDER..k)
+                    createDirectory(FOLDER..k)
+                    local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
+                    writeFile(fh, path.."/"..pack.name, #(path.."/"..pack.name))
+                    closeFile(fh)
+                    Keys[k] = true
+                end
+                Cache.saveChapters(Manga, Chapters)
+                Database.add(Manga)
+                ChapterSaver.save()
+                Downloading[path] = nil
+            end
+        elseif doesFileExist(path) then
+            if path:find("%.cbz$") then
+                Cache.addManga(Manga)
+                local mk = Cache.getKey(Manga)
+                local Chapter = {
+                    Name = path:match(".*/(.*)%..-$"),
+                    Link = table.concat({h, mn, s, d, mo, y, _}, "B"),
+                    Pages = {},
+                    Manga = Manga
+                }
+                local zip_dir = listZip(path) or {}
+                table.sort(zip_dir, function(a, b) return a.name < b.name end)
+                for _, file in ipairs(zip_dir) do
+                    Console.write(file.name)
+                    if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
+                        extractFromZip(path, file.name, "ux0:data/noboru/cache/"..mk.."/cover.image")
+                        break
+                    end
+                end
+                local k = get_key(Chapter)
+                rem_dir(FOLDER..k)
+                createDirectory(FOLDER..k)
+                local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
+                writeFile(fh, path, #path)
+                closeFile(fh)
+                Keys[k] = true
+                Cache.saveChapters(Manga, {Chapter})
+                Database.add(Manga)
+                ChapterSaver.save()
+                Downloading[path] = nil
+            end
+        end
+    end
+    Order[#Order + 1] = this
+end
+
 ---@return boolean
 ---Gives info if download is running
 function ChapterSaver.is_download_running()
@@ -172,7 +379,7 @@ end
 ---@param chapter table
 ---Stops `chapter` downloading
 function ChapterSaver.stop(chapter)
-    if chapter then stop(key(chapter)) end
+    if chapter then stop(get_key(chapter)) end
 end
 
 ---@param item table
@@ -184,7 +391,7 @@ end
 ---@param chapter table
 ---Deletes saved chapter
 function ChapterSaver.delete(chapter)
-    local k = key(chapter)
+    local k = get_key(chapter)
     if Keys[k] then
         rem_dir(FOLDER .. k)
         Keys[k] = nil
@@ -216,7 +423,7 @@ end
 ---@return boolean
 ---Gives `true` if chapter is downloaded
 function ChapterSaver.check(chapter)
-    return Keys[key(chapter)] == true
+    return Keys[get_key(chapter)] == true or chapter and chapter.FastLoad
 end
 
 
@@ -224,25 +431,86 @@ end
 ---@return boolean
 ---Gives `true` if chapter is downloading
 function ChapterSaver.is_downloading(chapter)
-    return Downloading[key(chapter)]
+    return Downloading[get_key(chapter)]
 end
 
+
+---@param str string
+---@return table
+---Breaks text into lines
+local function to_lines(str)
+    if str:sub(-1) ~= "\n" then
+        str = str .. "\n"
+    end
+    local lines = {}
+    for line in str:gmatch("(.-)\n") do
+        lines[#lines + 1] = line
+    end
+    return lines
+end
 
 ---@param chapter table
 ---@return table
 ---Gives table with all pathes to chapters images (pages)
 function ChapterSaver.getChapter(chapter)
-    local k = key(chapter)
-    local table = {Done = true}
+    if chapter.FastLoad then
+        local _table_ = {
+            Done = true
+        }
+        local zip = listZip(chapter.Path)
+        table.sort(zip, function (a,b)
+            return a.name < b.name
+        end)
+        for i, file in ipairs(zip) do
+            if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
+                _table_[#_table_+1] = {
+                    Extract = file.name,
+                    Path = chapter.Path:match("/noboru/(.*)$")
+                }
+            end
+        end
+        return _table_
+    end
+    local k = get_key(chapter)
+    local _table_ = {
+        Done = true
+    }
     if Keys[k] then
-        local pages = #listDirectory(FOLDER .. k) - 1
-        for i = 1, pages do
-            table[i] = {
-                Path = "chapters/" .. k .. "/" .. i .. ".image"
-            }
+        if doesFileExist(FOLDER..k.."/custom.txt") then
+            local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
+            local pathes = readFile(fh_2, sizeFile(fh_2))
+            closeFile(fh_2)
+            local lines = to_lines(pathes)
+            if #lines == 1 and lines[1]:find("%.cbz")then
+                local zip = listZip(lines[1])
+                table.sort(zip, function (a,b)
+                    return a.name < b.name
+                end)
+                for i, file in ipairs(zip) do
+                    if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
+                        _table_[#_table_+1] = {
+                            Extract = file.name,
+                            Path = lines[1]:match("/noboru/(.*)$")
+                        }
+                    end
+                end
+            else
+                for _, path in ipairs(lines) do
+                    _table_[_] = {
+                        Path = path:match("/noboru/(.*)$")
+                    }
+                end
+            end
+        else
+            local pages = #listDirectory(FOLDER .. k) - 1
+            for i = 1, pages do
+                _table_[i] = {
+                    Path = "chapters/" .. k .. "/" .. i .. ".image"
+                }
+            end
         end
     end
-    return table
+    return _table_
 end
 
 ---Saves saved chapters changes
@@ -270,7 +538,19 @@ function ChapterSaver.load()
             local cntr = 1
             for k, _ in pairs(keys) do
                 coroutine.yield("ChapterSaver: Checking " .. FOLDER .. k, cntr / cnt)
-                if doesFileExist(FOLDER .. k .. "/done.txt") then
+                if doesFileExist(FOLDER .. k .. "/custom.txt") then
+                    local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
+                    local pathes = readFile(fh_2, sizeFile(fh_2))
+                    closeFile(fh_2)
+                    for _, path in ipairs(to_lines(pathes)) do
+                        if not doesFileExist(path) then
+                            rem_dir(FOLDER .. k)
+                            Notifications.push("here chapters_error\n" .. k)
+                            break
+                        end
+                    end
+                    Keys[k] = true
+                elseif doesFileExist(FOLDER .. k .. "/done.txt") then
                     local fh_2 = openFile(FOLDER .. k .. "/done.txt", FREAD)
                     local pages = readFile(fh_2, sizeFile(fh_2))
                     closeFile(fh_2)
@@ -311,6 +591,11 @@ function ChapterSaver.load()
         closeFile(fh)
         ChapterSaver.save()
     end
+end
+
+function ChapterSaver.setKey(key)
+    Keys[key] = true
+    ChapterSaver.save()
 end
 
 ---Clears all saved chapters

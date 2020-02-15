@@ -91,6 +91,26 @@ function Threads.update()
                 uniques[Task.UniqueKey] = nil
                 Task = nil
             end
+        elseif Task.Type == "UnZipFile" then
+            if Task.Extract then
+                if Task.DestPath then
+                    if Task.Path then
+                        System.extractFromZipAsync(Task.Path, Task.Extract, Task.DestPath)
+                    else
+                        Console.error("No Path given")
+                        uniques[Task.UniqueKey] = nil
+                        Task = nil
+                    end
+                else
+                    Console.error("No DestPath given")
+                    uniques[Task.UniqueKey] = nil
+                    Task = nil
+                end
+            else
+                Console.error("No Extract file path given")
+                uniques[Task.UniqueKey] = nil
+                Task = nil
+            end
         end
         if Task then
             Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
@@ -289,6 +309,7 @@ local function taskete(UniqueKey, T, foo)
         Header3 = T.Header3 or "",
         Header4 = T.Header4 or "",
         OnComplete = T.OnComplete,
+        Extract = T.Extract,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
         Retry = 3,
         HttpMethod = T.HttpMethod or GET_METHOD,

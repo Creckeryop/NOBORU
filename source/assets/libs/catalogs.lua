@@ -117,6 +117,7 @@ local MangaSelector = Selector:new(-4, 4, -1, 1, function() return max(1, floor(
 local ParserSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 local DownloadSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 local SettingSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
+local ImportSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 local function selectSetting(index)
     local item = Settings:list()[index]
     if Settings:isTab(item) then
@@ -186,6 +187,12 @@ local function selectSetting(index)
         end
     end
 end
+local function selectImport(index)
+    local list = Import.listDir()
+    if index > 0 and index <= #list then
+        Import.go(list[index])
+    end
+end
 
 MangaSelector:xaction(selectManga)
 ParserSelector:xaction(selectParser)
@@ -193,6 +200,7 @@ DownloadSelector:xaction(function(item)
     ChapterSaver.stopByListItem(ChapterSaver.getDownloadingList()[item])
 end)
 SettingSelector:xaction(selectSetting)
+ImportSelector:xaction(selectImport)
 
 function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
@@ -228,6 +236,18 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             Settings:back()
             SettingSelector:resetSelected()
         end
+    elseif mode == "IMPORT" then
+        if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
+            Import.back()
+            ImportSelector:resetSelected()
+        end
+        if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+            local item = Import.listDir()[ImportSelector:getSelected()]
+            if item and item.name ~= "..." then
+                ChapterSaver.importManga(Import.getPath(item))
+                ImportSelector:resetSelected()
+            end
+        end
     end
     if touch.x or pad ~= 0 then
         Timer.reset(TouchTimer)
@@ -240,6 +260,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         DownloadSelector:input(#ChapterSaver.getDownloadingList(), oldpad, pad, touch.x)
     elseif mode == "SETTINGS" then
         SettingSelector:input(#Settings:list(), oldpad, pad, touch.x)
+    elseif mode == "IMPORT" then
+        ImportSelector:input(#Import.listDir(), oldpad, pad, touch.x)
     end
     if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
         TOUCH.MODE = TOUCH.READ
@@ -265,6 +287,14 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                         local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
                         if list[id] then
                             selectSetting(id)
+                        end
+                    end
+                elseif mode == "IMPORT" then
+                    if oldtouch.x > 265 and oldtouch.x < 945 then
+                        local list = Import.listDir()
+                        local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+                        if list[id] then
+                            selectImport(id)
                         end
                     end
                 elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
@@ -299,6 +329,11 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         elseif mode == "SETTINGS" then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
             if Settings:list()[id] then
+                new_itemID = id
+            end
+        elseif mode == "IMPORT" then
+            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+            if Import.listDir()[id] then
                 new_itemID = id
             end
         end
@@ -436,6 +471,27 @@ function Catalogs.update()
             Slider.Y = max(-10, ceil(#list) * 75 - 514)
             Slider.V = 0
         end
+    elseif mode == "IMPORT" then
+        local list = Import.listDir()
+        local item = ImportSelector:getSelected()
+        Panel.set{
+            "L\\R", "DPad", "Circle", "Cross", "Square",
+            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+            DPad = Language[Settings.Language].PANEL.CHOOSE,
+            Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT,
+            Cross = Language[Settings.Language].PANEL.SELECT,
+            Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
+        }
+        if item ~= 0 then
+            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
+        end
+        if Slider.Y < -10 then
+            Slider.Y = -10
+            Slider.V = 0
+        elseif Slider.Y > ceil(#list) * 75 - 514 then
+            Slider.Y = max(-10, ceil(#list) * 75 - 514)
+            Slider.V = 0
+        end
     end
     if StartSearch then
         if Keyboard.getState() ~= RUNNING then
@@ -492,6 +548,41 @@ function Catalogs.draw()
             for i = ks, ks + 1 do
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
+            end
+        end
+    elseif mode == "IMPORT" then
+        local list = Import.listDir()
+        local start = max(1, floor((Slider.Y - 10) / 75))
+        local y = start * 75 - Slider.Y
+        for i = start, min(#list, start + 9) do
+            local object = list[i]
+            Graphics.fillRect(264, 946, y - 75, y, Color.new(0, 0, 0, 32))
+            Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+            if object.active then
+                Font.print(FONT26, 275, y - 70, object.name, COLOR_BLACK)
+            else
+                Font.print(FONT26, 275, y - 70, object.name, COLOR_GRAY)
+            end
+            local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
+            Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
+            if Slider.ItemID == i then
+                Graphics.fillRect(265, 945, y - 74, y, Color.new(0, 0, 0, 32))
+            end
+            y = y + 75
+        end
+        local elements_count = #list
+        if elements_count > 0 then
+            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
+            scroll_height = elements_count > 7 and #Parsers * 75 / 524 or nil
+        end
+        local item = ImportSelector:getSelected()
+        if item ~= 0 then
+            y = item * 75 - Slider.Y
+            local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+            local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
+            for i = ks, ks + 1 do
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
             end
         end
     elseif mode == "DOWNLOAD" then
@@ -688,5 +779,6 @@ function Catalogs.setMode(new_mode)
     ParserSelector:resetSelected()
     DownloadSelector:resetSelected()
     SettingSelector:resetSelected()
+    ImportSelector:resetSelected()
     Catalogs.terminate()
 end

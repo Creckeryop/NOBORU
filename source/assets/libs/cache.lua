@@ -35,11 +35,13 @@ function Cache.addManga(Manga, Chapters)
         if Chapters then
             Cache.saveChapters(Manga, Chapters)
         end
-        Threads.insertTask(tostring(Manga) .. "coverDownload", {
-            Type = "FileDownload",
-            Path = "cache/" .. key .. "/cover.image",
-            Link = Manga.ImageLink
-        })
+        if Manga.ParserID~="IMPORTED" then
+            Threads.insertTask(tostring(Manga) .. "coverDownload", {
+                Type = "FileDownload",
+                Path = "cache/" .. key .. "/cover.image",
+                Link = Manga.ImageLink
+            })
+        end
         Cache.save()
     end
 end

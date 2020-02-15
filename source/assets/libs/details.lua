@@ -88,7 +88,6 @@ end
 
 function Details.setManga(manga)
     if manga then
-        Panel.hide()
         Manga = manga
         ms = 50 * string.len(manga.Name)
         dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 920, 0)
@@ -105,7 +104,7 @@ function Details.setManga(manga)
         elseif Database.check(Manga) then
             Cache.addManga(Manga, Chapters)
         end
-        if Threads.netActionUnSafe(Network.isWifiEnabled) then
+        if Threads.netActionUnSafe(Network.isWifiEnabled) and GetParserByID(manga.ParserID) then
             ParserManager.getChaptersAsync(manga, Chapters)
             is_chapter_loaded_offline = false
         else
@@ -200,7 +199,6 @@ function Details.input(oldpad, pad, oldtouch, touch)
             Loading.setMode("NONE")
             ParserManager.remove(Chapters)
             Timer.reset(animation_timer)
-            Panel.show()
             old_fade = fade
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             press_download(DetailsSelector.getSelected())
@@ -282,9 +280,9 @@ function Details.draw()
                 local bookmark = Cache.getBookmark(Chapters[i])
                 if bookmark ~= nil and bookmark ~= true then
                     Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, WHITE)
-                    Font.print(BONT16, 290, y + 18, Chapters[i].Name, WHITE)
+                    Font.print(BONT16, 290, y + 18, Chapters[i].Name or ("Chapter "..i), WHITE)
                 else
-                    Font.print(BONT16, 290, y + 30, Chapters[i].Name, WHITE)
+                    Font.print(BONT16, 290, y + 30, Chapters[i].Name or ("Chapter "..i), WHITE)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, Color.new(0, 0, 0, Alpha))
                 if i < #Chapters then

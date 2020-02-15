@@ -86,7 +86,25 @@ local function changePage(page)
         local p = page + o[k]
         if p > 0 and p <= #Pages then
             if not Pages[p].Image and not (Pages[p].Link == "LoadPrev" or Pages[p].Link == "LoadNext") then
-                if Pages[p].Path then
+                if Pages[p].Extract then
+                    local new_page = Pages[p]
+                    Threads.insertTask(new_page, {
+                        Type = "UnZipFile",
+                        Path = new_page.Path,
+                        Extract = new_page.Extract,
+                        DestPath = "ux0:data/noboru/cache/"..p..".image",
+                        OnComplete = function ()
+                            new_page.Extract = nil
+                            new_page.Path = "cache/"..p..".image"
+                            Threads.insertTask(new_page, {
+                                Type = "Image",
+                                Path = new_page.Path,
+                                Table = new_page,
+                                Index = "Image"
+                            })
+                        end
+                    })
+                elseif Pages[p].Path then
                     Threads.insertTask(Pages[p], {
                         Type = "Image",
                         Path = Pages[p].Path,
@@ -113,6 +131,7 @@ local function changePage(page)
                 Pages[i][1],
                 Link = Pages[i].Link,
                 Path = Pages[i].Path,
+                Extract = Pages[i].Extract,
                 x = 0,
                 y = 0
             }
@@ -207,7 +226,9 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             elseif bookmark == Pages.Count then
                 bookmark = true
             end
-            Cache.setBookmark(Chapters[current_chapter], bookmark)
+            if Cache.isCached(Chapters[current_chapter].Manga) then
+                Cache.setBookmark(Chapters[current_chapter], bookmark)
+            end
         end
         for i = 1, #Pages do
             Threads.remove(Pages[i])
@@ -345,6 +366,7 @@ function Reader.update()
                     Pages[#Pages + 1] = {
                         chapter.Pages[i],
                         Path = chapter.Pages[i].Path,
+                        Extract = chapter.Pages[i].Extract,
                         x = 0,
                         y = 0
                     }
@@ -354,6 +376,7 @@ function Reader.update()
                     Pages[#Pages + 1] = {
                         chapter.Pages[i],
                         Path = chapter.Pages[i].Path,
+                        Extract = chapter.Pages[i].Extract,
                         x = 0,
                         y = 0
                     }
@@ -432,7 +455,25 @@ function Reader.update()
             local p = Pages.Page + math.sign(Pages.Page - Pages.PrevPage)
             if p > 0 and p <= #Pages then
                 if not Pages[p].Image and not (Pages[p].Link == "LoadPrev" or Pages[p].Link == "LoadNext") then
-                    if Pages[p].Path then
+                    if Pages[p].Extract then
+                        local new_page = Pages[p]
+                        Threads.insertTask(new_page, {
+                            Type = "UnZipFile",
+                            Path = new_page.Path,
+                            Extract = new_page.Extract,
+                            DestPath = "ux0:data/noboru/cache/"..p..".image",
+                            OnComplete = function ()
+                                new_page.Extract = nil
+                                new_page.Path = "cache/"..p..".image"
+                                Threads.insertTask(new_page, {
+                                    Type = "Image",
+                                    Path = new_page.Path,
+                                    Table = new_page,
+                                    Index = "Image"
+                                })
+                            end
+                        })
+                    elseif Pages[p].Path then
                         Threads.addTask(Pages[p], {
                             Type = "Image",
                             Path = Pages[p].Path,

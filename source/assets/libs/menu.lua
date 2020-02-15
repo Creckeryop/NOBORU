@@ -17,7 +17,8 @@ end
 local next_mode = {
     ["LIBRARY"] = "CATALOGS",
     ["CATALOGS"] = "HISTORY",
-    ["HISTORY"] = "DOWNLOAD",
+    ["HISTORY"] = "IMPORT",
+    ["IMPORT"] = "DOWNLOAD",
     ["DOWNLOAD"] = "SETTINGS",
     ["SETTINGS"] = "SETTINGS"
 }
@@ -26,7 +27,8 @@ local prev_mode = {
     ["LIBRARY"] = "LIBRARY",
     ["CATALOGS"] = "LIBRARY",
     ["HISTORY"] = "CATALOGS",
-    ["DOWNLOAD"] = "HISTORY",
+    ["IMPORT"] = "HISTORY",
+    ["DOWNLOAD"] = "IMPORT",
     ["SETTINGS"] = "DOWNLOAD"
 }
 
@@ -51,6 +53,8 @@ function Menu.input(oldpad, pad, oldtouch, touch)
                 Menu.setMode("SETTINGS")
             elseif touch.y > 400 then
                 Menu.setMode("DOWNLOAD")
+            elseif touch.y > 340 then
+                Menu.setMode("IMPORT")
             end
         end
         Catalogs.input(oldpad, pad, oldtouch, touch)
@@ -68,6 +72,7 @@ local button_a = {
     ["LIBRARY"] = 1,
     ["CATALOGS"] = 1,
     ["HISTORY"] = 1,
+    ["IMPORT"] = 1,
     ["DOWNLOAD"] = 1,
     ["SETTINGS"] = 1
 }
@@ -88,6 +93,7 @@ function Menu.draw()
     Font.print(FONT30, 30, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 227, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 255 - 128 * button_a["HISTORY"]))
+    Font.print(FONT30, 30, 348, Language[Settings.Language].APP.IMPORT, Color.new(255, 255, 255, 255 - 128 * button_a["IMPORT"]))
     Font.print(FONT30, 30, 408, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
     if ChapterSaver.is_download_running() then
         download_led = math.min(download_led + 0.1, 1)

@@ -31,6 +31,7 @@ loadlib("debug")
 loadlib("chsaver")
 loadlib("cache")
 loadlib("reader")
+loadlib("import")
 
 os = nil
 debug = nil
@@ -42,6 +43,7 @@ System = {
     extractZipAsync = System.extractZipAsync,
     getAsyncState = System.getAsyncState,
     getPictureResolution = System.getPictureResolution,
+    extractFromZipAsync = System.extractFromZipAsync
 }
 
 if doesDirExist("ux0:data/noboru/parsers") then
@@ -185,8 +187,14 @@ local function update()
     end
     if AppMode == MENU then
         Menu.update()
+        if Details.getMode() == "END" then
+            Panel.show()
+        else
+            Panel.hide()
+        end
     elseif AppMode == READER then
         Reader.update()
+        Panel.hide()
     end
     Notifications.update()
 end

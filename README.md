@@ -16,12 +16,27 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 ```
 ux0:data/noboru/cache/ - folder that holds cached manga info (also history)
 ux0:data/noboru/chapters/ - folder that holds chapters saved
+ux0:data/noboru/import/ - folder where you can store files you want to read locally or import to Library (0.35+)
 ux0:data/noboru/parsers/ - folder for parsers
 ux0:data/noboru/save.dat - library savefile
 ux0:data/noboru/c.c - saved chapters info
 ux0:data/noboru/settings.ini - application settings
 ```
 You can simply delete `noboru` folder to reset all settings
+## Importing (0.35+):
+So if you want to add your manga to library, you have four ways:
+* You can import folder with images
+* You can import folder with folders with images
+* You can import folder with .cbz files
+* You can import one .cbz file
+
+Also if you want to read directly .cbz file you can just open file in import section<br><br>
+<b>Requirements to .cbz file:</b>
+* No extra (non-image) files
+* Names of images should end .jpg .jpeg .png or .bmp (webp not supported yet)
+
+<b>Requirements to folders:</b>
+* No extra (non-image) files
 ## Features:
 * Browsing manga sites
 * Searching
@@ -33,7 +48,6 @@ You can simply delete `noboru` folder to reset all settings
 * Multilanguage
 * Reading without network (Offline mode !!Don't forget to add manga in library!! (you can also check `History` tab))
 ## TODO:
-* CBZ, CBR(don't think i will add cbr) or folder with images import support
 * Settings for parserlist (sorting by languages or else, hide some)
 * Notify user if no space left
 * More languages

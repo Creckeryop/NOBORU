@@ -32,6 +32,7 @@ USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML
 COLOR_WHITE = Color.new(255, 255, 255)
 COLOR_BLACK = Color.new(0, 0, 0)
 COLOR_GRAY = Color.new(128, 128, 128)
+COLOR_DARK_GRAY = Color.new(64, 64, 64)
 COLOR_LIGHT_GRAY = Color.new(192, 192, 192)
 COLOR_ROYAL_BLUE = Color.new(65, 105, 226)
 COLOR_CRIMSON = Color.new(137, 30, 43)
@@ -165,9 +166,9 @@ function DrawManga(x, y, Manga, M)
             pcall(drawMangaName, Manga)
         else
             if Manga.PrintName.f then
-                Font.print(BONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 45, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))
+                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT * M / 2 - 47, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))
             end
-            Font.print(BONT16, x - MANGA_WIDTH / 2 + 10, y + MANGA_HEIGHT * M / 2 - 25, Manga.PrintName.s, Color.new(255, 255, 255, 255 * alpha))
+            Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT * M / 2 - 27, Manga.PrintName.s, Color.new(255, 255, 255, 255 * alpha))
         end
     end
 end
