@@ -37,6 +37,7 @@ Also if you want to read directly .cbz file you can just open file in import sec
 
 <b>Requirements to folders:</b>
 * No extra (non-image) files
+
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
 ## Features:
 * Browsing manga sites
