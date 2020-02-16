@@ -27,12 +27,11 @@ You can simply delete `noboru` folder to reset all settings
 So if you want to add your manga to library, you have four ways:
 * You can import folder with images
 * You can import folder with folders with images
-* You can import folder with .cbz files
-* You can import one .cbz file
+* You can import folder with (.cbz, .zip) files
+* You can import one (.cbz, .zip) file
 
 Also if you want to read directly .cbz file you can just open file in import section<br><br>
-<b>Requirements to .cbz file:</b>
-* No extra (non-image) files
+<b>Requirements to .cbz or .zip file:</b>
 * Names of images should end .jpg .jpeg .png or .bmp (webp not supported yet)
 
 <b>Requirements to folders:</b>

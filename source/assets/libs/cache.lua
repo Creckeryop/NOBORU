@@ -46,6 +46,15 @@ function Cache.addManga(Manga, Chapters)
     end
 end
 
+function Cache.removeManga(Manga)
+    local key = get_key(Manga)
+    if data[key] then
+        data[key] = nil
+        Manga.Path = nil
+        rem_dir("ux0:data/noboru/cache/" .. key)
+        Cache.save()
+    end
+end
 ---@param Chapter table
 ---@param mode integer | boolean
 function Cache.setBookmark(Chapter, mode)

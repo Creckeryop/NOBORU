@@ -10,7 +10,7 @@ function Import.listDir()
         local list = listDirectory(path)
         local new_list = {}
         for _, v in ipairs(list) do
-            if v.directory or v.name:match("%.cbz$") then
+            if v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$") then
                 v.active = true
             else
                 v.active = false
@@ -37,7 +37,7 @@ function Import.go(item)
     elseif item.directory then
         path = path .. item.name .. "/"
         dir_list = nil
-    elseif item.name:find("%.cbz$") then
+    elseif item.name:find("%.cbz$") or item.name:find("%.zip$") then
         Reader.load({{
             FastLoad = true,
             Name = item.name:match("(.*)%..-$"),
