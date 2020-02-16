@@ -33,6 +33,8 @@ local StartPage
 
 local orientation
 
+local hideCounterTimer = Timer.new()
+
 local Chapters = {}
 local current_chapter = 1
 
@@ -241,6 +243,9 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         AppMode = MENU
     end
     if STATE == STATE_READING and Pages[Pages.Page] then
+        if touch.x~=nil then
+            Timer.reset(hideCounterTimer)
+        end
         local page = Pages[Pages.Page]
         if page.Zoom then
             local x, y = Controls.readLeftAnalog()
@@ -343,6 +348,8 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
     end
 end
 
+local counterShift = 0
+
 function Reader.update()
     if STATE == STATE_LOADING then
         if Chapters[current_chapter].Pages.Done then
@@ -443,6 +450,7 @@ function Reader.update()
                 end
                 StartPage = nil
             end
+            Timer.reset(hideCounterTimer)
         end
     elseif STATE == STATE_READING then
         if not Pages[Pages.Page] then
@@ -677,6 +685,11 @@ function Reader.update()
                 pageMode = PAGE_LEFT + PAGE_RIGHT
             end
         end
+        if Timer.getTime(hideCounterTimer) > 1500 then
+            counterShift = math.max(counterShift - 1.5, -30)
+        else
+            counterShift = math.min(counterShift + 1.5, 0)
+        end
     end
 end
 
@@ -755,8 +768,8 @@ function Reader.draw()
                 Counter = (Pages.Count - Pages.Page + 1) .. "/" .. Pages.Count
             end
             local Width = Font.getTextWidth(FONT16, Counter) + 20
-            Graphics.fillRect(960 - Width, 960, 0, Font.getTextHeight(FONT16, Counter) + 4, Color.new(0, 0, 0, 128))
-            Font.print(FONT16, 970 - Width, 0, Counter, COLOR_WHITE)
+            Graphics.fillRect(960 - Width, 960, counterShift, counterShift + Font.getTextHeight(FONT16, Counter) + 4, Color.new(0, 0, 0, 128))
+            Font.print(FONT16, 970 - Width, counterShift, Counter, COLOR_WHITE)
         end
     end
 end
