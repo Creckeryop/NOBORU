@@ -5,7 +5,8 @@ local deleteDirectory = System.deleteDirectory
 
 local function r_dir(path)
     if doesDirExist(path) then
-        for k, v in ipairs(listDirectory(path)) do
+        local dir = listDirectory(path) or {}
+        for k, v in ipairs(dir) do
             if v.directory then
                 r_dir(path .. "/" .. v.name)
             else

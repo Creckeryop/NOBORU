@@ -70,7 +70,7 @@ end
 
 function ClearParsers()
     if doesDirExist("ux0:data/noboru/parsers") then
-        local list = listDirectory("ux0:/data/noboru/parsers")
+        local list = listDirectory("ux0:/data/noboru/parsers") or {}
         for _, v in ipairs(list) do
             if not v.directory then
                 deleteFile("ux0:data/noboru/parsers/" .. v.name)

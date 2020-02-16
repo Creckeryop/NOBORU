@@ -646,7 +646,7 @@ function Catalogs.draw()
                 if chapters_space == nil then
                     chapters_space = 0
                     local function get_space_dir(dir)
-                        local d = listDirectory(dir)
+                        local d = listDirectory(dir) or {}
                         for _, v in ipairs(d) do
                             if v.directory then
                                 get_space_dir(dir .. "/" .. v.name)
@@ -683,7 +683,7 @@ function Catalogs.draw()
                 if cache_space == nil then
                     cache_space = 0
                     local function get_space_dir(dir)
-                        local d = listDirectory(dir)
+                        local d = listDirectory(dir) or {}
                         for _, v in ipairs(d) do
                             if v.directory then
                                 get_space_dir(dir .. "/" .. v.name)

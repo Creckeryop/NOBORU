@@ -185,7 +185,7 @@ function ChapterSaver.importManga(path)
     local this = Downloading[path]
     this.F = function()
         if doesDirExist(path) then
-            local dir = listDirectory(path)
+            local dir = listDirectory(path) or {}
             local new_dir = {}
             local type
             for _, f in ipairs(dir) do
@@ -219,7 +219,8 @@ function ChapterSaver.importManga(path)
             if type == "folder" then
                 local cover_loaded = false
                 for _, folder in ipairs(dir) do
-                    for _, file in ipairs(listDirectory(path.."/"..folder.name)) do
+                    local dir_ = listDirectory(path.."/"..folder.name) or {}
+                    for _, file in ipairs(dir_) do
                         if (System.getPictureResolution(path.."/"..folder.name.."/"..file.name) or -1) <= 0 and not file.name:find("%.txt$") and not file.name:find("%.xml$") then
                             Notifications.push("Bad Image found")
                             Downloading[path].Fail = true
@@ -237,7 +238,7 @@ function ChapterSaver.importManga(path)
                         Pages = {},
                         Manga = Manga
                     }
-                    local subdir = listDirectory(path.."/"..folder.name)
+                    local subdir = listDirectory(path.."/"..folder.name) or {}
                     table.sort(subdir, function(a, b) return a.name < b.name end)
                     local img_links = {}
                     for _, f in ipairs(subdir) do
@@ -510,7 +511,7 @@ function ChapterSaver.getChapter(chapter)
         local _table_ = {
             Done = true
         }
-        local zip = listZip(chapter.Path)
+        local zip = listZip(chapter.Path) or {}
         table.sort(zip, function (a,b)
             return a.name < b.name
         end)
@@ -535,7 +536,7 @@ function ChapterSaver.getChapter(chapter)
             closeFile(fh_2)
             local lines = to_lines(pathes)
             if #lines == 1 and (lines[1]:find("%.cbz$") or lines[1]:find("%.zip$")) then
-                local zip = listZip(lines[1])
+                local zip = listZip(lines[1]) or {}
                 table.sort(zip, function (a,b)
                     return a.name < b.name
                 end)
@@ -555,7 +556,7 @@ function ChapterSaver.getChapter(chapter)
                 end
             end
         else
-            local pages = #listDirectory(FOLDER .. k) - 1
+            local pages = #(listDirectory(FOLDER .. k) or {}) - 1
             for i = 1, pages do
                 _table_[i] = {
                     Path = "chapters/" .. k .. "/" .. i .. ".image"
@@ -607,7 +608,7 @@ function ChapterSaver.load()
                     local fh_2 = openFile(FOLDER .. k .. "/done.txt", FREAD)
                     local pages = readFile(fh_2, sizeFile(fh_2))
                     closeFile(fh_2)
-                    local lDir = listDirectory(FOLDER .. k)
+                    local lDir = listDirectory(FOLDER .. k) or {}
                     if tonumber(pages) == #lDir - 1 then
                         --[[
                         -- This code checks all images in cache, their type (more safer)
@@ -637,7 +638,7 @@ function ChapterSaver.load()
                 end
                 cntr = cntr + 1
             end
-            local dir_list = listDirectory("ux0:data/noboru/chapters")
+            local dir_list = listDirectory("ux0:data/noboru/chapters") or {}
             for _, v in ipairs(dir_list) do
                 if not Keys[v.name] and v.directory then
                     rem_dir("ux0:data/noboru/chapters/" .. v.name)

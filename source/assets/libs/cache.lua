@@ -284,7 +284,7 @@ end
 function Cache.clear(mode)
     mode = mode or "notlibrary"
     if mode == "notlibrary" then
-        local d = listDirectory("ux0:data/noboru/cache")
+        local d = listDirectory("ux0:data/noboru/cache") or {}
         for _, v in ipairs(d) do
             if not Database.checkByKey(v.name) and v.directory then
                 rem_dir("ux0:data/noboru/cache/" .. v.name)

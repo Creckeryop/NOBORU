@@ -48,7 +48,7 @@ System = {
 
 if doesDirExist("ux0:data/noboru/parsers") then
     local path = "ux0:data/noboru/parsers/"
-    local files = listDirectory(path)
+    local files = listDirectory(path) or {}
     for _, file in pairs(files) do
         if not file.directory then
             local suc, err = pcall(function()

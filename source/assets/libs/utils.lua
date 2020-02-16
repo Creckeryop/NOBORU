@@ -304,7 +304,8 @@ end
 local r_dir
 function RemoveDirectory(path)
     if doesDirExist(path) then
-        for _, v in ipairs(listDirectory(path)) do
+        local dir = listDirectory(path) or {}
+        for _, v in ipairs(dir) do
             if v.directory then
                 r_dir(path .. "/" .. v.name)
             else

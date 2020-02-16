@@ -7,7 +7,7 @@ local path = fullpath
 local dir_list
 function Import.listDir()
     if dir_list == nil then
-        local list = listDirectory(path)
+        local list = listDirectory(path) or {}
         local new_list = {}
         for _, v in ipairs(list) do
             if v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$") then
