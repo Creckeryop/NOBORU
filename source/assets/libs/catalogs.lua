@@ -247,7 +247,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         end
         if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local item = Import.listDir()[ImportSelector:getSelected()]
-            if item.active and item.name ~= "..." then
+            if item and item.active and item.name ~= "..." then
                 ChapterSaver.importManga(Import.getPath(item))
                 ImportSelector:resetSelected()
             end
@@ -303,7 +303,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                             end
                         else
                             local item = Import.listDir()[floor((Slider.Y - 10 + oldtouch.y) / 75) + 1]
-                            if item.active and item.name ~= "..." then
+                            if item and item.active and item.name ~= "..." then
                                 ChapterSaver.importManga(Import.getPath(item))
                                 ImportSelector:resetSelected()
                             end
