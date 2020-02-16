@@ -168,7 +168,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
             if TOUCH.MODE == TOUCH.READ and oldtouch.x then
                 if oldtouch.x > 320 and oldtouch.x < 920 and oldtouch.y > 90 then
                     local id = math.floor((Slider.Y + oldtouch.y - 20) / 80)
-                    if oldtouch.x < 850 then
+                    if oldtouch.x < 850 or Manga.ParserID == "IMPORTED" then
                         press_manga(id)
                     else
                         press_download(id)
@@ -200,7 +200,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
             ParserManager.remove(Chapters)
             Timer.reset(animation_timer)
             old_fade = fade
-        elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+        elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) and Manga.ParserID ~= "IMPORTED" then
             press_download(DetailsSelector.getSelected())
         elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
             if ContinueChapter then
@@ -291,19 +291,21 @@ function Details.draw()
                 if i == Slider.ItemID then
                     Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24*M))
                 end
-                if ChapterSaver.check(Chapters[i]) then
-                    Graphics.drawRotateImage(920 - 32, y + 37, cross.e, 0)
-                else
-                    local t = ChapterSaver.is_downloading(Chapters[i])
-                    if t then
-                        local text = "0%"
-                        if t.page_count and t.page_count > 0 then
-                            text = math.ceil(100 * t.page / t.page_count) .. "%"
-                        end
-                        local width = Font.getTextWidth(FONT20, text)
-                        Font.print(FONT20, 920 - 32 - width / 2, y + 26, text, COLOR_WHITE)
+                if Manga.ParserID ~= "IMPORTED" then
+                    if ChapterSaver.check(Chapters[i]) then
+                        Graphics.drawRotateImage(920 - 32, y + 37, cross.e, 0)
                     else
-                        Graphics.drawRotateImage(920 - 32, y + 37, dwnld.e, 0)
+                        local t = ChapterSaver.is_downloading(Chapters[i])
+                        if t then
+                            local text = "0%"
+                            if t.page_count and t.page_count > 0 then
+                                text = math.ceil(100 * t.page / t.page_count) .. "%"
+                            end
+                            local width = Font.getTextWidth(FONT20, text)
+                            Font.print(FONT20, 920 - 32 - width / 2, y + 26, text, COLOR_WHITE)
+                        else
+                            Graphics.drawRotateImage(920 - 32, y + 37, dwnld.e, 0)
+                        end
                     end
                 end
             else
@@ -347,7 +349,9 @@ function Details.draw()
                 Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
                 Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
             end
-            Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
+            if Manga.ParserID ~= "IMPORTED" then
+                Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
+            end
         end
         Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)

@@ -98,7 +98,8 @@ Language = {
             LIBRARY_CLEARED = "Библиотека очищена!",
             CACHE_CLEARED = "Кэш очищен!",
             DEVELOPER_THING = "Поставь звезду на Github!",
-            NEW_UPDATE_AVAILABLE = "Доступно новое обновление"
+            NEW_UPDATE_AVAILABLE = "Доступно новое обновление",
+            NO_SPACE_LEFT = "Недостаточно места"
         },
         PANEL = {
             BACK = "Назад",
@@ -213,7 +214,8 @@ Language = {
             LIBRARY_CLEARED = "Library cleared!",
             CACHE_CLEARED = "Cache has been cleared!",
             DEVELOPER_THING = "Start app on Github!",
-            NEW_UPDATE_AVAILABLE = "New update available"
+            NEW_UPDATE_AVAILABLE = "New update available",
+            NO_SPACE_LEFT = "No space left"
         },
         PANEL = {
             BACK = "Back",
@@ -328,7 +330,8 @@ Language = {
             LIBRARY_CLEARED = "La librería ha sido eliminada!",
             CACHE_CLEARED = "La cache ha sido eliminada!",
             DEVELOPER_THING = "Inicia la app de Github!",
-            NEW_UPDATE_AVAILABLE = "Nueva actualización disponible"
+            NEW_UPDATE_AVAILABLE = "Nueva actualización disponible",
+            NO_SPACE_LEFT = "No space left"
         },
         PANEL = {
             BACK = "Volver",

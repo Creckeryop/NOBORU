@@ -56,7 +56,7 @@ function Import.go(item)
 end
 
 function Import.canImport(item)
-    return item.name ~= "..."
+    return item.name ~= "..." and item.active
 end
 
 function Import.getPath(item)

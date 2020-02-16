@@ -26,12 +26,25 @@ local function get_key(chapter)
 end
 
 ChapterSaver.getKey = get_key
-
+local getFreeSpace = System.getFreeSpace
+local notifyied = false
 ---Updates Cache things
 function ChapterSaver.update()
-    if #Order == 0 and Task == nil then return end
+    if #Order == 0 and Task == nil then
+        notifyied = false
+        return
+    end
     if not Task then
         Task = table.remove(Order, 1)
+        if Task.Type == "Download" and getFreeSpace("ux0:") < 50 * 1024 * 1024 then
+            if not notifyied then
+                Notifications.push(Language[Settings.Language].NOTIFICATIONS.NO_SPACE_LEFT)
+                notifyied = true
+            end
+            Downloading[Task.Key] = nil
+            Task = nil
+            return
+        end
         Task.F = coroutine.create(Task.F)
     else
         if coroutine.status(Task.F) ~= "dead" then
@@ -377,6 +390,10 @@ function ChapterSaver.importManga(path)
                     Downloading[path].Fail = true
                 end
                 Downloading[path] = nil
+            else
+                Notifications(path.."\nerror: this format not supported")
+                Downloading[path].Fail = true
+                Downloading[path] = nil
             end
         end
     end
@@ -436,7 +453,6 @@ function ChapterSaver.delete(chapter)
         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
     end
 end
-
 
 ---@return table
 ---Returns all active downloadings
