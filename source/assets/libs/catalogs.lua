@@ -6,6 +6,8 @@ local doesFileExist = System.doesFileExist
 local listDirectory = System.listDirectory
 local deleteFile = System.deleteFile
 
+local imprt = Image:new(Graphics.loadImage("app0:assets/images/import.png"))
+
 local Parser = nil
 local TouchTimer = Timer.new()
 
@@ -293,10 +295,18 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                     end
                 elseif mode == "IMPORT" then
                     if oldtouch.x > 265 and oldtouch.x < 945 then
-                        local list = Import.listDir()
-                        local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
-                        if list[id] then
-                            selectImport(id)
+                        if oldtouch.x < 850 then
+                            local list = Import.listDir()
+                            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+                            if list[id] then
+                                selectImport(id)
+                            end
+                        else
+                            local item = Import.listDir()[floor((Slider.Y - 10 + oldtouch.y) / 75) + 1]
+                            if item.active and item.name ~= "..." then
+                                ChapterSaver.importManga(Import.getPath(item))
+                                ImportSelector:resetSelected()
+                            end
                         end
                     end
                 elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
@@ -558,24 +568,27 @@ function Catalogs.draw()
         local y = start * 75 - Slider.Y
         for i = start, min(#list, start + 9) do
             local object = list[i]
-            Graphics.fillRect(264, 946, y - 75, y, Color.new(0, 0, 0, 32))
-            Graphics.fillRect(265, 945, y - 74, y, COLOR_WHITE)
+            if Slider.ItemID == i then
+                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
+            end
+            if i < #list then
+                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+            end
             if object.active then
                 Font.print(FONT26, 275, y - 70, object.name, COLOR_BLACK)
+                if object.name~="..." then
+                    Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_BLACK)
+                end
             else
                 Font.print(FONT26, 275, y - 70, object.name, COLOR_GRAY)
             end
             local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
-            if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 74, y, Color.new(0, 0, 0, 32))
-            end
             y = y + 75
         end
         local elements_count = #list
-        if elements_count > 0 then
-            Graphics.fillRect(264, 946, y - 75, y - 74, Color.new(0, 0, 0, 32))
-            scroll_height = elements_count > 7 and #Parsers * 75 / 524 or nil
+        if elements_count > 7 then
+            scroll_height = elements_count * 75 / 524
         end
         local item = ImportSelector:getSelected()
         if item ~= 0 then
@@ -583,8 +596,8 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 3, y - 71 + i + 1, wh)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
     elseif mode == "DOWNLOAD" then

@@ -73,6 +73,9 @@ if not doesDirExist("ux0:data/noboru/cache") then
     createDirectory("ux0:data/noboru/cache")
 end
 
+if not doesDirExist("ux0:data/noboru/import") then
+    createDirectory("ux0:data/noboru/import")
+end
 
 ---@param Name string
 ---@param Link string
