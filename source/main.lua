@@ -74,13 +74,15 @@ local fonts = {
 }
 
 local function preload_data()
-    for k, v in ipairs(fonts) do
-        coroutine.yield("Loading fonts "..k.."/"..#fonts)
-        Font.print(v, 0, 0, '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—', COLOR_BLACK)
-    end
     coroutine.yield("Loading settings")
     local suc, err = pcall(Settings.load, Settings)
     if not suc then Console.error(err) end
+    if not Settings.SkipFontLoad then
+        for k, v in ipairs(fonts) do
+            coroutine.yield("Loading fonts "..k.."/"..#fonts)
+            Font.print(v, 0, 0, '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—', COLOR_BLACK)
+        end
+    end
     coroutine.yield("Loading cache, checking existing data")
     suc, err = pcall(Cache.load)
     if not suc then Console.error(err) end

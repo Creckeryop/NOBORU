@@ -280,9 +280,9 @@ function Details.draw()
                 local bookmark = Cache.getBookmark(Chapters[i])
                 if bookmark ~= nil and bookmark ~= true then
                     Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, WHITE)
-                    Font.print(BONT16, 290, y + 18, Chapters[i].Name or ("Chapter "..i), WHITE)
+                    Font.print(BONT16, 290, y + 14, Chapters[i].Name or ("Chapter "..i), WHITE)
                 else
-                    Font.print(BONT16, 290, y + 30, Chapters[i].Name or ("Chapter "..i), WHITE)
+                    Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter "..i), WHITE)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, Color.new(0, 0, 0, Alpha))
                 if i < #Chapters then
@@ -292,7 +292,7 @@ function Details.draw()
                     Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24*M))
                 end
                 if ChapterSaver.check(Chapters[i]) then
-                    Graphics.drawRotateImage(920 - 32, y + 40, cross.e, 0)
+                    Graphics.drawRotateImage(920 - 32, y + 37, cross.e, 0)
                 else
                     local t = ChapterSaver.is_downloading(Chapters[i])
                     if t then
@@ -303,7 +303,7 @@ function Details.draw()
                         local width = Font.getTextWidth(FONT20, text)
                         Font.print(FONT20, 920 - 32 - width / 2, y + 26, text, COLOR_WHITE)
                     else
-                        Graphics.drawRotateImage(920 - 32, y + 40, dwnld.e, 0)
+                        Graphics.drawRotateImage(920 - 32, y + 37, dwnld.e, 0)
                     end
                 end
             else

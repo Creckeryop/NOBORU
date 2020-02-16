@@ -169,6 +169,8 @@ local function selectSetting(index)
             Settings:changeReaderDirection()
         elseif item == "HideInOffline" then
             Settings:hideChapsOffline()
+        elseif item == "SkipFontLoading" then
+            Settings:skipFontLoading()
         end
         if item ~= "ClearChapters" then
             sure_clear_chapters = 0
@@ -665,6 +667,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
             elseif task == "HideInOffline" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.HideInOffline], COLOR_ROYAL_BLUE)
+            elseif task == "SkipFontLoading" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.SkipFontLoad], COLOR_ROYAL_BLUE)
             elseif task == "ZoomReader" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_GRAY)
             elseif task == "ClearLibrary" then

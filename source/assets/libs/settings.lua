@@ -3,10 +3,11 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.34,
+    Version = 0.35,
     KeyType = "EU",
     ReaderDirection = "RIGHT",
-    HideInOffline = true
+    HideInOffline = true,
+    SkipFontLoad = false,
 }
 
 Settings.LateVersion = Settings.Version
@@ -107,6 +108,9 @@ function Settings:load()
             if is(set.NSFW, {true, false}) then
                 self.NSFW = set.NSFW
             end
+            if is(set.SkipFontLoad, {true, false}) then
+                self.SkipFontLoad = set.SkipFontLoad
+            end
             if is(set.Orientation, {"Horizontal", "Vertical"}) then
                 self.Orientation = set.Orientation
             end
@@ -141,14 +145,15 @@ function Settings:save()
         ZoomReader = self.ZoomReader,
         KeyType = self.KeyType,
         ReaderDirection = self.ReaderDirection,
-        HideInOffline = self.HideInOffline
+        HideInOffline = self.HideInOffline,
+        SkipFontLoad = self.SkipFontLoad
     }, "Settings")
     writeFile(fh, set, #set)
     closeFile(fh)
 end
 
 local set_list = {
-    "Language", "Catalogs", "Reader", "Data", "Controls", "About",
+    "Language", "SkipFontLoading", "Catalogs", "Reader", "Data", "Controls", "About",
     Catalogs = {
         "ShowNSFW",
         "HideInOffline"
@@ -268,6 +273,11 @@ end
 
 function Settings:hideChapsOffline()
     self.HideInOffline = not self.HideInOffline
+    self:save()
+end
+
+function Settings:skipFontLoading()
+    self.SkipFontLoad = not self.SkipFontLoad
     self:save()
 end
 

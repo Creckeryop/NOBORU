@@ -15,9 +15,9 @@ function Import.listDir()
             else
                 v.active = false
             end
-            new_list[#new_list+1] = v
+            new_list[#new_list + 1] = v
         end
-        if path~=fullpath then
+        if path ~= fullpath then
             table.insert(new_list, 1, {
                 name = "...",
                 directory = true,
@@ -35,14 +35,14 @@ function Import.go(item)
         path = path:match("(.*/).-/$")
         dir_list = nil
     elseif item.directory then
-        path = path..item.name.."/"
+        path = path .. item.name .. "/"
         dir_list = nil
     elseif item.name:find("%.cbz$") then
         Reader.load({{
             FastLoad = true,
             Name = item.name:match("(.*)%..-$"),
             Link = "AABBCCDDEEFFGG",
-            Path = path..item.name,
+            Path = path .. item.name,
             Pages = {},
             Manga = {
                 Name = item.name:match("(.*)%..-$)"),
@@ -50,7 +50,7 @@ function Import.go(item)
                 ImageLink = "",
                 ParserID = "IMPORTED"
             }
-        }},1)
+        }}, 1)
         AppMode = READER
     end
 end
@@ -60,16 +60,16 @@ function Import.canImport(item)
 end
 
 function Import.getPath(item)
-    return path..item.name
+    return path .. item.name
 end
 
 function Import.back()
-    if path~=fullpath then
+    if path ~= fullpath then
         path = path:match("(.*/).-/$")
         dir_list = nil
     end
 end
 
 function Import.canBack()
-    return path~=fullpath
+    return path ~= fullpath
 end
