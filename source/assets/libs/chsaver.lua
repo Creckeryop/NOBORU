@@ -556,7 +556,7 @@ function ChapterSaver.load()
                     closeFile(fh_2)
                     local lDir = listDirectory(FOLDER .. k)
                     if tonumber(pages) == #lDir - 1 then
-                        local count = 0
+                        --[[local count = 0
                         for i = 1, #lDir do
                             local width = System.getPictureResolution(FOLDER .. k .. "/" .. lDir[i].name)
                             if not width or width <= 0 then
@@ -569,8 +569,9 @@ function ChapterSaver.load()
                             end
                         end
                         if count < 2 then
-                            Keys[k] = true
-                        end
+                            
+                        end]]
+                        Keys[k] = true
                     else
                         rem_dir("ux0:data/noboru/chapters/" .. k)
                         Notifications.push("chapters_error\n" .. k)
