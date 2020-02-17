@@ -21,6 +21,9 @@ end
 
 Cache.getKey = get_key
 
+---@param Manga table
+---@param Chapters table | nil
+---Adds `Manga` to cache if it is not in cache
 function Cache.addManga(Manga, Chapters)
     local key = get_key(Manga)
     if not data[key] then
@@ -46,6 +49,8 @@ function Cache.addManga(Manga, Chapters)
     end
 end
 
+---@param Manga table
+---Removes given `Manga` from cache
 function Cache.removeManga(Manga)
     local key = get_key(Manga)
     if data[key] then
@@ -55,8 +60,10 @@ function Cache.removeManga(Manga)
         Cache.save()
     end
 end
+
 ---@param Chapter table
 ---@param mode integer | boolean
+---Set's bookmark for given `Chapter`
 function Cache.setBookmark(Chapter, mode)
     Cache.addManga(Chapter.Manga)
     local mkey = get_key(Chapter.Manga)
@@ -75,17 +82,27 @@ function Cache.setBookmark(Chapter, mode)
     closeFile(fh)
 end
 
+---@param Chapter table
+---@return nil | boolean | number
+---Gives latest readed page for `Chapter`
+---
+---`number` latest readed page, `true` if manga readed full, `nil` if no bookmark on this `Chapter`
 function Cache.getBookmark(Chapter)
     local mkey = get_key(Chapter.Manga)
     local key = Chapter.Link:gsub("%p", "")
     return bookmarks[mkey] and bookmarks[mkey][key]
 end
 
+---@param Manga table
+---@return string
+---Gives key for latest closed chapter
 function Cache.getLatestBookmark(Manga)
     local mkey = get_key(Manga)
     return bookmarks[mkey] and bookmarks[mkey].LatestBookmark
 end
 
+---@param Manga table
+---Saves all bookmarks related to given `Manga`
 function Cache.saveBookmarks(Manga)
     local mkey = get_key(Manga)
     if doesDirExist("ux0:data/noboru/cache/" .. mkey) then
@@ -99,6 +116,8 @@ function Cache.saveBookmarks(Manga)
     end
 end
 
+---@param Manga table
+---Loads all bookmarks in cache for given `Manga`
 function Cache.loadBookmarks(Manga)
     local mkey = get_key(Manga)
     if doesFileExist("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat") then
@@ -111,12 +130,17 @@ function Cache.loadBookmarks(Manga)
     end
 end
 
+---@param Manga table
+---Checks if bookmarks is already loaded (in cache)
 function Cache.BookmarksLoaded(Manga)
     local mkey = get_key(Manga)
     return bookmarks[mkey] ~= nil
 end
 
 local updated = false
+
+---@param Manga table
+---Creates/Updates History record
 function Cache.makeHistory(Manga)
     local key = get_key(Manga)
     for i, v in ipairs(history) do
@@ -130,6 +154,8 @@ function Cache.makeHistory(Manga)
     updated = true
 end
 
+---@param Manga table
+---Removes given `Manga` from history
 function Cache.removeHistory(Manga)
     local key = get_key(Manga)
     for i, v in ipairs(history) do
@@ -143,6 +169,9 @@ function Cache.removeHistory(Manga)
 end
 
 local cached_history = {}
+
+---@return table
+---Gives list of all History records
 function Cache.getHistory()
     if updated then
         local new_history = {}
@@ -157,6 +186,7 @@ function Cache.getHistory()
     return cached_history
 end
 
+---Saves all History records
 function Cache.saveHistory()
     if doesFileExist("ux0:data/noboru/cache/history.dat") then
         deleteFile("ux0:data/noboru/cache/history.dat")
@@ -167,6 +197,7 @@ function Cache.saveHistory()
     closeFile(fh)
 end
 
+---Loads History records from `history.dat` file
 function Cache.loadHistory()
     if doesFileExist("ux0:data/noboru/cache/history.dat") then
         local fh = openFile("ux0:data/noboru/cache/history.dat", FREAD)
@@ -180,10 +211,15 @@ function Cache.loadHistory()
     updated = true
 end
 
+---@param Manga table
+---Checks if `Manga` is cached
 function Cache.isCached(Manga)
     return Manga and data[get_key(Manga)] ~= nil or false
 end
 
+---@param Manga table
+---@param Chapters table
+---Updates `Chapter` List for given `Manga`
 function Cache.saveChapters(Manga, Chapters)
     local key = get_key(Manga)
     local path = "ux0:data/noboru/cache/" .. key .. "/chapters.dat"
@@ -203,6 +239,9 @@ function Cache.saveChapters(Manga, Chapters)
     closeFile(fh)
 end
 
+---@param Manga table
+---@return table
+---Gives chapter list for given `Manga`
 function Cache.loadChapters(Manga)
     local key = get_key(Manga)
     if data[key] then
@@ -231,6 +270,7 @@ function Cache.loadChapters(Manga)
     return {}
 end
 
+---Loads Cache
 function Cache.load()
     data = {}
     if doesFileExist("ux0:data/noboru/cache/info.txt") then
@@ -265,6 +305,7 @@ function Cache.load()
     Cache.save()
 end
 
+---Saves Cache
 function Cache.save()
     if doesFileExist("ux0:data/noboru/cache/info.txt") then
         deleteFile("ux0:data/noboru/cache/info.txt")
@@ -281,6 +322,8 @@ function Cache.save()
     closeFile(fh)
 end
 
+---@param mode string | '"notlibrary"' | '"all"'
+---Clears cache in specific `mode`
 function Cache.clear(mode)
     mode = mode or "notlibrary"
     if mode == "notlibrary" then

@@ -17,6 +17,7 @@ local updated = false
 local listDirectory = System.listDirectory
 local doesDirExist = System.doesDirExist
 local deleteFile = System.deleteFile
+
 ---@param Name string
 ---@param Link string
 ---@param Lang string

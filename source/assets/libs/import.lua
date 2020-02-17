@@ -5,6 +5,11 @@ local listDirectory = System.listDirectory
 local fullpath = "ux0:data/noboru/import/"
 local path = fullpath
 local dir_list
+
+---@return table
+---Gives folder list of opened directory
+---
+---Table elements: {`name`: string, `directory`: boolean, `active`: boolean, `size`: number}
 function Import.listDir()
     if dir_list == nil then
         local list = listDirectory(path) or {}
@@ -30,6 +35,8 @@ function Import.listDir()
     return dir_list
 end
 
+---@param item table
+---Opens `item` directory / file
 function Import.go(item)
     if item.name == "..." and path ~= fullpath then
         path = path:match("(.*/).-/$")
@@ -55,14 +62,21 @@ function Import.go(item)
     end
 end
 
+---@param item table
+---@return boolean
+---Gives `true` if selected `item` is importable
 function Import.canImport(item)
     return item.name ~= "..." and item.active
 end
 
+---@param item table
+---@return string
+---Returns fullpath of given item
 function Import.getPath(item)
-    return path .. item.name
+    return item and path .. item.name
 end
 
+---Go parent directory of current directory if it is possible
 function Import.back()
     if path ~= fullpath then
         path = path:match("(.*/).-/$")
@@ -70,6 +84,8 @@ function Import.back()
     end
 end
 
+---@return boolean
+---Says does current directory has accessible parent directory
 function Import.canBack()
     return path ~= fullpath
 end

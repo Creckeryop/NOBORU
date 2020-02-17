@@ -266,6 +266,7 @@ function Threads.isDownloadRunning()
     return System.getAsyncState() == 0 or #Order ~= 0 or Task ~= nil
 end
 
+---You can use Network function in here if you sure that your function is safe
 function Threads.netActionUnSafe(foo)
     if not net_inited then
         Network.init()
@@ -277,6 +278,7 @@ function Threads.netActionUnSafe(foo)
     end
 end
 
+---Add Network function that uses curl in Task and execute it
 function Threads.netActionSafe(foo)
     repeat until System.getAsyncState() ~= 0
     return Threads.netActionUnSafe(foo)
@@ -335,7 +337,7 @@ function Threads.insertTask(UniqueKey, T)
     return taskete(UniqueKey, T, taskinsert)
 end
 
-local function taskadd(task)
+local function task_add(task)
     Order[#Order + 1] = task
 end
 
@@ -344,7 +346,7 @@ end
 ---@return boolean
 ---Adds task to threads
 function Threads.addTask(UniqueKey, T)
-    return taskete(UniqueKey, T, taskadd)
+    return taskete(UniqueKey, T, task_add)
 end
 
 ---Terminates Threads functions and net features

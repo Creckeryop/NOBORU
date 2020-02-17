@@ -4,7 +4,6 @@ local Order = {}
 
 local Task = nil
 local Trash = {}
-
 local uniques = {}
 
 local doesFileExist = System.doesFileExist
@@ -195,6 +194,7 @@ function ParserManager.updateParserList(Table, Insert)
     uniques["Update"] = T
 end
 
+---Clears ParserManager tasks
 function ParserManager.clear()
     Order = {}
     uniques = {}
