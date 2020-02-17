@@ -4,7 +4,6 @@ local TOUCH = TOUCH()
 
 local doesFileExist = System.doesFileExist
 local listDirectory = System.listDirectory
-local deleteFile = System.deleteFile
 
 local imprt = Image:new(Graphics.loadImage("app0:assets/images/import.png"))
 
@@ -36,7 +35,7 @@ local function freeMangaImage(manga)
 end
 
 local function loadMangaImage(manga)
-    if manga.Path and doesFileExist("ux0:data/noboru/" .. manga.Path) and System.getPictureResolution("ux0:data/noboru/"..manga.Path) or -1 > 0 then
+    if manga.Path and doesFileExist("ux0:data/noboru/" .. manga.Path) and System.getPictureResolution("ux0:data/noboru/" .. manga.Path) or -1 > 0 then
         Threads.addTask(manga, {
             Type = "Image",
             Path = manga.Path,
@@ -112,8 +111,6 @@ local sure_clear_library
 local sure_clear_chapters
 local sure_clear_all_cache
 local sure_clear_cache
-local sure_update
-
 
 local MangaSelector = Selector:new(-4, 4, -1, 1, function() return max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1) end)
 local ParserSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
@@ -185,9 +182,6 @@ local function selectSetting(index)
         end
         if item ~= "ClearLibrary" then
             sure_clear_library = 0
-        end
-        if item ~= "CheckUpdate" then
-            sure_update = 0
         end
     end
 end
@@ -333,17 +327,17 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             if GetParserList()[id] then
                 new_itemID = id
             end
-        elseif mode == "DOWNLOAD" then
+        elseif mode == "DOWNLOAD" and oldtouch.x > 265 and oldtouch.x < 945 then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
             if ChapterSaver.getDownloadingList()[id] then
                 new_itemID = id
             end
-        elseif mode == "SETTINGS" then
+        elseif mode == "SETTINGS" and oldtouch.x > 265 and oldtouch.x < 945 then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
             if Settings:list()[id] then
                 new_itemID = id
             end
-        elseif mode == "IMPORT" then
+        elseif mode == "IMPORT" and oldtouch.x > 265 and oldtouch.x < 945 then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
             if Import.listDir()[id] then
                 new_itemID = id
@@ -522,9 +516,9 @@ function Catalogs.update()
         end
     end
 end
+
 local download_bar = 0
 function Catalogs.draw()
-    Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
     local scroll_height
     if mode == "CATALOGS" then
         local first = max(1, floor((Slider.Y - 10) / 75))
@@ -571,19 +565,26 @@ function Catalogs.draw()
             if Slider.ItemID == i then
                 Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
             end
-            if i < #list then
-                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
-            end
             if object.active then
                 Font.print(FONT26, 275, y - 70, object.name, COLOR_BLACK)
-                if object.name~="..." then
-                    Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_BLACK)
-                end
             else
                 Font.print(FONT26, 275, y - 70, object.name, COLOR_GRAY)
             end
             local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
+            if Slider.ItemID == i then
+                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH, 1, 75, Color.new(200, 200, 200))
+                Graphics.fillRect(910, 955, y - 75, y, Color.new(200, 200, 200))
+            else
+                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH, 1, 75, Color.new(245, 245, 245))
+                Graphics.fillRect(910, 955, y - 75, y, Color.new(245, 245, 245))
+            end
+            if object.active and object.name ~= "..." then
+                Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_BLACK)
+            end
+            if i < #list then
+                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+            end
             y = y + 75
         end
         local elements_count = #list
@@ -628,7 +629,7 @@ function Catalogs.draw()
         end
         local elements_count = #list
         if elements_count > 7 then
-            scroll_height =  elements_count * 75 / 524
+            scroll_height = elements_count * 75 / 524
         end
         local item = DownloadSelector:getSelected()
         if item ~= 0 then
@@ -758,6 +759,7 @@ function Catalogs.draw()
             scroll_height = ceil(#Results / 4) * (MANGA_HEIGHT + 12) / 524
         end
     end
+    Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
     if scroll_height then
         Graphics.fillRect(955, 960, Slider.Y / scroll_height, (Slider.Y + 524) / scroll_height, COLOR_BLACK)
     end
@@ -791,7 +793,6 @@ function Catalogs.setMode(new_mode)
     sure_clear_chapters = 0
     sure_clear_cache = 0
     sure_clear_all_cache = 0
-    sure_update = 0
     MangaSelector:resetSelected()
     ParserSelector:resetSelected()
     DownloadSelector:resetSelected()

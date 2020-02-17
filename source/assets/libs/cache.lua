@@ -15,6 +15,7 @@ local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
 local listDirectory = System.listDirectory
 local rem_dir = RemoveDirectory
+
 local function get_key(Manga)
     return (Manga.ParserID .. Manga.Link):gsub("%p", "")
 end
