@@ -39,7 +39,7 @@ function Cache.addManga(Manga, Chapters)
         if Chapters then
             Cache.saveChapters(Manga, Chapters)
         end
-        if Manga.ParserID~="IMPORTED" then
+        if Manga.ParserID ~= "IMPORTED" then
             Threads.insertTask(tostring(Manga) .. "coverDownload", {
                 Type = "FileDownload",
                 Path = "cache/" .. key .. "/cover.image",
@@ -292,7 +292,7 @@ function Cache.load()
                         local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
                         if not image_size or image_size <= 0 then
                             deleteFile("ux0:data/noboru/" .. v.Path)
-                            --Notifications.push("image_error\n" .. v.Path)
+                        --Notifications.push("image_error\n" .. v.Path)
                         end
                     end
                     data[k] = v

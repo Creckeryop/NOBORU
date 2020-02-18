@@ -192,7 +192,7 @@ function ChapterSaver.importManga(path)
                 local new_type
                 if f.directory then
                     new_type = "folder"
-                elseif (System.getPictureResolution(path.."/"..f.name) or -1) > 0 then
+                elseif (System.getPictureResolution(path .. "/" .. f.name) or -1) > 0 then
                     new_type = "image"
                 elseif f.name:find("%.cbz$") or f.name:find("%.zip$") then
                     new_type = "package"
@@ -219,9 +219,9 @@ function ChapterSaver.importManga(path)
             if type == "folder" then
                 local cover_loaded = false
                 for _, folder in ipairs(dir) do
-                    local dir_ = listDirectory(path.."/"..folder.name) or {}
+                    local dir_ = listDirectory(path .. "/" .. folder.name) or {}
                     for _, file in ipairs(dir_) do
-                        if (System.getPictureResolution(path.."/"..folder.name.."/"..file.name) or -1) <= 0 and not file.name:find("%.txt$") and not file.name:find("%.xml$") then
+                        if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. file.name) or -1) <= 0 and not file.name:find("%.txt$") and not file.name:find("%.xml$") then
                             Notifications.push("Bad Image found")
                             Downloading[path].Fail = true
                             Downloading[path] = nil
@@ -238,30 +238,30 @@ function ChapterSaver.importManga(path)
                         Pages = {},
                         Manga = Manga
                     }
-                    local subdir = listDirectory(path.."/"..folder.name) or {}
+                    local subdir = listDirectory(path .. "/" .. folder.name) or {}
                     table.sort(subdir, function(a, b) return a.name < b.name end)
                     local img_links = {}
                     for _, f in ipairs(subdir) do
-                        if (System.getPictureResolution(path.."/"..folder.name.."/"..f.name) or -1) > 0 then
-                            img_links[#img_links + 1] = path.."/"..folder.name.."/"..f.name
+                        if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. f.name) or -1) > 0 then
+                            img_links[#img_links + 1] = path .. "/" .. folder.name .. "/" .. f.name
                         end
                     end
                     if #img_links > 0 then
                         Chapters[#Chapters + 1] = Chapter
                         if not cover_loaded then
-                            cpy_file(img_links[1], "ux0:data/noboru/cache/"..Cache.getKey(Manga).."/cover.image")
+                            cpy_file(img_links[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
                             cover_loaded = true
                         end
                         img_links = table.concat(img_links, "\n")
                         local k = get_key(Chapter)
-                        rem_dir(FOLDER..k)
-                        createDirectory(FOLDER..k)
+                        rem_dir(FOLDER .. k)
+                        createDirectory(FOLDER .. k)
                         local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
                         writeFile(fh, img_links, #img_links)
                         closeFile(fh)
                         Keys[k] = true
                     else
-                        Notifications.push(Chapter.Name.."\nerror: no supported images found")
+                        Notifications.push(Chapter.Name .. "\nerror: no supported images found")
                     end
                 end
                 if #Chapters > 0 then
@@ -270,14 +270,14 @@ function ChapterSaver.importManga(path)
                     ChapterSaver.save()
                 else
                     Cache.removeManga(Manga)
-                    Notifications.push(path.."\nerror: no supported chapters found")
+                    Notifications.push(path .. "\nerror: no supported chapters found")
                     Downloading[path].Fail = true
                 end
                 Downloading[path] = nil
             elseif type == "image" then
                 local img_links = {}
                 for _, f in ipairs(dir) do
-                    img_links[_] = path.."/"..f.name
+                    img_links[_] = path .. "/" .. f.name
                 end
                 local Chapter = {
                     Name = Manga.Name,
@@ -287,11 +287,11 @@ function ChapterSaver.importManga(path)
                 }
                 if #img_links > 0 then
                     Cache.addManga(Manga, {Chapter})
-                    cpy_file(img_links[1], "ux0:data/noboru/cache/"..Cache.getKey(Manga).."/cover.image")
+                    cpy_file(img_links[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
                     img_links = table.concat(img_links, "\n")
                     local k = get_key(Chapter)
-                    rem_dir(FOLDER..k)
-                    createDirectory(FOLDER..k)
+                    rem_dir(FOLDER .. k)
+                    createDirectory(FOLDER .. k)
                     local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
                     writeFile(fh, img_links, #img_links)
                     closeFile(fh)
@@ -299,7 +299,7 @@ function ChapterSaver.importManga(path)
                     Database.add(Manga)
                     ChapterSaver.save()
                 else
-                    Notifications.push(path.."\nerror: no supported images found")
+                    Notifications.push(path .. "\nerror: no supported images found")
                     Downloading[path].Fail = true
                 end
                 Downloading[path] = nil
@@ -315,14 +315,14 @@ function ChapterSaver.importManga(path)
                         Pages = {},
                         Manga = Manga
                     }
-                    local zip_dir = listZip(path.."/"..pack.name) or {}
+                    local zip_dir = listZip(path .. "/" .. pack.name) or {}
                     table.sort(zip_dir, function(a, b) return a.name < b.name end)
                     local contains_images = false
                     for _, file in ipairs(zip_dir) do
                         Console.write(file.name)
                         if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
                             if not cover_loaded then
-                                extractFromZip(path.."/"..pack.name, file.name, "ux0:data/noboru/cache/"..mk.."/cover.image")
+                                extractFromZip(path .. "/" .. pack.name, file.name, "ux0:data/noboru/cache/" .. mk .. "/cover.image")
                                 cover_loaded = true
                             end
                             contains_images = true
@@ -332,14 +332,14 @@ function ChapterSaver.importManga(path)
                     if contains_images then
                         Chapters[#Chapters + 1] = Chapter
                         local k = get_key(Chapter)
-                        rem_dir(FOLDER..k)
-                        createDirectory(FOLDER..k)
+                        rem_dir(FOLDER .. k)
+                        createDirectory(FOLDER .. k)
                         local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
-                        writeFile(fh, path.."/"..pack.name, #(path.."/"..pack.name))
+                        writeFile(fh, path .. "/" .. pack.name, #(path .. "/" .. pack.name))
                         closeFile(fh)
                         Keys[k] = true
                     else
-                        Notifications.push(path.."/"..pack.name.."\nerror: no supported images found")
+                        Notifications.push(path .. "/" .. pack.name .. "\nerror: no supported images found")
                     end
                 end
                 if #Chapters > 0 then
@@ -348,7 +348,7 @@ function ChapterSaver.importManga(path)
                     ChapterSaver.save()
                 else
                     Cache.removeManga(Manga)
-                    Notifications.push(Manga.Name.."\nerror: no supported chapters found")
+                    Notifications.push(Manga.Name .. "\nerror: no supported chapters found")
                     Downloading[path].Fail = true
                 end
                 Downloading[path] = nil
@@ -369,15 +369,15 @@ function ChapterSaver.importManga(path)
                 for _, file in ipairs(zip_dir) do
                     Console.write(file.name)
                     if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
-                        extractFromZip(path, file.name, "ux0:data/noboru/cache/"..mk.."/cover.image")
+                        extractFromZip(path, file.name, "ux0:data/noboru/cache/" .. mk .. "/cover.image")
                         cover_loaded = true
                         break
                     end
                 end
                 if cover_loaded then
                     local k = get_key(Chapter)
-                    rem_dir(FOLDER..k)
-                    createDirectory(FOLDER..k)
+                    rem_dir(FOLDER .. k)
+                    createDirectory(FOLDER .. k)
                     local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
                     writeFile(fh, path, #path)
                     closeFile(fh)
@@ -387,12 +387,12 @@ function ChapterSaver.importManga(path)
                     ChapterSaver.save()
                 else
                     Cache.removeManga(Manga)
-                    Notifications(path.."\nerror: no supported images found")
+                    Notifications(path .. "\nerror: no supported images found")
                     Downloading[path].Fail = true
                 end
                 Downloading[path] = nil
             else
-                Notifications(path.."\nerror: this format not supported")
+                Notifications(path .. "\nerror: this format not supported")
                 Downloading[path].Fail = true
                 Downloading[path] = nil
             end
@@ -512,12 +512,12 @@ function ChapterSaver.getChapter(chapter)
             Done = true
         }
         local zip = listZip(chapter.Path) or {}
-        table.sort(zip, function (a,b)
+        table.sort(zip, function(a, b)
             return a.name < b.name
         end)
         for i, file in ipairs(zip) do
             if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
-                _table_[#_table_+1] = {
+                _table_[#_table_ + 1] = {
                     Extract = file.name,
                     Path = chapter.Path:match("/noboru/(.*)$")
                 }
@@ -530,19 +530,19 @@ function ChapterSaver.getChapter(chapter)
         Done = true
     }
     if Keys[k] then
-        if doesFileExist(FOLDER..k.."/custom.txt") then
+        if doesFileExist(FOLDER .. k .. "/custom.txt") then
             local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
             local pathes = readFile(fh_2, sizeFile(fh_2))
             closeFile(fh_2)
             local lines = to_lines(pathes)
             if #lines == 1 and (lines[1]:find("%.cbz$") or lines[1]:find("%.zip$")) then
                 local zip = listZip(lines[1]) or {}
-                table.sort(zip, function (a,b)
+                table.sort(zip, function(a, b)
                     return a.name < b.name
                 end)
                 for _, file in ipairs(zip) do
                     if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
-                        _table_[#_table_+1] = {
+                        _table_[#_table_ + 1] = {
                             Extract = file.name,
                             Path = lines[1]:match("/noboru/(.*)$")
                         }
@@ -614,18 +614,18 @@ function ChapterSaver.load()
                         -- This code checks all images in cache, their type (more safer)
                         local count = 0
                         for i = 1, #lDir do
-                            local width = System.getPictureResolution(FOLDER .. k .. "/" .. lDir[i].name)
-                            if not width or width <= 0 then
-                                count = count + 1
-                                if count == 2 then
-                                    rem_dir("ux0:data/noboru/chapters/" .. k)
-                                    Notifications.push("chapters_error_wrong_image\n" .. k)
-                                    break
-                                end
-                            end
+                        local width = System.getPictureResolution(FOLDER .. k .. "/" .. lDir[i].name)
+                        if not width or width <= 0 then
+                        count = count + 1
+                        if count == 2 then
+                        rem_dir("ux0:data/noboru/chapters/" .. k)
+                        Notifications.push("chapters_error_wrong_image\n" .. k)
+                        break
+                        end
+                        end
                         end
                         if count < 2 then
-                            Keys[k] = true
+                        Keys[k] = true
                         end]]
                         Keys[k] = true
                     else

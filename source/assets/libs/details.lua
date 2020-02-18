@@ -70,7 +70,7 @@ local function updateContinueManga(Manga)
         local Latest = Cache.getLatestBookmark(Manga)
         for i = 1, #Chapters do
             local bookmark = Cache.getBookmark(Chapters[i])
-            local key = Chapters[i].Link:gsub("%p","")
+            local key = Chapters[i].Link:gsub("%p", "")
             if Latest == key then
                 if bookmark == true then
                     ContinueChapter = i + 1
@@ -280,16 +280,16 @@ function Details.draw()
                 local bookmark = Cache.getBookmark(Chapters[i])
                 if bookmark ~= nil and bookmark ~= true then
                     Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, WHITE)
-                    Font.print(BONT16, 290, y + 14, Chapters[i].Name or ("Chapter "..i), WHITE)
+                    Font.print(BONT16, 290, y + 14, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 else
-                    Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter "..i), WHITE)
+                    Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, Color.new(0, 0, 0, Alpha))
                 if i < #Chapters then
                     Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
                 end
                 if i == Slider.ItemID then
-                    Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24*M))
+                    Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24 * M))
                 end
                 if Manga.ParserID ~= "IMPORTED" then
                     if ChapterSaver.check(Chapters[i]) then

@@ -79,7 +79,7 @@ local function preload_data()
     if not suc then Console.error(err) end
     if not Settings.SkipFontLoad then
         for k, v in ipairs(fonts) do
-            coroutine.yield("Loading fonts "..k.."/"..#fonts)
+            coroutine.yield("Loading fonts " .. k .. "/" .. #fonts)
             Font.print(v, 0, 0, '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—', COLOR_BLACK)
         end
     end
@@ -102,16 +102,18 @@ local function preload_data()
     if not suc then Console.error(err) end
 end
 
+Screen.flip()
+Screen.waitVblankStart()
+
 MENU = 0
 READER = 1
 AppMode = MENU
 
 local TouchLock = false
 
-Screen.flip()
-Screen.waitVblankStart()
 local f = coroutine.create(preload_data)
-while coroutine.status(f)~="dead" do
+
+while coroutine.status(f) ~= "dead" do
     Graphics.initBlend()
     Screen.clear()
     local _, text, prog = coroutine.resume(f)
@@ -140,7 +142,7 @@ local function input()
     oldpad, pad = pad, Controls.read()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
     if Changes.isActive() then
-        if touch.x or pad~=0 then
+        if touch.x or pad ~= 0 then
             oldpad = Changes.close(pad) or 0
         end
         pad = oldpad
@@ -183,7 +185,7 @@ local function update()
     end
     if fade > 0 then
         fade = fade - fade / 8
-        if fade < 1/254 then
+        if fade < 1 / 254 then
             fade = 0
         end
     end
@@ -211,8 +213,12 @@ local function draw()
     Loading.draw()
     if fade > 0 then
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 255 * fade))
-        Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo, Color.new(255, 255, 255, 255 * fade))
-    else
+        if logo then
+            Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo, Color.new(255, 255, 255, 255 * fade))
+        end
+    elseif logo then
+        Graphics.freeImage(logo)
+        logo = nil
         Changes.draw()
     end
     Notifications.draw()
@@ -222,6 +228,7 @@ local function draw()
     Screen.flip()
     Screen.waitVblankStart()
 end
+
 while true do
     input()
     update()

@@ -94,10 +94,10 @@ local function changePage(page)
                         Type = "UnZipFile",
                         Path = new_page.Path,
                         Extract = new_page.Extract,
-                        DestPath = "ux0:data/noboru/cache/"..p..".image",
-                        OnComplete = function ()
+                        DestPath = "ux0:data/noboru/cache/" .. p .. ".image",
+                        OnComplete = function()
                             new_page.Extract = nil
-                            new_page.Path = "cache/"..p..".image"
+                            new_page.Path = "cache/" .. p .. ".image"
                             Threads.insertTask(new_page, {
                                 Type = "Image",
                                 Path = new_page.Path,
@@ -243,7 +243,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         AppMode = MENU
     end
     if STATE == STATE_READING and Pages[Pages.Page] then
-        if touch.x~=nil then
+        if touch.x ~= nil then
             Timer.reset(hideCounterTimer)
         end
         local page = Pages[Pages.Page]
@@ -469,10 +469,10 @@ function Reader.update()
                             Type = "UnZipFile",
                             Path = new_page.Path,
                             Extract = new_page.Extract,
-                            DestPath = "ux0:data/noboru/cache/"..p..".image",
-                            OnComplete = function ()
+                            DestPath = "ux0:data/noboru/cache/" .. p .. ".image",
+                            OnComplete = function()
                                 new_page.Extract = nil
-                                new_page.Path = "cache/"..p..".image"
+                                new_page.Path = "cache/" .. p .. ".image"
                                 Threads.insertTask(new_page, {
                                     Type = "Image",
                                     Path = new_page.Path,

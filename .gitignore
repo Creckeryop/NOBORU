@@ -2,3 +2,4 @@
 *.elf
 *.velf
 *.o
+*.ini
