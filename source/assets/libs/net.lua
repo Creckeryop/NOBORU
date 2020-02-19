@@ -158,7 +158,28 @@ function Threads.update()
                             Console.write(Task.Image.Parts)
                             Task.Type = "ImageLoadTable"
                         else
-                            Graphics.loadPartImageAsync(Task.Path, 0, 0, Width, Height)
+                            local scale = 1
+                            if Task.MaxWidth and Task.MaxHeight then
+                                if Width > Height then
+                                    scale = Width / Task.MaxWidth
+                                else
+                                    scale = Height / Task.MaxHeight
+                                end
+                            elseif Task.MaxWidth then
+                                scale = Width / Task.MaxWidth
+                            elseif Task.MaxHeight then
+                                scale = Height / Task.MaxHeight
+                            end
+                            if scale <= 1 then
+                                scale = 1
+                            elseif scale <= 2 then
+                                scale = 2
+                            elseif scale <= 4 then
+                                scale = 4
+                            else
+                                scale = 8
+                            end
+                            Graphics.loadImageAsync(Task.Path, scale)
                             Task.Type = "ImageLoad"
                         end
                     end
@@ -310,6 +331,8 @@ local function taskete(UniqueKey, T, foo)
         Header2 = T.Header2 or "",
         Header3 = T.Header3 or "",
         Header4 = T.Header4 or "",
+        MaxHeight = T.MaxHeight,
+        MaxWidth = T.MaxWidth,
         OnComplete = T.OnComplete,
         Extract = T.Extract,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,

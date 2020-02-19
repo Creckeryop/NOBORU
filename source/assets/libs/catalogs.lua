@@ -40,6 +40,7 @@ local function loadMangaImage(manga)
             Type = "Image",
             Path = manga.Path,
             Table = manga,
+            MaxHeight = MANGA_HEIGHT*4,
             Index = "Image"
         })
     else
@@ -48,6 +49,7 @@ local function loadMangaImage(manga)
             Link = manga.ImageLink,
             Table = manga,
             Index = "Image",
+            MaxHeight = MANGA_HEIGHT*4,
             Path = Cache.isCached(manga) and manga.Path or nil
         })
     end
