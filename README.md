@@ -1,10 +1,10 @@
 <img src="/res/logo.png" width="50%" height="50%"><br>
 # NOBORU
 Application for PlayStation Vita to read manga or comics<br>
-![GitHub All Releases](https://img.shields.io/github/downloads/Creckeryop/NOBORU/total)
-![GitHub](https://img.shields.io/github/license/Creckeryop/NOBORU)
-![GitHub top language](https://img.shields.io/github/languages/top/Creckeryop/NOBORU)
-[![VitaDB](https://img.shields.io/badge/Vita-DB-blue)](https://vitadb.rinnegatamante.it/#/info/534)
+![GitHub All Releases](https://img.shields.io/github/downloads/Creckeryop/NOBORU/total?style=flat-square)
+![GitHub](https://img.shields.io/github/license/Creckeryop/NOBORU?style=flat-square)
+![GitHub top language](https://img.shields.io/github/languages/top/Creckeryop/NOBORU?style=flat-square)
+[![VitaDB](https://img.shields.io/badge/Vita-DB-blue?style=flat-square)](https://vitadb.rinnegatamante.it/#/info/534)
 <br>
 ![Screenshots](/res/screenshots.gif)
 ## Features
