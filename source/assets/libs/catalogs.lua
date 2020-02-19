@@ -119,6 +119,7 @@ local ParserSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor
 local DownloadSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 local SettingSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 local ImportSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
+
 local function selectSetting(index)
     local item = Settings:list()[index]
     if Settings:isTab(item) then
@@ -187,6 +188,7 @@ local function selectSetting(index)
         end
     end
 end
+
 local function selectImport(index)
     local list = Import.listDir()
     if index > 0 and index <= #list then
@@ -575,10 +577,10 @@ function Catalogs.draw()
             local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
             if Slider.ItemID == i then
-                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH, 1, 75, Color.new(200, 200, 200))
+                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, Color.new(200, 200, 200))
                 Graphics.fillRect(910, 955, y - 75, y, Color.new(200, 200, 200))
             else
-                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH, 1, 75, Color.new(245, 245, 245))
+                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, Color.new(245, 245, 245))
                 Graphics.fillRect(910, 955, y - 75, y, Color.new(245, 245, 245))
             end
             if object.active and object.name ~= "..." then

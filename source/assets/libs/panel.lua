@@ -50,7 +50,9 @@ function Panel.draw()
     if y >= 23 then return end
     Graphics.fillRect(0, 960, 521 + y, 524 + y, Color.new(0, 0, 0, 32))
     Graphics.fillRect(0, 960, 522 + y, 524 + y, Color.new(0, 0, 0, 32))
-    Graphics.drawImage(0, 524 + y, LUA_PANEL)
+    if LUA_PANEL then
+        Graphics.drawImage(0, 524 + y, LUA_PANEL.e)
+    end
     local x = 20
     for _, v in ipairs(hints) do
         if hints[v] then

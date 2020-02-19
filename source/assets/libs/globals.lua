@@ -23,9 +23,9 @@ Slider = function()
     }
 end
 
-LUA_GRADIENT = Graphics.loadImage("app0:assets/images/gradient.png")
-LUA_GRADIENTH = Graphics.loadImage("app0:assets/images/gradientH.png")
-LUA_PANEL = Graphics.loadImage("app0:assets/images/panel.png")
+LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
+LUA_GRADIENTH = Image:new(Graphics.loadImage("app0:assets/images/gradientH.png"))
+LUA_PANEL = Image:new(Graphics.loadImage("app0:assets/images/panel.png"))
 
 USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 
@@ -163,7 +163,7 @@ function DrawManga(x, y, Manga, M)
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(101, 115, 146))
     end
     local alpha = Mflag and 5 - M / 0.25 or M
-    Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT, MANGA_WIDTH * M, 1, Color.new(255, 255, 255, 255 * alpha))
+    Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH * M, 1, Color.new(255, 255, 255, 255 * alpha))
     if Manga.Name then
         if not Manga.PrintName then
             pcall(drawMangaName, Manga)

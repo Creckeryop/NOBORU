@@ -1,6 +1,6 @@
 Menu = {}
 
-local logoSmall = Graphics.loadImage("app0:assets/images/logo-small.png")
+local logoSmall = Image:new(Graphics.loadImage("app0:assets/images/logo-small.png"))
 
 ---@param mode string
 ---Menu mode
@@ -88,7 +88,9 @@ function Menu.draw()
         end
     end
     Screen.clear(Color.new(0, 0, 0))
-    Graphics.drawImage(0, 0, logoSmall)
+    if logoSmall then
+        Graphics.drawImage(0, 0, logoSmall.e)
+    end
     Graphics.fillRect(255, 960, 0, 544, Color.new(245, 245, 245))
     Font.print(FONT30, 30, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))

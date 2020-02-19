@@ -1,15 +1,18 @@
 local doesDirExist = System.doesDirExist
 local listDirectory = System.listDirectory
 local createDirectory = System.createDirectory
+loadlib("utils")
+loadlib("image")
 
-local logo = Graphics.loadImage("app0:assets/images/logo.png")
+local logo = Image:new(Graphics.loadImage("app0:assets/images/logo.png"))
 
 Graphics.initBlend()
 Screen.clear()
-Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo)
+if logo then
+    Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e)
+end
 Graphics.termBlend()
 
-loadlib("utils")
 loadlib("changes")
 loadlib("selector")
 loadlib("console")
@@ -20,7 +23,6 @@ loadlib("net")
 loadlib("parserhandler")
 loadlib("settings")
 loadlib("database")
-loadlib("image")
 loadlib("parser")
 loadlib("catalogs")
 loadlib("details")
@@ -126,7 +128,9 @@ while coroutine.status(f) ~= "dead" do
     if prog then
         Graphics.fillRect(0, 960 * prog, 542, 544, COLOR_WHITE)
     end
-    Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo)
+    if logo then
+        Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e)
+    end
     Graphics.termBlend()
     Screen.flip()
     Screen.waitVblankStart()
@@ -214,10 +218,10 @@ local function draw()
     if fade > 0 then
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 255 * fade))
         if logo then
-            Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo, Color.new(255, 255, 255, 255 * fade))
+            Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e, Color.new(255, 255, 255, 255 * fade))
         end
     elseif logo then
-        Graphics.freeImage(logo)
+        logo:free()
         logo = nil
         Changes.draw()
     end

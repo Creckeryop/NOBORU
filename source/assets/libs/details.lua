@@ -284,7 +284,7 @@ function Details.draw()
                 else
                     Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
-                Graphics.drawScaleImage(850, y, LUA_GRADIENTH, 1, 79, Color.new(0, 0, 0, Alpha))
+                Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, Color.new(0, 0, 0, Alpha))
                 if i < #Chapters then
                     Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
                 end
