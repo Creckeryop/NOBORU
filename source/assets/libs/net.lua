@@ -141,7 +141,7 @@ function Threads.update()
                         end
                     end
                     Console.write(Width .. "x" .. Height .. " Image got")
-                    if GetTextureMemoryUsed() + bit32.band(bit32.bor(Width, 7), bit32.bnot(7)) * Height * 4 > 96 * 1024 * 1024 then
+                    if GetTextureMemoryUsed() + bit32.band(Width + 7, bit32.bnot(7)) * Height * 4 + 1024 > 89 * 1024 * 1024 then
                         Console.error("No enough memory to load image")
                         uniques[Task.UniqueKey] = nil
                         Task = nil

@@ -40,6 +40,8 @@ debug = nil
 package = nil
 require = nil
 RemoveDirectory = nil
+
+
 System = {
     getLanguage = System.getLanguage,
     extractZipAsync = System.extractZipAsync,
@@ -47,7 +49,6 @@ System = {
     getPictureResolution = System.getPictureResolution,
     extractFromZipAsync = System.extractFromZipAsync
 }
-
 if doesDirExist("ux0:data/noboru/parsers") then
     local path = "ux0:data/noboru/parsers/"
     local files = listDirectory(path) or {}
