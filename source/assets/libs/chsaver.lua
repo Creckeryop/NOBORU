@@ -36,7 +36,7 @@ function ChapterSaver.update()
     end
     if not Task then
         Task = table.remove(Order, 1)
-        if Task.Type == "Download" and getFreeSpace("ux0:") < 50 * 1024 * 1024 then
+        if Task.Type == "Download" and getFreeSpace("ux0:") < 40 * 1024 * 1024 then
             if not notifyied then
                 Notifications.push(Language[Settings.Language].NOTIFICATIONS.NO_SPACE_LEFT)
                 notifyied = true

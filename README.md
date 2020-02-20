@@ -30,7 +30,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 - [ToDo List](#todo)
 - [Credits](#credits)
 ## Requirements
-* At least 50-100 MB memory (for online reading) or more (for offline reading)
+* At least 50-60 MB memory (for online reading) or more (for offline reading)
 ## Data structure
 ```
 ux0:data/noboru/cache/ - folder that holds cached manga info (also history)

@@ -94,14 +94,12 @@ local function changePage(page)
                         Type = "UnZipFile",
                         Path = new_page.Path,
                         Extract = new_page.Extract,
-                        DestPath = "ux0:data/noboru/cache/" .. p .. ".image",
+                        DestPath = "ux0:data/noboru/cache.image",
                         OnComplete = function()
-                            new_page.Extract = nil
-                            new_page.Path = "cache/" .. p .. ".image"
                             Threads.insertTask(new_page, {
                                 Type = "Image",
-                                Path = new_page.Path,
                                 Table = new_page,
+                                Path = "cache.image",
                                 Index = "Image"
                             })
                         end
@@ -465,18 +463,16 @@ function Reader.update()
                 if not Pages[p].Image and not (Pages[p].Link == "LoadPrev" or Pages[p].Link == "LoadNext") then
                     if Pages[p].Extract then
                         local new_page = Pages[p]
-                        Threads.insertTask(new_page, {
+                        Threads.addTask(new_page, {
                             Type = "UnZipFile",
                             Path = new_page.Path,
                             Extract = new_page.Extract,
-                            DestPath = "ux0:data/noboru/cache/" .. p .. ".image",
+                            DestPath = "ux0:data/noboru/cache.image",
                             OnComplete = function()
-                                new_page.Extract = nil
-                                new_page.Path = "cache/" .. p .. ".image"
                                 Threads.insertTask(new_page, {
                                     Type = "Image",
-                                    Path = new_page.Path,
                                     Table = new_page,
+                                    Path = "cache.image",
                                     Index = "Image"
                                 })
                             end
