@@ -135,7 +135,7 @@ function settings.load()
             setSetting(new, "Orientation", {"Horizontal", "Vertical"})
             setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
             setSetting(new, "ReaderDirection", {"LEFT", "RIGHT"})
-            setSetting(new, "KeyType",  {"JP", "EU"})
+            setSetting(new, "KeyType", {"JP", "EU"})
             setSetting(new, "HideInOffline", {true, false})
             setSetting(new, "Theme", Themes)
         end
@@ -243,42 +243,42 @@ SettingsFunctions = {
     SkipFontLoading = function()
         settings.SkipFontLoad = not settings.SkipFontLoad
     end,
-    ChangeUI = function ()
+    ChangeUI = function()
         settings.Theme = nextTableValue(settings.Theme, GetThemes())
         setTheme(settings.Theme)
     end,
-    ShowNSFW = function ()
+    ShowNSFW = function()
         ChangeNSFW()
         settings.NSFW = not settings.NSFW
     end,
-    HideInOffline = function ()
+    HideInOffline = function()
         settings.HideInOffline = not settings.HideInOffline
     end,
-    ReaderOrientation = function ()
-        settings.ReaderOrientation = nextTableValue(settings.ReaderOrientation, {"Horizontal", "Vertical"})
+    ReaderOrientation = function()
+        settings.Orientation = nextTableValue(settings.Orientation, {"Horizontal", "Vertical"})
     end,
-    ZoomReader = function ()
+    ZoomReader = function()
         settings.ZoomReader = nextTableValue(settings.ZoomReader, {"Width", "Height", "Smart"})
     end,
-    ReaderDirection = function ()
+    ReaderDirection = function()
         settings.ReaderDirection = nextTableValue(settings.ReaderDirection, {"LEFT", "RIGHT"})
     end,
-    ClearLibrary = function ()
+    ClearLibrary = function()
         Database.clear()
         Notifications.push(Language[settings.Language].NOTIFICATIONS.LIBRARY_CLEARED)
     end,
-    ClearCache = function ()
+    ClearCache = function()
         Cache.clear()
         Notifications.push(Language[settings.Language].NOTIFICATIONS.CACHE_CLEARED)
     end,
-    ClearAllCache = function ()
+    ClearAllCache = function()
         Cache.clear("all")
         Notifications.push(Language[settings.Language].NOTIFICATIONS.CACHE_CLEARED)
     end,
-    ClearChapters = function ()
+    ClearChapters = function()
         ChapterSaver.clear()
     end,
-    CheckUpdate = function ()
+    CheckUpdate = function()
         if Threads.netActionUnSafe(Network.isWifiEnabled) then
             local file = {}
             Threads.insertTask("CheckLatestVersion", {
@@ -303,10 +303,10 @@ SettingsFunctions = {
             Notifications.push(Language[settings.Language].settings.NoConnection)
         end
     end,
-    ShowAuthor = function ()
+    ShowAuthor = function()
         Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
     end,
-    SwapXO = function ()
+    SwapXO = function()
         settings.KeyType = nextTableValue(settings.KeyType, {"JP", "EU"})
         SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
         SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle

@@ -164,7 +164,7 @@ local function swipe(direction)
                 local page = Pages[Pages.Page - 1]
                 if page and page.Zoom then
                     if page.Zoom * page.Width >= 960 then
-                        page.x = -480 + (960 - page.Width * page.Zoom) / 2
+                        page.x = -page.Width * page.Zoom / 2
                     else
                         page.x = -480
                     end
@@ -176,7 +176,7 @@ local function swipe(direction)
                 local page = Pages[Pages.Page + 1]
                 if page and page.Zoom then
                     if page.Zoom * page.Width >= 960 then
-                        page.x = 960 + 480 - (960 - page.Width * page.Zoom) / 2
+                        page.x = 960 + page.Width * page.Zoom / 2
                     else
                         page.x = 960 + 480
                     end
@@ -190,7 +190,7 @@ local function swipe(direction)
                 local page = Pages[Pages.Page - 1]
                 if page and page.Zoom then
                     if page.Zoom * page.Width >= 544 then
-                        page.y = -272 + (544 - page.Width * page.Zoom) / 2
+                        page.y = -page.Width * page.Zoom / 2
                     else
                         page.y = -272
                     end
@@ -202,7 +202,7 @@ local function swipe(direction)
                 local page = Pages[Pages.Page + 1]
                 if page and page.Zoom then
                     if page.Zoom * page.Width >= 544 then
-                        page.y = 544 + 272 - (544 - page.Width * page.Zoom) / 2
+                        page.y = 544 + page.Width * page.Zoom / 2
                     else
                         page.y = 544 + 272
                     end
@@ -323,18 +323,15 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             touchMode = TOUCH_IDLE
         end
         if touchMode == TOUCH_READ then
-            if orientation == "Horizontal" then
-                local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
-                if len > 10 then
+            local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
+            if len > 10 then
+                if orientation == "Horizontal" then
                     if not page.Zoom or (page.Height * page.Zoom < 545 or math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
                         touchMode = TOUCH_SWIPE
                     else
                         touchMode = TOUCH_MOVE
                     end
-                end
-            elseif orientation == "Vertical" then
-                local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
-                if len > 10 then
+                elseif orientation == "Vertical" then
                     if not page.Zoom or (page.Height * page.Zoom < 961 or math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
                         touchMode = TOUCH_SWIPE
                     else
@@ -695,14 +692,14 @@ function Reader.draw()
         local manga_name = Chapters[current_chapter].Manga.Name
         local prepare_message = Language[Settings.Language].READER.PREPARING_PAGES .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
         local chapter_name = Chapters[current_chapter].Name
-        if Font.getTextWidth(FONT26, manga_name) > 960 then
+        if Font.getTextWidth(BONT30, manga_name) > 960 then
             if Font.getTextWidth(FONT16, manga_name) > 960 then
                 Font.print(FONT12, 480 - Font.getTextWidth(FONT12, manga_name) / 2, 247, manga_name, COLOR_FONT)
             else
                 Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
             end
         else
-            Font.print(FONT26, 480 - Font.getTextWidth(FONT26, manga_name) / 2, 232, manga_name, COLOR_FONT)
+            Font.print(BONT30, 480 - Font.getTextWidth(BONT30, manga_name) / 2, 232, manga_name, COLOR_FONT)
         end
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_FONT)
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_FONT)

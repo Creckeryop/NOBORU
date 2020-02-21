@@ -40,7 +40,7 @@ local function loadMangaImage(manga)
             Type = "Image",
             Path = manga.Path,
             Table = manga,
-            MaxHeight = MANGA_HEIGHT*2,
+            MaxHeight = MANGA_HEIGHT * 2,
             Index = "Image"
         })
     else
@@ -49,7 +49,7 @@ local function loadMangaImage(manga)
             Link = manga.ImageLink,
             Table = manga,
             Index = "Image",
-            MaxHeight = MANGA_HEIGHT*2,
+            MaxHeight = MANGA_HEIGHT * 2,
             Path = Cache.isCached(manga) and manga.Path or nil
         })
     end
@@ -256,7 +256,17 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
         if oldtouch.x then
             if TOUCH.MODE == TOUCH.READ then
-                if oldtouch.x > 265 and oldtouch.x < 945 then
+                if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
+                    local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
+                    for i = start, min(#Results, start + 11) do
+                        local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
+                        local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 12) - Slider.Y + 12
+                        if oldtouch.x > lx and oldtouch.x < lx + MANGA_WIDTH and oldtouch.y > uy and oldtouch.y < uy + MANGA_HEIGHT then
+                            selectManga(i)
+                            break
+                        end
+                    end
+                elseif oldtouch.x > 265 and oldtouch.x < 945 then
                     local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
                     if mode == "CATALOGS" then
                         selectParser(id)
@@ -282,17 +292,6 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                                 ChapterSaver.importManga(Import.getPath(item))
                                 ImportSelector:resetSelected()
                             end
-                        end
-                    end
-                end
-                if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
-                    local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
-                    for i = start, min(#Results, start + 11) do
-                        local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
-                        local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 12) - Slider.Y + 12
-                        if oldtouch.x > lx and oldtouch.x < lx + MANGA_WIDTH and oldtouch.y > uy and oldtouch.y < uy + MANGA_HEIGHT then
-                            selectManga(i)
-                            break
                         end
                     end
                 end
@@ -506,7 +505,7 @@ function Catalogs.draw()
         for i = first, last do
             local parser = Parsers[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
+                Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
             end
             if i < #Parsers then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
@@ -542,7 +541,7 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local object = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
+                Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
             end
             if object.active then
                 Font.print(FONT26, 275, y - 70, object.name, COLOR_FONT)
@@ -588,7 +587,7 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
+                Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
             end
             if i < #list then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
@@ -628,7 +627,7 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
+                Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
             end
             if i < #list then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))

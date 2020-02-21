@@ -567,12 +567,14 @@ function ChapterSaver.getChapter(chapter)
     return _table_
 end
 
+local CHAPTERSAV_PATH = "ux0:data/noboru/c.c"
+
 ---Saves saved chapters changes
 function ChapterSaver.save()
-    if doesFileExist("ux0:data/noboru/c.c") then
-        deleteFile("ux0:data/noboru/c.c")
+    if doesFileExist(CHAPTERSAV_PATH) then
+        deleteFile(CHAPTERSAV_PATH)
     end
-    local fh = openFile("ux0:data/noboru/c.c", FCREATE)
+    local fh = openFile(CHAPTERSAV_PATH, FCREATE)
     local save_data = table.serialize(Keys, "Keys")
     writeFile(fh, save_data, #save_data)
     closeFile(fh)
@@ -581,8 +583,8 @@ end
 ---Loads saved chapters changes
 function ChapterSaver.load()
     Keys = {}
-    if doesFileExist("ux0:data/noboru/c.c") then
-        local fh = openFile("ux0:data/noboru/c.c", FREAD)
+    if doesFileExist(CHAPTERSAV_PATH) then
+        local fh = openFile(CHAPTERSAV_PATH, FREAD)
         local suc, keys = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")() end)
         if suc then
             local cnt = 0

@@ -271,11 +271,12 @@ function Cache.loadChapters(Manga)
     return {}
 end
 
+local CACHE_INFO_PATH = "ux0:data/noboru/cache/info.txt"
 ---Loads Cache
 function Cache.load()
     data = {}
-    if doesFileExist("ux0:data/noboru/cache/info.txt") then
-        local fh = openFile("ux0:data/noboru/cache/info.txt", FREAD)
+    if doesFileExist(CACHE_INFO_PATH) then
+        local fh = openFile(CACHE_INFO_PATH, FREAD)
         local suc, new_data = pcall(function() return load(readFile(fh, sizeFile(fh)))() end)
         if suc then
             local count = 0
@@ -292,7 +293,6 @@ function Cache.load()
                         local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
                         if not image_size or image_size <= 0 then
                             deleteFile("ux0:data/noboru/" .. v.Path)
-                        --Notifications.push("image_error\n" .. v.Path)
                         end
                     end
                     data[k] = v
@@ -309,10 +309,10 @@ end
 
 ---Saves Cache
 function Cache.save()
-    if doesFileExist("ux0:data/noboru/cache/info.txt") then
-        deleteFile("ux0:data/noboru/cache/info.txt")
+    if doesFileExist(CACHE_INFO_PATH) then
+        deleteFile(CACHE_INFO_PATH)
     end
-    local fh = openFile("ux0:data/noboru/cache/info.txt", FCREATE)
+    local fh = openFile(CACHE_INFO_PATH, FCREATE)
     local save_data = {}
     for k, v in pairs(data) do
         save_data[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
