@@ -24,7 +24,7 @@ function Changes.close(pad)
                 return SCE_CTRL_CIRCLE
             end
         elseif Controls.check(pad, SCE_CTRL_CROSS) then
-            Settings:updateApp()
+            Settings.updateApp()
             updating = true
         end
     end
@@ -38,7 +38,7 @@ function Changes.update()
         time = math.min(time / 800, 1)
     end
     Offset = FinalY + 544 * easing(time)
-    if updating and not Settings:isAppUpdating() then
+    if updating and not Settings.isAppUpdating() then
         updating = false
         active = false
     end

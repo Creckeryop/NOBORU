@@ -3,6 +3,7 @@ local listDirectory = System.listDirectory
 local createDirectory = System.createDirectory
 loadlib("utils")
 loadlib("image")
+loadlib("globals")
 
 local logo = Image:new(Graphics.loadImage("app0:assets/images/logo.png"))
 
@@ -17,7 +18,7 @@ loadlib("changes")
 loadlib("selector")
 loadlib("console")
 loadlib("language")
-loadlib("globals")
+loadlib("themes")
 loadlib("loading")
 loadlib("net")
 loadlib("parserhandler")
@@ -101,7 +102,7 @@ local function preload_data()
     Menu.setMode("LIBRARY")
     Panel.show()
     coroutine.yield("Checking for update")
-    suc, err = pcall(Settings.checkUpdate, Settings)
+    suc, err = pcall(Settings.checkUpdate)
     if not suc then Console.error(err) end
 end
 
@@ -146,6 +147,7 @@ local fade = 1
 local function input()
     oldpad, pad = pad, Controls.read()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
+
     if Changes.isActive() then
         if touch.x or pad ~= 0 then
             oldpad = Changes.close(pad) or 0
@@ -153,6 +155,7 @@ local function input()
         pad = oldpad
         TouchLock = true
     end
+
     if touch2.x and AppMode ~= READER then
         TouchLock = true
     elseif not touch.x then

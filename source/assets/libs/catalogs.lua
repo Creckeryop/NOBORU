@@ -121,60 +121,43 @@ local SettingSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floo
 local ImportSelector = Selector:new(-1, 1, -3, 3, function() return max(1, floor((Slider.Y - 10) / 75)) end)
 
 local function selectSetting(index)
-    local item = Settings:list()[index]
-    if Settings:isTab(item) then
-        Settings:setTab(item)
+    local item = Settings.list()[index]
+    if Settings.isTab(item) then
+        Settings.setTab(item)
         SettingSelector:resetSelected()
     elseif item then
-        if item == "Language" then
-            Settings:nextLanguage()
-        elseif item == "ClearChapters" then
-            sure_clear_chapters = sure_clear_chapters + 1
-            if sure_clear_chapters == 2 then
-                Settings:clearChapters()
-                chapters_space = nil
-                sure_clear_chapters = 0
+        if SettingsFunctions[item] then
+            if item == "ClearChapters" then
+                sure_clear_chapters = sure_clear_chapters + 1
+                if sure_clear_chapters == 2 then
+                    SettingsFunctions[item]()
+                    chapters_space = nil
+                    sure_clear_chapters = 0
+                end
+            elseif item == "ClearLibrary" then
+                sure_clear_library = sure_clear_library + 1
+                if sure_clear_library == 2 then
+                    SettingsFunctions[item]()
+                    sure_clear_library = 0
+                end
+            elseif item == "ClearAllCache" then
+                sure_clear_all_cache = sure_clear_all_cache + 1
+                if sure_clear_all_cache == 2 then
+                    cache_space = nil
+                    SettingsFunctions[item]()
+                    sure_clear_all_cache = 0
+                end
+            elseif item == "ClearCache" then
+                sure_clear_cache = sure_clear_cache + 1
+                if sure_clear_cache == 2 then
+                    cache_space = nil
+                    SettingsFunctions[item]()
+                    sure_clear_cache = 0
+                end
+            else
+                SettingsFunctions[item]()
+                Settings.save()
             end
-        elseif item == "ShowNSFW" then
-            Settings:changeNSFW()
-        elseif item == "ClearLibrary" then
-            sure_clear_library = sure_clear_library + 1
-            if sure_clear_library == 2 then
-                Settings:clearLibrary()
-                sure_clear_library = 0
-            end
-        elseif item == "ReaderOrientation" then
-            Settings:changeOrientation()
-        elseif item == "ZoomReader" then
-            Settings:changeZoom()
-        elseif item == "ClearAllCache" then
-            sure_clear_all_cache = sure_clear_all_cache + 1
-            if sure_clear_all_cache == 2 then
-                cache_space = nil
-                Settings:clearAllCache()
-                sure_clear_all_cache = 0
-            end
-        elseif item == "ClearCache" then
-            sure_clear_cache = sure_clear_cache + 1
-            if sure_clear_cache == 2 then
-                cache_space = nil
-                Settings:clearCache()
-                sure_clear_cache = 0
-            end
-        elseif item == "ShowAuthor" then
-            Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
-        elseif item == "SwapXO" then
-            Settings:swapXO()
-        elseif item == "ChangeUI" then
-            Settings:changeUI()
-        elseif item == "CheckUpdate" then
-            Settings:checkUpdate()
-        elseif item == "ReaderDirection" then
-            Settings:changeReaderDirection()
-        elseif item == "HideInOffline" then
-            Settings:hideChapsOffline()
-        elseif item == "SkipFontLoading" then
-            Settings:skipFontLoading()
         end
         if item ~= "ClearChapters" then
             sure_clear_chapters = 0
@@ -237,7 +220,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         end
     elseif mode == "SETTINGS" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
-            Settings:back()
+            Settings.back()
             SettingSelector:resetSelected()
         end
     elseif mode == "IMPORT" then
@@ -263,7 +246,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     elseif mode == "DOWNLOAD" then
         DownloadSelector:input(#ChapterSaver.getDownloadingList(), oldpad, pad, touch.x)
     elseif mode == "SETTINGS" then
-        SettingSelector:input(#Settings:list(), oldpad, pad, touch.x)
+        SettingSelector:input(#Settings.list(), oldpad, pad, touch.x)
     elseif mode == "IMPORT" then
         ImportSelector:input(#Import.listDir(), oldpad, pad, touch.x)
     end
@@ -273,43 +256,36 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
         if oldtouch.x then
             if TOUCH.MODE == TOUCH.READ then
-                if mode == "CATALOGS" then
-                    if oldtouch.x > 265 and oldtouch.x < 945 then
-                        selectParser(floor((Slider.Y - 10 + oldtouch.y) / 75) + 1)
-                    end
-                elseif mode == "DOWNLOAD" then
-                    if oldtouch.x > 265 and oldtouch.x < 945 then
+                if oldtouch.x > 265 and oldtouch.x < 945 then
+                    local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+                    if mode == "CATALOGS" then
+                        selectParser(id)
+                    elseif mode == "DOWNLOAD" then
                         local list = ChapterSaver.getDownloadingList()
-                        local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
                         if list[id] then
                             ChapterSaver.stopByListItem(list[id])
                         end
-                    end
-                elseif mode == "SETTINGS" then
-                    if oldtouch.x > 265 and oldtouch.x < 945 then
-                        local list = Settings:list()
-                        local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+                    elseif mode == "SETTINGS" then
+                        local list = Settings.list()
                         if list[id] then
                             selectSetting(id)
                         end
-                    end
-                elseif mode == "IMPORT" then
-                    if oldtouch.x > 265 and oldtouch.x < 945 then
+                    elseif mode == "IMPORT" then
                         if oldtouch.x < 850 then
                             local list = Import.listDir()
-                            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
                             if list[id] then
                                 selectImport(id)
                             end
                         else
-                            local item = Import.listDir()[floor((Slider.Y - 10 + oldtouch.y) / 75) + 1]
+                            local item = Import.listDir()[id]
                             if item and item.active and item.name ~= "..." then
                                 ChapterSaver.importManga(Import.getPath(item))
                                 ImportSelector:resetSelected()
                             end
                         end
                     end
-                elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
+                end
+                if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
                     local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
                     for i = start, min(#Results, start + 11) do
                         local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 10) + 610
@@ -328,24 +304,15 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     if TOUCH.MODE == TOUCH.READ then
         if abs(Slider.V) > 0.1 or abs(Slider.TouchY - touch.y) > 10 then
             TOUCH.MODE = TOUCH.SLIDE
-        elseif mode == "CATALOGS" and oldtouch.x > 265 and oldtouch.x < 945 then
+        elseif oldtouch.x > 265 and oldtouch.x < 945 then
             local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
-            if GetParserList()[id] then
+            if mode == "CATALOGS" and GetParserList()[id] then
                 new_itemID = id
-            end
-        elseif mode == "DOWNLOAD" and oldtouch.x > 265 and oldtouch.x < 945 then
-            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
-            if ChapterSaver.getDownloadingList()[id] then
+            elseif mode == "DOWNLOAD" and ChapterSaver.getDownloadingList()[id] then
                 new_itemID = id
-            end
-        elseif mode == "SETTINGS" and oldtouch.x > 265 and oldtouch.x < 945 then
-            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
-            if Settings:list()[id] then
+            elseif mode == "SETTINGS" and Settings.list()[id] then
                 new_itemID = id
-            end
-        elseif mode == "IMPORT" and oldtouch.x > 265 and oldtouch.x < 945 then
-            local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
-            if Import.listDir()[id] then
+            elseif mode == "IMPORT" and Import.listDir()[id] then
                 new_itemID = id
             end
         end
@@ -470,13 +437,13 @@ function Catalogs.update()
             Slider.V = 0
         end
     elseif mode == "SETTINGS" then
-        local list = Settings:list()
+        local list = Settings.list()
         Panel.set{
             "L\\R", "DPad", "Circle", "Cross",
             ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
             DPad = Language[Settings.Language].PANEL.CHOOSE,
             Cross = Language[Settings.Language].PANEL.SELECT,
-            Circle = Settings:inTab() and Language[Settings.Language].PANEL.BACK
+            Circle = Settings.inTab() and Language[Settings.Language].PANEL.BACK
         }
         local item = SettingSelector:getSelected()
         if item ~= 0 then
@@ -655,7 +622,7 @@ function Catalogs.draw()
             end
         end
     elseif mode == "SETTINGS" then
-        local list = Settings:list()
+        local list = Settings.list()
         local start = max(1, floor((Slider.Y - 10) / 75))
         local y = start * 75 - Slider.Y
         for i = start, min(#list, start + 9) do

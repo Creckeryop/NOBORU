@@ -397,3 +397,10 @@ else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
 end
+local langs = {}
+for k, _ in pairs(Language) do
+    langs[#langs + 1] = k
+end
+function GetLanguages()
+    return langs
+end

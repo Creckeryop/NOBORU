@@ -83,7 +83,7 @@ test("Settings-Language test", function()
     dofile("../source/assets/libs/language.lua")
     dofile("../source/assets/libs/settings.lua")
     Language.Default = nil
-    local list = Settings:list()
+    local list = Settings.list()
     for name, Lang in pairs(Language) do
         for _, v in pairs(list) do
             if (type(v) == "table") then

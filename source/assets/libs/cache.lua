@@ -302,6 +302,7 @@ function Cache.load()
                 i = i + 1
             end
         end
+        closeFile(fh)
     end
     Cache.save()
 end
