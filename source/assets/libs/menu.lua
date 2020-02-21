@@ -91,7 +91,7 @@ function Menu.draw()
     if logoSmall then
         Graphics.drawImage(0, 0, logoSmall.e)
     end
-    Graphics.fillRect(255, 960, 0, 544, Color.new(245, 245, 245))
+    Graphics.fillRect(255, 960, 0, 544, COLOR_BACK)
     Font.print(FONT30, 30, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 255 - 128 * button_a["LIBRARY"]))
     Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 227, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 255 - 128 * button_a["HISTORY"]))

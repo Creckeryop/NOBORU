@@ -51,7 +51,7 @@ function Panel.draw()
     Graphics.fillRect(0, 960, 521 + y, 524 + y, Color.new(0, 0, 0, 32))
     Graphics.fillRect(0, 960, 522 + y, 524 + y, Color.new(0, 0, 0, 32))
     if LUA_PANEL then
-        Graphics.drawImage(0, 524 + y, LUA_PANEL.e)
+        Graphics.drawImage(0, 524 + y, LUA_PANEL.e, COLOR_PANEL)
     end
     local x = 20
     for _, v in ipairs(hints) do
@@ -66,10 +66,10 @@ function Panel.draw()
                 end
                 x = x + 20
             else
-                Font.print(FONT12, x, 526 + y, v, COLOR_BLACK)
+                Font.print(FONT12, x, 526 + y, v, COLOR_FONT)
                 x = x + Font.getTextWidth(FONT12, v) + 5
             end
-            Font.print(FONT12, x, 526 + y, hints[v], COLOR_BLACK)
+            Font.print(FONT12, x, 526 + y, hints[v], COLOR_FONT)
             x = x + Font.getTextWidth(FONT12, hints[v]) + 10
         end
     end

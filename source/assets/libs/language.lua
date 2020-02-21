@@ -42,7 +42,12 @@ Language = {
             Controls = "Параметры клавиш",
             Data = "Данные",
             About = "О программе",
-            Catalogs = "Каталоги"
+            Catalogs = "Каталоги",
+            ChangeUI = "Тема"
+        },
+        THEME = {
+            Dark = "Тёмная",
+            Light = "Светлая"
         },
         NSFW = {
             [true] = "Показывать",
@@ -158,7 +163,12 @@ Language = {
             Controls = "Controls Setup",
             Data = "Data settings",
             About = "About program",
-            Catalogs = "Catalogs"
+            Catalogs = "Catalogs",
+            ChangeUI = "Theme"
+        },
+        THEME = {
+            Dark = "Dark",
+            Light = "Light"
         },
         NSFW = {
             [true] = "Show",
@@ -274,7 +284,12 @@ Language = {
             Controls = "Controls Setup",
             Data = "Data settings",
             About = "About program",
-            Catalogs = "Catalogo"
+            Catalogs = "Catalogo",
+            ChangeUI = "Theme"
+        },
+        THEME = {
+            Dark = "Dark",
+            Light = "Light"
         },
         NSFW = {
             [true] = "Mostrar",

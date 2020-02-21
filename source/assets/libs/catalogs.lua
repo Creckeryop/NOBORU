@@ -165,6 +165,8 @@ local function selectSetting(index)
             Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
         elseif item == "SwapXO" then
             Settings:swapXO()
+        elseif item == "ChangeUI" then
+            Settings:changeUI()
         elseif item == "CheckUpdate" then
             Settings:checkUpdate()
         elseif item == "ReaderDirection" then
@@ -368,7 +370,7 @@ function Catalogs.update()
     if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
         UpdateMangas()
         if ParserManager.check(Results) then
-            Loading.setMode("BLACK", 600, 272)
+            Loading.setMode(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 600, 272)
         elseif Details.getMode() == "END" then
             Loading.setMode("NONE")
         end
@@ -401,6 +403,12 @@ function Catalogs.update()
         local item = MangaSelector:getSelected()
         if item ~= 0 then
             Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 12) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
+            if mode == "MANGA" and not Results.NoPages and Parser and item > #Results - 4 then
+                if not ParserManager.check(Results) then
+                    ParserManager.getMangaListAsync(getMangaMode, Parser, page, Results, searchData)
+                    page = page + 1
+                end
+            end
         end
         if Slider.Y < 0 then
             Slider.Y = 0
@@ -531,12 +539,12 @@ function Catalogs.draw()
         for i = first, last do
             local parser = Parsers[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
             end
             if i < #Parsers then
-                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+                Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
-            Font.print(FONT26, 275, y - 70, parser.Name, COLOR_BLACK)
+            Font.print(FONT26, 275, y - 70, parser.Name, COLOR_FONT)
             local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
             Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
             if parser.NSFW then
@@ -567,27 +575,28 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local object = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
             end
             if object.active then
-                Font.print(FONT26, 275, y - 70, object.name, COLOR_BLACK)
+                Font.print(FONT26, 275, y - 70, object.name, COLOR_FONT)
             else
                 Font.print(FONT26, 275, y - 70, object.name, COLOR_GRAY)
             end
             local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
             if Slider.ItemID == i then
-                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, Color.new(200, 200, 200))
-                Graphics.fillRect(910, 955, y - 75, y, Color.new(200, 200, 200))
+                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, COLOR_SELECTED)
+                Graphics.fillRect(910, 955, y - 75, y, COLOR_SELECTED)
+                Graphics.fillRect(945, 955, y - 75, y, COLOR_BACK)
             else
-                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, Color.new(245, 245, 245))
-                Graphics.fillRect(910, 955, y - 75, y, Color.new(245, 245, 245))
+                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, COLOR_BACK)
+                Graphics.fillRect(910, 955, y - 75, y, COLOR_BACK)
             end
             if object.active and object.name ~= "..." then
-                Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_BLACK)
+                Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_ICON_EXTRACT)
             end
             if i < #list then
-                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+                Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
             y = y + 75
         end
@@ -612,20 +621,20 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
             end
             if i < #list then
-                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+                Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
-            Font.print(FONT20, 275, y - 70, task.Manga, COLOR_BLACK)
-            Font.print(FONT16, 275, y - 44, task.Chapter, COLOR_BLACK)
+            Font.print(FONT20, 275, y - 70, task.Manga, COLOR_FONT)
+            Font.print(FONT16, 275, y - 44, task.Chapter, COLOR_FONT)
             if task.page_count > 0 then
                 local text_counter = task.page .. "/" .. task.page_count
                 local w = Font.getTextWidth(FONT16, text_counter)
                 download_bar = download_bar + (task.page / task.page_count - download_bar) / 32
                 Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * download_bar, y - 20, y - 8, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(270 + 10 + w, 940, y - 20, y - 8, COLOR_BLACK)
-                Font.print(FONT16, 275, y - 24, text_counter, COLOR_BLACK)
+                Graphics.fillEmptyRect(270 + 10 + w, 940, y - 20, y - 8, COLOR_FONT)
+                Font.print(FONT16, 275, y - 24, text_counter, COLOR_FONT)
             elseif i == 1 then
                 download_bar = 0
             end
@@ -652,14 +661,14 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(255, 955, y - 76, y, Color.new(200, 200, 200))
+                Graphics.fillRect(265, 945, y - 75, y-1, COLOR_SELECTED)
             end
             if i < #list then
-                Graphics.drawLine(270, 940, y, y, Color.new(200, 200, 200))
+                Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
-            Font.print(FONT20, 275, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_BLACK)
+            Font.print(FONT20, 275, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
             if task == "Language" then
-                Font.print(FONT16, 275, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_BLACK)
+                Font.print(FONT16, 275, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
             elseif task == "ClearChapters" then
                 if chapters_space == nil then
                     chapters_space = 0
@@ -689,6 +698,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.SkipFontLoad], COLOR_ROYAL_BLUE)
             elseif task == "ZoomReader" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_GRAY)
+            elseif task == "ChangeUI" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].THEME[Settings.Theme], COLOR_GRAY)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
@@ -763,9 +774,9 @@ function Catalogs.draw()
             scroll_height = ceil(#Results / 4) * (MANGA_HEIGHT + 12) / 524
         end
     end
-    Graphics.fillRect(955, 960, 0, 544, Color.new(160, 160, 160))
+    Graphics.fillRect(955, 960, 0, 544, COLOR_BACK)
     if scroll_height then
-        Graphics.fillRect(955, 960, Slider.Y / scroll_height, (Slider.Y + 524) / scroll_height, COLOR_BLACK)
+        Graphics.fillRect(955, 960, Slider.Y / scroll_height, (Slider.Y + 524) / scroll_height, COLOR_FONT)
     end
 end
 

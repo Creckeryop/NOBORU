@@ -37,6 +37,12 @@ COLOR_LIGHT_GRAY = Color.new(192, 192, 192)
 COLOR_ROYAL_BLUE = Color.new(65, 105, 226)
 COLOR_CRIMSON = Color.new(137, 30, 43)
 
+COLOR_FONT = COLOR_WHITE
+COLOR_BACK = COLOR_BLACK
+COLOR_SELECTED = Color.new(200,200,200)
+COLOR_ICON_EXTRACT = COLOR_WHITE
+COLOR_PANEL = COLOR_WHITE
+
 BONT16 = Font.load("app0:robboto.ttf")
 FONT16 = Font.load("app0:roboto.ttf")
 FONT12 = Font.load("app0:roboto.ttf")

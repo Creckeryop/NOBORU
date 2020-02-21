@@ -8,6 +8,7 @@ Settings = {
     ReaderDirection = "RIGHT",
     HideInOffline = true,
     SkipFontLoad = false,
+    Theme = "Light",
 }
 
 Settings.LateVersion = Settings.Version
@@ -128,6 +129,14 @@ function Settings:load()
             if is(set.HideInOffline, {true, false}) then
                 self.HideInOffline = set.HideInOffline
             end
+            if is(set.Theme, {"Dark", "Light"}) then
+                self.Theme = set.Theme
+            end
+            COLOR_FONT = self.Theme == "Dark" and COLOR_WHITE or COLOR_BLACK
+            COLOR_BACK = self.Theme == "Dark" and COLOR_BLACK or COLOR_WHITE
+            COLOR_SELECTED = self.Theme == "Dark" and Color.new(24, 24, 24) or Color.new(200, 200, 200)
+            COLOR_ICON_EXTRACT = self.Theme == "Dark" and COLOR_WHITE or COLOR_BLACK
+            COLOR_PANEL = self.Theme == "Dark" and Color.new(72, 72, 72) or COLOR_WHITE
         end
     end
     self:save()
@@ -146,14 +155,15 @@ function Settings:save()
         KeyType = self.KeyType,
         ReaderDirection = self.ReaderDirection,
         HideInOffline = self.HideInOffline,
-        SkipFontLoad = self.SkipFontLoad
+        SkipFontLoad = self.SkipFontLoad,
+        Theme = self.Theme
     }, "Settings")
     writeFile(fh, set, #set)
     closeFile(fh)
 end
 
 local set_list = {
-    "Language", "SkipFontLoading", "Catalogs", "Reader", "Data", "Controls", "About",
+    "Language", "SkipFontLoading", "ChangeUI", "Catalogs", "Reader", "Data", "Controls", "About",
     Catalogs = {
         "ShowNSFW",
         "HideInOffline"
@@ -278,6 +288,16 @@ end
 
 function Settings:skipFontLoading()
     self.SkipFontLoad = not self.SkipFontLoad
+    self:save()
+end
+
+function Settings:changeUI()
+    self.Theme = self.Theme == "Dark" and "Light" or "Dark"
+    COLOR_FONT = self.Theme == "Dark" and COLOR_WHITE or COLOR_BLACK
+    COLOR_BACK = self.Theme == "Dark" and COLOR_BLACK or COLOR_WHITE
+    COLOR_SELECTED = self.Theme == "Dark" and Color.new(24,24,24) or Color.new(200,200,200)
+    COLOR_ICON_EXTRACT = self.Theme == "Dark" and COLOR_WHITE or  COLOR_BLACK
+    COLOR_PANEL = self.Theme == "Dark" and Color.new(72, 72, 72) or COLOR_WHITE
     self:save()
 end
 

@@ -241,7 +241,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         AppMode = MENU
     end
     if STATE == STATE_READING and Pages[Pages.Page] then
-        if touch.x ~= nil then
+        if touch.x ~= nil or pad ~= 0 then
             Timer.reset(hideCounterTimer)
         end
         local page = Pages[Pages.Page]
@@ -690,22 +690,22 @@ function Reader.update()
 end
 
 function Reader.draw()
-    Screen.clear(COLOR_WHITE)
+    Screen.clear(COLOR_BACK)
     if STATE == STATE_LOADING then
         local manga_name = Chapters[current_chapter].Manga.Name
         local prepare_message = Language[Settings.Language].READER.PREPARING_PAGES .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
         local chapter_name = Chapters[current_chapter].Name
         if Font.getTextWidth(FONT26, manga_name) > 960 then
             if Font.getTextWidth(FONT16, manga_name) > 960 then
-                Font.print(FONT12, 480 - Font.getTextWidth(FONT12, manga_name) / 2, 247, manga_name, COLOR_BLACK)
+                Font.print(FONT12, 480 - Font.getTextWidth(FONT12, manga_name) / 2, 247, manga_name, COLOR_FONT)
             else
-                Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_BLACK)
+                Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
             end
         else
-            Font.print(FONT26, 480 - Font.getTextWidth(FONT26, manga_name) / 2, 232, manga_name, COLOR_BLACK)
+            Font.print(FONT26, 480 - Font.getTextWidth(FONT26, manga_name) / 2, 232, manga_name, COLOR_FONT)
         end
-        Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_BLACK)
-        Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_BLACK)
+        Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_FONT)
+        Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_FONT)
     elseif STATE == STATE_READING then
         local o = Settings.ReaderDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
         for _, i in ipairs(o) do
@@ -728,11 +728,11 @@ function Reader.draw()
                             if orientation == "Horizontal" then
                                 local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                                 local Width = Font.getTextWidth(FONT16, loading)
-                                Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_BLACK)
+                                Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, offset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_FONT)
                             elseif orientation == "Vertical" then
                                 local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                                 local Width = Font.getTextWidth(FONT16, loading)
-                                Font.print(FONT16, offset.x - Width + page.x - ((k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom), offset.y + 272 + 544 * i, loading, COLOR_BLACK)
+                                Font.print(FONT16, offset.x - Width + page.x - ((k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom), offset.y + 272 + 544 * i, loading, COLOR_FONT)
                             end
                         end
                     end
@@ -750,11 +750,11 @@ function Reader.draw()
                 if orientation == "Horizontal" then
                     local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                     local Width = Font.getTextWidth(FONT16, loading)
-                    Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_BLACK)
+                    Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_FONT)
                 elseif orientation == "Vertical" then
                     local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                     local Width = Font.getTextWidth(FONT16, loading)
-                    Font.print(FONT16, 960 / 2 - Width / 2, 272 + offset.y + 544 * i - 10, loading, COLOR_BLACK)
+                    Font.print(FONT16, 960 / 2 - Width / 2, 272 + offset.y + 544 * i - 10, loading, COLOR_FONT)
                 end
             end
         end
