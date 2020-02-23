@@ -280,7 +280,7 @@ function Cache.load()
         local suc, new_data = pcall(function() return load(readFile(fh, sizeFile(fh)))() end)
         if suc then
             local count = 0
-            for _, _ in pairs(new_data) do
+            for _ in pairs(new_data) do
                 count = count + 1
             end
             local i = 1

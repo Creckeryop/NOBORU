@@ -1,3 +1,9 @@
+--[[
+    ParserManager is a pack of functions needed to work with
+    async functions related to parsers, it will help you to
+    get all available info from parsers, from manga List to
+    List of links to images of their chapter pages
+]]
 ParserManager = {}
 
 local Order = {}
@@ -8,6 +14,7 @@ local uniques = {}
 
 local doesFileExist = System.doesFileExist
 
+---Updates ParserManager functions
 function ParserManager.update()
     if #Order == 0 and not Task then return end
     if not Task then
@@ -37,6 +44,14 @@ function ParserManager.update()
     end
 end
 
+---@param mode string | "POPULAR" | "LATEST" | "SEARCH"
+---@param parser Parser
+---@param i number
+---@param Table table
+---@param data string | nil
+---Puts all manga on `i` page in `mode` to `Table`
+---
+---`data` is search string works only if `mode` == "SEARCH"
 function ParserManager.getMangaListAsync(mode, parser, i, Table, data)
     if not parser or uniques[Table] then return end
     Console.write("Task created")
@@ -72,6 +87,12 @@ function ParserManager.getMangaListAsync(mode, parser, i, Table, data)
     uniques[Table] = T
 end
 
+---@param manga table
+---@param Table table
+---@param Insert boolean
+---Puts all chapters info from `manga` to `Table`, `Insert` is priority (`true` for high or `false` for low)
+---
+---Chapter info table is a list of `{Name: string, Link: string, Manga: table}` values
 function ParserManager.getChaptersAsync(manga, Table, Insert)
     local parser = GetParserByID(manga.ParserID)
     if not parser or uniques[Table] then return end
@@ -90,6 +111,10 @@ function ParserManager.getChaptersAsync(manga, Table, Insert)
     uniques[Table] = T
 end
 
+---@param chapter table
+---@param Table table
+---@param Insert boolean
+---Puts all helpful for parser links to `Table`
 function ParserManager.prepareChapter(chapter, Table, Insert)
     local parser = GetParserByID(chapter.Manga.ParserID)
     if not parser or uniques[Table] then return end
@@ -108,7 +133,12 @@ function ParserManager.prepareChapter(chapter, Table, Insert)
     uniques[Table] = T
 end
 
-function ParserManager.loadPageImage(parserID, Link, Table, id, Insert)
+---@param parserID string
+---@param Link string
+---@param Table table
+---@param Insert boolean
+---Parses `Link` from prepareChapter function to image link of the page
+function ParserManager.loadPageImage(parserID, Link, Table, Insert)
     local parser = GetParserByID(parserID)
     if not parser or uniques[Table] then return end
     local T = {
@@ -133,10 +163,15 @@ function ParserManager.loadPageImage(parserID, Link, Table, id, Insert)
     uniques[Table] = T
 end
 
+---@param Table table
+---@return boolean
+---Checks if task for `Table` is running or in order
 function ParserManager.check(Table)
     return uniques[Table] ~= nil
 end
 
+---@param Table table
+---Removes task for `Table` from is running or order list
 function ParserManager.remove(Table)
     if uniques[Table] then
         if uniques[Table] == Task then
@@ -149,6 +184,9 @@ function ParserManager.remove(Table)
     end
 end
 
+---@param Table table
+---@param Insert boolean
+---Updates list of parsers from NOBORU-parsers GitHub page
 function ParserManager.updateParserList(Table, Insert)
     if uniques[Table] then return end
     local T = {

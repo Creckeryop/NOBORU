@@ -20,6 +20,8 @@ for k, _ in pairs(Themes) do
     themes[#themes + 1] = k
 end
 
+---@return table
+---Gives list of all available themes
 function GetThemes()
     return themes
 end

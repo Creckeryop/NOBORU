@@ -27,7 +27,8 @@ local is_notification_showed = false
 
 local Chapters = {}
 
-local scrollUpdate = function()
+---Updates scrolling movement
+local function scrollUpdate()
     Slider.Y = Slider.Y + Slider.V
     Slider.V = Slider.V / 1.12
     if math.abs(Slider.V) < 0.1 then
@@ -44,6 +45,7 @@ end
 
 local easing = EaseInOutCubic
 
+---Updates animation of fade in or out
 local animationUpdate = function()
     if mode == "START" then
         fade = easing(math.min((Timer.getTime(animation_timer) / 500), 1))
@@ -64,6 +66,8 @@ local is_chapter_loaded_offline = false
 
 local ContinueChapter
 
+---@param Manga table
+---Sets Continue button to latest read chapter in given `Manga`
 local function updateContinueManga(Manga)
     ContinueChapter = 0
     if #Chapters > 0 then
@@ -86,6 +90,8 @@ local function updateContinueManga(Manga)
     end
 end
 
+---@param manga table
+---Sets `manga` to details
 function Details.setManga(manga)
     if manga then
         Manga = manga

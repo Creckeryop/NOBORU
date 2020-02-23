@@ -65,10 +65,12 @@ function GetParserList()
     return list
 end
 
+---Sets update flag to `true`, for regenerating parsers list
 function ChangeNSFW()
     updated = true
 end
 
+---Deletes all parsers and their files
 function ClearParsers()
     if doesDirExist("ux0:data/noboru/parsers") then
         local list = listDirectory("ux0:/data/noboru/parsers") or {}

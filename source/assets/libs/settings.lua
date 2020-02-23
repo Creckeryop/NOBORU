@@ -29,10 +29,19 @@ local rem_dir = RemoveDirectory
 
 local AppIsUpdating = false
 
+---@return boolean
+---Gives true if app is updating
 function settings.isAppUpdating()
     return AppIsUpdating
 end
 
+---@param source_path string
+---@param dest_path string
+---Copies file source_path to dest_path (creates file)
+---
+---Example:
+---
+---`cpy_file("ux0:data/noboru/cache.image","ux0:cover.jpeg") -> cover.jpeg appeared in ux0:`
 local function cpy_file(source_path, dest_path)
     local fh1 = openFile(source_path, FREAD)
     local fh2 = openFile(dest_path, FCREATE)
@@ -42,9 +51,7 @@ local function cpy_file(source_path, dest_path)
     closeFile(fh2)
 end
 
-local installApp = System.installApp
-local launchApp = System.launchApp
-
+---Sets colors from Themes[Settings.Theme] to their values
 local function setTheme(name)
     if Themes[name] then
         for k, v in pairs(Themes[name]) do
@@ -53,6 +60,9 @@ local function setTheme(name)
     end
 end
 
+local installApp = System.installApp
+local launchApp = System.launchApp
+---Unpacks downloaded NOBORU.vpk and installing it
 local function UpdateApp()
     local notify = Notifications ~= nil
     if doesFileExist("ux0:data/noboru/NOBORU.vpk") then
@@ -96,6 +106,16 @@ local function UpdateApp()
     end
 end
 
+---@param source table
+---@param setting_name string
+---@param values table
+---Sets `settings[setting_name]` value to `source[setting_name]` if value is in `values` table
+---
+---Example:
+---
+---`setSetting(new_settings, "SpeedOfScrolling", {1,5,10}) ->`
+---
+---`sets Settings.SpeedOfScrolling to new_settings.SpeedOfScrolling if it is 1, 5 or 10 else sets to nil`
 local function setSetting(source, setting_name, values)
     local new_set = source[setting_name]
     if new_set == nil then
@@ -112,9 +132,21 @@ local function setSetting(source, setting_name, values)
     end
 end
 
+---@param old_value any
+---@param values table
+---@return any
+---Gives next to `old_value` table value from `values` or first
+---
+---Example:
+---
+---`nextTableValue("cat", {"dog", "cat", "parrot"}) -> "parrot"`
+---
+---`nextTableValue("parrot", {"dog", "cat", "parrot"}) -> "dog"`
+---
+---`nextTableValue("whale", {"dog", "cat", "parrot"}) -> "dog"`
 local function nextTableValue(old_value, values)
     local found = false
-    for k, v in ipairs(values) do
+    for _, v in ipairs(values) do
         if found then
             return v
         elseif old_value == v then
@@ -124,9 +156,12 @@ local function nextTableValue(old_value, values)
     return values[1]
 end
 
+local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
+
+---Loads settings from `ux0:data/noboru/settings.ini`
 function settings.load()
-    if doesFileExist("ux0:data/noboru/settings.ini") then
-        local fh = openFile("ux0:data/noboru/settings.ini", FREAD)
+    if doesFileExist(SETTINGS_SAVE_PATH) then
+        local fh = openFile(SETTINGS_SAVE_PATH, FREAD)
         local suc, new = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return settings")() end)
         if suc then
             setSetting(new, "Language", Language)
@@ -147,11 +182,12 @@ function settings.load()
     setTheme(settings.Theme)
 end
 
+---Saves settings in `ux0:data/noboru/settings.ini`
 function settings.save()
-    if doesFileExist("ux0:data/noboru/settings.ini") then
-        deleteFile("ux0:data/noboru/settings.ini")
+    if doesFileExist(SETTINGS_SAVE_PATH) then
+        deleteFile(SETTINGS_SAVE_PATH)
     end
-    local fh = openFile("ux0:data/noboru/settings.ini", FCREATE)
+    local fh = openFile(SETTINGS_SAVE_PATH, FCREATE)
     local copy_settings = {}
     for k, v in pairs(settings) do
         if type(v) ~= "function" and k ~= "Version" then
@@ -163,6 +199,7 @@ function settings.save()
     closeFile(fh)
 end
 
+---Table of all available options
 local set_list = {
     "Language", "SkipFontLoading", "ChangeUI", "Catalogs", "Reader", "Data", "Controls", "About",
     Catalogs = {
@@ -190,26 +227,37 @@ local set_list = {
     }
 }
 
+---Table of current options
 local set_list_tab = set_list
 
+---@return table
+---Return list of available options
 function settings.list()
     return set_list_tab
 end
 
+---@param mode string
+---@return boolean
+---Checks if setting is submenu
 function settings.isTab(mode)
     return set_list[mode] ~= nil
 end
 
+---@param mode string
+---Sets settings menu as submenu `mode`
 function settings.setTab(mode)
     if set_list[mode] then
         set_list_tab = set_list[mode]
     end
 end
 
+---@return boolean
+---Checks if settings not in main settings menu (subsettings screen)
 function settings.inTab()
     return set_list_tab ~= set_list
 end
 
+---Throws in main settings menu
 function settings.back()
     set_list_tab = set_list
 end
@@ -217,6 +265,7 @@ end
 local last_vpk_link
 local changes
 
+---Starting update for NOBORU Application
 function settings.updateApp()
     if Threads.netActionUnSafe(Network.isWifiEnabled) then
         if last_vpk_link then
@@ -236,6 +285,7 @@ function settings.updateApp()
     end
 end
 
+---Table with Option Names and their Functions
 SettingsFunctions = {
     Language = function()
         settings.Language = nextTableValue(settings.Language, GetLanguages())

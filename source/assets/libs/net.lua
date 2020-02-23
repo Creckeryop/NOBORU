@@ -22,6 +22,7 @@ local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 local rem_dir = RemoveDirectory
 
+---Updates threads tasks
 function Threads.update()
     if net_inited and not Task and #Order == 0 then
         Network.term()
@@ -305,6 +306,7 @@ function Threads.netActionSafe(foo)
     return Threads.netActionUnSafe(foo)
 end
 
+---Checks if given parameters is enough to execute task
 local function taskcheck(T)
     local task = T
     if task.Type == "FileDownload" then
@@ -317,6 +319,10 @@ local function taskcheck(T)
     return false
 end
 
+---@param UniqueKey any
+---@param T table of parameters
+---@param foo function
+---Adds task to order with given `T` parameters
 local function taskete(UniqueKey, T, foo)
     if UniqueKey and uniques[UniqueKey] and taskcheck(T) or not UniqueKey then
         return false
