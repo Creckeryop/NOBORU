@@ -3,7 +3,7 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
-    Version = 0.35,
+    Version = 0.4,
     KeyType = "EU",
     ReaderDirection = "RIGHT",
     HideInOffline = true,
@@ -71,7 +71,7 @@ local function UpdateApp()
             closeFile(fh)
             deleteFile("ux0:data/noboru/NOBORU.vpk")
             if notify then
-                Notifications.push(Language[settings.Language].settings.FailedToUpdate)
+                Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
                 AppIsUpdating = false
             end
             return
@@ -79,8 +79,8 @@ local function UpdateApp()
         closeFile(fh)
         rem_dir("ux0:data/noboru/NOBORU")
         if notify then
-            Notifications.push(Language[settings.Language].settings.UnzipingVPK)
-            Notifications.push(Language[settings.Language].settings.PleaseWait, 60000)
+            Notifications.push(Language[settings.Language].SETTINGS.UnzipingVPK)
+            Notifications.push(Language[settings.Language].SETTINGS.PleaseWait, 60000)
         end
         Threads.insertTask("ExtractingApp", {
             Type = "UnZip",
@@ -101,7 +101,7 @@ local function UpdateApp()
         })
     end
     if notify and not Threads.check("ExtractingApp") then
-        Notifications.push(Language[settings.Language].settings.FailedToUpdate)
+        Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
         AppIsUpdating = false
     end
 end
@@ -162,8 +162,8 @@ local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
 function settings.load()
     if doesFileExist(SETTINGS_SAVE_PATH) then
         local fh = openFile(SETTINGS_SAVE_PATH, FREAD)
-        local suc, new = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return settings")() end)
-        if suc then
+        local suc, new = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")() end)
+        if suc and type(new) == "table" then
             setSetting(new, "Language", Language)
             setSetting(new, "NSFW", {true, false})
             setSetting(new, "SkipFontLoad", {true, false})
@@ -194,7 +194,7 @@ function settings.save()
             copy_settings[k] = v
         end
     end
-    local save_content = table.serialize(copy_settings, "settings")
+    local save_content = table.serialize(copy_settings, "Settings")
     writeFile(fh, save_content, #save_content)
     closeFile(fh)
 end
@@ -270,7 +270,7 @@ function settings.updateApp()
     if Threads.netActionUnSafe(Network.isWifiEnabled) then
         if last_vpk_link then
             AppIsUpdating = true
-            Notifications.push(Language[settings.Language].settings.PleaseWait)
+            Notifications.push(Language[settings.Language].SETTINGS.PleaseWait)
             Threads.insertTask("DownloadAppUpdate", {
                 Type = "FileDownload",
                 Link = "https://github.com" .. last_vpk_link,
@@ -281,7 +281,7 @@ function settings.updateApp()
             })
         end
     else
-        Notifications.push(Language[settings.Language].settings.NoConnection)
+        Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
     end
 end
 
@@ -344,13 +344,13 @@ SettingsFunctions = {
                     local body = content:match('markdown%-body">(.-)</div>') or ""
                     changes = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
                     if settings.LateVersion and settings.Version and tonumber(settings.LateVersion) > tonumber(settings.Version) then
-                        Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].settings.CurrentVersionIs .. settings.Version .. "\n\n" .. changes)
+                        Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changes)
                         Notifications.push(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " " .. settings.LateVersion)
                     end
                 end
             })
         else
-            Notifications.push(Language[settings.Language].settings.NoConnection)
+            Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
         end
     end,
     ShowAuthor = function()

@@ -349,6 +349,18 @@ local function taskete(UniqueKey, T, foo)
         Cookie = T.Cookie or "",
         UniqueKey = UniqueKey
     }
+    if type(newTask.Link) == "table" then
+        local t = newTask.Link
+        newTask.Link = t.Link
+        newTask.Header1 = t.Header1 or newTask.Header1 or ""
+        newTask.Header2 = t.Header2 or newTask.Header2 or ""
+        newTask.Header3 = t.Header3 or newTask.Header3 or ""
+        newTask.Header4 = t.Header4 or newTask.Header4 or ""
+        newTask.HttpMethod = t.HttpMethod or newTask.HttpMethod or GET_METHOD
+        newTask.PostData = t.PostData or newTask.PostData or ""
+        newTask.ContentType = t.ContentType or newTask.ContentType or XWWW
+        newTask.Cookie = t.Cookie or newTask.Cookie or ""
+    end
     foo(newTask)
     uniques[UniqueKey] = newTask
     return true

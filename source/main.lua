@@ -102,7 +102,7 @@ local function preload_data()
     Menu.setMode("LIBRARY")
     Panel.show()
     coroutine.yield("Checking for update")
-    suc, err = pcall(Settings.checkUpdate)
+    suc, err = pcall(SettingsFunctions.CheckUpdate)
     if not suc then Console.error(err) end
 end
 
@@ -227,6 +227,7 @@ local function draw()
     elseif logo then
         logo:free()
         logo = nil
+    else
         Changes.draw()
     end
     Notifications.draw()
