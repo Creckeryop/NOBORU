@@ -1,4 +1,5 @@
 --Spanish translation created by SamuEDL98
+--Vietnamese translation created by nguyenmao2101
 Language = {
     Russian = {
         APP = {
@@ -67,7 +68,7 @@ Language = {
             DIF = "Разные",
             TUR = "Турецкий",
             ITA = "Итальянский",
-            VIE = "Vietnamese"
+            VIE = "Вьетнамский"
         },
         WARNINGS = {
             NO_CHAPTERS = "Главы не найдены"
