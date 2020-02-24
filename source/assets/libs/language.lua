@@ -66,7 +66,8 @@ Language = {
             JAP = "Японский",
             DIF = "Разные",
             TUR = "Турецкий",
-            ITA = "Итальянский"
+            ITA = "Итальянский",
+            VIE = "Vietnamese"
         },
         WARNINGS = {
             NO_CHAPTERS = "Главы не найдены"
@@ -187,7 +188,8 @@ Language = {
             JAP = "Japan",
             DIF = "Different",
             TUR = "Turkish",
-            ITA = "Italian"
+            ITA = "Italian",
+            VIE = "Vietnamese"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
@@ -240,6 +242,128 @@ Language = {
             UPDATE = "Update",
             CANCEL = "Cancel",
             DELETE = "Delete"
+        }
+    },
+    Vietnamese = {
+        APP = {
+            LIBRARY = "Thư viện",
+            CATALOGS = "Danh mục",
+            SETTINGS = "Cài đặt",
+            DOWNLOAD = "Tải xuống",
+            IMPORT = "Thêm truyện",
+            HISTORY = "Lịch sử",
+            SEARCH = "Tìm kiếm"
+        },
+        SETTINGS = {
+            Language = "Ngôn ngữ",
+            ClearChapters = "Xóa các tập đã tải",
+            ShowNSFW = "Nội dung người lớn",
+            ClearLibrary = "Xóa lịch sử",
+            ClearCache = "Xóa dữ liệu tạm",
+            ClearAllCache = "Xóa tất cả dữ liệu",
+            ReaderOrientation = "Trình đọc mặc định",
+            ZoomReader = "Thay đổi kích thước",
+            SwapXO = "Chuyển đổi phím chọn",
+            ShowAuthor = "Tác giả",
+            ShowVersion = "Phiên bản",
+            CheckUpdate = "Kiểm tra cập nhật",
+            SkipFontLoading = "Bỏ qua tải font chữ",
+            LatestVersion = "Phiên bản mới nhất:",
+            PleaseWait = "Xin chờ",
+            FailedToUpdate = "Không thể cập nhật",
+            NoConnection = "Không có kết nối",
+            HideInOffline = "Chỉ hiện thị tập đã tải (offline mode)",
+            UnzipingVPK = "Giải nén tập tin vpk",
+            CurrentVersionIs = "Phiên bản hiện tại:",
+            Space = "Bộ nhớ đã dùng",
+            ReaderDirection = "Thứ tự khung truyện",
+            VersionIsUpToDate = "Đã là phiên bản mới nhất",
+            EU = "Europe",
+            JP = "Japan",
+            PressAgainToAccept = "Bấm lại để xác nhận",
+            PressAgainToUpdate = "Bấm lại để cập nhật:",
+            Reader = "Trình đọc truyện",
+            Controls = "Điều khiển",
+            Data = "Bộ nhớ",
+            About = "Giới thiệu",
+            Catalogs = "Danh mục",
+            ChangeUI = "Giao diện"
+        },
+        THEME = {
+            Dark = "Tối",
+            Light = "Sáng"
+        },
+        NSFW = {
+            [true] = "Hiện",
+            [false] = "Ẩn"
+        },
+        YORN = {
+            [true] = "Có",
+            [false] = "Không"
+        },
+        PARSERS = {
+            RUS = "Nga",
+            ENG = "Anh",
+            ESP = "Tây Ban Nha",
+            PRT = "Bồ Đào Nha",
+            FRA = "Pháp",
+            JAP = "Nhật",
+            DIF = "Khác",
+            TUR = "Thổ Nhĩ Kỳ",
+            ITA = "Italia",
+            VIE = "Việt Nam"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "Không có tập nào!"
+        },
+        READER = {
+            PREPARING_PAGES = "Đang tải",
+            LOADING_PAGE = "Đang tải",
+            LOADING_SEGMENT = "Đang tải",
+            Horizontal = "Dọc",
+            Vertical = "Ngang",
+            Smart = "Tự động",
+            Height = "Chiều cao",
+            Width = "Chiều rộng",
+            LEFT = "Phải sang trái",
+            RIGHT = "Trái sang phải"
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "Thêm vào thư viện",
+            REMOVE_FROM_LIBRARY = "Xóa khỏi thư viện",
+            PAGE = "Trang : ",
+            CONTINUE = "Đọc tiếp : ",
+            START = "Đọc truyện"
+        },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "Đã thêm vào thư viện",
+            REMOVED_FROM_LIBRARY = "Đã xóa khỏi thư viện",
+            SEARCHING = 'Đang tìm "%s"',
+            START_DOWNLOAD = "Bắt đầu tải xuống!\n%s: %s",
+            END_DOWNLOAD = "Hoàn thành tải xuống!\n%s: %s",
+            CANCEL_DOWNLOAD = "Đã hủy tải xuống!\n%s: %s",
+            CHAPTER_REMOVE = "Đã xóa!\n%s",
+            NET_PROBLEM = "Lỗi kết nối!",
+            CHAPTERS_CLEARED = "Đã xóa tất cả tập đã lưu!",
+            LIBRARY_CLEARED = "Đã xóa lịch sử!",
+            CACHE_CLEARED = "Đã xóa bộ nhớ tạm!",
+            DEVELOPER_THING = "Start app on Github!",
+            NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
+            NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!"
+        },
+        PANEL = {
+            BACK = "Trở về",
+            MODE_POPULAR = "Chế độ: Phổ biến",
+            MODE_LATEST = "Chế độ: Mới nhất",
+            MODE_SEARCHING = 'Chế độ: Tìm kiếm "%s"',
+            SEARCH = "Tìm",
+            SELECT = "Chọn",
+            CHOOSE = "Điều khiển",
+            IMPORT = "Nhập",
+            CHANGE_SECTION = "Thay đổi danh mục",
+            UPDATE = "Cập nhật",
+            CANCEL = "Hủy bỏ",
+            DELETE = "Xóa bỏ"
         }
     },
     Spanish = {
@@ -308,7 +432,8 @@ Language = {
             JAP = "Japonés",
             DIF = "Diferentes",
             TUR = "Turkish",
-            ITA = "Italian"
+            ITA = "Italian",
+            VIE = "Vietnamese"
         },
         WARNINGS = {
             NO_CHAPTERS = "No hay capítulos"
@@ -370,19 +495,29 @@ LanguageNames = {
         Russian = "Русский",
         English = "Английский",
         Spanish = "Испанский",
+        Vietnamese = "вьетнамский",
         Default = "Системный"
     },
     English = {
         Russian = "Russian",
         English = "English",
         Spanish = "Spanish",
+        Vietnamese = "Vietnamese",
         Default = "System"
     },
     Spanish = {
         Russian = "Ruso",
         English = "Ingles",
         Spanish = "Español",
+        Vietnamese = "vietnamita",
         Default = "Sistema"
+    },
+    Vietnamese = {
+        Russian = "Tiếng Nga",
+        English = "Tiếng Anh",
+        Spanish = "Tiếng Tây Ban Nha",
+        Vietnamese = "Tiếng Việt",
+        Default = "Hệ thống"
     }
 }
 
