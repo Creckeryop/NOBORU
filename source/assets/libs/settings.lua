@@ -3,6 +3,7 @@ Settings = {
     NSFW = false,
     Orientation = "Horizontal",
     ZoomReader = "Smart",
+    DoubleTapReader = true,
     Version = 0.41,
     KeyType = "EU",
     ReaderDirection = "RIGHT",
@@ -172,6 +173,7 @@ function settings.load()
             setSetting(new, "ReaderDirection", {"LEFT", "RIGHT"})
             setSetting(new, "KeyType", {"JP", "EU"})
             setSetting(new, "HideInOffline", {true, false})
+            setSetting(new, "DoubleTapReader", {true, false})
             setSetting(new, "Theme", Themes)
         end
         closeFile(fh)
@@ -209,7 +211,8 @@ local set_list = {
     Reader = {
         "ReaderOrientation",
         "ZoomReader",
-        "ReaderDirection"
+        "ReaderDirection",
+        "DoubleTapReader"
     },
     Data = {
         "ClearLibrary",
@@ -312,6 +315,9 @@ SettingsFunctions = {
     end,
     ReaderDirection = function()
         settings.ReaderDirection = nextTableValue(settings.ReaderDirection, {"LEFT", "RIGHT"})
+    end,
+    DoubleTapReader = function()
+        settings.DoubleTapReader = not settings.DoubleTapReader
     end,
     ClearLibrary = function()
         Database.clear()

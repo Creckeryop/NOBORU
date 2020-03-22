@@ -41,66 +41,70 @@ local last_click = {x = -100, y = -100}
 local gesture_zoom = false
 
 local function gesture_touch_input(touch, oldtouch, page)
-    if gesture_zoom then
-        touchMode = TOUCH_IDLE
-    end
-    if not page or not page.Zoom then
-        return
-    end
-    if touch.x == nil and oldtouch.x ~= nil and not gesture_zoom and touchMode == TOUCH_READ then
-        gesture_zoom = false
-        local update_last = true
-        if Timer.getTime(doubleClickTimer) < 300 then
-            local len = math.sqrt((last_click.x - oldtouch.x) * (last_click.x - oldtouch.x) + (last_click.y - oldtouch.y) * (last_click.y - oldtouch.y))
-            if len < 80 then
-                if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom)/2 then
-                    gesture_zoom = {
-                        Zoom = page.start_Zoom,
-                        x = 480,
-                        y = 272
-                    }
-                else
-                    gesture_zoom = {
-                        Zoom = max_Zoom - (max_Zoom - page.min_Zoom)/2,
-                        x = oldtouch.x,
-                        y = oldtouch.y
-                    }
-                end
-                touchMode = TOUCH_LOCK
-                Console.write(gesture_zoom.Zoom)
-                Console.write(Pages[Pages.Page].Zoom)
-                update_last = false
-                last_click = {x = -100, y = -100}
-            end
+    if Settings.DoubleTapReader then
+        if gesture_zoom then
+            touchMode = TOUCH_IDLE
         end
-        Timer.reset(doubleClickTimer)
-        if update_last then
-            last_click = {x = oldtouch.x, y = oldtouch.y}
+        if not page or not page.Zoom then
+            return
+        end
+        if touch.x == nil and oldtouch.x ~= nil and not gesture_zoom and touchMode == TOUCH_READ then
+            gesture_zoom = false
+            local update_last = true
+            if Timer.getTime(doubleClickTimer) < 300 then
+                local len = math.sqrt((last_click.x - oldtouch.x) * (last_click.x - oldtouch.x) + (last_click.y - oldtouch.y) * (last_click.y - oldtouch.y))
+                if len < 80 then
+                    if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom)/2 then
+                        gesture_zoom = {
+                            Zoom = page.start_Zoom,
+                            x = 480,
+                            y = 272
+                        }
+                    else
+                        gesture_zoom = {
+                            Zoom = max_Zoom - (max_Zoom - page.min_Zoom)/2,
+                            x = oldtouch.x,
+                            y = oldtouch.y
+                        }
+                    end
+                    touchMode = TOUCH_LOCK
+                    Console.write(gesture_zoom.Zoom)
+                    Console.write(Pages[Pages.Page].Zoom)
+                    update_last = false
+                    last_click = {x = -100, y = -100}
+                end
+            end
+            Timer.reset(doubleClickTimer)
+            if update_last then
+                last_click = {x = oldtouch.x, y = oldtouch.y}
+            end
         end
     end
 end
 
 local function gesture_touch_update()
-    if gesture_zoom and Pages[Pages.Page] and STATE == STATE_READING then
-        local stop = false
-        local old_Zoom = Pages[Pages.Page].Zoom
-        if math.abs((Pages[Pages.Page].Zoom - gesture_zoom.Zoom) / 4) < 0.01 then
-            Pages[Pages.Page].Zoom = gesture_zoom.Zoom
-            stop = true
-        else
-            Pages[Pages.Page].Zoom = (Pages[Pages.Page].Zoom  + (gesture_zoom.Zoom - Pages[Pages.Page].Zoom) / 4)
+    if Settings.DoubleTapReader then
+        if gesture_zoom and Pages[Pages.Page] and STATE == STATE_READING then
+            local stop = false
+            local old_Zoom = Pages[Pages.Page].Zoom
+            if math.abs((Pages[Pages.Page].Zoom - gesture_zoom.Zoom) / 4) < 0.01 then
+                Pages[Pages.Page].Zoom = gesture_zoom.Zoom
+                stop = true
+            else
+                Pages[Pages.Page].Zoom = (Pages[Pages.Page].Zoom  + (gesture_zoom.Zoom - Pages[Pages.Page].Zoom) / 4)
+            end
+            Pages[Pages.Page].y = 272 + ((Pages[Pages.Page].y - 272) / old_Zoom) * Pages[Pages.Page].Zoom
+            Pages[Pages.Page].x = 480 + ((Pages[Pages.Page].x - 480) / old_Zoom) * Pages[Pages.Page].Zoom
+            local n = Pages[Pages.Page].Zoom / old_Zoom
+            Pages[Pages.Page].y = Pages[Pages.Page].y - (gesture_zoom.y - 272) * (n - 1)
+            Pages[Pages.Page].x = Pages[Pages.Page].x - (gesture_zoom.x - 480) * (n - 1)
+            if stop then
+                gesture_zoom = false
+            end
         end
-        Pages[Pages.Page].y = 272 + ((Pages[Pages.Page].y - 272) / old_Zoom) * Pages[Pages.Page].Zoom
-        Pages[Pages.Page].x = 480 + ((Pages[Pages.Page].x - 480) / old_Zoom) * Pages[Pages.Page].Zoom
-        local n = Pages[Pages.Page].Zoom / old_Zoom
-        Pages[Pages.Page].y = Pages[Pages.Page].y - (gesture_zoom.y - 272) * (n - 1)
-        Pages[Pages.Page].x = Pages[Pages.Page].x - (gesture_zoom.x - 480) * (n - 1)
-        if stop then
-            gesture_zoom = false
+        if Timer.getTime(doubleClickTimer) > 300 then
+            last_click = {x = -100, y = -100}
         end
-    end
-    if Timer.getTime(doubleClickTimer) > 300 then
-        last_click = {x = -100, y = -100}
     end
 end
 
