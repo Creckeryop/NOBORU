@@ -322,9 +322,9 @@ Language = {
             TUR = "Thổ Nhĩ Kỳ",
             ITA = "Italia",
             VIE = "Việt Nam",
-            GER = "German", --Needed to translate
-            BRA = "Brazil", --Needed to translate
-            POL = "Polish" --Needed to translate
+            GER = "Tiếng Đức",
+            BRA = "Brazil",
+            POL = "Ba Lan"
         },
         WARNINGS = {
             NO_CHAPTERS = "Không có tập nào!"
@@ -448,9 +448,9 @@ Language = {
             TUR = "Turco",
             ITA = "Italiano",
             VIE = "Vietnamita",
-            GER = "German", --Needed to translate
-            BRA = "Brazil", --Needed to translate
-            POL = "Polish" --Needed to translate
+            GER = "Aleman",
+            BRA = "Brasileño",
+            POL = "Polaco"
         },
         WARNINGS = {
             NO_CHAPTERS = "No hay capítulos"
@@ -512,7 +512,7 @@ LanguageNames = {
         Russian = "Русский",
         English = "Английский",
         Spanish = "Испанский",
-        Vietnamese = "вьетнамский",
+        Vietnamese = "Вьетнамский",
         Default = "Системный"
     },
     English = {
