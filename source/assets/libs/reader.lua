@@ -57,12 +57,12 @@ local function gesture_touch_input(touch, oldtouch, page)
                     if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom)/2 then
                         gesture_zoom = {
                             Zoom = page.start_Zoom,
-                            x = 480,
+                            x = Pages[Pages.Page].x,
                             y = 272
                         }
                     else
                         gesture_zoom = {
-                            Zoom = max_Zoom - (max_Zoom - page.min_Zoom)/2,
+                            Zoom = math.min(max_Zoom, max_Zoom - (max_Zoom - page.min_Zoom)/2),
                             x = oldtouch.x,
                             y = oldtouch.y
                         }
@@ -527,6 +527,7 @@ function Reader.update()
         if not Pages[Pages.Page] then
             return
         end
+        gesture_touch_update()
         if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and ((offset.x >= 0 and Pages.PrevPage > Pages.Page or offset.x <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Horizontal" or (offset.y >= 0 and Pages.PrevPage > Pages.Page or offset.y <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Vertical") then
             if Pages.PrevPage > 0 and Pages.PrevPage <= #Pages then
                 deletePageImage(Pages.PrevPage)
@@ -762,7 +763,6 @@ function Reader.update()
             counterShift = math.min(counterShift + 1.5, 0)
         end
     end
-    gesture_touch_update()
 end
 
 function Reader.draw()
