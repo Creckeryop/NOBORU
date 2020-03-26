@@ -507,6 +507,133 @@ Language = {
             UPDATE = "Actualizar",
             CANCEL = "Cancelar",
             DELETE = "Eliminar"
+         }
+    },         
+            Italian = {
+        APP = {
+            LIBRARY = "LIBRERIA",
+            CATALOGS = "CATALOGHI",
+            SETTINGS = "IMPOSTAZIONI",
+            DOWNLOAD = "DOWNLOADS",
+            IMPORT = "IMPORTA",
+            HISTORY = "HISTORY",
+            SEARCH = "Ricerca"
+        },
+        SETTINGS = {
+            Language = "Linguaggio",
+            ClearChapters = "Cancella i capitoli salvati",
+            ShowNSFW = "Mostra parser NSFW",
+            ClearLibrary = "Cancella libreria",
+            ClearCache = "Cancella tutta la cache creata per i manga non tracciati",
+            ClearAllCache = "Cancella tutta la cache",
+            ReaderOrientation = "Orientamento lettore predefinito",
+            DoubleTapReader = "Abilita il doppio tocco per ingrandire la funzione",
+            ZoomReader = "Ridimensionamento del lettore",
+            SwapXO = "Cambia tipo di chiave",
+            ShowAuthor = "Sviluppatore",
+            ShowVersion = "Versione APP",
+            CheckUpdate = "Controlla gli aggiornamenti",
+            SkipFontLoading = "Salta il caricamento del carattere",
+            LatestVersion = "Ultima versione:",
+            PleaseWait = "Attendere prego",
+            FailedToUpdate = "Impossibile aggiornare l'app",
+            NoConnection = "Nessuna connessione",
+            HideInOffline = "Mostra solo i capitoli scaricati offline",
+            UnzipingVPK = "Estrazione del vpk per l' installazione",
+            CurrentVersionIs = "La versione attuale è:",
+            Space = "Memoria usata",
+            ReaderDirection = "Direzione di lettura Manga",
+            VersionIsUpToDate = "La tua versione è aggiornata",
+            EU = "Europa",
+            JP = "Giappone",
+            PressAgainToAccept = "Premere di nuovo per accettare",
+            PressAgainToUpdate = "Premere di nuovo per aggiornare su:",
+            Reader = "Reader",
+            Controls = "Impostazioni dei controlli",
+            Data = "Impostazioni dei dati",
+            About = "A proposito del programma...",
+            Catalogs = "Cataloghi",
+            ChangeUI = "Tema",
+            PreferredCatalogLanguage = "Lingua preferita"
+        },
+        THEME = {
+            Dark = "Scuro",
+            Light = "Chiaro"
+        },
+        NSFW = {
+            [true] = "Mostra",
+            [false] = "Non mostrare"
+        },
+        YORN = {
+            [true] = "Si",
+            [false] = "No"
+        },
+        PARSERS = {
+            RUS = "Russo",
+            ENG = "Inglese",
+            ESP = "Spagnolo",
+            PRT = "Portoghese",
+            FRA = "Francese",
+            JAP = "Giapponese",
+            DIF = "Diverso",
+            TUR = "Turco",
+            ITA = "Italiano",
+            VIE = "Vietnamese",
+            GER = "Tedesco",
+            BRA = "Brasiliano",
+            POL = "Polacco"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "Nessun capitolo"
+        },
+        READER = {
+            PREPARING_PAGES = "Preparazione delle pagine",
+            LOADING_PAGE = "Caricamento pagina",
+            LOADING_SEGMENT = "Caricamento segmento",
+            Horizontal = "Orizzontale",
+            Vertical = "Verticale",
+            Smart = "Smart",
+            Height = "Altezza",
+            Width = "Larghezza",
+            LEFT = "Da destra a sinistra",
+            RIGHT = "Da sinistra a destra"
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "Aggiungi alla libreria",
+            REMOVE_FROM_LIBRARY = "Rimuovi dalla libreria",
+            PAGE = "Pagina : ",
+            CONTINUE = "Continua : ",
+            START = "Inizia a leggere"
+        },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "Aggiunto alla libreria",
+            REMOVED_FROM_LIBRARY = "Rimosso dalla libreria",
+            SEARCHING = 'Ricerca in corso "%s"',
+            START_DOWNLOAD = "%s: %s\ndownload avviato!",
+            END_DOWNLOAD = "%s: %s\nscaricato con successo!",
+            CANCEL_DOWNLOAD = "%s: %s\ndownload è stato cancellato!",
+            CHAPTER_REMOVE = "%s cancellato!",
+            NET_PROBLEM = "Ci sono problemi con la connessione!",
+            CHAPTERS_CLEARED = "Tutti i capitoli salvati vengono cancellati!",
+            LIBRARY_CLEARED = "Libreria cancellata!",
+            CACHE_CLEARED = "La cache è stata cancellata!",
+            DEVELOPER_THING = "Avvia app su Github!",
+            NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
+            NO_SPACE_LEFT = "Non è rimasto spazio"
+        },
+        PANEL = {
+            BACK = "Indietro",
+            MODE_POPULAR = "Modalità: Popolare",
+            MODE_LATEST = "Modalità: più recente",
+            MODE_SEARCHING = 'Modalità: ricerca "%s"',
+            SEARCH = "Ricerca",
+            SELECT = "Seleziona",
+            CHOOSE = "Scegli",
+            IMPORT = "Importa",
+            CHANGE_SECTION = "Cambia sezione",
+            UPDATE = "Aggiorna",
+            CANCEL = "Cancella",
+            DELETE = "Elimina"
         }
     }
 }
@@ -539,6 +666,13 @@ LanguageNames = {
         Spanish = "Tiếng Tây Ban Nha",
         Vietnamese = "Tiếng Việt",
         Default = "Hệ thống"
+        },
+    Italian = {
+        Russian = "Russo",
+        English = "Inglese",
+        Spanish = "Spagnolo",
+        Vietnamese = "Vietnamese",
+        Default = "Sistema"
     }
 }
 
@@ -552,6 +686,9 @@ elseif language_now == 3 then
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
+else
+    Language.Default = Language.Italian
+    LanguageNames.Default = LanguageNames.Italian
 end
 local langs = {}
 for k, _ in pairs(Language) do
