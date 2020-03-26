@@ -45,7 +45,8 @@ Language = {
             Data = "Данные",
             About = "О программе",
             Catalogs = "Каталоги",
-            ChangeUI = "Тема"
+            ChangeUI = "Тема",
+            PreferredCatalogLanguage = "Предпочитаемый язык"
         },
         THEME = {
             Dark = "Тёмная",
@@ -171,7 +172,8 @@ Language = {
             Data = "Data settings",
             About = "About program",
             Catalogs = "Catalogs",
-            ChangeUI = "Theme"
+            ChangeUI = "Theme",
+            PreferredCatalogLanguage = "Preferred Language"
         },
         THEME = {
             Dark = "Dark",
@@ -248,7 +250,7 @@ Language = {
             CHOOSE = "Choose",
             IMPORT = "Import",
             CHANGE_SECTION = "Change section",
-            UPDATE = "Update",
+            UPDATE = "Refresh",
             CANCEL = "Cancel",
             DELETE = "Delete"
         }
@@ -272,7 +274,7 @@ Language = {
             ClearAllCache = "Xóa tất cả dữ liệu",
             ReaderOrientation = "Trình đọc mặc định",
             ZoomReader = "Thay đổi kích thước",
-            DoubleTapReader = "Enable double tap to zoom feature", --Needed to translate
+            DoubleTapReader = "Kích hoạt tính năng chạm hai lần để thu phóng",
             SwapXO = "Chuyển đổi phím chọn",
             ShowAuthor = "Tác giả",
             ShowVersion = "Phiên bản",
@@ -297,7 +299,8 @@ Language = {
             Data = "Bộ nhớ",
             About = "Giới thiệu",
             Catalogs = "Danh mục",
-            ChangeUI = "Giao diện"
+            ChangeUI = "Giao diện",
+            PreferredCatalogLanguage = "Ngôn ngữ ưa thích"
         },
         THEME = {
             Dark = "Tối",
@@ -423,7 +426,8 @@ Language = {
             Data = "Ajustes de datos",
             About = "Información del programa",
             Catalogs = "Catalogo",
-            ChangeUI = "Tema:"
+            ChangeUI = "Tema:",
+            PreferredCatalogLanguage = "Idioma preferido"
         },
         THEME = {
             Dark = "Dark",

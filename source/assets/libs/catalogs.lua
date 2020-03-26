@@ -513,9 +513,17 @@ function Catalogs.draw()
             Font.print(FONT26, 275, y - 70, parser.Name, COLOR_FONT)
             local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
             Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
+            local width = Font.getTextWidth(FONT26, parser.Name)
             if parser.NSFW then
-                Font.print(FONT16, 280 + Font.getTextWidth(FONT26, parser.Name), y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 280 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
+                width = width + Font.getTextWidth(FONT16, "NSFW") + 5
             end
+            if parser.isNew then
+                Font.print(FONT16, 280 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "New"), "New", COLOR_CRIMSON)
+            elseif parser.isUpdated then
+                Font.print(FONT16, 280 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Updated"), "Updated", COLOR_CRIMSON)
+            end
+            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v"..parser.Version), y - 65, "v"..parser.Version, Color.new(101, 101, 101))
             local link_text = parser.Link .. "/"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_GRAY)
             y = y + 75
@@ -656,6 +664,8 @@ function Catalogs.draw()
                 end
             elseif task == "ReaderOrientation" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_GRAY)
+            elseif task == "PreferredCatalogLanguage" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].PARSERS[Settings.ParserLanguage] or Settings.ParserLanguage or "error_type", COLOR_GRAY)
             elseif task == "ShowNSFW" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
             elseif task == "HideInOffline" then

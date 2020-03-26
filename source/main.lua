@@ -84,6 +84,7 @@ local function preload_data()
     if not Settings.SkipFontLoad then
         for k, v in ipairs(fonts) do
             coroutine.yield("Loading fonts " .. k .. "/" .. #fonts)
+            --ĂăÂâĐđÊê\nÔôƠơƯư\nÁáÀàẢảÃãẠạĂăẮắẰằẲẳẴẵẶặÂâẤấẦầẨ\nẩẪẫẬậĐđÉéÈèẺẻẼẽẸẹÊêẾếỀ\nềỂểỄễỆệÍíÌìỈỉĨĩỊịÓóÒò\nỎỏÕõỌọÔôỐốỒồỔổỖỗỘộƠ\nơỚớỜờỞởỠỡỢợÚúÙùỦủ\nŨũỤụƯưỨứỪừỬửỮữỰựÝýỲỳỶỷỸ\nỹỴỵ to disable lag for vietnamese (very slow loading)
             Font.print(v, 0, 0, '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—', COLOR_BLACK)
         end
     end
@@ -237,6 +238,8 @@ local function draw()
     Screen.flip()
     Screen.waitVblankStart()
 end
+
+LAUNCHED = true
 
 while true do
     input()

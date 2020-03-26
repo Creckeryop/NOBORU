@@ -10,6 +10,7 @@ Settings = {
     HideInOffline = true,
     SkipFontLoad = false,
     Theme = "Light",
+    ParserLanguage = "DIF"
 }
 
 local settings = Settings
@@ -175,6 +176,7 @@ function settings.load()
             setSetting(new, "HideInOffline", {true, false})
             setSetting(new, "DoubleTapReader", {true, false})
             setSetting(new, "Theme", Themes)
+            setSetting(new, "ParserLanguage", GetParserLanguages())
         end
         closeFile(fh)
     end
@@ -206,7 +208,8 @@ local set_list = {
     "Language", "SkipFontLoading", "ChangeUI", "Catalogs", "Reader", "Data", "Controls", "About",
     Catalogs = {
         "ShowNSFW",
-        "HideInOffline"
+        "HideInOffline",
+        "PreferredCatalogLanguage"
     },
     Reader = {
         "ReaderOrientation",
@@ -366,5 +369,9 @@ SettingsFunctions = {
         settings.KeyType = nextTableValue(settings.KeyType, {"JP", "EU"})
         SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
         SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
+    end,
+    PreferredCatalogLanguage = function()
+        settings.ParserLanguage = nextTableValue(settings.ParserLanguage, GetParserLanguages())
+        ChangeNSFW()
     end
 }
