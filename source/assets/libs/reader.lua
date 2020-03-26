@@ -57,7 +57,7 @@ local function gesture_touch_input(touch, oldtouch, page)
                     if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom)/2 then
                         gesture_zoom = {
                             Zoom = page.start_Zoom,
-                            x = Pages[Pages.Page].x,
+                            x = 480,
                             y = 272
                         }
                     else

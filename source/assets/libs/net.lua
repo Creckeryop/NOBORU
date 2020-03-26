@@ -361,6 +361,10 @@ local function taskete(UniqueKey, T, foo)
         newTask.ContentType = t.ContentType or newTask.ContentType or XWWW
         newTask.Cookie = t.Cookie or newTask.Cookie or ""
     end
+    if type(newTask.Link) == "string" then
+        newTask.Link = newTask.Link:match("^(.-)%s*$") or ""
+        newTask.Link = newTask.Link:gsub("([^%%])%%([^%%])","%1%%%%%2"):gsub(" ","%%%%20"):gsub("([^%%])%%$","%1%%%%"):gsub("^%%([^%%])","%%%%%1")
+    end
     foo(newTask)
     uniques[UniqueKey] = newTask
     return true
