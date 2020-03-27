@@ -507,9 +507,9 @@ Language = {
             UPDATE = "Actualizar",
             CANCEL = "Cancelar",
             DELETE = "Eliminar"
-         }
-    },         
-            Italian = {
+        }
+    },
+    Italian = {
         APP = {
             LIBRARY = "LIBRERIA",
             CATALOGS = "CATALOGHI",
@@ -644,6 +644,7 @@ LanguageNames = {
         English = "Английский",
         Spanish = "Испанский",
         Vietnamese = "Вьетнамский",
+        Italian = "Итальянский",
         Default = "Системный"
     },
     English = {
@@ -651,6 +652,7 @@ LanguageNames = {
         English = "English",
         Spanish = "Spanish",
         Vietnamese = "Vietnamese",
+        Italian = "Italian",
         Default = "System"
     },
     Spanish = {
@@ -658,19 +660,22 @@ LanguageNames = {
         English = "Ingles",
         Spanish = "Español",
         Vietnamese = "Vietnamita",
+        Italian = "Italiano",
         Default = "Sistema"
     },
     Vietnamese = {
         Russian = "Tiếng Nga",
         English = "Tiếng Anh",
         Spanish = "Tiếng Tây Ban Nha",
+        Italian = "Ý",
         Vietnamese = "Tiếng Việt",
         Default = "Hệ thống"
-        },
+    },
     Italian = {
         Russian = "Russo",
         English = "Inglese",
         Spanish = "Spagnolo",
+        Italian = "Italiano",
         Vietnamese = "Vietnamese",
         Default = "Sistema"
     }
@@ -683,12 +688,12 @@ if language_now == 8 then
 elseif language_now == 3 then
     Language.Default = Language.Spanish
     LanguageNames.Default = LanguageNames.Spanish
+elseif language_now == 5 then
+    Language.Default = Language.Italian
+    LanguageNames.Default = LanguageNames.Italian
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
-else
-    Language.Default = Language.Italian
-    LanguageNames.Default = LanguageNames.Italian
 end
 local langs = {}
 for k, _ in pairs(Language) do
