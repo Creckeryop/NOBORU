@@ -678,6 +678,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.DoubleTapReader], COLOR_ROYAL_BLUE)
             elseif task == "ChangeUI" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].THEME[Settings.Theme], COLOR_GRAY)
+            elseif task == "LibrarySorting" then
+                Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)

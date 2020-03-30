@@ -10,7 +10,8 @@ Settings = {
     HideInOffline = true,
     SkipFontLoad = false,
     Theme = "Light",
-    ParserLanguage = "DIF"
+    ParserLanguage = "DIF",
+    LibrarySorting = "Date added"
 }
 
 local settings = Settings
@@ -177,6 +178,7 @@ function settings.load()
             setSetting(new, "DoubleTapReader", {true, false})
             setSetting(new, "Theme", Themes)
             setSetting(new, "ParserLanguage", GetParserLanguages())
+            setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
         end
         closeFile(fh)
     end
@@ -205,7 +207,10 @@ end
 
 ---Table of all available options
 local set_list = {
-    "Language", "SkipFontLoading", "ChangeUI", "Catalogs", "Reader", "Data", "Controls", "About",
+    "Language", "SkipFontLoading", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Controls", "About",
+    Library = {
+        "LibrarySorting"
+    },
     Catalogs = {
         "ShowNSFW",
         "HideInOffline",
@@ -372,6 +377,10 @@ SettingsFunctions = {
     end,
     PreferredCatalogLanguage = function()
         settings.ParserLanguage = nextTableValue(settings.ParserLanguage, GetParserLanguages())
+        ChangeNSFW()
+    end,
+    LibrarySorting = function()
+        settings.LibrarySorting = nextTableValue(settings.LibrarySorting, {"Date added", "A-Z", "Z-A"})
         ChangeNSFW()
     end
 }

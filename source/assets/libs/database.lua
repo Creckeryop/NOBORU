@@ -21,6 +21,11 @@ function Database.getMangaList()
     for k, v in ipairs(base) do
         b[k] = v
     end
+    if Settings.LibrarySorting == "A-Z" then
+        table.sort(b, function(a, b) return a.Name < b.Name end)
+    elseif Settings.LibrarySorting == "Z-A" then
+        table.sort(b, function(a, b) return a.Name > b.Name end)
+    end
     return b
 end
 
