@@ -59,7 +59,7 @@ Also if you want to read directly .cbz file you can just open file in import sec
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
 ## Known issues
 <b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading<br>
-<b>Advice</b> Please don't shut vita screen untill blue LED turns off. I hope i'll find better solution
+<b>Advice</b> Update app to version 0.47+
 ## FAQ
 - **I found bug that ...**
     - You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file
