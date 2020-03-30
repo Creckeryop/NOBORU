@@ -16,6 +16,7 @@ local point = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
 
 local cross = Image:new(Graphics.loadImage("app0:assets/images/cross.png"))
 local dwnld = Image:new(Graphics.loadImage("app0:assets/images/download.png"))
+local brger = Image:new(Graphics.loadImage("app0:assets/images/burger.png"))
 
 local ms = 0
 local dif = 0
@@ -96,7 +97,7 @@ function Details.setManga(manga)
     if manga then
         Manga = manga
         ms = 50 * string.len(manga.Name)
-        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 920, 0)
+        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 830, 0)
         Chapters = {}
         Slider.Y = -50
         DetailsSelector:resetSelected()
@@ -361,11 +362,13 @@ function Details.draw()
                 Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
             end
         end
-        Graphics.fillRect(0, 960, 0, 90, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(0, 870, 0, 90, Color.new(0, 0, 0, Alpha))
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
+        Graphics.fillRect(870, 960, 0, 90, Color.new(0, 0, 0, Alpha))
+        Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454
             Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
