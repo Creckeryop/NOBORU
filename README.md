@@ -59,12 +59,14 @@ Also if you want to read directly .cbz file you can just open file in import sec
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
 ## Known issues
 <b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading<br>
-<b>Advice</b> Update app to version 0.47+
+<b>Advice</b> Update app to version 0.47+, but you need to wait 10 seconds after sleeping mode
 ## FAQ
 - **I found bug that ...**
     - You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file
 - **How to view debug console?**
     - DPAD_LEFT + START
+- **How to download chapters in background?**
+    - There is only one way to download in background, don't press Power button! screen will shut by itself
 - **Reader doesn't load some images**
     - Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page)
 - **I downloaded app and can't see any parsers**
