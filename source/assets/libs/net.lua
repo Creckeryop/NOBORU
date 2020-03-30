@@ -123,9 +123,12 @@ function Threads.update()
             Trash.Link = Task.Link
             if Task.Type == "StringRequest" then
                 Task.Table[Task.Index] = getAsyncResult() or ""
-                bytes = bytes + #Task.Table[Task.Index]
-                if #Task.Table[Task.Index] < 100 then
-                    Console.write("NET:" .. Task.Table[Task.Index])
+                local len = #Task.Table[Task.Index]
+                if len > 0 then
+                    bytes = bytes + len
+                    if len < 100 then
+                        Console.write("NET:" .. Task.Table[Task.Index])
+                    end
                 end
             elseif Task.Type == "Image" then
                 if doesFileExist(Task.Path) then
@@ -232,9 +235,11 @@ function Threads.update()
                 end
                 return
             elseif Task.Type == "FileDownload" then
-                local handle = openFile(Task.Path, FREAD)
-                bytes = bytes + sizeFile(handle)
-                closeFile(handle)
+                if doesFileExist(Task.Path) then
+                    local handle = openFile(Task.Path, FREAD)
+                    bytes = bytes + sizeFile(handle)
+                    closeFile(handle)
+                end
             elseif Task.Type == "Skip" then
                 Console.error("WOW HOW THAT HAPPENED?")
             end
@@ -363,7 +368,7 @@ local function taskete(UniqueKey, T, foo)
     end
     if type(newTask.Link) == "string" then
         newTask.Link = newTask.Link:match("^(.-)%s*$") or ""
-        newTask.Link = newTask.Link:gsub("([^%%])%%([^%%])","%1%%%%%2"):gsub(" ","%%%%20"):gsub("([^%%])%%$","%1%%%%"):gsub("^%%([^%%])","%%%%%1")
+        newTask.Link = newTask.Link:gsub("([^%%])%%([^%%])", "%1%%%%%2"):gsub(" ", "%%%%20"):gsub("([^%%])%%$", "%1%%%%"):gsub("^%%([^%%])", "%%%%%1")
     end
     foo(newTask)
     uniques[UniqueKey] = newTask

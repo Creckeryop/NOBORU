@@ -116,15 +116,20 @@
         "CANCELED",
         "FCREATE",
         "textures_16x16",
-        "loadlib"
+        "loadlib",
+        "SCE_CTRL_POWER"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [
         113
     ],
-    "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe", 
-    "terminal.integrated.shellArgs.windows": ["--login", "-i"],
-    "terminal.integrated.env.windows": { 
-        "MSYSTEM": "MINGW64", 
-        "CHERE_INVOKING":"1" } 
+    "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
+    "terminal.integrated.shellArgs.windows": [
+        "--login",
+        "-i"
+    ],
+    "terminal.integrated.env.windows": {
+        "MSYSTEM": "MINGW64",
+        "CHERE_INVOKING": "1"
+    }
 }

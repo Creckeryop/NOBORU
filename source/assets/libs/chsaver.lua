@@ -93,17 +93,37 @@ function ChapterSaver.downloadChapter(chapter)
         ChapterName = chapter.Name,
         F = function()
             local t = {}
-            local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
-            if connection then
+            local connection
+            local retry_get_chptrs = 0
+            while retry_get_chptrs < 3 do
                 ParserManager.prepareChapter(chapter, t)
-            else
-                Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
-                Downloading[k] = nil
-                Downloading[k].Fail = true
-                return
+                while ParserManager.check(t) do
+                    coroutine.yield("update_count", 0, 0)
+                end
+                if #t < 1 then
+                    Console.error("error getting pages")
+                    retry_get_chptrs = retry_get_chptrs + 1
+                    if retry_get_chptrs < 3 then
+                        connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+                        if not connection then
+                            ConnectMessage.show()
+                        end
+                        while ConnectMessage.isActive() do
+                            coroutine.yield(true)
+                        end
+                        Console.error("retrying")
+                    end
+                else
+                    break
+                end
+                coroutine.yield(true)
             end
-            while ParserManager.check(t) do
-                coroutine.yield("update_count", 0, 0)
+            if retry_get_chptrs == 3 then
+                Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM .. "\nMaybe chapter has 0 pages")
+                rem_dir("ux0:data/noboru/chapters/" .. k)
+                Downloading[k].Fail = true
+                Downloading[k] = nil
+                return
             end
             local parser = GetParserByID(chapter.Manga.ParserID)
             for i = 1, #t do
@@ -127,18 +147,36 @@ function ChapterSaver.downloadChapter(chapter)
                             Console.error("error loading picture for " .. k .. " " .. i)
                             retry = retry + 1
                             if retry < 3 then
+                                connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+                                if not connection then
+                                    ConnectMessage.show()
+                                end
+                                while ConnectMessage.isActive() do
+                                    coroutine.yield(true)
+                                end
                                 Console.error("retrying")
                             end
                         else
                             break
                         end
                     else
+                        Console.error("download of " .. k .. "/" .. i .. ".image failed")
                         retry = retry + 1
+                        if retry < 3 then
+                            connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+                            if not connection then
+                                ConnectMessage.show()
+                            end
+                            while ConnectMessage.isActive() do
+                                coroutine.yield(true)
+                            end
+                            Console.error("retrying")
+                        end
                     end
                     coroutine.yield(true)
                 end
                 if retry == 3 then
-                    Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
+                    Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
                     rem_dir("ux0:data/noboru/chapters/" .. k)
                     Downloading[k].Fail = true
                     Downloading[k] = nil
@@ -471,6 +509,18 @@ function ChapterSaver.getDownloadingList()
         }
     end
     return list
+end
+
+function ChapterSaver.clearDownloadingList()
+    if Task then
+        stop(Task.Key)
+    end
+    for i = 1, #Order do
+        local key = Order[i].Key
+        Downloading[key] = nil
+        rem_dir(FOLDER .. key)
+    end
+    Order = {}
 end
 
 ---@param chapter table

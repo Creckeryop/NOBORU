@@ -146,6 +146,9 @@ function Cache.makeHistory(Manga)
     local key = get_key(Manga)
     for i, v in ipairs(history) do
         if v == key then
+            if i == 1 then
+                return
+            end
             table.remove(history, i)
             break
         end
@@ -159,14 +162,18 @@ end
 ---Removes given `Manga` from history
 function Cache.removeHistory(Manga)
     local key = get_key(Manga)
+    local deleted = false
     for i, v in ipairs(history) do
         if v == key then
             table.remove(history, i)
+            deleted = true
             break
         end
     end
-    Cache.saveHistory()
-    updated = true
+    if deleted then
+        Cache.saveHistory()
+        updated = true
+    end
 end
 
 local cached_history = {}

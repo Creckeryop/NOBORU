@@ -147,6 +147,8 @@ local function press_download(item)
                 ChapterSaver.stop(item)
             elseif connection then
                 ChapterSaver.downloadChapter(item)
+            elseif not connection then
+                Notifications.pushUnique(Language[Settings.Language].SETTINGS.NoConnection)
             end
         else
             ChapterSaver.delete(item)

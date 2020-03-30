@@ -28,7 +28,27 @@ local easing = EaseInOutCubic
 function Notifications.push(message, ms)
     order[#order + 1] = {
         to_lines(message),
-        ms or 800
+        ms or 800,
+        message
+    }
+end
+
+---@param message string
+---@param ms number
+---Adds unique notification (if `message` is not in order) with given message that will be shown on screen
+function Notifications.pushUnique(message, ms)
+    if notification and notification[3] == message then
+        return
+    end
+    for i = 1, #order do
+        if order[i][3] == message then
+            return
+        end
+    end
+    order[#order + 1] = {
+        to_lines(message),
+        ms or 800,
+        message
     }
 end
 

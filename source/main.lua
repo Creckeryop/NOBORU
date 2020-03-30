@@ -15,6 +15,7 @@ end
 Graphics.termBlend()
 
 loadlib("changes")
+loadlib("conmessage")
 loadlib("selector")
 loadlib("console")
 loadlib("language")
@@ -148,21 +149,29 @@ local fade = 1
 local function input()
     oldpad, pad = pad, Controls.read()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
-
+    
+    Debug.input(oldpad, pad)
+    
     if Changes.isActive() then
         if touch.x or pad ~= 0 then
             oldpad = Changes.close(pad) or 0
         end
         pad = oldpad
         TouchLock = true
+    elseif ConnectMessage.isActive() then
+        if touch.x or pad ~= 0 then
+            oldpad = ConnectMessage.input(pad) or 0
+        end
+        pad = oldpad
+        TouchLock = true
     end
-
+    
     if touch2.x and AppMode ~= READER then
         TouchLock = true
     elseif not touch.x then
         TouchLock = false
     end
-
+    
     if TouchLock then
         touch.x = nil
         touch.y = nil
@@ -173,7 +182,7 @@ local function input()
         oldtouch2.x = nil
         oldtouch2.y = nil
     end
-
+    
     if not StartSearch then
         if AppMode == MENU then
             Menu.input(oldpad, pad, oldtouch, touch)
@@ -181,15 +190,16 @@ local function input()
             Reader.input(oldpad, pad, oldtouch, touch, oldtouch2, touch2)
         end
     end
-    Debug.input(oldpad, pad)
 end
 
 local function update()
+    Debug.update()
     if fade == 0 then
         Panel.update()
         Threads.update()
         ParserManager.update()
         ChapterSaver.update()
+        ConnectMessage.update()
         Changes.update()
     end
     if fade > 0 then
@@ -229,6 +239,7 @@ local function draw()
         logo:free()
         logo = nil
     else
+        ConnectMessage.draw()
         Changes.draw()
     end
     Notifications.draw()

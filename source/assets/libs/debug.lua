@@ -19,16 +19,25 @@ function MemToStr(bytes, name)
     return string.format("%s: %.2f %s", name, bytes, str)
 end
 
-function Debug.input(oldpad, pad)
+local pad, oldpad = 0
+
+function Debug.input()
+    oldpad, pad = pad, Controls.read()
     if bit32.bxor(pad, SCE_CTRL_START + SCE_CTRL_LEFT) == 0 and bit32.bxor(oldpad, SCE_CTRL_START + SCE_CTRL_LEFT) ~= 0 then
         DEBUG_MODE = not DEBUG_MODE
     end
+end
+
+local wait = System.wait
+function Debug.update()
+    wait(100)
 end
 
 function Debug.draw()
     if DEBUG_MODE then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
         Font.print(FONT16, 0, 0, "TASKS " .. Threads.getTasksNum(), COLOR_WHITE)
+        Font.print(FONT16, 930, 0, System.getAsyncState(), COLOR_WHITE)
         local mem_net = MemToStr(Threads.getMemoryDownloaded(), "NET")
         Font.print(FONT16, 720 - Font.getTextWidth(FONT16, mem_net) / 2, 0, mem_net, Color.new(0, 255, 0))
         local mem_var = MemToStr(collectgarbage("count") * 1024, "VAR")
