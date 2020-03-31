@@ -115,7 +115,8 @@ Language = {
             CACHE_CLEARED = "Кэш очищен!",
             DEVELOPER_THING = "Поставь звезду на Github!",
             NEW_UPDATE_AVAILABLE = "Доступно новое обновление",
-            NO_SPACE_LEFT = "Недостаточно места"
+            NO_SPACE_LEFT = "Недостаточно места",
+            REFRESH_COMPLETED = "Обновление выполнено!"
         },
         PANEL = {
             BACK = "Назад",
@@ -246,7 +247,8 @@ Language = {
             CACHE_CLEARED = "Cache has been cleared!",
             DEVELOPER_THING = "Start app on Github!",
             NEW_UPDATE_AVAILABLE = "New update available",
-            NO_SPACE_LEFT = "No space left"
+            NO_SPACE_LEFT = "No space left",
+            REFRESH_COMPLETED = "Refresh completed!"
         },
         PANEL = {
             BACK = "Back",
@@ -377,7 +379,8 @@ Language = {
             CACHE_CLEARED = "Đã xóa bộ nhớ tạm!",
             DEVELOPER_THING = "Start app on Github!",
             NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
-            NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!"
+            NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
+            REFRESH_COMPLETED = "Refresh completed!" --Need to translate
         },
         PANEL = {
             BACK = "Trở về",
@@ -508,7 +511,8 @@ Language = {
             CACHE_CLEARED = "La cache ha sido eliminada!",
             DEVELOPER_THING = "Inicia la app de Github!",
             NEW_UPDATE_AVAILABLE = "Nueva actualización disponible",
-            NO_SPACE_LEFT = "No space left"
+            NO_SPACE_LEFT = "No space left",
+            REFRESH_COMPLETED = "Refresh completed!" --Need to translate
         },
         PANEL = {
             BACK = "Volver",
@@ -639,7 +643,8 @@ Language = {
             CACHE_CLEARED = "La cache è stata cancellata!",
             DEVELOPER_THING = "Avvia app su Github!",
             NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
-            NO_SPACE_LEFT = "Non è rimasto spazio"
+            NO_SPACE_LEFT = "Non è rimasto spazio",
+            REFRESH_COMPLETED = "Refresh completed!" --Need to translate
         },
         PANEL = {
             BACK = "Indietro",

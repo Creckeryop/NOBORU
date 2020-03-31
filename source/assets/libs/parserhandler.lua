@@ -221,6 +221,7 @@ function ParserManager.updateCounters()
                     end
                 end
             end
+            Notifications.push(Language[Settings.Language].NOTIFICATIONS.REFRESH_COMPLETED)
         end,
         Table = "updateCounters"
     }
