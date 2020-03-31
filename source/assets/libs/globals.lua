@@ -26,6 +26,7 @@ end
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
 LUA_GRADIENTH = Image:new(Graphics.loadImage("app0:assets/images/gradientH.png"))
 LUA_PANEL = Image:new(Graphics.loadImage("app0:assets/images/panel.png"))
+DEV_LOGO = Image:new(Graphics.loadImage("app0:assets/images/devlogo.png"))
 
 USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 

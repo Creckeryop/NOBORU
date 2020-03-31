@@ -237,6 +237,7 @@ local set_list = {
         "ShowVersion",
         "CheckUpdate",
         "ShowAuthor",
+        "Translators"
     },
     Controls = {
         "SwapXO"

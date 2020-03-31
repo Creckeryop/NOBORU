@@ -54,7 +54,8 @@ Language = {
             PreferredCatalogLanguage = "Предпочитаемый язык",
             LibrarySorting = "Сортировка библиотеки",
             ChapterSorting = "Сортировка глав",
-            RefreshLibAtStart = "Обновлять библиотеку при запуске"
+            RefreshLibAtStart = "Обновлять библиотеку при запуске",
+            Translators = "Спасибо переводчикам"
         },
         THEME = {
             Dark = "Тёмная",
@@ -190,7 +191,8 @@ Language = {
             PreferredCatalogLanguage = "Preferred Language",
             LibrarySorting = "Library sorting",
             ChapterSorting = "Chapters sorting",
-            RefreshLibAtStart = "Refresh library at startup"
+            RefreshLibAtStart = "Refresh library at startup",
+            Translators = "Thanks to translators"
         },
         THEME = {
             Dark = "Dark",
@@ -326,7 +328,8 @@ Language = {
             PreferredCatalogLanguage = "Ngôn ngữ ưa thích",
             LibrarySorting = "Library sorting",--Need to translate
             ChapterSorting = "Chapters sorting", --Need to translate
-            RefreshLibAtStart = "Refresh library at startup" --Need to translate
+            RefreshLibAtStart = "Refresh library at startup", --Need to translate
+            Translators = "Thanks to translators"--Need to translate :)
         },
         THEME = {
             Dark = "Tối",
@@ -462,7 +465,8 @@ Language = {
             PreferredCatalogLanguage = "Idioma preferido",
             LibrarySorting = "Library sorting",--Need to translate
             ChapterSorting = "Chapters sorting", --Need to translate
-            RefreshLibAtStart = "Refresh library at startup" --Need to translate
+            RefreshLibAtStart = "Refresh library at startup", --Need to translate
+            Translators = "Translators"--Need to translate :)
         },
         THEME = {
             Dark = "Dark",
@@ -598,7 +602,8 @@ Language = {
             PreferredCatalogLanguage = "Lingua preferita",
             LibrarySorting = "Ordinamento della libreria",
             ChapterSorting = "Chapters sorting", --Need to translate
-            RefreshLibAtStart = "Refresh library at startup" --Need to translate
+            RefreshLibAtStart = "Refresh library at startup", --Need to translate
+            Translators = "Thanks to translators"--Need to translate :)
         },
         THEME = {
             Dark = "Scuro",

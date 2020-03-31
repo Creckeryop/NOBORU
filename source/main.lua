@@ -134,6 +134,7 @@ while coroutine.status(f) ~= "dead" do
     end
     if logo then
         Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e)
+        Graphics.drawImage(960-172, 0, DEV_LOGO.e)
     end
     Graphics.termBlend()
     Screen.flip()
@@ -239,6 +240,7 @@ local function draw()
         if logo then
             Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e, Color.new(255, 255, 255, 255 * fade))
         end
+        Graphics.drawImage(960-172, -32*(1-fade), DEV_LOGO.e, Color.new(255, 255, 255, 255 * fade))
     elseif logo then
         logo:free()
         logo = nil

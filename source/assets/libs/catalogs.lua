@@ -531,7 +531,7 @@ function Catalogs.draw()
             elseif parser.isUpdated then
                 Font.print(FONT16, 280 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Updated"), "Updated", COLOR_CRIMSON)
             end
-            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v"..parser.Version), y - 65, "v"..parser.Version, Color.new(101, 101, 101))
+            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, Color.new(101, 101, 101))
             local link_text = parser.Link .. "/"
             Font.print(FONT16, 275, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_GRAY)
             y = y + 75
@@ -692,6 +692,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ChapterSorting" then
                 Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+            elseif task == "Translators" then
+                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
@@ -720,7 +722,8 @@ function Catalogs.draw()
                     Font.print(FONT16, 275, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                 end
             elseif task == "ShowAuthor" then
-                Font.print(FONT16, 275, y - 44, "@creckeryop", COLOR_ROYAL_BLUE)
+                Graphics.drawImage(275, y - 44, DEV_LOGO.e)
+            --Font.print(FONT16, 275, y - 44, "@creckeryop", COLOR_ROYAL_BLUE)
             elseif task == "ShowVersion" then
                 Font.print(FONT16, 275, y - 44, Settings.Version, COLOR_GRAY)
             elseif task == "ReaderDirection" then
@@ -741,22 +744,26 @@ function Catalogs.draw()
             y = item * 75 - Slider.Y
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
+            local dy_for_translators = 0
+            if list[item] == "Translators" then
+                dy_for_translators = 30
+            end
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, wh)
             end
         end
     elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
         for i = start, min(#Results, start + 15) do
             local x = 610 + (((i - 1) % 4) - 2) * (MANGA_WIDTH + 10)
-            local y = - Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 12) + 12
+            local y = -Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 12) + 12
             DrawManga(x + MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2, Results[i])
             if mode == "LIBRARY" and Results[i].Counter then
                 local c = Results[i].Counter
                 if c > 0 then
-                    Graphics.fillRect(x, x+Font.getTextWidth(BONT16, c) + 10, y, y + 24, COLOR_CRIMSON)
-                    Font.print(BONT16, x+5, y+2, tostring(c), COLOR_WHITE)
+                    Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 10, y, y + 24, COLOR_CRIMSON)
+                    Font.print(BONT16, x + 5, y + 2, tostring(c), COLOR_WHITE)
                 end
             end
         end
