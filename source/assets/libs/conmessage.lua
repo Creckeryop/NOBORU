@@ -1,13 +1,14 @@
 local Offset = 544
 local FinalY = 0
 local active = false
-local str = "Connection is lost\n\nWaiting for connection...\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored"
+local str
 ConnectMessage = {}
 
 local easing = EaseInOutCubic
 local animation_timer = Timer.new()
 
 function ConnectMessage.show()
+    str = Language[Settings.Language].MESSAGE.LOST_CONNECTION
     active = true
     FinalY = 544 / 2 - (Font.getTextHeight(FONT20, str) + 20) / 2
     Timer.reset(animation_timer)

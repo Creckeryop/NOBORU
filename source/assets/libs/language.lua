@@ -11,6 +11,10 @@ Language = {
             IMPORT = "ИМПОРТ",
             SEARCH = "Поиск"
         },
+        MESSAGE = {
+            LOST_CONNECTION = "Соединение потеряно\n\nОжидание подключения...\n\n(Сверните приложение, Зайдите в настройки соединения, нажмите Присоединиться)\n\nНажмите X для отмены всех загрузок и закрытия сообщения\n\nВсе загрузки продолжаться, если соединение восстановится",
+            PRESS_TO_UPDATE = "Нажмите X для обновления\nНажмите O для отмены"
+        },
         SETTINGS = {
             Language = "Язык",
             ClearChapters = "Очистить сохраненные главы",
@@ -142,6 +146,10 @@ Language = {
             IMPORT = "IMPORT",
             HISTORY = "HISTORY",
             SEARCH = "Search"
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored",
+            PRESS_TO_UPDATE = "Press X to update\nPress O to cancel"
         },
         SETTINGS = {
             Language = "Language",
@@ -275,6 +283,10 @@ Language = {
             HISTORY = "Lịch sử",
             SEARCH = "Tìm kiếm"
         },
+        MESSAGE = {
+            LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored", --Need to translate
+            PRESS_TO_UPDATE = "Press X to update\nPress O to cancel" --Need to translate
+        },
         SETTINGS = {
             Language = "Ngôn ngữ",
             ClearChapters = "Xóa các tập đã tải",
@@ -407,6 +419,10 @@ Language = {
             HISTORY = "HISTORIAL",
             SEARCH = "Buscar"
         },
+        MESSAGE = {
+            LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored", --Need to translate
+            PRESS_TO_UPDATE = "Press X to update\nPress O to cancel" --Need to translate
+        },
         SETTINGS = {
             Language = "Idioma:",
             ClearChapters = "Eliminar capítulos guardados",
@@ -538,6 +554,10 @@ Language = {
             IMPORT = "IMPORTA",
             HISTORY = "CRONOLOGIA",
             SEARCH = "Ricerca"
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored", --Need to translate
+            PRESS_TO_UPDATE = "Press X to update\nPress O to cancel" --Need to translate
         },
         SETTINGS = {
             Language = "Linguaggio",
