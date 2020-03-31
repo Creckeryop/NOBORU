@@ -26,7 +26,7 @@ function ParserManager.update()
         end
     else
         if coroutine.status(Task.Update) == "dead" then
-            if Task.Type ~= "Update" then
+            if Task.Type ~= "Update" and Task.Type~="updateCounters" then
                 Task.Table.Done = true
             end
             uniques[Task.Table] = nil
@@ -161,6 +161,71 @@ function ParserManager.loadPageImage(parserID, Link, Table, Insert)
         Order[#Order + 1] = T
     end
     uniques[Table] = T
+end
+
+function ParserManager.updateCounters()
+    if uniques["updateCounters"] then return end
+    local T = {
+        Type = "updateCounters",
+        F = function ()
+            local list = Database.getMangaList()
+            local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
+            if connection then
+                for k, v in ipairs(list) do
+                    Cache.addManga(v)
+                    local parser = GetParserByID(v.ParserID)
+                    if parser then
+                        local chps = {}
+                        parser:getChapters(v, chps)
+                        if #chps > 0 then
+                            Cache.saveChapters(v, chps)
+                            Cache.loadBookmarks(v)
+                            v.Counter = #chps
+                            local Latest = Cache.getLatestBookmark(v)
+                            for i = 1, #chps do
+                                local key = chps[i].Link:gsub("%p", "")
+                                if key == Latest then
+                                    if Cache.getBookmark(chps[i]) == true then
+                                        v.Counter = #chps - i
+                                    else
+                                        v.Counter = #chps - i + 1
+                                    end
+                                    break
+                                end
+                            end
+                        else
+                            v.Counter = 0
+                        end
+                    end
+                end
+            else
+                for k, v in ipairs(list) do
+                    local chps = Cache.loadChapters(v, true)
+                    if #chps > 0 then
+                        Cache.loadBookmarks(v)
+                        v.Counter = #chps
+                        local Latest = Cache.getLatestBookmark(v)
+                        for i = 1, #chps do
+                            local key = chps[i].Link:gsub("%p", "")
+                            if key == Latest then
+                                if Cache.getBookmark(chps[i]) == true then
+                                    v.Counter = #chps - i
+                                else
+                                    v.Counter = #chps - i + 1
+                                end
+                                break
+                            end
+                        end
+                    else
+                        v.Counter = 0
+                    end
+                end
+            end
+        end,
+        Table = "updateCounters"
+    }
+    table.insert(Order, 1, T)
+    uniques["updateCounters"] = T
 end
 
 ---@param Table table

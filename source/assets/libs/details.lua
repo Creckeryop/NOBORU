@@ -74,22 +74,26 @@ local function updateContinueManga(Manga)
     if #Chapters > 0 then
         local Latest = Cache.getLatestBookmark(Manga)
         for i = 1, #Chapters do
-            local bookmark = Cache.getBookmark(Chapters[i])
             local key = Chapters[i].Link:gsub("%p", "")
             if Latest == key then
+                local bookmark = Cache.getBookmark(Chapters[i])
                 if bookmark == true then
                     ContinueChapter = i + 1
                     if not Chapters[ContinueChapter] then
                         ContinueChapter = i
                     end
+                    Chapters[1].Manga.Counter = #Chapters - i
                 else
                     ContinueChapter = i
+                    Chapters[1].Manga.Counter = #Chapters - i + 1
                 end
                 break
             end
         end
     end
 end
+
+local chapters_loaded = false
 
 ---@param manga table
 ---Sets `manga` to details
@@ -118,6 +122,7 @@ function Details.setManga(manga)
             Chapters = Cache.loadChapters(manga)
             is_chapter_loaded_offline = true
         end
+        chapters_loaded = false
         is_notification_showed = false
         Timer.reset(animation_timer)
         Timer.reset(name_timer)
@@ -177,6 +182,9 @@ function Details.input(oldpad, pad, oldtouch, touch)
             if TOUCH.MODE == TOUCH.READ and oldtouch.x then
                 if oldtouch.x > 320 and oldtouch.x < 920 and oldtouch.y > 90 then
                     local id = math.floor((Slider.Y + oldtouch.y - 20) / 80)
+                    if Settings.ChapterSorting == "N->1" then
+                        id = #Chapters - id + 1
+                    end
                     if oldtouch.x < 850 or Manga.ParserID == "IMPORTED" then
                         press_manga(id)
                     else
@@ -202,7 +210,11 @@ function Details.input(oldpad, pad, oldtouch, touch)
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             press_add_to_library()
         elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
-            press_manga(DetailsSelector.getSelected())
+            local id = DetailsSelector.getSelected()
+            if Settings.ChapterSorting == "N->1" then
+                id = #Chapters - id + 1
+            end
+            press_manga(id)
         elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
             mode = "WAIT"
             Loading.setMode("NONE")
@@ -210,7 +222,11 @@ function Details.input(oldpad, pad, oldtouch, touch)
             Timer.reset(animation_timer)
             old_fade = fade
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) and Manga.ParserID ~= "IMPORTED" then
-            press_download(DetailsSelector.getSelected())
+            local id = DetailsSelector.getSelected()
+            if Settings.ChapterSorting == "N->1" then
+                id = #Chapters - id + 1
+            end
+            press_download(id)
         elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
             if ContinueChapter then
                 if ContinueChapter > 0 then
@@ -227,6 +243,9 @@ function Details.input(oldpad, pad, oldtouch, touch)
             else
                 if oldtouch.x > 320 and oldtouch.x < 900 then
                     local id = math.floor((Slider.Y - 20 + oldtouch.y) / 80)
+                    if Settings.ChapterSorting == "N->1" then
+                        id = #Chapters - id + 1
+                    end
                     if Chapters[id] then
                         new_itemID = id
                     end
@@ -266,6 +285,9 @@ function Details.update()
                 end
             end
         end
+        if not chapters_loaded and not ParserManager.check(Chapters) then
+            chapters_loaded = true
+        end
         if AppMode == MENU and not ContinueChapter and not ParserManager.check(Chapters) then
             updateContinueManga(Manga)
         end
@@ -284,7 +306,12 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 80
-        for i = start, math.min(#Chapters, start + 8) do
+        local ListCount = #Chapters
+        for n = start, math.min(ListCount, start + 8) do
+            local i = n
+            if Settings.ChapterSorting == "N->1" then
+                i = ListCount - n + 1
+            end
             if y < 544 then
                 local bookmark = Cache.getBookmark(Chapters[i])
                 if bookmark ~= nil and bookmark ~= true then
@@ -294,7 +321,7 @@ function Details.draw()
                     Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, Color.new(0, 0, 0, Alpha))
-                if i < #Chapters then
+                if n < ListCount then
                     Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
                 end
                 if i == Slider.ItemID then

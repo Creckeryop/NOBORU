@@ -238,6 +238,10 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                 ImportSelector:resetSelected()
             end
         end
+    elseif mode == "LIBRARY" then
+        if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+            ParserManager.updateCounters()
+        end
     end
     if touch.x or pad ~= 0 then
         Timer.reset(TouchTimer)
@@ -355,10 +359,11 @@ function Catalogs.update()
             }
         elseif mode == "LIBRARY" then
             Panel.set{
-                "L\\R", "DPad", "Cross",
+                "L\\R", "DPad", "Triangle", "Cross",
                 ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
                 DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT
+                Cross = Language[Settings.Language].PANEL.SELECT,
+                Triangle = Language[Settings.Language].PANEL.UPDATE
             }
         elseif mode == "HISTORY" then
             Panel.set{
@@ -679,10 +684,14 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_GRAY)
             elseif task == "DoubleTapReader" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.DoubleTapReader], COLOR_ROYAL_BLUE)
+            elseif task == "RefreshLibAtStart" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.RefreshLibAtStart], COLOR_ROYAL_BLUE)
             elseif task == "ChangeUI" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].THEME[Settings.Theme], COLOR_GRAY)
             elseif task == "LibrarySorting" then
                 Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
+            elseif task == "ChapterSorting" then
+                Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
@@ -740,7 +749,16 @@ function Catalogs.draw()
     elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 12)) * 4 + 1)
         for i = start, min(#Results, start + 15) do
-            DrawManga(610 + (((i - 1) % 4) - 2) * (MANGA_WIDTH + 10) + MANGA_WIDTH / 2, MANGA_HEIGHT / 2 - Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 12) + 12, Results[i])
+            local x = 610 + (((i - 1) % 4) - 2) * (MANGA_WIDTH + 10)
+            local y = - Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 12) + 12
+            DrawManga(x + MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2, Results[i])
+            if mode == "LIBRARY" and Results[i].Counter then
+                local c = Results[i].Counter
+                if c > 0 then
+                    Graphics.fillRect(x, x+Font.getTextWidth(BONT16, c) + 10, y, y + 24, COLOR_CRIMSON)
+                    Font.print(BONT16, x+5, y+2, tostring(c), COLOR_WHITE)
+                end
+            end
         end
         local item = MangaSelector:getSelected()
         if item ~= 0 then

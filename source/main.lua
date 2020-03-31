@@ -140,6 +140,10 @@ while coroutine.status(f) ~= "dead" do
     Screen.waitVblankStart()
 end
 
+if Settings.RefreshLibAtStart then
+    ParserManager.updateCounters()
+end
+
 local pad, oldpad = Controls.read()
 local oldtouch, touch = {}, {x = nil, y = nil}
 local oldtouch2, touch2 = {}, {x = nil, y = nil}

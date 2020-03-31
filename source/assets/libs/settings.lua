@@ -11,7 +11,9 @@ Settings = {
     SkipFontLoad = false,
     Theme = "Light",
     ParserLanguage = "DIF",
-    LibrarySorting = "Date added"
+    LibrarySorting = "Date added",
+    ChapterSorting = "1->N",
+    RefreshLibAtStart = false
 }
 
 local settings = Settings
@@ -179,6 +181,8 @@ function settings.load()
             setSetting(new, "Theme", Themes)
             setSetting(new, "ParserLanguage", GetParserLanguages())
             setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
+            setSetting(new, "ChapterSorting", {"1->N", "N->1"})
+            setSetting(new, "RefreshLibAtStart", {true, false})
         end
         closeFile(fh)
     end
@@ -207,9 +211,10 @@ end
 
 ---Table of all available options
 local set_list = {
-    "Language", "SkipFontLoading", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Controls", "About",
+    "Language", "SkipFontLoading","ChapterSorting", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Controls", "About",
     Library = {
-        "LibrarySorting"
+        "LibrarySorting",
+        "RefreshLibAtStart"
     },
     Catalogs = {
         "ShowNSFW",
@@ -381,6 +386,11 @@ SettingsFunctions = {
     end,
     LibrarySorting = function()
         settings.LibrarySorting = nextTableValue(settings.LibrarySorting, {"Date added", "A-Z", "Z-A"})
-        ChangeNSFW()
+    end,
+    ChapterSorting = function()
+        settings.ChapterSorting = nextTableValue(settings.ChapterSorting, {"1->N", "N->1"})
+    end,
+    RefreshLibAtStart = function()
+        settings.RefreshLibAtStart = nextTableValue(settings.RefreshLibAtStart, {true, false})
     end
 }

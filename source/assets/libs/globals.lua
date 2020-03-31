@@ -43,19 +43,19 @@ COLOR_SELECTED = COLOR_WHITE
 COLOR_ICON_EXTRACT = COLOR_WHITE
 COLOR_PANEL = COLOR_WHITE
 
-BONT16 = Font.load("app0:robboto.ttf")
 FONT16 = Font.load("app0:roboto.ttf")
 FONT12 = Font.load("app0:roboto.ttf")
 FONT20 = Font.load("app0:roboto.ttf")
-FONT30 = Font.load("app0:roboto.ttf")
-BONT30 = Font.load("app0:robboto.ttf")
 FONT26 = Font.load("app0:roboto.ttf")
+FONT30 = Font.load("app0:roboto.ttf")
+BONT16 = Font.load("app0:robboto.ttf")
+BONT30 = Font.load("app0:robboto.ttf")
 
+Font.setPixelSizes(FONT12, 12)
+Font.setPixelSizes(FONT20, 20)
+Font.setPixelSizes(FONT26, 26)
 Font.setPixelSizes(FONT30, 30)
 Font.setPixelSizes(BONT30, 30)
-Font.setPixelSizes(FONT26, 26)
-Font.setPixelSizes(FONT20, 20)
-Font.setPixelSizes(FONT12, 12)
 
 local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory

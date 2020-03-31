@@ -48,7 +48,9 @@ Language = {
             Library = "Библиотека",
             ChangeUI = "Тема",
             PreferredCatalogLanguage = "Предпочитаемый язык",
-            LibrarySorting = "Сортировка библиотеки"
+            LibrarySorting = "Сортировка библиотеки",
+            ChapterSorting = "Сортировка глав",
+            RefreshLibAtStart = "Обновлять библиотеку при запуске"
         },
         THEME = {
             Dark = "Тёмная",
@@ -177,7 +179,9 @@ Language = {
             Library = "Library",
             ChangeUI = "Theme",
             PreferredCatalogLanguage = "Preferred Language",
-            LibrarySorting = "Library sorting"
+            LibrarySorting = "Library sorting",
+            ChapterSorting = "Chapters sorting",
+            RefreshLibAtStart = "Refresh library at startup"
         },
         THEME = {
             Dark = "Dark",
@@ -306,7 +310,9 @@ Language = {
             Library = "Thư viện",
             ChangeUI = "Giao diện",
             PreferredCatalogLanguage = "Ngôn ngữ ưa thích",
-            LibrarySorting = "Library sorting"--Need to translate
+            LibrarySorting = "Library sorting",--Need to translate
+            ChapterSorting = "Chapters sorting", --Need to translate
+            RefreshLibAtStart = "Refresh library at startup" --Need to translate
         },
         THEME = {
             Dark = "Tối",
@@ -435,7 +441,9 @@ Language = {
             Library = "Libreria",
             ChangeUI = "Tema:",
             PreferredCatalogLanguage = "Idioma preferido",
-            LibrarySorting = "Library sorting"--Need to translate
+            LibrarySorting = "Library sorting",--Need to translate
+            ChapterSorting = "Chapters sorting", --Need to translate
+            RefreshLibAtStart = "Refresh library at startup" --Need to translate
         },
         THEME = {
             Dark = "Dark",
@@ -564,7 +572,9 @@ Language = {
             Library = "Libreria",
             ChangeUI = "Tema",
             PreferredCatalogLanguage = "Lingua preferita",
-            LibrarySorting = "Ordinamento della libreria"
+            LibrarySorting = "Ordinamento della libreria",
+            ChapterSorting = "Chapters sorting", --Need to translate
+            RefreshLibAtStart = "Refresh library at startup" --Need to translate
         },
         THEME = {
             Dark = "Scuro",

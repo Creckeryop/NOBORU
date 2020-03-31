@@ -102,6 +102,10 @@ function Cache.getLatestBookmark(Manga)
     return bookmarks[mkey] and bookmarks[mkey].LatestBookmark
 end
 
+function Cache.getBookmarkKey(Chapter)
+    return Chapter.Link:gsub("%p", "")
+end
+
 ---@param Manga table
 ---Saves all bookmarks related to given `Manga`
 function Cache.saveBookmarks(Manga)
@@ -250,7 +254,7 @@ end
 ---@param Manga table
 ---@return table
 ---Gives chapter list for given `Manga`
-function Cache.loadChapters(Manga)
+function Cache.loadChapters(Manga, skiphiding)
     local key = get_key(Manga)
     if data[key] then
         if doesFileExist("ux0:data/noboru/cache/" .. key .. "/chapters.dat") then
@@ -261,6 +265,9 @@ function Cache.loadChapters(Manga)
             end)
             closeFile(fh)
             if suc then
+                if skiphiding then
+                    return new_chlist
+                end
                 if Settings.HideInOffline then
                     local t = {}
                     for _, chapter in ipairs(new_chlist) do
