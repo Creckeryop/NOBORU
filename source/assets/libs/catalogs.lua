@@ -44,6 +44,9 @@ local function loadMangaImage(manga)
             Index = "Image"
         })
     else
+        if Database.check(manga) and not Cache.isCached(manga) then
+            Cache.addManga(manga)
+        end
         Threads.addTask(manga, {
             Type = "ImageDownload",
             Link = manga.ImageLink,
