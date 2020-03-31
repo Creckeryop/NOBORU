@@ -20,9 +20,12 @@ local brger = Image:new(Graphics.loadImage("app0:assets/images/burger.png"))
 
 local ms = 0
 local dif = 0
+local ms_ch = 0
+local dif_ch = 0
 
 local animation_timer = Timer.new()
 local name_timer = Timer.new()
+local chapter_timer = Timer.new()
 
 local is_notification_showed = false
 
@@ -59,6 +62,9 @@ local animationUpdate = function()
     if Timer.getTime(name_timer) > 3500 + ms then
         Timer.reset(name_timer)
     end
+    if Timer.getTime(chapter_timer) > 3500 + ms_ch then
+        Timer.reset(chapter_timer)
+    end
 end
 
 local DetailsSelector = Selector:new(-1, 1, -3, 3, function() return math.floor((Slider.Y - 20 + 90) / 80) end)
@@ -90,6 +96,12 @@ local function updateContinueManga(Manga)
                 end
                 break
             end
+        end
+        if ContinueChapter > 0 then
+            local ch_name = Chapters[ContinueChapter].Name or ("Chapter " .. ContinueChapter)
+            ms_ch = 25 * string.len(ch_name)
+            dif_ch = math.max(Font.getTextWidth(FONT12, ch_name) - 220, 0)
+            Timer.reset(chapter_timer)
         end
     end
 end
@@ -299,7 +311,7 @@ function Details.draw()
     if mode ~= "END" then
         local M = old_fade * fade
         local Alpha = 255 * M
-        Graphics.fillRect(0, 920, 90, 544, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(20, 260, 90, 544, Color.new(0, 0, 0, Alpha))
         local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
@@ -307,6 +319,43 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 80
+        Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
+        local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
+        if Database.check(Manga) then
+            color = RED
+            text = Language[Settings.Language].DETAILS.REMOVE_FROM_LIBRARY
+        end
+        Graphics.fillRect(20, 260, shift + 416, shift + 475, color)
+        Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
+        if ContinueChapter then
+            if #Chapters > 0 then
+                Graphics.fillRect(30, 250, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+                local continue_txt = Language[Settings.Language].DETAILS.START
+                local ch_name
+                local dy = 0
+                if ContinueChapter > 0 and Chapters[ContinueChapter] and (ContinueChapter == 1 and Cache.getBookmark(Chapters[ContinueChapter]) or ContinueChapter ~= 1) then
+                    continue_txt = Language[Settings.Language].DETAILS.CONTINUE
+                    dy = -10
+                    ch_name = Chapters[ContinueChapter].Name or ("Chapter " .. ContinueChapter)
+                end
+                local width = Font.getTextWidth(FONT20, continue_txt)
+                local height = Font.getTextHeight(FONT20, continue_txt)
+                Font.print(FONT20, 140 - width / 2, shift + 505 - height / 2 + dy, continue_txt, WHITE)
+                if ch_name then
+                    width = math.min(Font.getTextWidth(FONT12, ch_name),220)
+                    local t = math.min(math.max(0, Timer.getTime(chapter_timer) - 1500), ms_ch)
+                    Font.print(FONT12, 140 - width / 2 - dif_ch * t / ms_ch, shift + 505 - height / 2+18, ch_name, WHITE)
+                end
+                Graphics.fillRect(20, 30, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+                Graphics.fillRect(250, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+            end
+        end
+        Graphics.fillRect(0, 20, 90, 544, Color.new(0, 0, 0, Alpha))
+        if textures_16x16.Triangle and textures_16x16.Triangle.e then
+            Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
+        end
+        DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
+        Graphics.fillRect(260, 920, 90, 544, Color.new(0, 0, 0, Alpha))
         local ListCount = #Chapters
         for n = start, math.min(ListCount, start + 8) do
             local i = n
@@ -350,29 +399,7 @@ function Details.draw()
             end
             y = y + 80
         end
-        Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
-        local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
-        if Database.check(Manga) then
-            color = RED
-            text = Language[Settings.Language].DETAILS.REMOVE_FROM_LIBRARY
-        end
-        Graphics.fillRect(20, 260, shift + 416, shift + 475, color)
-        if textures_16x16.Triangle and textures_16x16.Triangle.e then
-            Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
-        end
-        Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
-        if ContinueChapter then
-            if #Chapters > 0 then
-                Graphics.fillRect(20, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
-                local continue_txt = Language[Settings.Language].DETAILS.START
-                if ContinueChapter > 0 and (ContinueChapter == 1 and Cache.getBookmark(Chapters[ContinueChapter]) or ContinueChapter ~= 1) then
-                    continue_txt = Language[Settings.Language].DETAILS.CONTINUE .. ContinueChapter
-                end
-                local width = Font.getTextWidth(FONT20, continue_txt)
-                local height = Font.getTextHeight(FONT20, continue_txt)
-                Font.print(FONT20, 140 - width / 2, shift + 505 - height / 2, continue_txt, WHITE)
-            end
-        end
+        
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
@@ -391,7 +418,6 @@ function Details.draw()
             end
         end
         Graphics.fillRect(0, 870, 0, 90, Color.new(0, 0, 0, Alpha))
-        DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)

@@ -98,7 +98,7 @@ Language = {
             ADD_TO_LIBRARY = "Добавить в библиотеку",
             REMOVE_FROM_LIBRARY = "Удалить из библиотеки",
             PAGE = "Страница : ",
-            CONTINUE = "Продолжить : ",
+            CONTINUE = "Продолжить",
             START = "Начать чтение"
         },
         NOTIFICATIONS = {
@@ -230,7 +230,7 @@ Language = {
             ADD_TO_LIBRARY = "Add to library",
             REMOVE_FROM_LIBRARY = "Remove from library",
             PAGE = "Page : ",
-            CONTINUE = "Continue : ",
+            CONTINUE = "Continue",
             START = "Start reading"
         },
         NOTIFICATIONS = {
@@ -362,7 +362,7 @@ Language = {
             ADD_TO_LIBRARY = "Thêm vào thư viện",
             REMOVE_FROM_LIBRARY = "Xóa khỏi thư viện",
             PAGE = "Trang : ",
-            CONTINUE = "Đọc tiếp : ",
+            CONTINUE = "Đọc tiếp",
             START = "Đọc truyện"
         },
         NOTIFICATIONS = {
@@ -494,7 +494,7 @@ Language = {
             ADD_TO_LIBRARY = "Añadir a la libreria",
             REMOVE_FROM_LIBRARY = "Eliminar de la librería",
             PAGE = "Página : ",
-            CONTINUE = "Continuar : ",
+            CONTINUE = "Continuar",
             START = "Comenzar lectura"
         },
         NOTIFICATIONS = {
@@ -626,7 +626,7 @@ Language = {
             ADD_TO_LIBRARY = "Aggiungi alla libreria",
             REMOVE_FROM_LIBRARY = "Rimuovi dalla libreria",
             PAGE = "Pagina : ",
-            CONTINUE = "Continua : ",
+            CONTINUE = "Continua",
             START = "Inizia a leggere"
         },
         NOTIFICATIONS = {
