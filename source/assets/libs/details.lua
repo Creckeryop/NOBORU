@@ -72,6 +72,7 @@ local ContinueChapter
 local function updateContinueManga(Manga)
     ContinueChapter = 0
     if #Chapters > 0 then
+        Chapters[1].Manga.Counter = #Chapters
         local Latest = Cache.getLatestBookmark(Manga)
         for i = 1, #Chapters do
             local key = Chapters[i].Link:gsub("%p", "")
