@@ -73,7 +73,7 @@ Language = {
             TUR = "Турецкий",
             ITA = "Итальянский",
             VIE = "Вьетнамский",
-            GER = "Немецкий",
+            DEU = "Немецкий",
             BRA = "Бразильский",
             POL = "Польский"
         },
@@ -202,7 +202,7 @@ Language = {
             TUR = "Turkish",
             ITA = "Italian",
             VIE = "Vietnamese",
-            GER = "German",
+            DEU = "German",
             BRA = "Brazil",
             POL = "Polish"
         },
@@ -331,7 +331,7 @@ Language = {
             TUR = "Thổ Nhĩ Kỳ",
             ITA = "Italia",
             VIE = "Việt Nam",
-            GER = "Tiếng Đức",
+            DEU = "Tiếng Đức",
             BRA = "Brazil",
             POL = "Ba Lan"
         },
@@ -460,7 +460,7 @@ Language = {
             TUR = "Turco",
             ITA = "Italiano",
             VIE = "Vietnamita",
-            GER = "Aleman",
+            DEU = "Aleman",
             BRA = "Brasileño",
             POL = "Polaco"
         },
@@ -589,7 +589,7 @@ Language = {
             TUR = "Turco",
             ITA = "Italiano",
             VIE = "Vietnamese",
-            GER = "Tedesco",
+            DEU = "Tedesco",
             BRA = "Brasiliano",
             POL = "Polacco"
         },
