@@ -524,7 +524,7 @@ Language = {
             SETTINGS = "IMPOSTAZIONI",
             DOWNLOAD = "DOWNLOADS",
             IMPORT = "IMPORTA",
-            HISTORY = "HISTORY",
+            HISTORY = "CRONOLOGIA",
             SEARCH = "Ricerca"
         },
         SETTINGS = {
@@ -537,7 +537,7 @@ Language = {
             ReaderOrientation = "Orientamento lettore predefinito",
             DoubleTapReader = "Abilita il doppio tocco per ingrandire la funzione",
             ZoomReader = "Ridimensionamento del lettore",
-            SwapXO = "Cambia tipo di chiave",
+            SwapXO = "Cambia pulsanti X o O",
             ShowAuthor = "Sviluppatore",
             ShowVersion = "Versione APP",
             CheckUpdate = "Controlla gli aggiornamenti",
@@ -564,7 +564,7 @@ Language = {
             Library = "Libreria",
             ChangeUI = "Tema",
             PreferredCatalogLanguage = "Lingua preferita",
-            LibrarySorting = "Library sorting"--Need to translate
+            LibrarySorting = "Ordinamento della libreria"
         },
         THEME = {
             Dark = "Scuro",
