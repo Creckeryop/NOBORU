@@ -51,7 +51,9 @@ function ChapterSaver.update()
             local _, msg, var1, var2 = coroutine.resume(Task.F)
             if _ then
                 if Task.Destroy and msg then
-                    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+                    if Task.Notify then
+                        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+                    end
                     Downloading[Task.Key] = nil
                     Task = nil
                 elseif msg == "update_count" then
@@ -81,17 +83,17 @@ local notify = true
 
 ---@param chapter table
 ---Creates task for downloading `chapter`
-function ChapterSaver.downloadChapter(chapter)
+function ChapterSaver.downloadChapter(chapter, silent)
     local k = get_key(chapter)
-    if not doesDirExist(FOLDER .. k) then
-        createDirectory(FOLDER .. k)
-    end
     Downloading[k] = {
         Type = "Download",
         Key = k,
         MangaName = chapter.Manga.Name,
         ChapterName = chapter.Name,
         F = function()
+            if not doesDirExist(FOLDER .. k) then
+                createDirectory(FOLDER .. k)
+            end
             local t = {}
             local connection
             local retry_get_chptrs = 0
@@ -192,7 +194,9 @@ function ChapterSaver.downloadChapter(chapter)
         end
     }
     Order[#Order + 1] = Downloading[k]
-    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
+    if not silent then
+        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
+    end
 end
 
 local getTime = System.getTime
@@ -447,15 +451,16 @@ end
 
 ---@param key string
 ---Stops task by it's key
-local function stop(key)
+local function stop(key, silent)
     if Downloading[key] then
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
+            Downloading[key].Notify = silent == nil
         else
             local new_order = {}
             for _, v in ipairs(Order) do
                 if v == Downloading[key] then
-                    if notify then
+                    if notify and silent == nil then
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
                     end
                 else
@@ -470,9 +475,10 @@ local function stop(key)
 end
 
 ---@param chapter table
----Stops `chapter` downloading
-function ChapterSaver.stop(chapter)
-    if chapter then stop(get_key(chapter)) end
+---@param silent boolean
+---Stops `chapter` downloading and notify if `silent == nil`
+function ChapterSaver.stop(chapter, silent)
+    if chapter then stop(get_key(chapter), silent) end
 end
 
 ---@param item table
@@ -483,13 +489,15 @@ end
 
 ---@param chapter table
 ---Deletes saved chapter
-function ChapterSaver.delete(chapter)
+function ChapterSaver.delete(chapter, silent)
     local k = get_key(chapter)
     if Keys[k] then
         rem_dir(FOLDER .. k)
         Keys[k] = nil
         ChapterSaver.save()
-        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
+        if not silent then
+            Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
+        end
     end
 end
 

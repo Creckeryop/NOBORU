@@ -42,7 +42,6 @@ function Menu.input(oldpad, pad, oldtouch, touch)
         end
         if touch.x and not oldtouch.x and touch.x < 250 then
             if touch.y < 97 then
-                _ = _
             elseif touch.y < 157 then
                 Menu.setMode("LIBRARY")
             elseif touch.y < 200 then
@@ -59,12 +58,17 @@ function Menu.input(oldpad, pad, oldtouch, touch)
         end
         Catalogs.input(oldpad, pad, oldtouch, touch)
     else
-        Details.input(oldpad, pad, oldtouch, touch)
+        if Extra.getMode() == "END" then
+            Details.input(oldpad, pad, oldtouch, touch)
+        else
+            Extra.input(oldpad, pad, oldtouch, touch)
+        end
     end
 end
 
 function Menu.update()
     Catalogs.update()
+    Extra.update()
     Details.update()
 end
 
@@ -108,4 +112,5 @@ function Menu.draw()
         Catalogs.draw()
     end
     Details.draw()
+    Extra.draw()
 end

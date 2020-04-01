@@ -50,7 +50,7 @@ end
 local easing = EaseInOutCubic
 
 ---Updates animation of fade in or out
-local animationUpdate = function()
+local function animationUpdate()
     if mode == "START" then
         fade = easing(math.min((Timer.getTime(animation_timer) / 500), 1))
     elseif mode == "WAIT" then
@@ -188,6 +188,7 @@ end
 
 function Details.input(oldpad, pad, oldtouch, touch)
     if mode == "START" then
+        local oldtouch_mode = TOUCH.MODE
         if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
             TOUCH.MODE = TOUCH.READ
             Slider.TouchY = touch.y
@@ -219,6 +220,8 @@ function Details.input(oldpad, pad, oldtouch, touch)
                         press_manga(1)
                     end
                 end
+            elseif oldtouch.x > 960-90 and oldtouch.y < 90 and chapters_loaded and oldtouch_mode == TOUCH.READ then
+                Extra.setChapters(Manga, Chapters)
             end
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             press_add_to_library()
@@ -248,6 +251,8 @@ function Details.input(oldpad, pad, oldtouch, touch)
                     press_manga(1)
                 end
             end
+        elseif Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) and chapters_loaded then
+            Extra.setChapters(Manga, Chapters)
         end
         local new_itemID = 0
         if TOUCH.MODE == TOUCH.READ then
@@ -423,7 +428,9 @@ function Details.draw()
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
-        Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
+        if chapters_loaded and Manga.ParserID ~="IMPORTED" then
+            Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
+        end
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454
             Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))

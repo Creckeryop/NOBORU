@@ -67,6 +67,10 @@ Language = {
             ["LR"] = "L и R триггеры",
             ["DPAD"] = "Используя крестовину"
         },
+        EXTRA = {
+            ["DownloadAll"] = "Скачать все главы",
+            ["RemoveAll"] = "Удалить все главы"
+        },
         THEME = {
             Dark = "Тёмная",
             Light = "Светлая",
@@ -216,6 +220,10 @@ Language = {
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
             ["DPAD"] = "Using DPad"
+        },
+        EXTRA = {
+            ["DownloadAll"] = "Download all chapters",
+            ["RemoveAll"] = "Remove all chapters"
         },
         THEME = {
             Dark = "Dark",
@@ -367,6 +375,10 @@ Language = {
             ["LR"] = "L and R triggers", --Need to translate
             ["DPAD"] = "Using DPad" --Need to translate
         },
+        EXTRA = {
+            ["DownloadAll"] = "Download all chapters", --Need to translate
+            ["RemoveAll"] = "Remove all chapters" --Need to translate
+        },
         THEME = {
             Dark = "Tối",
             Light = "Sáng",
@@ -517,6 +529,10 @@ Language = {
             ["LR"] = "L and R triggers", --Need to translate
             ["DPAD"] = "Using DPad" --Need to translate
         },
+        EXTRA = {
+            ["DownloadAll"] = "Download all chapters", --Need to translate
+            ["RemoveAll"] = "Remove all chapters" --Need to translate
+        },
         THEME = {
             Dark = "Dark",
             Light = "Light",
@@ -666,6 +682,10 @@ Language = {
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers", --Need to translate
             ["DPAD"] = "Using DPad" --Need to translate
+        },
+        EXTRA = {
+            ["DownloadAll"] = "Download all chapters", --Need to translate
+            ["RemoveAll"] = "Remove all chapters" --Need to translate
         },
         THEME = {
             Dark = "Scuro",
