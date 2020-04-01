@@ -19,6 +19,7 @@
 #include <vitasdk.h>
 #include "include/apptool.h"
 
+
 int launchAppByUriExit(const char *titleid) {
 	char uri[32];
 	sprintf(uri, "psgm:play?titleid=%s", titleid);
@@ -26,6 +27,7 @@ int launchAppByUriExit(const char *titleid) {
 	sceAppMgrLaunchAppByUri(0xFFFFF, uri);
 	sceKernelDelayThread(10000);
 	sceAppMgrLaunchAppByUri(0xFFFFF, uri);
+	sceKernelDelayThread(100);
 	sceKernelExitProcess(0);
 	return 0;
 }

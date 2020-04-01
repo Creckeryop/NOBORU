@@ -2,11 +2,11 @@ TITLE_ID = NOBORUPDT
 TARGET   = updater
 OBJS     = main.o include/head.o include/apptool.o include/autovpk/file.o include/autovpk/headgen.o include/autovpk/sfo.o 
 
-LIBS     = -lssl -lcrypto -lSceAppMgr_stub -lScePromoterUtil_stub -lSceSysmodule_stub
+LIBS     = -lssl -lcrypto -lSceAppMgr_stub -lScePromoterUtil_stub -lSceSysmodule_stub -lSceDisplay_stub
 
 PREFIX   = arm-vita-eabi
 CC       = $(PREFIX)-gcc
-CFLAGS   = -Wl,-q -Wall -O3 -marm
+CFLAGS   = -Wl,-q -Wall -O3 -marm -Iinclude/font
 ASFLAGS  = $(CFLAGS)
 
 all: $(TARGET).vpk

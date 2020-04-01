@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "autovpk/file.h"
+#include "font/debugScreen.h"
+#define printf psvDebugScreenPrintf
 
 static int loadScePaf()
 {
@@ -52,17 +54,23 @@ static int unloadScePaf()
 
 int installPackage(const char *file)
 {
+  psvDebugScreenInit();
+	printf("If the new version of the application did not start after closing the updater, start it yourself\nInstalling NOBORU please wait...\n");
   const char *copyFolderRoot = "ux0:data/lppvai/";
+  printf("Launching modules\n");
   loadScePaf();
   sceSysmoduleLoadModuleInternal(SCE_SYSMODULE_INTERNAL_PROMOTER_UTIL);
   scePromoterUtilityInit();
+  printf("Creating temporary folder\n");
   sceIoMkdir(copyFolderRoot, 0777);
 
   char tmpFolder[255];
   snprintf(tmpFolder, 255, "%s%s%s", copyFolderRoot, hasEndSlash(copyFolderRoot) ? "" : "/", "pkg");
+  printf("Copying all files\n");
   int copyResult = copyPath(file, tmpFolder);
   if (copyResult < 0)
   {
+    printf("Error while installing installing, can't copy folder\n");
     sceIoRmdir(tmpFolder);
     sceIoRmdir(copyFolderRoot);
     // End promoter stuff
@@ -71,13 +79,15 @@ int installPackage(const char *file)
     unloadScePaf();
     return -1;
   }
-
+  printf("Generating head.bin file\n");
   generateHeadBin(tmpFolder);
   scePromoterUtilityPromotePkgWithRif(tmpFolder, 1);
   // End promoter stuff
   scePromoterUtilityExit();
+  printf("\e[32mSuccessfully installed\e[39m\n");
   sceSysmoduleUnloadModuleInternal(SCE_SYSMODULE_INTERNAL_PROMOTER_UTIL);
   unloadScePaf();
+  printf("Deleting temporary folder\n");
   sceIoRmdir(copyFolderRoot);
   return 0;
 }
