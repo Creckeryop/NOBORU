@@ -15,7 +15,8 @@ local Manga
 
 ExtraMenu = {
     "DownloadAll",
-    "RemoveAll"
+    "RemoveAll",
+    "CancelAll"
 }
 
 local w_max = 0
@@ -76,6 +77,7 @@ end
 local function press_action(id)
     if ExtraMenu[id] == "DownloadAll" then
         Cache.addManga(Manga)
+        Cache.makeHistory(Manga)
         for i = 1, #Chapters do
             local chapter = Chapters[i]
             if not ChapterSaver.is_downloading(chapter) and not ChapterSaver.check(chapter) then
@@ -83,14 +85,12 @@ local function press_action(id)
             end
         end
     elseif ExtraMenu[id] == "RemoveAll" then
+        ChapterSaver.stopList(Chapters, true)
         for i = 1, #Chapters do
-            local chapter = Chapters[i]
-            if not ChapterSaver.check(chapter) then
-                ChapterSaver.stop(chapter, true)
-            else
-                ChapterSaver.delete(chapter, true)
-            end
+            ChapterSaver.delete(Chapters[i], true)
         end
+    elseif ExtraMenu[id] == "CancelAll" then
+        ChapterSaver.stopList(Chapters, true)
     end
 end
 
@@ -196,7 +196,7 @@ function Extra.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(480 - w_max / 2 + i, 480 + w_max / 2 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
+                Graphics.fillEmptyRect(480 - w_max / 2 + i, 480 + w_max / 2 - i, y + i + 2, y + 75 - i + 1, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(480 - w_max / 2 + i, 480 + w_max / 2 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
             end
         end

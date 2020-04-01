@@ -602,18 +602,20 @@ function Catalogs.draw()
         local y = start * 75 - Slider.Y
         for i = start, min(#list, start + 9) do
             local task = list[i]
+            local page_count = task.page_count or 0
+            local page = task.page or 0
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
             end
             if i < #list then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
-            Font.print(FONT20, 275, y - 70, task.Manga, COLOR_FONT)
-            Font.print(FONT16, 275, y - 44, task.Chapter, COLOR_FONT)
-            if task.page_count > 0 then
-                local text_counter = task.page .. "/" .. task.page_count
+            Font.print(FONT20, 275, y - 70, task.MangaName, COLOR_FONT)
+            Font.print(FONT16, 275, y - 44, task.ChapterName, COLOR_FONT)
+            if page_count > 0 then
+                local text_counter = page .. "/" .. page_count
                 local w = Font.getTextWidth(FONT16, text_counter)
-                download_bar = download_bar + (task.page / task.page_count - download_bar) / 32
+                download_bar = download_bar + (page / page_count - download_bar) / 32
                 Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * download_bar, y - 20, y - 8, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(270 + 10 + w, 940, y - 20, y - 8, COLOR_FONT)
                 Font.print(FONT16, 275, y - 24, text_counter, COLOR_FONT)

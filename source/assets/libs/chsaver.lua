@@ -25,6 +25,8 @@ local function get_key(chapter)
     return (chapter.Manga.ParserID .. chapter.Manga.Link):gsub("%p", "") .. "_" .. chapter.Link:gsub("%p", "")
 end
 
+local UpdatedTable = false
+
 ChapterSaver.getKey = get_key
 local getFreeSpace = System.getFreeSpace
 local notifyied = false
@@ -36,6 +38,7 @@ function ChapterSaver.update()
     end
     if not Task then
         Task = table.remove(Order, 1)
+        UpdatedTable = false
         if Task.Type == "Download" and getFreeSpace("ux0:") < 40 * 1024 * 1024 then
             if not notifyied then
                 Notifications.push(Language[Settings.Language].NOTIFICATIONS.NO_SPACE_LEFT)
@@ -193,6 +196,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
             Downloading[k] = nil
         end
     }
+    UpdatedTable = false
     Order[#Order + 1] = Downloading[k]
     if not silent then
         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
@@ -440,6 +444,7 @@ function ChapterSaver.importManga(path)
             end
         end
     end
+    UpdatedTable = false
     Order[#Order + 1] = this
 end
 
@@ -456,6 +461,7 @@ local function stop(key, silent)
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
             Downloading[key].Notify = silent == nil
+            rem_dir(FOLDER .. key)
         else
             local new_order = {}
             for _, v in ipairs(Order) do
@@ -469,9 +475,43 @@ local function stop(key, silent)
             end
             Order = new_order
         end
+        UpdatedTable = false
         Downloading[key] = nil
-        rem_dir(FOLDER .. key)
     end
+end
+
+---@param chapter table
+---@param silent boolean
+---Stops `chapter` downloading and notify if `silent == nil`
+function ChapterSaver.stopList(chapters, silent)
+    local new_order = {}
+    local OrderLen = #Order
+    for k, v in ipairs(chapters) do
+        local key = get_key(v)
+        local d = Downloading[key]
+        if d then
+            if d == Task then
+                d.Destroy = true
+                d.Notify = silent == nil
+                rem_dir(FOLDER .. key)
+            else
+                for i, od in pairs(Order) do
+                    if od == d then
+                        Order[i] = nil
+                        break
+                    end
+                end
+            end
+            Downloading[key] = nil
+        end
+    end
+    for i=1, OrderLen do
+        if Order[i]~=nil then
+            new_order[#new_order + 1] = Order[i]
+        end
+    end
+    Order = new_order
+    UpdatedTable = false
 end
 
 ---@param chapter table
@@ -501,22 +541,20 @@ function ChapterSaver.delete(chapter, silent)
     end
 end
 
+local cached = {}
+
 ---@return table
 ---Returns all active downloadings
 function ChapterSaver.getDownloadingList()
+    if UpdatedTable then return cached end
     local list = {}
     Order[0] = Task
     for i = Task and 0 or 1, #Order do
-        local task = Order[i]
-        list[#list + 1] = {
-            Manga = task.MangaName,
-            Chapter = task.ChapterName,
-            page = task.page or 0,
-            page_count = task.page_count or 0,
-            Key = task.Key
-        }
+        list[#list + 1] = Order[i]
     end
-    return list
+    UpdatedTable = true
+    cached = list
+    return cached
 end
 
 function ChapterSaver.clearDownloadingList()

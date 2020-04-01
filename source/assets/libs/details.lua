@@ -357,6 +357,13 @@ function Details.draw()
             end
         end
         Graphics.fillRect(0, 20, 90, 544, BACK_COLOR)
+        if ContinueChapter then
+            if #Chapters > 0 then
+                if textures_16x16.Select and textures_16x16.Select.e then
+                    Graphics.drawImage(0, shift + 472, textures_16x16.Select.e)
+                end
+            end
+        end
         if textures_16x16.Triangle and textures_16x16.Triangle.e then
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
@@ -430,6 +437,9 @@ function Details.draw()
         Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
         if chapters_loaded and Manga.ParserID ~="IMPORTED" then
             Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
+            if textures_16x16.Start and textures_16x16.Start.e then
+                Graphics.drawImage(883, 5 - (1-M) * 32, textures_16x16.Start.e)
+            end
         end
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454
