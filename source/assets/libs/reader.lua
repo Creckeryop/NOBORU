@@ -324,10 +324,10 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             x = x - 127
             y = y - 127
             if math.abs(x) > SCE_LEFT_STICK_DEADZONE then
-                page.x = page.x - SCE_LEFT_STICK_SENSITIVITY * 25 * (x - SCE_LEFT_STICK_DEADZONE * math.sign(x)) / (128-SCE_LEFT_STICK_DEADZONE)
+                page.x = page.x - SCE_LEFT_STICK_SENSITIVITY * 25 * (x - SCE_LEFT_STICK_DEADZONE * math.sign(x)) / (128 - SCE_LEFT_STICK_DEADZONE)
             end
             if math.abs(y) > SCE_LEFT_STICK_DEADZONE then
-                page.y = page.y - SCE_LEFT_STICK_SENSITIVITY * 25 * (y - SCE_LEFT_STICK_DEADZONE * math.sign(y)) / (128-SCE_LEFT_STICK_DEADZONE)
+                page.y = page.y - SCE_LEFT_STICK_SENSITIVITY * 25 * (y - SCE_LEFT_STICK_DEADZONE * math.sign(y)) / (128 - SCE_LEFT_STICK_DEADZONE)
             end
             if Settings.ChangingPageButtons == "LR" then
                 if Controls.check(pad, SCE_CTRL_UP) then
@@ -367,13 +367,13 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             if orientation == "Horizontal" then
                 y = y - 127
                 if math.abs(y) > SCE_RIGHT_STICK_DEADZONE then
-                    y = (y - SCE_RIGHT_STICK_DEADZONE * math.sign(y)) / (128-SCE_RIGHT_STICK_DEADZONE)
+                    y = (y - SCE_RIGHT_STICK_DEADZONE * math.sign(y)) / (128 - SCE_RIGHT_STICK_DEADZONE)
                     scale(1 - SCE_LEFT_STICK_SENSITIVITY * y * 0.05, page)
                 end
             elseif orientation == "Vertical" then
                 x = x - 127
                 if math.abs(x) > SCE_RIGHT_STICK_DEADZONE then
-                    x = (x - SCE_RIGHT_STICK_DEADZONE * math.sign(x)) / (128-SCE_RIGHT_STICK_DEADZONE)
+                    x = (x - SCE_RIGHT_STICK_DEADZONE * math.sign(x)) / (128 - SCE_RIGHT_STICK_DEADZONE)
                     scale(1 + SCE_LEFT_STICK_SENSITIVITY * x * 0.05, page)
                 end
             end

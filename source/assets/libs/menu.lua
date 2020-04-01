@@ -87,7 +87,7 @@ function Menu.draw()
             button_a[k] = math.min(v + 0.1, 1)
         end
     end
-    Screen.clear(Color.new(0, 0, 0))
+    Screen.clear(Themes[Settings.Theme].COLOR_LEFT_BACK)
     if logoSmall then
         Graphics.drawImage(0, 0, logoSmall.e)
     end

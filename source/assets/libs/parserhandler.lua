@@ -1,8 +1,8 @@
 --[[
-    ParserManager is a pack of functions needed to work with
-    async functions related to parsers, it will help you to
-    get all available info from parsers, from manga List to
-    List of links to images of their chapter pages
+ParserManager is a pack of functions needed to work with
+async functions related to parsers, it will help you to
+get all available info from parsers, from manga List to
+List of links to images of their chapter pages
 ]]
 ParserManager = {}
 
@@ -26,7 +26,7 @@ function ParserManager.update()
         end
     else
         if coroutine.status(Task.Update) == "dead" then
-            if Task.Type ~= "Update" and Task.Type~="updateCounters" then
+            if Task.Type ~= "Update" and Task.Type ~= "updateCounters" then
                 Task.Table.Done = true
             end
             uniques[Task.Table] = nil
@@ -167,7 +167,7 @@ function ParserManager.updateCounters()
     if uniques["updateCounters"] then return end
     local T = {
         Type = "updateCounters",
-        F = function ()
+        F = function()
             local list = Database.getMangaList()
             local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
             if connection then

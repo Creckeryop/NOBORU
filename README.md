@@ -76,9 +76,6 @@ CBR not supported (im working on the way to support RAR archives, some images br
 ## Compiling
 Execute `build.bat` to create working .vpk
 ## TODO
-* Settings for parserlist (sorting by languages or else, hide some)
-* Sort chapters by 1->N or N->1
-* Add new way of controls for changing page (DPAD)
 * Add up to down scroll
 * More languages
 ## Credits

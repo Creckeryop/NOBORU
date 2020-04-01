@@ -232,7 +232,7 @@ end
 
 ---Table of all available options
 local set_list = {
-    "Language", "SkipFontLoading","ChapterSorting", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Controls", "About",
+    "Language", "SkipFontLoading", "ChapterSorting", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Controls", "About",
     Library = {
         "LibrarySorting",
         "RefreshLibAtStart"
@@ -444,7 +444,7 @@ SettingsFunctions = {
     end,
     ResetAllSettings = function()
         for k, v in pairs(SettingsDefaults) do
-            if k~="Language" and k~="Theme" then
+            if k ~= "Language" and k ~= "Theme" then
                 settings[k] = v
             end
         end

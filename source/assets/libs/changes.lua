@@ -9,7 +9,7 @@ local updating = false
 local animation_timer = Timer.new()
 
 function Changes.load(string)
-    str = string .. "\n\n" ..Language[Settings.Language].MESSAGE.PRESS_TO_UPDATE
+    str = string .. "\n\n" .. Language[Settings.Language].MESSAGE.PRESS_TO_UPDATE
     active = true
     FinalY = 544 / 2 - (Font.getTextHeight(FONT20, str) + 20) / 2
     Timer.reset(animation_timer)

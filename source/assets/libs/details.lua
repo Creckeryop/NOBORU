@@ -311,7 +311,8 @@ function Details.draw()
     if mode ~= "END" then
         local M = old_fade * fade
         local Alpha = 255 * M
-        Graphics.fillRect(20, 260, 90, 544, Color.new(0, 0, 0, Alpha))
+        local BACK_COLOR = ChangeAlpha(Themes[Settings.Theme].COLOR_DETAILS_BACK, Alpha)
+        Graphics.fillRect(20, 260, 90, 544, BACK_COLOR)
         local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
@@ -319,7 +320,7 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 80
-        Graphics.fillRect(920, 960, 90, 544, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
         local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
         if Database.check(Manga) then
             color = RED
@@ -342,20 +343,20 @@ function Details.draw()
                 local height = Font.getTextHeight(FONT20, continue_txt)
                 Font.print(FONT20, 140 - width / 2, shift + 505 - height / 2 + dy, continue_txt, WHITE)
                 if ch_name then
-                    width = math.min(Font.getTextWidth(FONT12, ch_name),220)
+                    width = math.min(Font.getTextWidth(FONT12, ch_name), 220)
                     local t = math.min(math.max(0, Timer.getTime(chapter_timer) - 1500), ms_ch)
-                    Font.print(FONT12, 140 - width / 2 - dif_ch * t / ms_ch, shift + 505 - height / 2+18, ch_name, WHITE)
+                    Font.print(FONT12, 140 - width / 2 - dif_ch * t / ms_ch, shift + 505 - height / 2 + 18, ch_name, WHITE)
                 end
                 Graphics.fillRect(20, 30, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
                 Graphics.fillRect(250, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
             end
         end
-        Graphics.fillRect(0, 20, 90, 544, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(0, 20, 90, 544, BACK_COLOR)
         if textures_16x16.Triangle and textures_16x16.Triangle.e then
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
         DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
-        Graphics.fillRect(260, 920, 90, 544, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(260, 920, 90, 544, BACK_COLOR)
         local ListCount = #Chapters
         for n = start, math.min(ListCount, start + 8) do
             local i = n
@@ -370,7 +371,7 @@ function Details.draw()
                 else
                     Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
-                Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, Color.new(0, 0, 0, Alpha))
+                Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, BACK_COLOR)
                 if n < ListCount then
                     Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
                 end
@@ -417,11 +418,11 @@ function Details.draw()
                 Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
             end
         end
-        Graphics.fillRect(0, 870, 0, 90, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(0, 870, 0, 90, BACK_COLOR)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
-        Graphics.fillRect(870, 960, 0, 90, Color.new(0, 0, 0, Alpha))
+        Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
         Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454

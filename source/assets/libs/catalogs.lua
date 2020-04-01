@@ -687,7 +687,7 @@ function Catalogs.draw()
             elseif task == "RefreshLibAtStart" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.RefreshLibAtStart], COLOR_ROYAL_BLUE)
             elseif task == "ChangeUI" then
-                Font.print(FONT16, 275, y - 44, Language[Settings.Language].THEME[Settings.Theme], COLOR_GRAY)
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].THEME[Settings.Theme] or Settings.Theme, COLOR_GRAY)
             elseif task == "LibrarySorting" then
                 Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ChapterSorting" then
@@ -788,7 +788,7 @@ function Catalogs.draw()
             if mode == "LIBRARY" and Results[i].Counter then
                 local c = Results[i].Counter
                 if c > 0 then
-                    Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 10, y, y + 24, COLOR_CRIMSON)
+                    Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 10, y, y + 24, Themes[Settings.Theme].COLOR_LABEL)
                     Font.print(BONT16, x + 5, y + 2, tostring(c), COLOR_WHITE)
                 end
             end

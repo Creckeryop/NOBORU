@@ -69,7 +69,9 @@ Language = {
         },
         THEME = {
             Dark = "Тёмная",
-            Light = "Светлая"
+            Light = "Светлая",
+            Blue = "Синяя",
+            Crimson = "Малиновый"
         },
         NSFW = {
             [true] = "Показывать",
@@ -217,7 +219,9 @@ Language = {
         },
         THEME = {
             Dark = "Dark",
-            Light = "Light"
+            Light = "Light",
+            Blue = "Blue",
+            Crimson = "Crimson"
         },
         NSFW = {
             [true] = "Show",
@@ -365,7 +369,9 @@ Language = {
         },
         THEME = {
             Dark = "Tối",
-            Light = "Sáng"
+            Light = "Sáng",
+            Blue = "Blue", --Need to translate
+            Crimson = "Crimson" --Need to translate
         },
         NSFW = {
             [true] = "Hiện",
@@ -513,7 +519,9 @@ Language = {
         },
         THEME = {
             Dark = "Dark",
-            Light = "Light"
+            Light = "Light",
+            Blue = "Blue", --Need to translate
+            Crimson = "Crimson" --Need to translate
         },
         NSFW = {
             [true] = "Mostrar",
@@ -661,7 +669,9 @@ Language = {
         },
         THEME = {
             Dark = "Scuro",
-            Light = "Chiaro"
+            Light = "Chiaro",
+            Blue = "Blue", --Need to translate
+            Crimson = "Crimson" --Need to translate
         },
         NSFW = {
             [true] = "Mostra",

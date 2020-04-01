@@ -318,3 +318,7 @@ function RemoveDirectory(path)
     end
 end
 r_dir = RemoveDirectory
+
+function ChangeAlpha(color, new_alpha)
+    return Color.new(Color.getR(color), Color.getG(color), Color.getB(color), new_alpha)
+end
