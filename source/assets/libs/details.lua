@@ -220,7 +220,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
                         press_manga(1)
                     end
                 end
-            elseif oldtouch.x > 960-90 and oldtouch.y < 90 and chapters_loaded and oldtouch_mode == TOUCH.READ then
+            elseif oldtouch.x > 960 - 90 and oldtouch.y < 90 and chapters_loaded and oldtouch_mode == TOUCH.READ then
                 Extra.setChapters(Manga, Chapters)
             end
         elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
@@ -435,10 +435,10 @@ function Details.draw()
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
-        if chapters_loaded and Manga.ParserID ~="IMPORTED" then
+        if chapters_loaded and Manga.ParserID ~= "IMPORTED" then
             Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
             if textures_16x16.Start and textures_16x16.Start.e then
-                Graphics.drawImage(883, 5 - (1-M) * 32, textures_16x16.Start.e)
+                Graphics.drawImage(883, 5 - (1 - M) * 32, textures_16x16.Start.e)
             end
         end
         if mode == "START" and #Chapters > 5 then

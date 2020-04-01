@@ -380,7 +380,7 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters", --Need to translate
             ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters"--Need to translate
+            ["CancelAll"] = "Cancel downloading chapters" --Need to translate
         },
         THEME = {
             Dark = "Tối",
@@ -535,7 +535,7 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters", --Need to translate
             ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters"--Need to translate
+            ["CancelAll"] = "Cancel downloading chapters" --Need to translate
         },
         THEME = {
             Dark = "Dark",
@@ -690,7 +690,7 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters", --Need to translate
             ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters"--Need to translate
+            ["CancelAll"] = "Cancel downloading chapters" --Need to translate
         },
         THEME = {
             Dark = "Scuro",

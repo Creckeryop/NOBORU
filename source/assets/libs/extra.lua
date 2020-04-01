@@ -33,7 +33,7 @@ local function scrollUpdate()
         Slider.Y = 0
         Slider.V = 0
     elseif Slider.Y > #ExtraMenu * 80 - 544 then
-        Slider.Y = math.max(0, #ExtraMenu * 80-544)
+        Slider.Y = math.max(0, #ExtraMenu * 80 - 544)
         Slider.V = 0
     end
 end
@@ -122,8 +122,8 @@ function Extra.input(oldpad, pad, oldtouch, touch)
             Timer.reset(animation_timer)
             old_fade = fade
         elseif touch.x ~= nil and oldtouch.x == nil then
-            if touch.x > 480 - w_max/2 and touch.x < 480 + w_max/2 and touch.y > y_srt and touch.y < y_srt + 80 * #ExtraMenu then
-            else
+            if touch.x > 480 - w_max / 2 and touch.x < 480 + w_max / 2 and touch.y > y_srt and touch.y < y_srt + 80 * #ExtraMenu then
+                else
                 mode = "WAIT"
                 Timer.reset(animation_timer)
                 old_fade = fade
@@ -175,12 +175,12 @@ function Extra.draw()
         local BLACK = Color.new(0, 0, 0, Alpha)
         local y = shift - Slider.Y + start * 80 + y_srt
         local ListCount = #ExtraMenu
-        Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y_srt + shift, y_srt+80*ListCount + shift, WHITE)
+        Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y_srt + shift, y_srt + 80 * ListCount + shift - 1, WHITE)
         for i = start, math.min(ListCount, start + 8) do
             if y < 544 then
                 Font.print(BONT16, 480 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) / 2, y + 28 - 79, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i], BLACK)
                 if i < ListCount then
-                    Graphics.drawLine(480 - w_max / 2+5, 480 + w_max / 2-5, y, y, BLACK)
+                    Graphics.drawLine(480 - w_max / 2 + 5, 480 + w_max / 2 - 5, y, y, BLACK)
                 end
                 if i == Slider.ItemID then
                     Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
@@ -192,12 +192,12 @@ function Extra.draw()
         end
         local item = ExtraSelector.getSelected()
         if item ~= 0 then
-            y = shift - Slider.Y + (item-1) * 80 + y_srt
+            y = shift - Slider.Y + (item - 1) * 80 + y_srt
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(480 - w_max / 2 + i, 480 + w_max / 2 - i, y + i + 2, y + 75 - i + 1, COLOR_ROYAL_BLUE)
-                Graphics.fillEmptyRect(480 - w_max / 2 + i, 480 + w_max / 2 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, SELECTED_RED)
             end
         end
         if mode == "START" and #ExtraMenu > 5 then
@@ -215,4 +215,3 @@ end
 function Extra.getFade()
     return fade * old_fade
 end
-

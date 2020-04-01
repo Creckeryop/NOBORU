@@ -505,8 +505,8 @@ function ChapterSaver.stopList(chapters, silent)
             Downloading[key] = nil
         end
     end
-    for i=1, OrderLen do
-        if Order[i]~=nil then
+    for i = 1, OrderLen do
+        if Order[i] ~= nil then
             new_order[#new_order + 1] = Order[i]
         end
     end
