@@ -54,7 +54,7 @@ local function gesture_touch_input(touch, oldtouch, page)
             if Timer.getTime(doubleClickTimer) < 300 then
                 local len = math.sqrt((last_click.x - oldtouch.x) * (last_click.x - oldtouch.x) + (last_click.y - oldtouch.y) * (last_click.y - oldtouch.y))
                 if len < 80 then
-                    if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom)/2 then
+                    if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom) / 2 then
                         gesture_zoom = {
                             Zoom = page.start_Zoom,
                             x = 480,
@@ -62,7 +62,7 @@ local function gesture_touch_input(touch, oldtouch, page)
                         }
                     else
                         gesture_zoom = {
-                            Zoom = math.min(max_Zoom, max_Zoom - (max_Zoom - page.min_Zoom)/2),
+                            Zoom = math.min(max_Zoom, max_Zoom - (max_Zoom - page.min_Zoom) / 2),
                             x = oldtouch.x,
                             y = oldtouch.y
                         }
@@ -91,7 +91,7 @@ local function gesture_touch_update()
                 Pages[Pages.Page].Zoom = gesture_zoom.Zoom
                 stop = true
             else
-                Pages[Pages.Page].Zoom = (Pages[Pages.Page].Zoom  + (gesture_zoom.Zoom - Pages[Pages.Page].Zoom) / 4)
+                Pages[Pages.Page].Zoom = (Pages[Pages.Page].Zoom + (gesture_zoom.Zoom - Pages[Pages.Page].Zoom) / 4)
             end
             Pages[Pages.Page].y = 272 + ((Pages[Pages.Page].y - 272) / old_Zoom) * Pages[Pages.Page].Zoom
             Pages[Pages.Page].x = 480 + ((Pages[Pages.Page].x - 480) / old_Zoom) * Pages[Pages.Page].Zoom
@@ -323,32 +323,36 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             local x, y = Controls.readLeftAnalog()
             x = x - 127
             y = y - 127
-            if math.abs(x) > 20 then
-                page.x = page.x - 30 * (x - 20 * math.sign(x)) / 110
+            if math.abs(x) > SCE_LEFT_STICK_DEADZONE then
+                page.x = page.x - SCE_LEFT_STICK_SENSITIVITY * 25 * (x - SCE_LEFT_STICK_DEADZONE * math.sign(x)) / (128-SCE_LEFT_STICK_DEADZONE)
             end
-            if math.abs(y) > 20 then
-                page.y = page.y - 30 * (y - 20 * math.sign(y)) / 110
+            if math.abs(y) > SCE_LEFT_STICK_DEADZONE then
+                page.y = page.y - SCE_LEFT_STICK_SENSITIVITY * 25 * (y - SCE_LEFT_STICK_DEADZONE * math.sign(y)) / (128-SCE_LEFT_STICK_DEADZONE)
             end
-            if Controls.check(pad, SCE_CTRL_UP) then
-                page.y = page.y + 20
-            elseif Controls.check(pad, SCE_CTRL_DOWN) then
-                page.y = page.y - 20
-            end
-            if Controls.check(pad, SCE_CTRL_LEFT) then
-                page.x = page.x + 20
-            elseif Controls.check(pad, SCE_CTRL_RIGHT) then
-                page.x = page.x - 20
+            if Settings.ChangingPageButtons == "LR" then
+                if Controls.check(pad, SCE_CTRL_UP) then
+                    page.y = page.y + 20
+                elseif Controls.check(pad, SCE_CTRL_DOWN) then
+                    page.y = page.y - 20
+                end
+                if Controls.check(pad, SCE_CTRL_LEFT) then
+                    page.x = page.x + 20
+                elseif Controls.check(pad, SCE_CTRL_RIGHT) then
+                    page.x = page.x - 20
+                end
             end
         end
         if math.abs(offset.x) < 80 and math.abs(offset.y) < 80 then
-            if not (Controls.check(pad, SCE_CTRL_RTRIGGER) or Controls.check(pad, SCE_CTRL_LTRIGGER)) then
+            if not (Controls.check(pad, SCE_CTRL_RIGHTPAGE) or Controls.check(pad, SCE_CTRL_LEFTPAGE) or (Settings.ChangingPageButtons == "DPAD" and (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP)))) then
                 buttonTimeSpace = 800
             end
-            if Controls.check(pad, SCE_CTRL_RTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_RTRIGGER)) then
+            local right_page_button = Settings.ChangingPageButtons == "DPAD" and orientation == "Vertical" and SCE_CTRL_DOWN or SCE_CTRL_RIGHTPAGE
+            local left_page_button = Settings.ChangingPageButtons == "DPAD" and orientation == "Vertical" and SCE_CTRL_UP or SCE_CTRL_LEFTPAGE
+            if Controls.check(pad, right_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, right_page_button)) then
                 swipe("LEFT")
                 buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
                 Timer.reset(buttonTimer)
-            elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, SCE_CTRL_LTRIGGER)) then
+            elseif Controls.check(pad, left_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, left_page_button)) then
                 swipe("RIGHT")
                 buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
                 Timer.reset(buttonTimer)
@@ -358,6 +362,20 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 scale(0.95, page)
             elseif Controls.check(pad, SCE_CTRL_TRIANGLE) then
                 scale(1.05, page)
+            end
+            local x, y = Controls.readRightAnalog()
+            if orientation == "Horizontal" then
+                y = y - 127
+                if math.abs(y) > SCE_RIGHT_STICK_DEADZONE then
+                    y = (y - SCE_RIGHT_STICK_DEADZONE * math.sign(y)) / (128-SCE_RIGHT_STICK_DEADZONE)
+                    scale(1 - SCE_LEFT_STICK_SENSITIVITY * y * 0.05, page)
+                end
+            elseif orientation == "Vertical" then
+                x = x - 127
+                if math.abs(x) > SCE_RIGHT_STICK_DEADZONE then
+                    x = (x - SCE_RIGHT_STICK_DEADZONE * math.sign(x)) / (128-SCE_RIGHT_STICK_DEADZONE)
+                    scale(1 + SCE_LEFT_STICK_SENSITIVITY * x * 0.05, page)
+                end
             end
         end
         if touch.y and oldtouch.y then

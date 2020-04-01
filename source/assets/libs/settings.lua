@@ -13,8 +13,18 @@ Settings = {
     ParserLanguage = "DIF",
     LibrarySorting = "Date added",
     ChapterSorting = "1->N",
-    RefreshLibAtStart = false
+    RefreshLibAtStart = false,
+    ChangingPageButtons = "LR",
+    LeftStickDeadZone = 30,
+    LeftStickSensitivity = 1,
+    RightStickDeadZone = 30,
+    RightStickSensitivity = 1
 }
+
+local SettingsDefaults = table.clone(Settings)
+
+DeadZoneValues = {20, 30, 40, 50, 90}
+SensitivityValues = {0.25, 0.50, 0.75, 1, 1.25, 1.5, 1.75}
 
 local settings = Settings
 
@@ -183,12 +193,23 @@ function settings.load()
             setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
             setSetting(new, "ChapterSorting", {"1->N", "N->1"})
             setSetting(new, "RefreshLibAtStart", {true, false})
+            setSetting(new, "ChangingPageButtons", {"DPAD", "LR"})
+            setSetting(new, "LeftStickDeadZone", DeadZoneValues)
+            setSetting(new, "LeftStickSensitivity", SensitivityValues)
+            setSetting(new, "RightStickDeadZone", DeadZoneValues)
+            setSetting(new, "RightStickSensitivity", SensitivityValues)
         end
         closeFile(fh)
     end
     settings.save()
     SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
     SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
+    SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
+    SCE_CTRL_LEFTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_LEFT or SCE_CTRL_LTRIGGER
+    SCE_LEFT_STICK_DEADZONE = settings.LeftStickDeadZone
+    SCE_LEFT_STICK_SENSITIVITY = settings.LeftStickSensitivity
+    SCE_RIGHT_STICK_DEADZONE = settings.RightStickDeadZone
+    SCE_RIGHT_STICK_SENSITIVITY = settings.RightStickSensitivity
     setTheme(settings.Theme)
 end
 
@@ -231,7 +252,8 @@ local set_list = {
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
-        "ClearChapters"
+        "ClearChapters",
+        "ResetAllSettings"
     },
     About = {
         "ShowVersion",
@@ -240,7 +262,12 @@ local set_list = {
         "Translators"
     },
     Controls = {
-        "SwapXO"
+        "SwapXO",
+        "ChangingPageButtons",
+        "LeftStickDeadZone",
+        "LeftStickSensitivity",
+        "RightStickDeadZone",
+        "RightStickSensitivity"
     }
 }
 
@@ -393,5 +420,34 @@ SettingsFunctions = {
     end,
     RefreshLibAtStart = function()
         settings.RefreshLibAtStart = nextTableValue(settings.RefreshLibAtStart, {true, false})
+    end,
+    ChangingPageButtons = function()
+        settings.ChangingPageButtons = nextTableValue(settings.ChangingPageButtons, {"DPAD", "LR"})
+        SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
+        SCE_CTRL_LEFTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_LEFT or SCE_CTRL_LTRIGGER
+    end,
+    LeftStickDeadZone = function()
+        settings.LeftStickDeadZone = nextTableValue(settings.LeftStickDeadZone, DeadZoneValues)
+        SCE_LEFT_STICK_DEADZONE = settings.LeftStickDeadZone
+    end,
+    LeftStickSensitivity = function()
+        settings.LeftStickSensitivity = nextTableValue(settings.LeftStickSensitivity, SensitivityValues)
+        SCE_LEFT_STICK_SENSITIVITY = settings.LeftStickSensitivity
+    end,
+    RightStickDeadZone = function()
+        settings.RightStickDeadZone = nextTableValue(settings.RightStickDeadZone, DeadZoneValues)
+        SCE_RIGHT_STICK_DEADZONE = settings.RightStickDeadZone
+    end,
+    RightStickSensitivity = function()
+        settings.RightStickSensitivity = nextTableValue(settings.RightStickSensitivity, SensitivityValues)
+        SCE_RIGHT_STICK_SENSITIVITY = settings.RightStickSensitivity
+    end,
+    ResetAllSettings = function()
+        for k, v in pairs(SettingsDefaults) do
+            if k~="Language" and k~="Theme" then
+                settings[k] = v
+            end
+        end
+        Notifications.push(Language[Settings.Language].NOTIFICATIONS.SETTINGS_RESET)
     end
 }

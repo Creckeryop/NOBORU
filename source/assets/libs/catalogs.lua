@@ -692,6 +692,32 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ChapterSorting" then
                 Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+            elseif task == "LeftStickDeadZone" then
+                local x = 0
+                for n = 1, #DeadZoneValues do
+                    Font.print(FONT16, 275 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.LeftStickDeadZone and COLOR_CRIMSON or COLOR_GRAY)
+                    x = x + Font.getTextWidth(FONT16, DeadZoneValues[n]) + 5
+                end
+            elseif task == "LeftStickSensitivity" then
+                local x = 0
+                for n = 1, #SensitivityValues do
+                    Font.print(FONT16, 275 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.LeftStickSensitivity and COLOR_CRIMSON or COLOR_GRAY)
+                    x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
+                end
+            elseif task == "RightStickDeadZone" then
+                local x = 0
+                for n = 1, #DeadZoneValues do
+                    Font.print(FONT16, 275 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.RightStickDeadZone and COLOR_CRIMSON or COLOR_GRAY)
+                    x = x + Font.getTextWidth(FONT16, DeadZoneValues[n]) + 5
+                end
+            elseif task == "RightStickSensitivity" then
+                local x = 0
+                for n = 1, #SensitivityValues do
+                    Font.print(FONT16, 275 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.RightStickSensitivity and COLOR_CRIMSON or COLOR_GRAY)
+                    x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
+                end
+            elseif task == "ChangingPageButtons" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
                 Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then

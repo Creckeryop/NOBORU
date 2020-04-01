@@ -80,6 +80,7 @@ test("Settings-Language test", function()
             return "Russian"
         end
     }
+    dofile("../source/assets/libs/utils.lua")
     dofile("../source/assets/libs/language.lua")
     dofile("../source/assets/libs/settings.lua")
     Language.Default = nil

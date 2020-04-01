@@ -55,7 +55,17 @@ Language = {
             LibrarySorting = "Сортировка библиотеки",
             ChapterSorting = "Сортировка глав",
             RefreshLibAtStart = "Обновлять библиотеку при запуске",
-            Translators = "Спасибо переводчикам"
+            Translators = "Спасибо переводчикам",
+            ChangingPageButtons = "Кнопки для смены страницы",
+            LeftStickDeadZone = "Мёртвая зона левого джойстика",
+            LeftStickSensitivity = "Чувствительность левого джойстика",
+            RightStickDeadZone = "Мёртвая зона правого джойстика",
+            RightStickSensitivity = "Чувствительность правого джойстика",
+            ResetAllSettings = "Сбросить все настройки"
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L и R триггеры",
+            ["DPAD"] = "Используя крестовину"
         },
         THEME = {
             Dark = "Тёмная",
@@ -121,7 +131,8 @@ Language = {
             DEVELOPER_THING = "Поставь звезду на Github!",
             NEW_UPDATE_AVAILABLE = "Доступно новое обновление",
             NO_SPACE_LEFT = "Недостаточно места",
-            REFRESH_COMPLETED = "Обновление выполнено!"
+            REFRESH_COMPLETED = "Обновление выполнено!",
+            SETTINGS_RESET = "Настройки были сброшены"
         },
         PANEL = {
             BACK = "Назад",
@@ -192,7 +203,17 @@ Language = {
             LibrarySorting = "Library sorting",
             ChapterSorting = "Chapters sorting",
             RefreshLibAtStart = "Refresh library at startup",
-            Translators = "Thanks to translators"
+            Translators = "Thanks to translators",
+            ChangingPageButtons = "Buttons to change page",
+            LeftStickDeadZone = "Left stick deadzone",
+            LeftStickSensitivity = "Left stick sensitivity",
+            RightStickDeadZone = "Right stick deadzone",
+            RightStickSensitivity = "Right stick sensitivity",
+            ResetAllSettings = "Reset all settings"
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L and R triggers",
+            ["DPAD"] = "Using DPad"
         },
         THEME = {
             Dark = "Dark",
@@ -258,7 +279,8 @@ Language = {
             DEVELOPER_THING = "Start app on Github!",
             NEW_UPDATE_AVAILABLE = "New update available",
             NO_SPACE_LEFT = "No space left",
-            REFRESH_COMPLETED = "Refresh completed!"
+            REFRESH_COMPLETED = "Refresh completed!",
+            SETTINGS_RESET = "Settings have been reset"
         },
         PANEL = {
             BACK = "Back",
@@ -326,10 +348,20 @@ Language = {
             Library = "Thư viện",
             ChangeUI = "Giao diện",
             PreferredCatalogLanguage = "Ngôn ngữ ưa thích",
-            LibrarySorting = "Library sorting",--Need to translate
+            LibrarySorting = "Library sorting", --Need to translate
             ChapterSorting = "Chapters sorting", --Need to translate
             RefreshLibAtStart = "Refresh library at startup", --Need to translate
-            Translators = "Thanks to translators"--Need to translate :)
+            Translators = "Thanks to translators", --Need to translate :)
+            ChangingPageButtons = "Buttons to change page", --Need to translate
+            LeftStickDeadZone = "Left stick deadzone", --Need to translate
+            LeftStickSensitivity = "Left stick sensitivity", --Need to translate
+            RightStickDeadZone = "Right stick deadzone", --Need to translate
+            RightStickSensitivity = "Right stick sensitivity", --Need to translate
+            ResetAllSettings = "Reset all settings" --Need to translate
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L and R triggers", --Need to translate
+            ["DPAD"] = "Using DPad" --Need to translate
         },
         THEME = {
             Dark = "Tối",
@@ -395,7 +427,8 @@ Language = {
             DEVELOPER_THING = "Start app on Github!",
             NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
-            REFRESH_COMPLETED = "Refresh completed!" --Need to translate
+            REFRESH_COMPLETED = "Refresh completed!", --Need to translate
+            SETTINGS_RESET = "Settings have been reset" --Need to translate
         },
         PANEL = {
             BACK = "Trở về",
@@ -463,10 +496,20 @@ Language = {
             Library = "Libreria",
             ChangeUI = "Tema:",
             PreferredCatalogLanguage = "Idioma preferido",
-            LibrarySorting = "Library sorting",--Need to translate
+            LibrarySorting = "Library sorting", --Need to translate
             ChapterSorting = "Chapters sorting", --Need to translate
             RefreshLibAtStart = "Refresh library at startup", --Need to translate
-            Translators = "Translators"--Need to translate :)
+            Translators = "Translators", --Need to translate :)
+            ChangingPageButtons = "Buttons to change page", --Need to translate
+            LeftStickDeadZone = "Left stick deadzone", --Need to translate
+            LeftStickSensitivity = "Left stick sensitivity", --Need to translate
+            RightStickDeadZone = "Right stick deadzone", --Need to translate
+            RightStickSensitivity = "Right stick sensitivity", --Need to translate
+            ResetAllSettings = "Reset all settings" --Need to translate
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L and R triggers", --Need to translate
+            ["DPAD"] = "Using DPad" --Need to translate
         },
         THEME = {
             Dark = "Dark",
@@ -532,7 +575,8 @@ Language = {
             DEVELOPER_THING = "Inicia la app de Github!",
             NEW_UPDATE_AVAILABLE = "Nueva actualización disponible",
             NO_SPACE_LEFT = "No space left",
-            REFRESH_COMPLETED = "Refresh completed!" --Need to translate
+            REFRESH_COMPLETED = "Refresh completed!", --Need to translate
+            SETTINGS_RESET = "Settings have been reset" --Need to translate
         },
         PANEL = {
             BACK = "Volver",
@@ -603,7 +647,17 @@ Language = {
             LibrarySorting = "Ordinamento della libreria",
             ChapterSorting = "Chapters sorting", --Need to translate
             RefreshLibAtStart = "Refresh library at startup", --Need to translate
-            Translators = "Thanks to translators"--Need to translate :)
+            Translators = "Thanks to translators", --Need to translate :)
+            ChangingPageButtons = "Buttons to change page", --Need to translate
+            LeftStickDeadZone = "Left stick deadzone", --Need to translate
+            LeftStickSensitivity = "Left stick sensitivity", --Need to translate
+            RightStickDeadZone = "Right stick deadzone", --Need to translate
+            RightStickSensitivity = "Right stick sensitivity", --Need to translate
+            ResetAllSettings = "Reset all settings" --Need to translate
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L and R triggers", --Need to translate
+            ["DPAD"] = "Using DPad" --Need to translate
         },
         THEME = {
             Dark = "Scuro",
@@ -669,7 +723,8 @@ Language = {
             DEVELOPER_THING = "Avvia app su Github!",
             NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
             NO_SPACE_LEFT = "Non è rimasto spazio",
-            REFRESH_COMPLETED = "Refresh completed!" --Need to translate
+            REFRESH_COMPLETED = "Refresh completed!", --Need to translate
+            SETTINGS_RESET = "Settings have been reset" --Need to translate
         },
         PANEL = {
             BACK = "Indietro",
