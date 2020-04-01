@@ -26,7 +26,7 @@ Themes = {
         COLOR_SELECTED = Color.new(200, 200, 200),
         COLOR_PANEL = Color.new(255, 255, 255),
         COLOR_ICON_EXTRACT = Color.new(0, 0, 0),
-        COLOR_DETAILS_BACK = Color.new(15, 17, 50),
+        COLOR_DETAILS_BACK = Color.new(0, 0, 0),
         COLOR_LABEL = Color.new(65, 105, 226)
     },
     Crimson = {
@@ -36,17 +36,17 @@ Themes = {
         COLOR_SELECTED = Color.new(200, 200, 200),
         COLOR_PANEL = Color.new(255, 255, 255),
         COLOR_ICON_EXTRACT = Color.new(0, 0, 0),
-        COLOR_DETAILS_BACK = Color.new(87, 28, 39),
+        COLOR_DETAILS_BACK = Color.new(0, 0, 0),
         COLOR_LABEL = Color.new(137, 30, 43)
     },
     PiCrestOne = {
-        COLOR_LEFT_BACK = Color.new(16, 0, 33),
+        COLOR_LEFT_BACK = Color.new(0, 0, 0),
         COLOR_FONT = Color.new(255, 255, 255),
-        COLOR_BACK = Color.new(16, 0, 33),
+        COLOR_BACK = Color.new(0, 0, 0),
         COLOR_SELECTED = Color.new(24, 24, 24),
         COLOR_PANEL = Color.new(200, 0, 64),
         COLOR_ICON_EXTRACT = Color.new(255, 255, 255),
-        COLOR_DETAILS_BACK = Color.new(16, 0, 33),
+        COLOR_DETAILS_BACK = Color.new(0, 0, 0),
         COLOR_LABEL = Color.new(4, 100, 100)
     }
 }

@@ -480,9 +480,9 @@ local function stop(key, silent)
     end
 end
 
----@param chapter table
+---@param chapters table
 ---@param silent boolean
----Stops `chapter` downloading and notify if `silent == nil`
+---Stops List of `chapters` downloading and notify if `silent == nil`
 function ChapterSaver.stopList(chapters, silent)
     local new_order = {}
     local OrderLen = #Order
