@@ -70,7 +70,7 @@ CBR not supported (im working on the way to support RAR archives, some images br
 - **Image loading is the same speed as downloading from network, is it broken?**
     - It is not broken, if you download chapters at the same time with reading. Image loading and downloading working in the one-thread mode. And your page that you are reading putted in queue, but if first task in queue is active, app can't cancel it not to corrupt data. That's why it is happening. If i will find a way to make it faster, i will make it faster.
 - **Reader doesn't load some images**
-    - Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page)
+    - Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page). This app supports only JPEG, BMP and PNG formats. Make sure that image you loading isn't gif or else. You can check network address through debug console.
 - **I downloaded app and can't see any parsers**
     - Press Triangle to update parser list, so if that won't help create issue [here](https://github.com/Creckeryop/NOBORU/issues)
 ## Compiling
