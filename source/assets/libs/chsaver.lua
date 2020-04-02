@@ -66,6 +66,7 @@ function ChapterSaver.update()
             else
                 Console.error("Unknown error with saved chapters: " .. msg)
                 Downloading[Task.Key] = nil
+                UpdatedTable = false
                 Task = nil
             end
         else
@@ -77,6 +78,7 @@ function ChapterSaver.update()
                 end
             end
             Downloading[Task.Key] = nil
+            UpdatedTable = false
             Task = nil
         end
     end
