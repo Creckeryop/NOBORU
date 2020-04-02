@@ -76,7 +76,6 @@ CBR not supported (im working on the way to support RAR archives, some images br
 ## Compiling
 Execute `build.bat` to create working .vpk
 ## TODO
-* Add up to down scroll
 * More languages
 ## Credits
 [Rinnegatamante](https://github.com/Rinnegatamante) - [LuaPlayerPlus_Vita](https://github.com/Rinnegatamante/lpp-vita)
