@@ -546,7 +546,7 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
@@ -592,7 +592,7 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
@@ -634,7 +634,7 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5, y - 71 + i + 1, wh)
             end
         end
@@ -777,7 +777,7 @@ function Catalogs.draw()
                 dy_for_translators = 30
             end
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, wh)
             end
         end
@@ -802,7 +802,7 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks + 1, ks + 3 do
-                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
             end
         end

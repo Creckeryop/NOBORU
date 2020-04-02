@@ -423,7 +423,7 @@ function Details.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
+                Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
                 Graphics.fillEmptyRect(272 + i, 920 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
             end
             if Manga.ParserID ~= "IMPORTED" then

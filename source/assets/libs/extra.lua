@@ -196,7 +196,7 @@ function Extra.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, COLOR_ROYAL_BLUE)
+                Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
                 Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, SELECTED_RED)
             end
         end
