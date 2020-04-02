@@ -1070,11 +1070,11 @@ function Reader.draw()
                 if orientation == "Horizontal" then
                     local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                     local Width = Font.getTextWidth(FONT16, loading)
-                    Font.print(FONT16, offset.x + 960 * i + 480 - Width / 2, 272 - 10, loading, COLOR_FONT)
+                    Font.print(FONT16, offset.x + 960 * (is_down and 0 or i) + 480 - Width / 2, 272 + offset.y + 544 * (is_down and i or 0) - 10, loading, COLOR_FONT)
                 elseif orientation == "Vertical" then
                     local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
                     local Width = Font.getTextWidth(FONT16, loading)
-                    Font.print(FONT16, 960 / 2 - Width / 2, 272 + offset.y + 544 * i - 10, loading, COLOR_FONT)
+                    Font.print(FONT16, 960 / 2 - Width / 2 + offset.x + 960 * (is_down and i or 0), 272 + offset.y + 544 * (is_down and 0 or i) - 10, loading, COLOR_FONT)
                 end
             end
         end
