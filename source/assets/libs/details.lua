@@ -309,6 +309,9 @@ function Details.update()
         if AppMode == MENU and not ContinueChapter and not ParserManager.check(Chapters) then
             updateContinueManga(Manga)
         end
+        if Extra.doesBookmarksUpdate() then
+            ContinueChapter = nil
+        end
     end
 end
 
@@ -435,7 +438,7 @@ function Details.draw()
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
-        if chapters_loaded and Manga.ParserID ~= "IMPORTED" then
+        if chapters_loaded then
             Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
             if textures_16x16.Start and textures_16x16.Start.e then
                 Graphics.drawImage(883, 5 - (1 - M) * 32, textures_16x16.Start.e)

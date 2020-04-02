@@ -142,6 +142,12 @@ function Cache.BookmarksLoaded(Manga)
     return bookmarks[mkey] ~= nil
 end
 
+function Cache.clearBookmarks(Manga)
+    local mkey = get_key(Manga)
+    bookmarks[mkey] = {}
+    Cache.saveBookmarks(Manga)
+end
+
 local updated = false
 
 ---@param Manga table
@@ -358,10 +364,21 @@ function Cache.clear(mode)
         end
         history = new_history
     elseif mode == "all" then
-        rem_dir("ux0:data/noboru/cache")
-        createDirectory("ux0:data/noboru/cache")
-        data = {}
-        history = {}
+        local d = listDirectory("ux0:data/noboru/cache") or {}
+        for _, v in ipairs(d) do
+            if not v.name:find("^IMPORTED") then
+                rem_dir("ux0:data/noboru/cache/" .. v.name)
+                data[v.name] = nil
+            end
+        end
+        local new_history = {}
+        for i = 1, #history do
+            if data[history[i]] then
+                new_history[#new_history + 1] = history[i]
+            end
+        end
+        history = new_history
+        bookmarks = {}
     end
     Cache.saveHistory()
     updated = true

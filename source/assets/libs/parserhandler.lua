@@ -196,6 +196,26 @@ function ParserManager.updateCounters()
                         else
                             v.Counter = 0
                         end
+                    elseif v.ParserID == "IMPORTED" then
+                        local chps = Cache.loadChapters(v, true)
+                        if #chps > 0 then
+                            Cache.loadBookmarks(v)
+                            v.Counter = #chps
+                            local Latest = Cache.getLatestBookmark(v)
+                            for i = 1, #chps do
+                                local key = chps[i].Link:gsub("%p", "")
+                                if key == Latest then
+                                    if Cache.getBookmark(chps[i]) == true then
+                                        v.Counter = #chps - i
+                                    else
+                                        v.Counter = #chps - i + 1
+                                    end
+                                    break
+                                end
+                            end
+                        else
+                            v.Counter = 0
+                        end
                     end
                 end
             else

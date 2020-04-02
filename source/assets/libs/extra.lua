@@ -12,15 +12,22 @@ local animation_timer = Timer.new()
 
 local Chapters = {}
 local Manga
+ExtraMenu = {}
 
-ExtraMenu = {
+ExtraMenuNormal = {
     "DownloadAll",
     "RemoveAll",
-    "CancelAll"
+    "CancelAll",
+    "ClearBookmarks"
+}
+ExtraMenuImported = {
+    "ClearBookmarks"
 }
 
 local w_max = 0
 local y_srt = 0
+
+local bookmarks_update = false
 
 ---Updates scrolling movement
 local function scrollUpdate()
@@ -55,10 +62,16 @@ end
 local ExtraSelector = Selector:new(-1, 1, 0, 0, function() return math.floor((Slider.Y + y_srt) / 80) end)
 
 function Extra.setChapters(manga, chapters)
-    if manga and manga.ParserID ~= "IMPORTED" then
+    if manga then
+        bookmarks_update = false
         Manga = manga
         Chapters = chapters
         Slider.Y = -50
+        if manga.ParserID == "IMPORTED" then
+            ExtraMenu = ExtraMenuImported
+        else
+            ExtraMenu = ExtraMenuNormal
+        end
         ExtraSelector:resetSelected()
         mode = "START"
         old_fade = 1
@@ -91,7 +104,16 @@ local function press_action(id)
         end
     elseif ExtraMenu[id] == "CancelAll" then
         ChapterSaver.stopList(Chapters, true)
+    elseif ExtraMenu[id] == "ClearBookmarks" then
+        Cache.clearBookmarks(Manga)
+        bookmarks_update = true
     end
+end
+
+function Extra.doesBookmarksUpdate()
+    local a = bookmarks_update
+    bookmarks_update = false
+    return a
 end
 
 function Extra.input(oldpad, pad, oldtouch, touch)

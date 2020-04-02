@@ -72,7 +72,8 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Скачать все главы",
             ["RemoveAll"] = "Удалить все главы",
-            ["CancelAll"] = "Отменить загрузку глав"
+            ["CancelAll"] = "Отменить загрузку глав",
+            ["ClearBookmarks"] = "Очистить закладки"
         },
         THEME = {
             Dark = "Тёмная",
@@ -229,7 +230,8 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters",
             ["RemoveAll"] = "Remove all chapters",
-            ["CancelAll"] = "Cancel downloading chapters"
+            ["CancelAll"] = "Cancel downloading chapters",
+            ["ClearBookmarks"] = "Clear bookmarks"
         },
         THEME = {
             Dark = "Dark",
@@ -386,7 +388,8 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters", --Need to translate
             ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters" --Need to translate
+            ["CancelAll"] = "Cancel downloading chapters", --Need to translate
+            ["ClearBookmarks"] = "Clear bookmarks" --Need to translate
         },
         THEME = {
             Dark = "Tối",
@@ -543,7 +546,8 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters", --Need to translate
             ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters" --Need to translate
+            ["CancelAll"] = "Cancel downloading chapters", --Need to translate
+            ["ClearBookmarks"] = "Clear bookmarks" --Need to translate
         },
         THEME = {
             Dark = "Dark",
@@ -700,7 +704,8 @@ Language = {
         EXTRA = {
             ["DownloadAll"] = "Download all chapters", --Need to translate
             ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters" --Need to translate
+            ["CancelAll"] = "Cancel downloading chapters", --Need to translate
+            ["ClearBookmarks"] = "Clear bookmarks" --Need to translate
         },
         THEME = {
             Dark = "Scuro",
