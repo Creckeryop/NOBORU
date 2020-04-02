@@ -18,7 +18,8 @@ Settings = {
     LeftStickDeadZone = 30,
     LeftStickSensitivity = 1,
     RightStickDeadZone = 30,
-    RightStickSensitivity = 1
+    RightStickSensitivity = 1,
+    SilentDownloads = false
 }
 
 local SettingsDefaults = table.clone(Settings)
@@ -198,6 +199,7 @@ function settings.load()
             setSetting(new, "LeftStickSensitivity", SensitivityValues)
             setSetting(new, "RightStickDeadZone", DeadZoneValues)
             setSetting(new, "RightStickSensitivity", SensitivityValues)
+            setSetting(new, "SilentDownloads", {true, false})
         end
         closeFile(fh)
     end
@@ -232,7 +234,7 @@ end
 
 ---Table of all available options
 local set_list = {
-    "Language", "SkipFontLoading", "ChapterSorting", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Controls", "About",
+    "Language", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Other", "Controls", "About",
     Library = {
         "LibrarySorting",
         "RefreshLibAtStart"
@@ -254,6 +256,11 @@ local set_list = {
         "ClearAllCache",
         "ClearChapters",
         "ResetAllSettings"
+    },
+    Other = {
+        "SkipFontLoading",
+        "ChapterSorting",
+        "SilentDownloads"
     },
     About = {
         "ShowVersion",
@@ -449,5 +456,8 @@ SettingsFunctions = {
             end
         end
         Notifications.push(Language[Settings.Language].NOTIFICATIONS.SETTINGS_RESET)
+    end,
+    SilentDownloads = function()
+        settings.SilentDownloads = not settings.SilentDownloads
     end
 }

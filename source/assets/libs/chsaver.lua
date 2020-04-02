@@ -54,7 +54,7 @@ function ChapterSaver.update()
             local _, msg, var1, var2 = coroutine.resume(Task.F)
             if _ then
                 if Task.Destroy and msg then
-                    if Task.Notify then
+                    if Task.Notify and not Settings.SilentDownloads then
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
                     end
                     Downloading[Task.Key] = nil
@@ -71,7 +71,7 @@ function ChapterSaver.update()
             end
         else
             if not Task.Fail then
-                if Task.Type == "Download" then
+                if Task.Type == "Download" and not Settings.SilentDownloads then
                     Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
                 elseif Task.Type == "Import" then
                     Notifications.push("Import completed!")
@@ -200,7 +200,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
     }
     UpdatedTable = false
     Order[#Order + 1] = Downloading[k]
-    if not silent then
+    if not silent and not Settings.SilentDownloads then
         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
     end
 end
@@ -468,7 +468,7 @@ local function stop(key, silent)
             local new_order = {}
             for _, v in ipairs(Order) do
                 if v == Downloading[key] then
-                    if notify and silent == nil then
+                    if notify and silent == nil and not Settings.SilentDownloads then
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
                     end
                 else
@@ -537,7 +537,7 @@ function ChapterSaver.delete(chapter, silent)
         rem_dir(FOLDER .. k)
         Keys[k] = nil
         ChapterSaver.save()
-        if not silent then
+        if not silent and not Settings.SilentDownloads then
             Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
         end
     end
@@ -766,5 +766,7 @@ function ChapterSaver.clear()
     createDirectory("ux0:data/noboru/chapters")
     Keys = {}
     ChapterSaver.save()
-    Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
+    if not Settings.SilentDownloads then
+        Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
+    end
 end

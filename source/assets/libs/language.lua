@@ -61,7 +61,9 @@ Language = {
             LeftStickSensitivity = "Чувствительность левого джойстика",
             RightStickDeadZone = "Мёртвая зона правого джойстика",
             RightStickSensitivity = "Чувствительность правого джойстика",
-            ResetAllSettings = "Сбросить все настройки"
+            ResetAllSettings = "Сбросить все настройки",
+            Other = "Другое",
+            SilentDownloads = "Не показывать уведомления связанные с загрузкой"
         },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
@@ -216,7 +218,9 @@ Language = {
             LeftStickSensitivity = "Left stick sensitivity",
             RightStickDeadZone = "Right stick deadzone",
             RightStickSensitivity = "Right stick sensitivity",
-            ResetAllSettings = "Reset all settings"
+            ResetAllSettings = "Reset all settings",
+            Other = "Other",
+            SilentDownloads = "Don't show downloads notifications"
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
@@ -371,7 +375,9 @@ Language = {
             LeftStickSensitivity = "Left stick sensitivity", --Need to translate
             RightStickDeadZone = "Right stick deadzone", --Need to translate
             RightStickSensitivity = "Right stick sensitivity", --Need to translate
-            ResetAllSettings = "Reset all settings" --Need to translate
+            ResetAllSettings = "Reset all settings", --Need to translate
+            Other = "Other", --Need to translate
+            SilentDownloads = "Don't show downloads notifications" --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers", --Need to translate
@@ -526,7 +532,9 @@ Language = {
             LeftStickSensitivity = "Left stick sensitivity", --Need to translate
             RightStickDeadZone = "Right stick deadzone", --Need to translate
             RightStickSensitivity = "Right stick sensitivity", --Need to translate
-            ResetAllSettings = "Reset all settings" --Need to translate
+            ResetAllSettings = "Reset all settings", --Need to translate
+            Other = "Other", --Need to translate
+            SilentDownloads = "Don't show downloads notifications" --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers", --Need to translate
@@ -681,7 +689,9 @@ Language = {
             LeftStickSensitivity = "Left stick sensitivity", --Need to translate
             RightStickDeadZone = "Right stick deadzone", --Need to translate
             RightStickSensitivity = "Right stick sensitivity", --Need to translate
-            ResetAllSettings = "Reset all settings" --Need to translate
+            ResetAllSettings = "Reset all settings", --Need to translate
+            Other = "Other", --Need to translate
+            SilentDownloads = "Don't show downloads notifications" --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers", --Need to translate
