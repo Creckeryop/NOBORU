@@ -403,8 +403,8 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             if not (Controls.check(pad, SCE_CTRL_RIGHTPAGE) or Controls.check(pad, SCE_CTRL_LEFTPAGE) or (Settings.ChangingPageButtons == "DPAD" and (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP)))) then
                 buttonTimeSpace = 800
             end
-            local right_page_button = Settings.ChangingPageButtons == "DPAD" and orientation == "Vertical" and SCE_CTRL_DOWN or SCE_CTRL_RIGHTPAGE
-            local left_page_button = Settings.ChangingPageButtons == "DPAD" and orientation == "Vertical" and SCE_CTRL_UP or SCE_CTRL_LEFTPAGE
+            local right_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_DOWN or SCE_CTRL_RIGHT) or (orientation == "Vertical" and (is_down and SCE_CTRL_LEFT or SCE_CTRL_DOWN))) or SCE_CTRL_RIGHTPAGE
+            local left_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_UP or SCE_CTRL_LEFT) or (orientation == "Vertical" and (is_down and SCE_CTRL_RIGHT or SCE_CTRL_UP))) or SCE_CTRL_LEFTPAGE
             if Controls.check(pad, right_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, right_page_button)) then
                 swipe("LEFT")
                 buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
