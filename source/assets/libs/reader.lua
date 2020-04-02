@@ -33,6 +33,7 @@ local touchTemp = Point_t(0, 0)
 local StartPage
 
 local orientation
+local is_down
 
 local hideCounterTimer = Timer.new()
 
@@ -232,52 +233,108 @@ local buttonTimeSpace = 800
 local function swipe(direction)
     if orientation == "Horizontal" then
         if direction == "LEFT" then
-            if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
-                offset.x = 960 + offset.x
-                local page = Pages[Pages.Page - 1]
-                if page and page.Zoom then
-                    if page.Zoom * page.Width >= 960 then
-                        page.x = -page.Width * page.Zoom / 2
-                    else
-                        page.x = -480
+            if is_down then
+                if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
+                    offset.y = 544 + offset.y
+                    local page = Pages[Pages.Page - 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Height >= 544 then
+                            page.y = -page.Height * page.Zoom / 2
+                        else
+                            page.y = -272
+                        end
+                    end
+                end
+            else
+                if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
+                    offset.x = 960 + offset.x
+                    local page = Pages[Pages.Page - 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Width >= 960 then
+                            page.x = -page.Width * page.Zoom / 2
+                        else
+                            page.x = -480
+                        end
                     end
                 end
             end
         elseif direction == "RIGHT" then
-            if Pages[Pages.Page - 1] and changePage(Pages.Page - 1) then
-                offset.x = -960 + offset.x
-                local page = Pages[Pages.Page + 1]
-                if page and page.Zoom then
-                    if page.Zoom * page.Width >= 960 then
-                        page.x = 960 + page.Width * page.Zoom / 2
-                    else
-                        page.x = 960 + 480
+            if is_down then
+                if Pages[Pages.Page - 1] and changePage(Pages.Page - 1) then
+                    offset.y = -544 + offset.y
+                    local page = Pages[Pages.Page + 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Height >= 544 then
+                            page.y = 544 + page.Height * page.Zoom / 2
+                        else
+                            page.y = 544 + 272
+                        end
+                    end
+                end
+            else
+                if Pages[Pages.Page - 1] and changePage(Pages.Page - 1) then
+                    offset.x = -960 + offset.x
+                    local page = Pages[Pages.Page + 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Width >= 960 then
+                            page.x = 960 + page.Width * page.Zoom / 2
+                        else
+                            page.x = 960 + 480
+                        end
                     end
                 end
             end
         end
     elseif orientation == "Vertical" then
         if direction == "LEFT" then
-            if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
-                offset.y = 544 + offset.y
-                local page = Pages[Pages.Page - 1]
-                if page and page.Zoom then
-                    if page.Zoom * page.Width >= 544 then
-                        page.y = -page.Width * page.Zoom / 2
-                    else
-                        page.y = -272
+            if is_down then
+                if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
+                    offset.x = -960 + offset.x
+                    local page = Pages[Pages.Page - 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Height >= 960 then
+                            page.x = 960 + page.Height * page.Zoom / 2
+                        else
+                            page.x = 960 + 480
+                        end
+                    end
+                end
+            else
+                if Pages.Page ~= #Pages and changePage(Pages.Page + 1) then
+                    offset.y = 544 + offset.y
+                    local page = Pages[Pages.Page - 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Width >= 544 then
+                            page.y = -page.Width * page.Zoom / 2
+                        else
+                            page.y = -272
+                        end
                     end
                 end
             end
         elseif direction == "RIGHT" then
-            if Pages[Pages.Page - 1] and changePage(Pages.Page - 1) then
-                offset.y = -544 + offset.y
-                local page = Pages[Pages.Page + 1]
-                if page and page.Zoom then
-                    if page.Zoom * page.Width >= 544 then
-                        page.y = 544 + page.Width * page.Zoom / 2
-                    else
-                        page.y = 544 + 272
+            if is_down then
+                if Pages[Pages.Page - 1] and changePage(Pages.Page - 1) then
+                    offset.x = 960 + offset.x
+                    local page = Pages[Pages.Page + 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Height >= 960 then
+                            page.x = -page.Height * page.Zoom / 2
+                        else
+                            page.x = -480
+                        end
+                    end
+                end
+            else
+                if Pages[Pages.Page - 1] and changePage(Pages.Page - 1) then
+                    offset.y = -544 + offset.y
+                    local page = Pages[Pages.Page + 1]
+                    if page and page.Zoom then
+                        if page.Zoom * page.Width >= 544 then
+                            page.y = 544 + page.Width * page.Zoom / 2
+                        else
+                            page.y = 544 + 272
+                        end
                     end
                 end
             end
@@ -291,7 +348,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             local bookmark
             if Settings.ReaderDirection == "LEFT" then
                 bookmark = Pages.Count - Pages.Page + 1
-            elseif Settings.ReaderDirection == "RIGHT" then
+            else
                 bookmark = Pages.Page
             end
             if bookmark == 1 then
@@ -404,9 +461,17 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         else
             if touchMode == TOUCH_SWIPE then
                 if offset.x > 90 or offset.y > 90 then
-                    swipe("RIGHT")
+                    if orientation == "Vertical" and is_down then
+                        swipe("LEFT")
+                    else
+                        swipe("RIGHT")
+                    end
                 elseif offset.x < -90 or offset.y < -90 then
-                    swipe("LEFT")
+                    if orientation == "Vertical" and is_down then
+                        swipe("RIGHT")
+                    else
+                        swipe("LEFT")
+                    end
                 end
                 velX = 0
                 velY = 0
@@ -420,16 +485,32 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
             if len > 10 then
                 if orientation == "Horizontal" then
-                    if not page.Zoom or (page.Height * page.Zoom < 545 or math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
-                        touchMode = TOUCH_SWIPE
+                    if is_down then
+                        if not page.Zoom or (page.Width * page.Zoom < 961 or math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
+                            touchMode = TOUCH_SWIPE
+                        else
+                            touchMode = TOUCH_MOVE
+                        end
                     else
-                        touchMode = TOUCH_MOVE
+                        if not page.Zoom or (page.Height * page.Zoom < 545 or math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
+                            touchMode = TOUCH_SWIPE
+                        else
+                            touchMode = TOUCH_MOVE
+                        end
                     end
                 elseif orientation == "Vertical" then
-                    if not page.Zoom or (page.Height * page.Zoom < 961 or math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
-                        touchMode = TOUCH_SWIPE
+                    if is_down then
+                        if not page.Zoom or (page.Width * page.Zoom < 545 or math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
+                            touchMode = TOUCH_SWIPE
+                        else
+                            touchMode = TOUCH_MOVE
+                        end
                     else
-                        touchMode = TOUCH_MOVE
+                        if not page.Zoom or (page.Height * page.Zoom < 961 or math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
+                            touchMode = TOUCH_SWIPE
+                        else
+                            touchMode = TOUCH_MOVE
+                        end
                     end
                 end
             end
@@ -457,7 +538,7 @@ function Reader.update()
             STATE = STATE_READING
             local chapter = Chapters[current_chapter]
             Pages.Count = #chapter.Pages
-            if Settings.ReaderDirection == "RIGHT" then
+            if Settings.ReaderDirection == "RIGHT" or is_down then
                 for i = 1, #chapter.Pages do
                     Pages[#Pages + 1] = {
                         chapter.Pages[i],
@@ -478,7 +559,7 @@ function Reader.update()
                     }
                 end
             end
-            if Settings.ReaderDirection == "RIGHT" then
+            if Settings.ReaderDirection == "RIGHT" or is_down then
                 StartPage = StartPage and StartPage > 0 and StartPage <= Pages.Count and StartPage or StartPage == false and -1 or nil
                 if StartPage == -1 then
                     StartPage = false
@@ -546,7 +627,7 @@ function Reader.update()
             return
         end
         gesture_touch_update()
-        if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and ((offset.x >= 0 and Pages.PrevPage > Pages.Page or offset.x <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Horizontal" or (offset.y >= 0 and Pages.PrevPage > Pages.Page or offset.y <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Vertical") then
+        if Pages.PrevPage and Pages.PrevPage ~= Pages.Page and (((is_down and offset.y or offset.x) >= 0 and Pages.PrevPage > Pages.Page or (is_down and offset.y or offset.x) <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Horizontal" or ((is_down and -offset.x or offset.y) >= 0 and Pages.PrevPage > Pages.Page or (is_down and -offset.x or offset.y) <= 0 and Pages.PrevPage < Pages.Page) and orientation == "Vertical") then
             if Pages.PrevPage > 0 and Pages.PrevPage <= #Pages then
                 deletePageImage(Pages.PrevPage)
             end
@@ -595,65 +676,129 @@ function Reader.update()
             if page and not page.Zoom and page.Image then
                 local Image = page.Image
                 if orientation == "Horizontal" then
-                    page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
-                    Console.write("Added " .. Pages.Page + i)
-                    if Settings.ZoomReader == "Smart" then
-                        if page.Width > page.Height then
-                            page.Zoom = 544 / page.Height
-                            if page.Width * page.Zoom >= 960 then
-                                if i == 0 then
-                                    if Pages.PrevPage > Pages.Page then
-                                        page.x = page.x + (960 - page.Width * page.Zoom) / 2
-                                    elseif Pages.PrevPage < Pages.Page then
-                                        page.x = page.x - (960 - page.Width * page.Zoom) / 2
-                                    end
-                                else
-                                    page.x = page.x - i * (960 - page.Width * page.Zoom) / 2
-                                end
+                    if is_down then
+                        page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
+                        Console.write("Added " .. Pages.Page + i)
+                        if Settings.ZoomReader == "Smart" then
+                            if page.Width < page.Height then
+                                page.Zoom = 960 / page.Width
+                            else
+                                page.Zoom = 544 / page.Height
                             end
-                        else
+                        elseif Settings.ZoomReader == "Width" then
                             page.Zoom = 960 / page.Width
+                        elseif Settings.ZoomReader == "Height" then
+                            page.Zoom = 544 / page.Height
                         end
-                    elseif Settings.ZoomReader == "Width" then
-                        page.Zoom = 960 / page.Width
-                    elseif Settings.ZoomReader == "Height" then
-                        page.Zoom = 544 / page.Height
-                    end
-                    page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
-                    if page.Zoom * page.Height > 544 then
-                        page.y = page.Zoom * page.Height / 2
-                    end
-                    page.start_Zoom = page.Zoom
-                elseif orientation == "Vertical" then
-                    page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
-                    Console.write("Added " .. Pages.Page + i)
-                    if Settings.ZoomReader == "Smart" then
-                        if page.Width > page.Height then
-                            page.Zoom = 960 / page.Height
-                            if page.Width * page.Zoom >= 544 then
-                                if i == 0 then
-                                    if Pages.PrevPage > Pages.Page then
-                                        page.y = page.y + (544 - page.Width * page.Zoom) / 2
-                                    elseif Pages.PrevPage < Pages.Page then
-                                        page.y = page.y - (544 - page.Width * page.Zoom) / 2
-                                    end
-                                else
-                                    page.y = page.y - i * (544 - page.Width * page.Zoom) / 2
+                        if page.Height * page.Zoom >= 544 then
+                            if i == 0 then
+                                if Pages.PrevPage > Pages.Page then
+                                    page.y = page.y + (544 - page.Height * page.Zoom) / 2
+                                elseif Pages.PrevPage < Pages.Page then
+                                    page.y = page.y - (544 - page.Height * page.Zoom) / 2
                                 end
+                            else
+                                page.y = page.y - i * (544 - page.Height * page.Zoom) / 2
                             end
-                        else
-                            page.Zoom = 544 / page.Width
                         end
-                    elseif Settings.ZoomReader == "Width" then
-                        page.Zoom = 544 / page.Width
-                    elseif Settings.ZoomReader == "Height" then
-                        page.Zoom = 960 / page.Height
+                        page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
+                        if page.Zoom * page.Width > 960 then
+                            page.x = 480 - (page.Height * page.Zoom) / 2
+                        end
+                        page.start_Zoom = page.Zoom
+                    else
+                        page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
+                        Console.write("Added " .. Pages.Page + i)
+                        if Settings.ZoomReader == "Smart" then
+                            if page.Width > page.Height then
+                                page.Zoom = 544 / page.Height
+                            else
+                                page.Zoom = 960 / page.Width
+                            end
+                        elseif Settings.ZoomReader == "Width" then
+                            page.Zoom = 960 / page.Width
+                        elseif Settings.ZoomReader == "Height" then
+                            page.Zoom = 544 / page.Height
+                        end
+                        if page.Width * page.Zoom >= 960 then
+                            if i == 0 then
+                                if Pages.PrevPage > Pages.Page then
+                                    page.x = page.x + (960 - page.Width * page.Zoom) / 2
+                                elseif Pages.PrevPage < Pages.Page then
+                                    page.x = page.x - (960 - page.Width * page.Zoom) / 2
+                                end
+                            else
+                                page.x = page.x - i * (960 - page.Width * page.Zoom) / 2
+                            end
+                        end
+                        page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
+                        if page.Zoom * page.Height > 544 then
+                            page.y = page.Zoom * page.Height / 2
+                        end
+                        page.start_Zoom = page.Zoom
                     end
-                    page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
-                    if page.Zoom * page.Height > 960 then
-                        page.x = 960 - (page.Zoom * page.Height) / 2
+                elseif orientation == "Vertical" then
+                    if is_down then
+                        page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 - i * 960, 272
+                        Console.write("Added " .. Pages.Page + i)
+                        if Settings.ZoomReader == "Smart" then
+                            if page.Width > page.Height then
+                                page.Zoom = 960 / page.Height
+                            else
+                                page.Zoom = 544 / page.Width
+                            end
+                        elseif Settings.ZoomReader == "Width" then
+                            page.Zoom = 544 / page.Width
+                        elseif Settings.ZoomReader == "Height" then
+                            page.Zoom = 960 / page.Height
+                        end
+                        if page.Height * page.Zoom >= 960 then
+                            if i == 0 then
+                                if Pages.PrevPage > Pages.Page then
+                                    page.x = page.x - (960 - page.Height * page.Zoom) / 2
+                                elseif Pages.PrevPage < Pages.Page then
+                                    page.x = page.x + (960 - page.Height * page.Zoom) / 2
+                                end
+                            else
+                                page.x = page.x + i * (960 - page.Height * page.Zoom) / 2
+                            end
+                        end
+                        page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
+                        if page.Zoom * page.Width > 544 then
+                            page.y = 272 - (page.Zoom * page.Width) / 2
+                        end
+                        page.start_Zoom = page.Zoom
+                    else
+                        page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
+                        Console.write("Added " .. Pages.Page + i)
+                        if Settings.ZoomReader == "Smart" then
+                            if page.Width > page.Height then
+                                page.Zoom = 960 / page.Height
+                            else
+                                page.Zoom = 544 / page.Width
+                            end
+                        elseif Settings.ZoomReader == "Width" then
+                            page.Zoom = 544 / page.Width
+                        elseif Settings.ZoomReader == "Height" then
+                            page.Zoom = 960 / page.Height
+                        end
+                        if page.Width * page.Zoom >= 544 then
+                            if i == 0 then
+                                if Pages.PrevPage > Pages.Page then
+                                    page.y = page.y + (544 - page.Width * page.Zoom) / 2
+                                elseif Pages.PrevPage < Pages.Page then
+                                    page.y = page.y - (544 - page.Width * page.Zoom) / 2
+                                end
+                            else
+                                page.y = page.y - i * (544 - page.Width * page.Zoom) / 2
+                            end
+                        end
+                        page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
+                        if page.Zoom * page.Height > 960 then
+                            page.x = 960 - (page.Zoom * page.Height) / 2
+                        end
+                        page.start_Zoom = page.Zoom
                     end
-                    page.start_Zoom = page.Zoom
                 end
             end
         end
@@ -668,14 +813,23 @@ function Reader.update()
                 velX = velX * 0.9
             end
         elseif touchMode == TOUCH_SWIPE then
-            if orientation == "Horizontal" then
-                offset.x = offset.x + velX
-                if offset.x > 0 and not Pages[Pages.Page - 1] then
-                    offset.x = 0
-                elseif offset.x < 0 and Pages.Page == #Pages then
-                    offset.x = 0
+            if (orientation == "Horizontal" and not is_down) or (orientation == "Vertical" and is_down) then
+                if orientation == "Vertical" then
+                    offset.x = offset.x + velX
+                    if offset.x < 0 and not Pages[Pages.Page - 1] then
+                        offset.x = 0
+                    elseif offset.x > 0 and Pages.Page == #Pages then
+                        offset.x = 0
+                    end
+                else
+                    offset.x = offset.x + velX
+                    if offset.x > 0 and not Pages[Pages.Page - 1] then
+                        offset.x = 0
+                    elseif offset.x < 0 and Pages.Page == #Pages then
+                        offset.x = 0
+                    end
                 end
-            elseif orientation == "Vertical" then
+            else
                 offset.y = offset.y + velY
                 if offset.y > 0 and not Pages[Pages.Page - 1] then
                     offset.y = 0
@@ -686,7 +840,7 @@ function Reader.update()
         end
         if touchMode ~= TOUCH_SWIPE then
             local dir = 'x'
-            if orientation == "Vertical" then
+            if orientation == "Vertical" and not is_down or orientation == "Horizontal" and is_down then
                 dir = 'y'
             end
             offset[dir] = offset[dir] / 1.3
@@ -707,72 +861,144 @@ function Reader.update()
         end
         local page = Pages[Pages.Page]
         if orientation == "Horizontal" then
-            if page.Zoom then
-                if page.Height * page.Zoom < 544 then
-                    page.y = 272
-                elseif page.y - page.Height / 2 * page.Zoom > 0 then
-                    page.y = page.Height / 2 * page.Zoom
-                elseif page.y + page.Height / 2 * page.Zoom < 544 then
-                    page.y = 544 - page.Height / 2 * page.Zoom
-                end
-                if page.Zoom * page.Width > 961 then
-                    if page.x - page.Width / 2 * page.Zoom >= 0 then
+            if is_down then
+                if page.Zoom then
+                    if page.Width * page.Zoom < 960 then
+                        page.x = 480
+                    elseif page.x - page.Width / 2 * page.Zoom > 0 then
                         page.x = page.Width / 2 * page.Zoom
-                        if Pages[Pages.Page - 1] then
-                            pageMode = PAGE_LEFT
-                        else
-                            pageMode = PAGE_NONE
-                        end
-                    elseif page.x + page.Width / 2 * page.Zoom <= 960 then
+                    elseif page.x + page.Width / 2 * page.Zoom < 960 then
                         page.x = 960 - page.Width / 2 * page.Zoom
-                        if Pages.Page ~= #Pages then
-                            pageMode = PAGE_RIGHT
+                    end
+                    if page.Zoom * page.Height > 545 then
+                        if page.y - page.Height / 2 * page.Zoom >= 0 then
+                            page.y = page.Height / 2 * page.Zoom
+                            if Pages[Pages.Page - 1] then
+                                pageMode = PAGE_LEFT
+                            else
+                                pageMode = PAGE_NONE
+                            end
+                        elseif page.y + page.Height / 2 * page.Zoom <= 544 then
+                            page.y = 544 - page.Height / 2 * page.Zoom
+                            if Pages.Page ~= #Pages then
+                                pageMode = PAGE_RIGHT
+                            else
+                                pageMode = PAGE_NONE
+                            end
                         else
                             pageMode = PAGE_NONE
                         end
                     else
-                        pageMode = PAGE_NONE
+                        page.y = 272
+                        pageMode = PAGE_LEFT + PAGE_RIGHT
                     end
                 else
-                    page.x = 480
                     pageMode = PAGE_LEFT + PAGE_RIGHT
                 end
             else
-                pageMode = PAGE_LEFT + PAGE_RIGHT
+                if page.Zoom then
+                    if page.Height * page.Zoom < 544 then
+                        page.y = 272
+                    elseif page.y - page.Height / 2 * page.Zoom > 0 then
+                        page.y = page.Height / 2 * page.Zoom
+                    elseif page.y + page.Height / 2 * page.Zoom < 544 then
+                        page.y = 544 - page.Height / 2 * page.Zoom
+                    end
+                    if page.Zoom * page.Width > 961 then
+                        if page.x - page.Width / 2 * page.Zoom >= 0 then
+                            page.x = page.Width / 2 * page.Zoom
+                            if Pages[Pages.Page - 1] then
+                                pageMode = PAGE_LEFT
+                            else
+                                pageMode = PAGE_NONE
+                            end
+                        elseif page.x + page.Width / 2 * page.Zoom <= 960 then
+                            page.x = 960 - page.Width / 2 * page.Zoom
+                            if Pages.Page ~= #Pages then
+                                pageMode = PAGE_RIGHT
+                            else
+                                pageMode = PAGE_NONE
+                            end
+                        else
+                            pageMode = PAGE_NONE
+                        end
+                    else
+                        page.x = 480
+                        pageMode = PAGE_LEFT + PAGE_RIGHT
+                    end
+                else
+                    pageMode = PAGE_LEFT + PAGE_RIGHT
+                end
             end
         elseif orientation == "Vertical" then
-            if page.Zoom then
-                if page.Height * page.Zoom < 960 then
-                    page.x = 480
-                elseif page.x - page.Height / 2 * page.Zoom > 0 then
-                    page.x = page.Height / 2 * page.Zoom
-                elseif page.x + page.Height / 2 * page.Zoom < 960 then
-                    page.x = 960 - page.Height / 2 * page.Zoom
-                end
-                if page.Zoom * page.Width > 545 then
-                    if page.y - page.Width / 2 * page.Zoom >= 0 then
+            if is_down then
+                if page.Zoom then
+                    if page.Width * page.Zoom < 544 then
+                        page.y = 272
+                    elseif page.y - page.Width / 2 * page.Zoom > 0 then
                         page.y = page.Width / 2 * page.Zoom
-                        if Pages[Pages.Page - 1] then
-                            pageMode = PAGE_LEFT
-                        else
-                            pageMode = PAGE_NONE
-                        end
-                    elseif page.y + page.Width / 2 * page.Zoom <= 544 then
+                    elseif page.y + page.Width / 2 * page.Zoom < 544 then
                         page.y = 544 - page.Width / 2 * page.Zoom
-                        if Pages.Page ~= #Pages then
-                            pageMode = PAGE_RIGHT
+                    end
+                    if page.Zoom * page.Height > 961 then
+                        if page.x - page.Height / 2 * page.Zoom >= 0 then
+                            page.x = page.Height / 2 * page.Zoom
+                            if Pages.Page ~= #Pages then
+                                pageMode = PAGE_LEFT
+                            else
+                                pageMode = PAGE_NONE
+                            end
+                        elseif page.x + page.Height / 2 * page.Zoom <= 960 then
+                            page.x = 960 - page.Height / 2 * page.Zoom
+                            if Pages[Pages.Page - 1] then
+                                pageMode = PAGE_RIGHT
+                            else
+                                pageMode = PAGE_NONE
+                            end
                         else
                             pageMode = PAGE_NONE
                         end
                     else
-                        pageMode = PAGE_NONE
+                        page.x = 480
+                        pageMode = PAGE_LEFT + PAGE_RIGHT
                     end
                 else
-                    page.y = 272
                     pageMode = PAGE_LEFT + PAGE_RIGHT
                 end
             else
-                pageMode = PAGE_LEFT + PAGE_RIGHT
+                if page.Zoom then
+                    if page.Height * page.Zoom < 960 then
+                        page.x = 480
+                    elseif page.x - page.Height / 2 * page.Zoom > 0 then
+                        page.x = page.Height / 2 * page.Zoom
+                    elseif page.x + page.Height / 2 * page.Zoom < 960 then
+                        page.x = 960 - page.Height / 2 * page.Zoom
+                    end
+                    if page.Zoom * page.Width > 545 then
+                        if page.y - page.Width / 2 * page.Zoom >= 0 then
+                            page.y = page.Width / 2 * page.Zoom
+                            if Pages[Pages.Page - 1] then
+                                pageMode = PAGE_LEFT
+                            else
+                                pageMode = PAGE_NONE
+                            end
+                        elseif page.y + page.Width / 2 * page.Zoom <= 544 then
+                            page.y = 544 - page.Width / 2 * page.Zoom
+                            if Pages.Page ~= #Pages then
+                                pageMode = PAGE_RIGHT
+                            else
+                                pageMode = PAGE_NONE
+                            end
+                        else
+                            pageMode = PAGE_NONE
+                        end
+                    else
+                        page.y = 272
+                        pageMode = PAGE_LEFT + PAGE_RIGHT
+                    end
+                else
+                    pageMode = PAGE_LEFT + PAGE_RIGHT
+                end
             end
         end
         if Timer.getTime(hideCounterTimer) > 1500 then
@@ -890,6 +1116,7 @@ function Reader.loadChapter(chapter)
 end
 
 function Reader.load(chapters, num)
+    is_down = Settings.ReaderDirection == "DOWN"
     orientation = Settings.Orientation
     Chapters = chapters
     StartPage = Cache.getBookmark(chapters[num])

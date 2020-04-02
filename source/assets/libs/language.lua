@@ -117,7 +117,8 @@ Language = {
             Height = "По высоте",
             Width = "По ширине",
             LEFT = "Справа налево",
-            RIGHT = "Слева направо"
+            RIGHT = "Слева направо",
+            DOWN = "Сверху вниз"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Добавить в библиотеку",
@@ -275,7 +276,8 @@ Language = {
             Height = "Height",
             Width = "Width",
             LEFT = "Right to left",
-            RIGHT = "Left to right"
+            RIGHT = "Left to right",
+            DOWN = "Up to down"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Add to library",
@@ -433,7 +435,8 @@ Language = {
             Height = "Chiều cao",
             Width = "Chiều rộng",
             LEFT = "Phải sang trái",
-            RIGHT = "Trái sang phải"
+            RIGHT = "Trái sang phải",
+            DOWN = "Up to down" --Need to translate
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Thêm vào thư viện",
@@ -591,7 +594,8 @@ Language = {
             Height = "Alto",
             Width = "Ancho",
             LEFT = "Derecha a izquierda",
-            RIGHT = "Izquierda a derecha"
+            RIGHT = "Izquierda a derecha",
+            DOWN = "Up to down" --Need to translate
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Añadir a la libreria",
@@ -749,7 +753,8 @@ Language = {
             Height = "Altezza",
             Width = "Larghezza",
             LEFT = "Da destra a sinistra",
-            RIGHT = "Da sinistra a destra"
+            RIGHT = "Da sinistra a destra",
+            DOWN = "Up to down" --Need to translate
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Aggiungi alla libreria",
