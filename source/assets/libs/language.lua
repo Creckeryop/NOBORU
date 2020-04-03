@@ -330,8 +330,8 @@ Language = {
             SEARCH = "Tìm kiếm"
         },
         MESSAGE = {
-            LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored", --Need to translate
-            PRESS_TO_UPDATE = "Press X to update\nPress O to cancel" --Need to translate
+            LOST_CONNECTION = "Mất kết nối\n\nĐang đợi mạng...\n\n(Hãy chạy ẩn ứng dụng, đi đến cài đặt và tiến hành kết nối mạng)\n\nNhấn X để hủy tất cả tiến trình tải và tắt thông báo\n\nCác tiến trình tải sẽ tự động tiếp tục khi có kết nối mạng",
+            PRESS_TO_UPDATE = "Nhấn X để cập nhật\nNhấn O để hủy bỏ"
         },
         SETTINGS = {
             Language = "Ngôn ngữ",
@@ -370,34 +370,34 @@ Language = {
             Library = "Thư viện",
             ChangeUI = "Giao diện",
             PreferredCatalogLanguage = "Ngôn ngữ ưa thích",
-            LibrarySorting = "Library sorting", --Need to translate
-            ChapterSorting = "Chapters sorting", --Need to translate
-            RefreshLibAtStart = "Refresh library at startup", --Need to translate
-            Translators = "Thanks to translators", --Need to translate :)
-            ChangingPageButtons = "Buttons to change page", --Need to translate
-            LeftStickDeadZone = "Left stick deadzone", --Need to translate
-            LeftStickSensitivity = "Left stick sensitivity", --Need to translate
-            RightStickDeadZone = "Right stick deadzone", --Need to translate
-            RightStickSensitivity = "Right stick sensitivity", --Need to translate
-            ResetAllSettings = "Reset all settings", --Need to translate
-            Other = "Other", --Need to translate
-            SilentDownloads = "Don't show downloads notifications" --Need to translate
+            LibrarySorting = "Sắp xếp lại thư viện",
+            ChapterSorting = "Sắp xếp lại chương truyện",
+            RefreshLibAtStart = "Làm mới thư viện khi khởi động",
+            Translators = "Cảm ơn đến các dịch giả",
+            ChangingPageButtons = "Nút chuyển trang",
+            LeftStickDeadZone = "Deadzone cần điều khiển trái",
+            LeftStickSensitivity = "Độ nhạy cần điều khiển trái",
+            RightStickDeadZone = "Deadzone cần điều khiển phải",
+            RightStickSensitivity = "Độ nhạy cần điều khiển phải",
+            ResetAllSettings = "Đặt lại tất cả cài đặt",
+            Other = "Khác",
+            SilentDownloads = "Không hiển thị thông báo tải xuống"
         },
         PAGINGCONTROLS = {
-            ["LR"] = "L and R triggers", --Need to translate
-            ["DPAD"] = "Using DPad" --Need to translate
+            ["LR"] = "Sử dụng L và R",
+            ["DPAD"] = "Sử dụng DPad" 
         },
         EXTRA = {
-            ["DownloadAll"] = "Download all chapters", --Need to translate
-            ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters", --Need to translate
-            ["ClearBookmarks"] = "Clear bookmarks" --Need to translate
+            ["DownloadAll"] = "Tải xuống tất cả chương",
+            ["RemoveAll"] = "Xóa tất cả chương",
+            ["CancelAll"] = "Hủy bỏ việc tải xuống",
+            ["ClearBookmarks"] = "Xóa dấu trang"
         },
         THEME = {
             Dark = "Tối",
             Light = "Sáng",
-            Blue = "Blue", --Need to translate
-            Crimson = "Crimson" --Need to translate
+            Blue = "Xanh da trời",
+            Crimson = "Đỏ thẫm"
         },
         NSFW = {
             [true] = "Hiện",
@@ -436,7 +436,7 @@ Language = {
             Width = "Chiều rộng",
             LEFT = "Phải sang trái",
             RIGHT = "Trái sang phải",
-            DOWN = "Up to down" --Need to translate
+            DOWN = "Trên xuống dưới"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Thêm vào thư viện",
@@ -460,8 +460,8 @@ Language = {
             DEVELOPER_THING = "Start app on Github!",
             NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
-            REFRESH_COMPLETED = "Refresh completed!", --Need to translate
-            SETTINGS_RESET = "Settings have been reset" --Need to translate
+            REFRESH_COMPLETED = "Làm mới hoàn tất!",
+            SETTINGS_RESET = "Đã đặt lại các cài đặt!"
         },
         PANEL = {
             BACK = "Trở về",
