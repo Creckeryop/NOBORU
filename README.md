@@ -58,8 +58,8 @@ Also if you want to read directly .cbz file you can just open file in import sec
 
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
 ## Known issues
-<b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading<br>
-<b>Advice</b> Update app to version 0.47+, but you need to wait 10 seconds after sleeping mode
+<b>Issue</b> After importing archive file, manga/comic shows "Unknown error (Parser's)"<br>
+<b>Advice</b> Make sure that archive file you imported is supported.
 ## FAQ
 - **I found bug that ...**
     - You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file
