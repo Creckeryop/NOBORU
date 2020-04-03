@@ -703,7 +703,7 @@ function Reader.update()
                         end
                         page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
                         if page.Zoom * page.Width > 960 then
-                            page.x = 480 - (page.Height * page.Zoom) / 2
+                            page.x = 960 - (page.Width * page.Zoom) / 2
                         end
                         page.start_Zoom = page.Zoom
                     else
@@ -765,7 +765,7 @@ function Reader.update()
                         end
                         page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
                         if page.Zoom * page.Width > 544 then
-                            page.y = 272 - (page.Zoom * page.Width) / 2
+                            page.y = 544 - (page.Zoom * page.Width) / 2
                         end
                         page.start_Zoom = page.Zoom
                     else
