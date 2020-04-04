@@ -17,13 +17,13 @@ end
 
 function Changes.close(pad)
     if not updating then
-        if Controls.check(pad, SCE_CTRL_CIRCLE) then
+        if Controls.check(pad, SCE_CTRL_REAL_CIRCLE) then
             if math.ceil(Offset - FinalY) < 10 then
                 active = false
                 Timer.reset(animation_timer)
-                return SCE_CTRL_CIRCLE
+                return SCE_CTRL_REAL_CIRCLE
             end
-        elseif Controls.check(pad, SCE_CTRL_CROSS) then
+        elseif Controls.check(pad, SCE_CTRL_REAL_CROSS) then
             Settings.updateApp()
             updating = true
         end

@@ -15,10 +15,10 @@ function ConnectMessage.show()
 end
 
 function ConnectMessage.input(pad, oldpad)
-    if Controls.check(pad, SCE_CTRL_CROSS) and active and Offset == FinalY then
+    if Controls.check(pad, SCE_CTRL_REAL_CROSS) and active and Offset == FinalY then
         ChapterSaver.clearDownloadingList()
         active = false
-        return SCE_CTRL_CROSS
+        return SCE_CTRL_REAL_CROSS
     end
 end
 
