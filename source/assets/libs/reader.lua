@@ -140,6 +140,7 @@ local function deletePageImage(page)
             end
         end
         Pages[page].Image = nil
+        Console.write("Removed "..tostring(page))
     else
         ParserManager.remove(Pages[page])
         Threads.remove(Pages[page])
@@ -1067,14 +1068,17 @@ function Reader.draw()
                     end
                 end
             elseif page then
+                local precentage = Threads.getProgress(page)
+                local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+                local Width = Font.getTextWidth(FONT16, loading)
                 if orientation == "Horizontal" then
-                    local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                    local Width = Font.getTextWidth(FONT16, loading)
                     Font.print(FONT16, offset.x + 960 * (is_down and 0 or i) + 480 - Width / 2, 272 + offset.y + 544 * (is_down and i or 0) - 10, loading, COLOR_FONT)
+                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and 0 or i) + 480 - 52, offset.x + 960 * (is_down and 0 or i) + 480 + 53, 272 + offset.y + 544 * (is_down and i or 0) + 20, 272 + offset.y + 544 * (is_down and i or 0) + 32, COLOR_WHITE)
+                    Graphics.fillRect(offset.x + 960 * (is_down and 0 or i) + 480 - 50, offset.x + 960 * (is_down and 0 or i) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and i or 0) + 22, 272 + offset.y + 544 * (is_down and i or 0) + 29, COLOR_WHITE)
                 elseif orientation == "Vertical" then
-                    local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                    local Width = Font.getTextWidth(FONT16, loading)
                     Font.print(FONT16, 960 / 2 - Width / 2 + offset.x + 960 * (is_down and i or 0), 272 + offset.y + 544 * (is_down and 0 or i) - 10, loading, COLOR_FONT)
+                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and i or 0) + 480 - 52, offset.x + 960 * (is_down and i or 0) + 480 + 53, 272 + offset.y + 544 * (is_down and 0 or i) + 20, 272 + offset.y + 544 * (is_down and 0 or i) + 32, COLOR_WHITE)
+                    Graphics.fillRect(offset.x + 960 * (is_down and i or 0) + 480 - 50, offset.x + 960 * (is_down and i or 0) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and 0 or i) + 22, 272 + offset.y + 544 * (is_down and 0 or i) + 29, COLOR_WHITE)
                 end
             end
         end

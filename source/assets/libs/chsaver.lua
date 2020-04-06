@@ -53,13 +53,16 @@ function ChapterSaver.update()
         if coroutine.status(Task.F) ~= "dead" then
             local _, msg, var1, var2 = coroutine.resume(Task.F)
             if _ then
-                if Task.Destroy and msg then
+                if Task.Destroy and msg and msg ~= "update_count+false" then
                     if Task.Notify and not Settings.SilentDownloads then
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
                     end
                     Downloading[Task.Key] = nil
                     Task = nil
                 elseif msg == "update_count" then
+                    Task.page = var1
+                    Task.page_count = var2
+                elseif msg == "update_count+false" then
                     Task.page = var1
                     Task.page_count = var2
                 end
@@ -134,7 +137,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
             end
             local parser = GetParserByID(chapter.Manga.ParserID)
             for i = 1, #t do
-                coroutine.yield("update_count", i, #t)
+                coroutine.yield("update_count", i-1, #t)
                 local result = {}
                 parser:loadChapterPage(t[i], result)
                 coroutine.yield(false)
@@ -146,7 +149,8 @@ function ChapterSaver.downloadChapter(chapter, silent)
                         Path = "chapters/" .. k .. "/" .. i .. ".image"
                     })
                     while Threads.check(result) do
-                        coroutine.yield(false)
+                        local progress = Threads.getProgress(result)
+                        coroutine.yield("update_count+false", i-1+progress, #t)
                     end
                     if doesFileExist("ux0:data/noboru/chapters/" .. k .. "/" .. i .. ".image") then
                         local size = System.getPictureResolution("ux0:data/noboru/chapters/" .. k .. "/" .. i .. ".image")

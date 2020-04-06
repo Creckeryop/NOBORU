@@ -114,7 +114,7 @@ function Threads.update()
             end
         end
         if Task then
-            Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
+            Console.write(string.format("NET: #%s %s", 6 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
         end
     else
         Console.write("(" .. Task.Type .. ")" .. (Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
@@ -188,13 +188,22 @@ function Threads.update()
                         end
                     end
                 else
-                    uniques[Task.UniqueKey] = nil
-                    Task = nil
+                    Task.Type = Task.Link and "ImageDownload" or Task.Type
+                    if Task.Type == "ImageDownload" then
+                        error("(Image)File not found")
+                    elseif Task.Type == "Image" then
+                        Console.error("(Image)File not found")
+                        uniques[Task.UniqueKey] = nil
+                        Task = nil
+                        return
+                    end
                 end
                 return
             elseif Task.Type == "ImageLoad" then
                 if doesFileExist(Task.Path) then
                     Task.Table[Task.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
+                else
+                    Console.error("(ImageLoad)File not found")
                 end
             elseif Task.Type == "ImageLoadTable" then
                 if not Task.Image.i then
@@ -347,7 +356,7 @@ local function taskete(UniqueKey, T, foo)
         OnComplete = T.OnComplete,
         Extract = T.Extract,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
-        Retry = 3,
+        Retry = 5,
         HttpMethod = T.HttpMethod or GET_METHOD,
         PostData = T.PostData or "",
         ContentType = T.ContentType or XWWW,
@@ -409,6 +418,22 @@ function Threads.terminate()
         Network.term()
         net_inited = false
     end
+end
+
+function Threads.getProgress(UniqueKey)
+    local task = uniques[UniqueKey]
+    if task then
+        if Task == task then
+            if task.Type == "ImageDownload" or task.Type == "StringRequest" or task.Type == "FileDownload" or (task.Type == "Image" and task.Link) then
+                return Network.getDownloadedBytes() / Network.getTotalBytes()
+            else
+                return 1
+            end
+        else
+            return 0
+        end
+    end
+    return 0
 end
 
 ---@param UniqueKey string
