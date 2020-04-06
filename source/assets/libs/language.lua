@@ -179,7 +179,7 @@ Language = {
             ClearChapters = "Clear saved chapters",
             ShowNSFW = "Show NSFW parsers",
             ClearLibrary = "Clear library",
-            ClearCache = "Clear all cache that created for not tracked manga",
+            ClearCache = "Clear cache of non followed manga",
             ClearAllCache = "Clear all cache",
             ReaderOrientation = "Default reader orientation",
             DoubleTapReader = "Enable double tap to zoom feature",
@@ -775,7 +775,7 @@ Language = {
             CHAPTERS_CLEARED = "Tutti i capitoli salvati vengono cancellati!",
             LIBRARY_CLEARED = "Libreria cancellata!",
             CACHE_CLEARED = "La cache è stata cancellata!",
-            DEVELOPER_THING = "Avvia app su Github!",
+            DEVELOPER_THING = "dare una stella por lei app su Github!",
             NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
             NO_SPACE_LEFT = "Non è rimasto spazio",
             REFRESH_COMPLETED = "Aggiornamento completato!",
@@ -794,6 +794,165 @@ Language = {
             UPDATE = "Aggiorna",
             CANCEL = "Cancella",
             DELETE = "Elimina"
+        }
+    }
+    French = {
+        APP = {
+            LIBRARY = "LIBRAIRIE",
+            CATALOGS = "CATALOGUE",
+            SETTINGS = "PARAMETRES",
+            DOWNLOAD = "TELECHARGEMENT",
+            IMPORT = "IMPORTER",
+            HISTORY = "HISTORIQUE",
+            SEARCH = "Recherche"
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "Connection perdu\n\nEn attente de la reconnection......\n\n(Réduir l'application, aller au paramètres Wi-Fi et appuyez sur connection)\n\nAppuyez sur X pour annuler tout les téléchargments et fermer le message\n\nTout les téléchargements reprondront une fois la connection établie", 
+            PRESS_TO_UPDATE = "Appuez sur X pour mettre à jour\nAppuyez sur O pour annuler" 
+        },
+        SETTINGS = {
+            Language = "Language",
+            ClearChapters = "Supprimer les chapitres fini",
+            ShowNSFW = "Montrer le NSFW",
+            ClearLibrary = "Vider la librairie",
+            ClearCache = "Vider le cache des mangas non suivie",
+            ClearAllCache = "Vider tout le cache",
+            ReaderOrientation = "Orientation du lecteur",
+            DoubleTapReader = "Activer le double tap pour zoomer",
+            ZoomReader = "Zoom du lecteur",
+            SwapXO = "changer entre X ou O",
+            ShowAuthor = "Developpeur",
+            ShowVersion = "Version de l'app",
+            CheckUpdate = "Chercher une mise à jour",
+            SkipFontLoading = "Passer le chargement des polices",
+            LatestVersion = "Dernière version:",
+            PleaseWait = "Veuillez patienter",
+            FailedToUpdate = "Impossible de mettre à jour",
+            NoConnection = "Pas de connection",
+            HideInOffline = "Montrer uniquement les chapitres hors ligne",
+            UnzipingVPK = "Extraction du vpk pour l'installation",
+            CurrentVersionIs = "Version actuelle:",
+            Space = "Mémoire utilisé",
+            ReaderDirection = "Sens de lecture",
+            VersionIsUpToDate = "La version est la plus récente",
+            EU = "Europe",
+            JP = "Japonais",
+            PressAgainToAccept = "Appuyez encore pour accepter",
+            PressAgainToUpdate = "Appuyez encore pour mettre à jour:",
+            Reader = "Lecteur",
+            Controls = "Paramètre des controles",
+            Data = "Paramètre de la date",
+            About = "A propos du programme...",
+            Catalogs = "Catalogue",
+            Library = "Librairie",
+            ChangeUI = "Thème",
+            PreferredCatalogLanguage = "Langue préféré",
+            LibrarySorting = "Ordonner la librairie",
+            ChapterSorting = "Ordonner les chapitres", 
+            RefreshLibAtStart = "Rafraichir la librairie au démarrage", 
+            Translators = "Merci aux traducteurs",
+            ChangingPageButtons = "Bouton pour changer de page",
+            LeftStickDeadZone = "Deadzone du joystick gauche", 
+            LeftStickSensitivity = "Sensibilité du joystick gauche", 
+            RightStickDeadZone = "Deadzone du joystick droit",
+            RightStickSensitivity = "Sensibilité du joystick droit",
+            ResetAllSettings = "Restaurer tout les paramètres",
+            Other = "Autres", 
+            SilentDownloads = "Pad de notifications de Téléchargement"
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "Boutons L et R",
+            ["DPAD"] = "Utiliser le Dpad" 
+        },
+        EXTRA = {
+            ["DownloadAll"] = "Télécharger tout les chapitres", 
+            ["RemoveAll"] = "Retirer tout les chapitres",
+            ["CancelAll"] = "Annuler le téléchargement des chapitres",
+            ["ClearBookmarks"] = "Vider les marques pages"
+        },
+        THEME = {
+            Dark = "Sombre",
+            Light = "Lumineux",
+            Blue = "Bleu",
+            Crimson = "Rouge foncé"
+        },
+        NSFW = {
+            [true] = "Montrer",
+            [false] = "Ne pas montrer"
+        },
+        YORN = {
+            [true] = "Oui",
+            [false] = "Non"
+        },
+        PARSERS = {
+            RUS = "Russe",
+            ENG = "Anglais",
+            ESP = "Espagnol",
+            PRT = "Portugais",
+            FRA = "Français",
+            JAP = "Japonais",
+            DIF = "Divers",
+            TUR = "Turque",
+            ITA = "Italien",
+            VIE = "Vietnamien",
+            DEU = "Allemand",
+            BRA = "Brésilien",
+            POL = "Polonais"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "Pas de chapitres"
+        },
+        READER = {
+            PREPARING_PAGES = "Préparation des pages",
+            LOADING_PAGE = "Chargement de la page",
+            LOADING_SEGMENT = "Chargement par parties",
+            Horizontal = "Horizontale",
+            Vertical = "Verticale",
+            Smart = "Adapté",
+            Height = "Hauteur",
+            Width = "Longueur",
+            LEFT = "Droite à gauche",
+            RIGHT = "Gauche à droite",
+            DOWN = "Haut en bas"
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "Ajouter à la librairie",
+            REMOVE_FROM_LIBRARY = "Enlever de la librairie",
+            PAGE = "Page : ",
+            CONTINUE = "Continuer",
+            START = "Commencer à lire"
+        },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "Ajouté à la librairie",
+            REMOVED_FROM_LIBRARY = "Retiré de la librairie",
+            SEARCHING = 'En train de rechercher "%s"',
+            START_DOWNLOAD = "%s: %s\nle téléchargement a débuté!",
+            END_DOWNLOAD = "%s: %s\ntéléchargement complété!",
+            CANCEL_DOWNLOAD = "%s: %s\nle téléchargement a été annulé!",
+            CHAPTER_REMOVE = "%s supprimé!",
+            NET_PROBLEM = "Un problème réseau est survenu.",
+            CHAPTERS_CLEARED = "Les chapitres ont été vidé!",
+            LIBRARY_CLEARED = "La librairie a été vidé!",
+            CACHE_CLEARED = "Le cache a été vidé!",
+            DEVELOPER_THING = "Donner une étoile a l'app sur github!",
+            NEW_UPDATE_AVAILABLE = "Nouvelle mise à jour disponible",
+            NO_SPACE_LEFT = "Plus d'espace disponible",
+            REFRESH_COMPLETED = "Mise à jour complète!",
+            SETTINGS_RESET = "Les paramètres vont être restauré"
+        },
+        PANEL = {
+            BACK = "Retourner",
+            MODE_POPULAR = "Mode: populaire",
+            MODE_LATEST = "Mode: plus récent",
+            MODE_SEARCHING = 'Mode: recherche "%s"',
+            SEARCH = "Rechercher",
+            SELECT = "Sélectionner",
+            CHOOSE = "Choisir",
+            IMPORT = "Importer",
+            CHANGE_SECTION = "Changer de section",
+            UPDATE = "Mettre à jour",
+            CANCEL = "Annuler",
+            DELETE = "Supprimer"
         }
     }
 }
@@ -838,6 +997,14 @@ LanguageNames = {
         Italian = "Italiano",
         Vietnamese = "Vietnamese",
         Default = "Sistema"
+    },
+    French = {
+        Russian = "Russe",
+        English = "Anglais",
+        Spanish = "Espagnol",
+        Italian = "Italien",
+        Vietnamese = "Vietnamien",
+        Default = "Système"
     }
 }
 
