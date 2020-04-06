@@ -648,8 +648,8 @@ Language = {
             SEARCH = "Ricerca"
         },
         MESSAGE = {
-            LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored", --Need to translate
-            PRESS_TO_UPDATE = "Press X to update\nPress O to cancel" --Need to translate
+            LOST_CONNECTION = "Connessione persa \n\nIn attesa di connessione ......\n\n(Riduci a icona l'applicazione, vai su Impostazioni Wi-Fi e premi Connetti)\n\nPremi X per annullare tutti i download e chiudere il messaggio \n\nTutti i download continueranno se la rete viene ripristinata", 
+            PRESS_TO_UPDATE = "Premi X per aggiornare\nPremi O per annullare" 
         },
         SETTINGS = {
             Language = "Linguaggio",
@@ -689,33 +689,33 @@ Language = {
             ChangeUI = "Tema",
             PreferredCatalogLanguage = "Lingua preferita",
             LibrarySorting = "Ordinamento della libreria",
-            ChapterSorting = "Chapters sorting", --Need to translate
-            RefreshLibAtStart = "Refresh library at startup", --Need to translate
-            Translators = "Thanks to translators", --Need to translate :)
-            ChangingPageButtons = "Buttons to change page", --Need to translate
-            LeftStickDeadZone = "Left stick deadzone", --Need to translate
-            LeftStickSensitivity = "Left stick sensitivity", --Need to translate
-            RightStickDeadZone = "Right stick deadzone", --Need to translate
-            RightStickSensitivity = "Right stick sensitivity", --Need to translate
-            ResetAllSettings = "Reset all settings", --Need to translate
-            Other = "Other", --Need to translate
-            SilentDownloads = "Don't show downloads notifications" --Need to translate
+            ChapterSorting = "Ordinamento dei capitoli", 
+            RefreshLibAtStart = "Aggiorna libreria all'avvio", 
+            Translators = "Grazie ai traduttori",
+            ChangingPageButtons = "Pulsanti per cambiare pagina",
+            LeftStickDeadZone = "Deadzone della levetta sinistra", 
+            LeftStickSensitivity = "Sensibilità levetta sinistra", 
+            RightStickDeadZone = "Deadzone della levetta destra",
+            RightStickSensitivity = "Sensibilità levetta destra",
+            ResetAllSettings = "Resetta tutte le impostazioni",
+            Other = "Altro", 
+            SilentDownloads = "Non mostrare le notifiche di download"
         },
         PAGINGCONTROLS = {
-            ["LR"] = "L and R triggers", --Need to translate
-            ["DPAD"] = "Using DPad" --Need to translate
+            ["LR"] = "L e R triggers",
+            ["DPAD"] = "Utilizza DPad" 
         },
         EXTRA = {
-            ["DownloadAll"] = "Download all chapters", --Need to translate
-            ["RemoveAll"] = "Remove all chapters", --Need to translate
-            ["CancelAll"] = "Cancel downloading chapters", --Need to translate
-            ["ClearBookmarks"] = "Clear bookmarks" --Need to translate
+            ["DownloadAll"] = "Scarica tutti i capitoli", 
+            ["RemoveAll"] = "Rimuovi tutti i capitoli",
+            ["CancelAll"] = "Annulla il download dei capitoli",
+            ["ClearBookmarks"] = "Cancella segnalibri"
         },
         THEME = {
             Dark = "Scuro",
             Light = "Chiaro",
-            Blue = "Blue", --Need to translate
-            Crimson = "Crimson" --Need to translate
+            Blue = "Blu",
+            Crimson = "Rosso scuro"
         },
         NSFW = {
             [true] = "Mostra",
@@ -754,7 +754,7 @@ Language = {
             Width = "Larghezza",
             LEFT = "Da destra a sinistra",
             RIGHT = "Da sinistra a destra",
-            DOWN = "Up to down" --Need to translate
+            DOWN = "Dall'alto verso il basso"
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Aggiungi alla libreria",
@@ -778,8 +778,8 @@ Language = {
             DEVELOPER_THING = "Avvia app su Github!",
             NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
             NO_SPACE_LEFT = "Non è rimasto spazio",
-            REFRESH_COMPLETED = "Refresh completed!", --Need to translate
-            SETTINGS_RESET = "Settings have been reset" --Need to translate
+            REFRESH_COMPLETED = "Aggiornamento completato!",
+            SETTINGS_RESET = "Le impostazioni sono state ripristinate"
         },
         PANEL = {
             BACK = "Indietro",
