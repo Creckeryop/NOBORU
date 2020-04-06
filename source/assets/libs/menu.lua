@@ -100,7 +100,12 @@ function Menu.draw()
     Font.print(FONT30, 30, 167, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 255 - 128 * button_a["CATALOGS"]))
     Font.print(FONT30, 30, 227, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 255 - 128 * button_a["HISTORY"]))
     Font.print(FONT30, 30, 348, Language[Settings.Language].APP.IMPORT, Color.new(255, 255, 255, 255 - 128 * button_a["IMPORT"]))
-    Font.print(FONT30, 30, 408, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
+    local download_width = Font.getTextWidth(FONT30, Language[Settings.Language].APP.DOWNLOAD)
+    if download_width > 225 then
+        Font.print(FONT20, 30, 415, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
+    else
+        Font.print(FONT30, 30, 408, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 255 - 128 * button_a["DOWNLOAD"]))
+    end
     if ChapterSaver.is_download_running() then
         download_led = math.min(download_led + 0.1, 1)
     else

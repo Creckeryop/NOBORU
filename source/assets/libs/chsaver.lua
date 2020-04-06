@@ -565,7 +565,7 @@ end
 
 function ChapterSaver.clearDownloadingList()
     if Task then
-        stop(Task.Key)
+        stop(Task.Key, true)
     end
     for i = 1, #Order do
         local key = Order[i].Key

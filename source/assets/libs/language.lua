@@ -1,5 +1,7 @@
 --Spanish translation created by SamuEDL98
 --Vietnamese translation created by nguyenmao2101
+--Italian translation created by theHeroGAC
+--French translation created by Samilop "Cimmerian" Iter
 Language = {
     Russian = {
         APP = {
@@ -298,7 +300,7 @@ Language = {
             CHAPTERS_CLEARED = "All saved chapters are cleared!",
             LIBRARY_CLEARED = "Library cleared!",
             CACHE_CLEARED = "Cache has been cleared!",
-            DEVELOPER_THING = "Start app on Github!",
+            DEVELOPER_THING = "Star app on Github!",
             NEW_UPDATE_AVAILABLE = "New update available",
             NO_SPACE_LEFT = "No space left",
             REFRESH_COMPLETED = "Refresh completed!",
@@ -457,7 +459,7 @@ Language = {
             CHAPTERS_CLEARED = "Đã xóa tất cả tập đã lưu!",
             LIBRARY_CLEARED = "Đã xóa lịch sử!",
             CACHE_CLEARED = "Đã xóa bộ nhớ tạm!",
-            DEVELOPER_THING = "Start app on Github!",
+            DEVELOPER_THING = "Star app on Github!",
             NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
             REFRESH_COMPLETED = "Làm mới hoàn tất!",
@@ -616,7 +618,7 @@ Language = {
             CHAPTERS_CLEARED = "Todos los capítulos guardados, han sido eliminados!",
             LIBRARY_CLEARED = "La librería ha sido eliminada!",
             CACHE_CLEARED = "La cache ha sido eliminada!",
-            DEVELOPER_THING = "Inicia la app de Github!",
+            DEVELOPER_THING = "Pon una estrella en la app de Github!",
             NEW_UPDATE_AVAILABLE = "Nueva actualización disponible",
             NO_SPACE_LEFT = "No hay espacio",
             REFRESH_COMPLETED = "Refresco completado!", 
@@ -795,7 +797,7 @@ Language = {
             CANCEL = "Cancella",
             DELETE = "Elimina"
         }
-    }
+    },
     French = {
         APP = {
             LIBRARY = "LIBRAIRIE",
@@ -963,6 +965,7 @@ LanguageNames = {
         English = "Английский",
         Spanish = "Испанский",
         Vietnamese = "Вьетнамский",
+        French = "Французский",
         Italian = "Итальянский",
         Default = "Системный"
     },
@@ -971,6 +974,7 @@ LanguageNames = {
         English = "English",
         Spanish = "Spanish",
         Vietnamese = "Vietnamese",
+        French = "French",
         Italian = "Italian",
         Default = "System"
     },
@@ -979,6 +983,7 @@ LanguageNames = {
         English = "Ingles",
         Spanish = "Español",
         Vietnamese = "Vietnamita",
+        French = "Francés",
         Italian = "Italiano",
         Default = "Sistema"
     },
@@ -986,7 +991,8 @@ LanguageNames = {
         Russian = "Tiếng Nga",
         English = "Tiếng Anh",
         Spanish = "Tiếng Tây Ban Nha",
-        Italian = "Ý",
+        Italian = "Italia",
+        French = "PhápF",
         Vietnamese = "Tiếng Việt",
         Default = "Hệ thống"
     },
@@ -995,6 +1001,7 @@ LanguageNames = {
         English = "Inglese",
         Spanish = "Spagnolo",
         Italian = "Italiano",
+        French = "Francese",
         Vietnamese = "Vietnamese",
         Default = "Sistema"
     },
@@ -1003,6 +1010,7 @@ LanguageNames = {
         English = "Anglais",
         Spanish = "Espagnol",
         Italian = "Italien",
+        French = "Français",
         Vietnamese = "Vietnamien",
         Default = "Système"
     }
@@ -1018,6 +1026,9 @@ elseif language_now == 3 then
 elseif language_now == 5 then
     Language.Default = Language.Italian
     LanguageNames.Default = LanguageNames.Italian
+elseif language_now == 2 then
+    Language.Default = Language.French
+    LanguageNames.Default = LanguageNames.French
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
