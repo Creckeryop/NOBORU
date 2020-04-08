@@ -59,7 +59,7 @@ Also if you want to read directly .cbz file you can just open file in import sec
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
 ## Known issues
 <b>Issue</b> After importing archive file, manga/comic shows "Unknown error (Parser's)"<br>
-<b>Advice</b> Make sure that archive file you imported is supported.
+<b>Advice</b> Make sure that archive file you imported is supported.<br>
 ## FAQ
 - **I found bug that ...**
     - You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file
@@ -73,6 +73,8 @@ CBR not supported (im working on the way to support RAR archives, some images br
     - Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page). This app supports only JPEG, BMP and PNG formats. Make sure that image you loading isn't gif or else. You can check network address through debug console.
 - **I downloaded app and can't see any parsers**
     - Press Triangle to update parser list, so if that won't help create issue [here](https://github.com/Creckeryop/NOBORU/issues)
+- **Image large than 1000x30000 doesn't loading**
+    - Vita isn't have enough video memory to load more than 100MB of data 1000x30000x4(bytes per pixel) = 114 MB. I really don't know what to do here, only downscaling, but this is not avaiable at the moment, im sorry about this.
 ## Compiling
 Execute `build.bat` to create working .vpk
 ## TODO
