@@ -22,6 +22,12 @@ local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 local rem_dir = RemoveDirectory
 
+local function img2bytes(Width, Height, DScale)
+    return bit32.band(Width + 7, bit32.bnot(7)) * Height * 4 / (DScale * DScale) + 1024
+end
+
+MAX_VRAM_MEMORY = 88 * 1024 * 1024
+
 ---Updates threads tasks
 function Threads.update()
     if net_inited and not Task and #Order == 0 then
@@ -145,20 +151,36 @@ function Threads.update()
                         end
                     end
                     Console.write(Width .. "x" .. Height .. " Image got")
-                    if GetTextureMemoryUsed() + bit32.band(Width + 7, bit32.bnot(7)) * Height * 4 + 1024 > 88 * 1024 * 1024 then
+
+                    if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY and Height <= 4096 and Height/Width<=2 then
                         Console.error("No enough memory to load image")
                         uniques[Task.UniqueKey] = nil
                         Task = nil
                     else
                         if Height > 4096 and Height / Width > 2 then
-                            if not (Width and Height) or Width <= 0 or Height <= 0 then
-                                error("measure problem")
+                            if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY then
+                                if GetTextureMemoryUsed() + img2bytes(Width, Height, 2) > MAX_VRAM_MEMORY then
+                                    Console.error("No enough memory to load image")
+                                    uniques[Task.UniqueKey] = nil
+                                    Task = nil
+                                else
+                                        Task.Image = {
+                                        Width = Width / 2,
+                                        Height = Height / 2,
+                                        RealWidth = Width,
+                                        RealHeight = Height,
+                                        Parts = math.ceil(Height / 8192)
+                                    }
+                                end
+                            else
+                                Task.Image = {
+                                    Width = Width,
+                                    Height = Height,
+                                    RealWidth = Width,
+                                    RealHeight = Height,
+                                    Parts = math.ceil(Height / 4096)
+                                }
                             end
-                            Task.Image = {
-                                Width = Width,
-                                Height = Height,
-                                Parts = math.ceil(Height / 4096)
-                            }
                             Console.write(Task.Image.Parts)
                             Task.Type = "ImageLoadTable"
                         else
@@ -231,13 +253,14 @@ function Threads.update()
                     Task = nil
                     return
                 end
-                local Height = Task.Table[Task.Index].SliceHeight
+                local sliceHeight = math.floor(Task.Image.RealHeight / Task.Image.Parts)
+                local Height = sliceHeight
                 if Task.Image.i == Task.Image.Parts - 1 then
-                    Height = Task.Image.Height - (Task.Image.i) * Height
+                    Height = Task.Image.RealHeight - (Task.Image.i) * Height
                 end
                 if Task.Image.i < Task.Image.Parts then
-                    Console.write(string.format("Getting %s %sx%s Image", Task.Table[Task.Index].SliceHeight * Task.Image.i, Task.Image.Width, Height))
-                    Graphics.loadPartImageAsync(Task.Path, 0, Task.Table[Task.Index].SliceHeight * Task.Image.i, Task.Image.Width, Height)
+                    Console.write(string.format("Getting %s %sx%s Image", sliceHeight * Task.Image.i, Task.Image.RealWidth, Height))
+                    Graphics.loadPartImageAsync(Task.Path, 0, sliceHeight * Task.Image.i, Task.Image.RealWidth, Height)
                 else
                     uniques[Task.UniqueKey] = nil
                     Task = nil
