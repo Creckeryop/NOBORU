@@ -57,7 +57,7 @@ function Threads.update()
         Task = table.remove(Order, 1)
         if Task.Type == "StringRequest" then
             if Task.Link then
-                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4)
+                Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4, Task.Proxy, Task.ProxyAuth)
             else
                 Console.error("No Link given or internet connection problem")
                 uniques[Task.UniqueKey] = nil
@@ -69,7 +69,7 @@ function Threads.update()
             end
             if Task.Link then
                 if Task.Path then
-                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4)
+                    Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4, Task.Proxy, Task.ProxyAuth)
                     if Task.Type == "ImageDownload" then
                         Task.Type = "Image"
                     end
@@ -120,7 +120,7 @@ function Threads.update()
             end
         end
         if Task then
-            Console.write(string.format("NET: #%s %s", 6 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
+            Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
         end
     else
         Console.write("(" .. Task.Type .. ")" .. (Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
@@ -379,7 +379,7 @@ local function taskete(UniqueKey, T, foo)
         OnComplete = T.OnComplete,
         Extract = T.Extract,
         Path = T.Path and ("ux0:data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
-        Retry = 5,
+        Retry = 3,
         HttpMethod = T.HttpMethod or GET_METHOD,
         PostData = T.PostData or "",
         ContentType = T.ContentType or XWWW,
@@ -402,6 +402,8 @@ local function taskete(UniqueKey, T, foo)
         newTask.Link = newTask.Link:match("^(.-)%s*$") or ""
         newTask.Link = newTask.Link:gsub("([^%%])%%([^%%])", "%1%%%%%2"):gsub(" ", "%%%%20"):gsub("([^%%])%%$", "%1%%%%"):gsub("^%%([^%%])", "%%%%%1")
     end
+    newTask.Proxy = Settings.UseProxy and (Settings.ProxyIP..":"..Settings.ProxyPort) or "";
+    newTask.ProxyAuth = Settings.UseProxyAuth and Settings.ProxyAuth or "";
     foo(newTask)
     uniques[UniqueKey] = newTask
     return true

@@ -696,6 +696,18 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ChapterSorting" then
                 Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+            elseif task == "UseProxy" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.UseProxy], COLOR_ROYAL_BLUE)
+            elseif task == "ProxyIP" then
+                Font.print(FONT16, 275, y - 44, Settings.ProxyIP, COLOR_GRAY)
+            elseif task == "ProxyPort" then
+                Font.print(FONT16, 275, y - 44, Settings.ProxyPort, COLOR_GRAY)
+            elseif task == "UseProxyAuth" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
+            elseif task == "ProxyAuth" then
+                Font.print(FONT16, 275, y - 44, Settings.ProxyAuth, COLOR_GRAY)
+            elseif task == "ChapterSorting" then
+                Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
             elseif task == "LeftStickDeadZone" then
                 local x = 0
                 for n = 1, #DeadZoneValues do
@@ -829,6 +841,7 @@ end
 
 function Catalogs.terminate()
     Catalogs.shrink()
+
     DownloadedImage = {}
     Results = {}
     page = 1

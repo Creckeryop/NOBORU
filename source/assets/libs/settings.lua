@@ -19,7 +19,12 @@ Settings = {
     LeftStickSensitivity = 1,
     RightStickDeadZone = 30,
     RightStickSensitivity = 1,
-    SilentDownloads = false
+    SilentDownloads = false,
+    UseProxy = false,
+    ProxyIP = "192.168.0.1",
+    ProxyPort = "8080",
+    UseProxyAuth = false,
+    ProxyAuth = "login:password"
 }
 
 local SettingsDefaults = table.clone(Settings)
@@ -137,6 +142,9 @@ local function setSetting(source, setting_name, values)
     if new_set == nil then
         return
     end
+    if #values == 0 then
+        settings[setting_name] = new_set
+    end
     for _, v in pairs(values) do
         if new_set == v then
             settings[setting_name] = new_set
@@ -200,6 +208,11 @@ function settings.load()
             setSetting(new, "RightStickDeadZone", DeadZoneValues)
             setSetting(new, "RightStickSensitivity", SensitivityValues)
             setSetting(new, "SilentDownloads", {true, false})
+            setSetting(new, "UseProxy", {true, false})
+            setSetting(new, "ProxyIP", {})
+            setSetting(new, "ProxyPort", {})
+            setSetting(new, "UseProxyAuth", {true, false})
+            setSetting(new, "ProxyAuth", {})
         end
         closeFile(fh)
     end
@@ -234,7 +247,7 @@ end
 
 ---Table of all available options
 local set_list = {
-    "Language", "ChangeUI", "Library", "Catalogs", "Reader", "Data", "Other", "Controls", "About",
+    "Language", "ChangeUI", "Library", "Catalogs", "Reader", "Network", "Data", "Other", "Controls", "About",
     Library = {
         "LibrarySorting",
         "RefreshLibAtStart"
@@ -249,6 +262,13 @@ local set_list = {
         "ZoomReader",
         "ReaderDirection",
         "DoubleTapReader"
+    },
+    Network = {
+        "UseProxy",
+        "ProxyIP",
+        "ProxyPort",
+        "UseProxyAuth",
+        "ProxyAuth"
     },
     Data = {
         "ClearLibrary",
@@ -459,5 +479,53 @@ SettingsFunctions = {
     end,
     SilentDownloads = function()
         settings.SilentDownloads = not settings.SilentDownloads
-    end
+    end,
+    UseProxy = function()
+        settings.UseProxy = not settings.UseProxy
+    end,
+    ProxyIP = function()
+        Keyboard.show(Language[Settings.Language].SETTINGS.ProxyIP, settings.ProxyIP, 15, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+        while Keyboard.getState() == RUNNING do
+            Graphics.initBlend()
+            Screen.clear()
+            Graphics.termBlend()
+            Screen.waitVblankStart()
+            Screen.flip()
+        end
+        if Keyboard.getState() == FINISHED then
+            settings.ProxyIP = Keyboard.getInput()
+        end
+        Keyboard.clear()
+    end,
+    ProxyPort = function()
+        Keyboard.show(Language[Settings.Language].SETTINGS.ProxyPort, settings.ProxyPort, 5, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+        while Keyboard.getState() == RUNNING do
+            Graphics.initBlend()
+            Screen.clear()
+            Graphics.termBlend()
+            Screen.waitVblankStart()
+            Screen.flip()
+        end
+        if Keyboard.getState() == FINISHED then
+            settings.ProxyPort = Keyboard.getInput()
+        end
+        Keyboard.clear()
+    end,
+    UseProxyAuth = function()
+        settings.UseProxyAuth = not settings.UseProxyAuth
+    end,
+    ProxyAuth = function()
+        Keyboard.show(Language[Settings.Language].SETTINGS.ProxyAuth, settings.ProxyAuth, 128, TYPE_LATIN, MODE_TEXT, OPT_NO_AUTOCAP)
+        while Keyboard.getState() == RUNNING do
+            Graphics.initBlend()
+            Screen.clear()
+            Graphics.termBlend()
+            Screen.waitVblankStart()
+            Screen.flip()
+        end
+        if Keyboard.getState() == FINISHED then
+            settings.ProxyAuth = Keyboard.getInput()
+        end
+        Keyboard.clear()
+    end,
 }
