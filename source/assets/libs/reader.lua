@@ -1073,12 +1073,12 @@ function Reader.draw()
                 local Width = Font.getTextWidth(FONT16, loading)
                 if orientation == "Horizontal" then
                     Font.print(FONT16, offset.x + 960 * (is_down and 0 or i) + 480 - Width / 2, 272 + offset.y + 544 * (is_down and i or 0) - 10, loading, COLOR_FONT)
-                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and 0 or i) + 480 - 52, offset.x + 960 * (is_down and 0 or i) + 480 + 53, 272 + offset.y + 544 * (is_down and i or 0) + 20, 272 + offset.y + 544 * (is_down and i or 0) + 32, COLOR_WHITE)
-                    Graphics.fillRect(offset.x + 960 * (is_down and 0 or i) + 480 - 50, offset.x + 960 * (is_down and 0 or i) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and i or 0) + 22, 272 + offset.y + 544 * (is_down and i or 0) + 29, COLOR_WHITE)
+                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and 0 or i) + 480 - 52, offset.x + 960 * (is_down and 0 or i) + 480 + 53, 272 + offset.y + 544 * (is_down and i or 0) + 20, 272 + offset.y + 544 * (is_down and i or 0) + 32, COLOR_FONT)
+                    Graphics.fillRect(offset.x + 960 * (is_down and 0 or i) + 480 - 50, offset.x + 960 * (is_down and 0 or i) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and i or 0) + 22, 272 + offset.y + 544 * (is_down and i or 0) + 29, COLOR_FONT)
                 elseif orientation == "Vertical" then
                     Font.print(FONT16, 960 / 2 - Width / 2 + offset.x + 960 * (is_down and i or 0), 272 + offset.y + 544 * (is_down and 0 or i) - 10, loading, COLOR_FONT)
-                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and i or 0) + 480 - 52, offset.x + 960 * (is_down and i or 0) + 480 + 53, 272 + offset.y + 544 * (is_down and 0 or i) + 20, 272 + offset.y + 544 * (is_down and 0 or i) + 32, COLOR_WHITE)
-                    Graphics.fillRect(offset.x + 960 * (is_down and i or 0) + 480 - 50, offset.x + 960 * (is_down and i or 0) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and 0 or i) + 22, 272 + offset.y + 544 * (is_down and 0 or i) + 29, COLOR_WHITE)
+                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and i or 0) + 480 - 52, offset.x + 960 * (is_down and i or 0) + 480 + 53, 272 + offset.y + 544 * (is_down and 0 or i) + 20, 272 + offset.y + 544 * (is_down and 0 or i) + 32, COLOR_FONT)
+                    Graphics.fillRect(offset.x + 960 * (is_down and i or 0) + 480 - 50, offset.x + 960 * (is_down and i or 0) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and 0 or i) + 22, 272 + offset.y + 544 * (is_down and 0 or i) + 29, COLOR_FONT)
                 end
             end
         end
