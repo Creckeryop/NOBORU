@@ -103,4 +103,62 @@ test("Settings-Language test", function()
     if not success then
         error("Watch log to see conflicts")
     end
+    end)
+
+function scandir(directory)
+    local i, t, popen = 0, {}, io.popen
+    local pfile
+    pfile = popen('ls -a "'..directory..'"')
+    for filename in pfile:lines() do
+        i = i + 1
+        t[i] = filename
+    end
+    pfile:close()
+    return t
+end
+
+function lines_from(file)
+    local lines = {}
+    for line in io.lines(file) do 
+        lines[#lines + 1] = line
+    end
+    return table.concat(lines,"\n")
+end
+
+test("All-files Language test", function()
+    local success = true
+    System = {
+        getLanguage = function()
+            return "Russian"
+        end
+    }
+    dofile("../source/assets/libs/language.lua")
+    dofile("../source/assets/libs/settings.lua")
+    Language.Default = nil
+    local files = scandir("../source/assets/libs/")
+    local blacklist = {"language.lua", ".", ".."}
+    for _, b in ipairs(blacklist) do
+        for i = 1, #files do
+            if files[i] == b then
+                table.remove(files,i)
+                break
+            end
+        end
+    end
+    for _, file in ipairs(files) do
+        local content = lines_from("../source/assets/libs/"..file)
+        local a = 0
+        for k in content:gmatch("(Language%[%s-Settings.Language%s-%][%.A-Za-z_]+)") do
+            for lang, _ in pairs(Language) do
+                local has = pcall(load("return "..k:gsub("Settings%.Language",'"'..lang..'"').."~=nil"))
+                if not has then
+                    print("\27[31m"..k.." for "..lang.." not found!\27[00m")
+                    success = false
+                end
+            end
+        end
+    end
+    if not success then
+        error("Watch log to see conflicts")
+    end
 end)

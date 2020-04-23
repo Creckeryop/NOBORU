@@ -68,11 +68,11 @@ function Panel.draw()
                 end
                 x = x + 20
             else
-                Font.print(FONT12, x, 526 + y, v, COLOR_FONT)
-                x = x + Font.getTextWidth(FONT12, v) + 5
+                Font.print(FONT16, x, 523 + y, v, COLOR_FONT)
+                x = x + Font.getTextWidth(FONT16, v) + 5
             end
-            Font.print(FONT12, x, 526 + y, hints[v], COLOR_FONT)
-            x = x + Font.getTextWidth(FONT12, hints[v]) + 10
+            Font.print(FONT16, x, 523 + y, hints[v], COLOR_FONT)
+            x = x + Font.getTextWidth(FONT16, hints[v]) + 10
         end
     end
 end

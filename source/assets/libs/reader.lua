@@ -140,6 +140,7 @@ local function deletePageImage(page)
             end
         end
         Pages[page].Image = nil
+        Console.write("Removed "..tostring(page))
     else
         ParserManager.remove(Pages[page])
         Threads.remove(Pages[page])
@@ -703,7 +704,7 @@ function Reader.update()
                         end
                         page.min_Zoom = math.min(544 / page.Height, 960 / page.Width)
                         if page.Zoom * page.Width > 960 then
-                            page.x = 480 - (page.Height * page.Zoom) / 2
+                            page.x = 960 - (page.Width * page.Zoom) / 2
                         end
                         page.start_Zoom = page.Zoom
                     else
@@ -765,7 +766,7 @@ function Reader.update()
                         end
                         page.min_Zoom = math.min(960 / page.Height, 544 / page.Width)
                         if page.Zoom * page.Width > 544 then
-                            page.y = 272 - (page.Zoom * page.Width) / 2
+                            page.y = 544 - (page.Zoom * page.Width) / 2
                         end
                         page.start_Zoom = page.Zoom
                     else
@@ -1016,11 +1017,7 @@ function Reader.draw()
         local prepare_message = Language[Settings.Language].READER.PREPARING_PAGES .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
         local chapter_name = Chapters[current_chapter].Name
         if Font.getTextWidth(BONT30, manga_name) > 960 then
-            if Font.getTextWidth(FONT16, manga_name) > 960 then
-                Font.print(FONT12, 480 - Font.getTextWidth(FONT12, manga_name) / 2, 247, manga_name, COLOR_FONT)
-            else
-                Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
-            end
+            Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
         else
             Font.print(BONT30, 480 - Font.getTextWidth(BONT30, manga_name) / 2, 232, manga_name, COLOR_FONT)
         end
@@ -1067,14 +1064,17 @@ function Reader.draw()
                     end
                 end
             elseif page then
+                local precentage = Threads.getProgress(page)
+                local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+                local Width = Font.getTextWidth(FONT16, loading)
                 if orientation == "Horizontal" then
-                    local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                    local Width = Font.getTextWidth(FONT16, loading)
                     Font.print(FONT16, offset.x + 960 * (is_down and 0 or i) + 480 - Width / 2, 272 + offset.y + 544 * (is_down and i or 0) - 10, loading, COLOR_FONT)
+                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and 0 or i) + 480 - 52, offset.x + 960 * (is_down and 0 or i) + 480 + 53, 272 + offset.y + 544 * (is_down and i or 0) + 20, 272 + offset.y + 544 * (is_down and i or 0) + 32, COLOR_FONT)
+                    Graphics.fillRect(offset.x + 960 * (is_down and 0 or i) + 480 - 50, offset.x + 960 * (is_down and 0 or i) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and i or 0) + 22, 272 + offset.y + 544 * (is_down and i or 0) + 29, COLOR_FONT)
                 elseif orientation == "Vertical" then
-                    local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
-                    local Width = Font.getTextWidth(FONT16, loading)
                     Font.print(FONT16, 960 / 2 - Width / 2 + offset.x + 960 * (is_down and i or 0), 272 + offset.y + 544 * (is_down and 0 or i) - 10, loading, COLOR_FONT)
+                    Graphics.fillEmptyRect(offset.x + 960 * (is_down and i or 0) + 480 - 52, offset.x + 960 * (is_down and i or 0) + 480 + 53, 272 + offset.y + 544 * (is_down and 0 or i) + 20, 272 + offset.y + 544 * (is_down and 0 or i) + 32, COLOR_FONT)
+                    Graphics.fillRect(offset.x + 960 * (is_down and i or 0) + 480 - 50, offset.x + 960 * (is_down and i or 0) + 480 - 50 + 100 * precentage, 272 + offset.y + 544 * (is_down and 0 or i) + 22, 272 + offset.y + 544 * (is_down and 0 or i) + 29, COLOR_FONT)
                 end
             end
         end

@@ -613,9 +613,9 @@ function Catalogs.draw()
             Font.print(FONT20, 275, y - 70, task.MangaName, COLOR_FONT)
             Font.print(FONT16, 275, y - 44, task.ChapterName, COLOR_FONT)
             if page_count > 0 then
-                local text_counter = page .. "/" .. page_count
+                local text_counter = math.ceil(page) .. "/" .. page_count
                 local w = Font.getTextWidth(FONT16, text_counter)
-                download_bar = download_bar + (page / page_count - download_bar) / 32
+                download_bar = page / page_count
                 Graphics.fillRect(270 + 10 + w, 270 + 10 + w + (940 - 270 - 10 - w) * download_bar, y - 20, y - 8, COLOR_ROYAL_BLUE)
                 Graphics.fillEmptyRect(270 + 10 + w, 940, y - 20, y - 8, COLOR_FONT)
                 Font.print(FONT16, 275, y - 24, text_counter, COLOR_FONT)
@@ -696,6 +696,18 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ChapterSorting" then
                 Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+            elseif task == "UseProxy" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.UseProxy], COLOR_ROYAL_BLUE)
+            elseif task == "ProxyIP" then
+                Font.print(FONT16, 275, y - 44, Settings.ProxyIP, COLOR_GRAY)
+            elseif task == "ProxyPort" then
+                Font.print(FONT16, 275, y - 44, Settings.ProxyPort, COLOR_GRAY)
+            elseif task == "UseProxyAuth" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
+            elseif task == "ProxyAuth" then
+                Font.print(FONT16, 275, y - 44, Settings.ProxyAuth, COLOR_GRAY)
+            elseif task == "ChapterSorting" then
+                Font.print(FONT16, 275, y - 44, Settings.ChapterSorting, COLOR_GRAY)
             elseif task == "LeftStickDeadZone" then
                 local x = 0
                 for n = 1, #DeadZoneValues do
@@ -723,7 +735,7 @@ function Catalogs.draw()
             elseif task == "ChangingPageButtons" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
-                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
@@ -776,7 +788,7 @@ function Catalogs.draw()
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             local dy_for_translators = 0
             if list[item] == "Translators" then
-                dy_for_translators = 30
+                dy_for_translators = 50
             end
             for i = ks, ks + 1 do
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
@@ -829,6 +841,7 @@ end
 
 function Catalogs.terminate()
     Catalogs.shrink()
+
     DownloadedImage = {}
     Results = {}
     page = 1

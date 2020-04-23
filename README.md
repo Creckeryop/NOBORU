@@ -58,8 +58,8 @@ Also if you want to read directly .cbz file you can just open file in import sec
 
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
 ## Known issues
-<b>Issue</b> Download freezes if you go sleeping mode, and after that app need in restarting to enable downloading<br>
-<b>Advice</b> Update app to version 0.47+, but you need to wait 10 seconds after sleeping mode
+<b>Issue</b> After importing archive file, manga/comic shows "Unknown error (Parser's)"<br>
+<b>Advice</b> Make sure that archive file you imported is supported.<br>
 ## FAQ
 - **I found bug that ...**
     - You can create issue [here](https://github.com/Creckeryop/NOBORU/issues), give screenshot with error or error file
@@ -73,6 +73,10 @@ CBR not supported (im working on the way to support RAR archives, some images br
     - Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page). This app supports only JPEG, BMP and PNG formats. Make sure that image you loading isn't gif or else. You can check network address through debug console.
 - **I downloaded app and can't see any parsers**
     - Press Triangle to update parser list, so if that won't help create issue [here](https://github.com/Creckeryop/NOBORU/issues)
+- **How to setup proxy?**
+    - You can write ip address like '192.169.0.1' or you can specify your proxy kind like 'socks5h://192.168.0.1' or "http", "https", "socks4a", "socks5", "socks5h"
+- **Application slows down sometimes, when new manga appears**
+    - That's a print function problem, all new characters that appears should be cached. In first launch, app can't load all glyphs because it's longtime process, so i load only Latin and Cryllic symbols.
 ## Compiling
 Execute `build.bat` to create working .vpk
 ## TODO
@@ -85,3 +89,4 @@ Execute `build.bat` to create working .vpk
 <br>[SamuEDL98](https://github.com/SamuEDL98) - Spanish translation
 <br>[nguyenmao2101](https://github.com/nguyenmao2101) - Vietnamese translation
 <br>[theheroGAC](https://github.com/theheroGAC) - Italian translation
+<br>[Cimmerian-Iter](https://github.com/Cimmerian-Iter) - French translation

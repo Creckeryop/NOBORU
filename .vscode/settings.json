@@ -117,7 +117,12 @@
         "FCREATE",
         "textures_16x16",
         "loadlib",
-        "SCE_CTRL_POWER"
+        "SCE_CTRL_POWER",
+        "OPT_MULTILINE",
+        "OPT_NO_ASSISTANCE",
+        "TYPE_NUMBER",
+        "TYPE_EXT_NUMBER",
+        "TYPE_LATIN"
     ],
     "Lua.runtime.version": "LuaJIT",
     "Lua.diagnostics.disable": [

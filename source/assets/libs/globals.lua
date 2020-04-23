@@ -52,15 +52,16 @@ SCE_LEFT_STICK_SENSITIVITY = 1
 SCE_RIGHT_STICK_DEADZONE = 20
 SCE_RIGHT_STICK_SENSITIVITY = 1
 
+SCE_CTRL_REAL_CROSS = SCE_CTRL_CROSS
+SCE_CTRL_REAL_CIRCLE = SCE_CTRL_CIRCLE
+
 FONT16 = Font.load("app0:roboto.ttf")
-FONT12 = Font.load("app0:roboto.ttf")
 FONT20 = Font.load("app0:roboto.ttf")
 FONT26 = Font.load("app0:roboto.ttf")
 FONT30 = Font.load("app0:roboto.ttf")
 BONT16 = Font.load("app0:robboto.ttf")
 BONT30 = Font.load("app0:robboto.ttf")
 
-Font.setPixelSizes(FONT12, 12)
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT26, 26)
 Font.setPixelSizes(FONT30, 30)
@@ -90,6 +91,23 @@ end
 
 if not doesDirExist("ux0:data/noboru/import") then
     createDirectory("ux0:data/noboru/import")
+end
+
+function MemToStr(bytes)
+    local str = "Bytes"
+    if bytes > 1024 then
+        bytes = bytes / 1024
+        str = "KB"
+        if bytes > 1024 then
+            bytes = bytes / 1024
+            str = "MB"
+            if bytes > 1024 then
+                bytes = bytes / 1024
+                str = "GB"
+            end
+        end
+    end
+    return string.format("%.2f %s", bytes, str)
 end
 
 ---@param Name string
@@ -123,7 +141,7 @@ local function drawMangaName(Manga)
         local tf = false
         for c in it_utf8(Manga.Name) do
             if tf and Font.getTextWidth(FONT16, table.concat(s)) > MANGA_WIDTH - 40 then
-                s[#s + 1] = "..."
+                s[#s + 1] = "…"
                 break
             elseif tf then
                 s[#s + 1] = c
