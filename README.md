@@ -73,6 +73,8 @@ CBR not supported (im working on the way to support RAR archives, some images br
     - Please create Issue and describe how you come to this (Parser you used, Manga, Chapter and page). This app supports only JPEG, BMP and PNG formats. Make sure that image you loading isn't gif or else. You can check network address through debug console.
 - **I downloaded app and can't see any parsers**
     - Press Triangle to update parser list, so if that won't help create issue [here](https://github.com/Creckeryop/NOBORU/issues)
+- **How to setup proxy?**
+    - You can write ip address like '192.169.0.1' or you can specify your proxy kind like 'socks5h://192.168.0.1' or "http", "https", "socks4a", "socks5", "socks5h"
 ## Compiling
 Execute `build.bat` to create working .vpk
 ## TODO

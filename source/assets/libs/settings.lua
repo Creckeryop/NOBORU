@@ -491,7 +491,7 @@ SettingsFunctions = {
         settings.UseProxy = not settings.UseProxy
     end,
     ProxyIP = function()
-        Keyboard.show(Language[Settings.Language].SETTINGS.ProxyIP, settings.ProxyIP, 15, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+        Keyboard.show(Language[Settings.Language].SETTINGS.ProxyIP, settings.ProxyIP, 32, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
         while Keyboard.getState() == RUNNING do
             Graphics.initBlend()
             Screen.clear()
