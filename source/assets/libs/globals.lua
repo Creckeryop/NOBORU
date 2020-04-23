@@ -95,6 +95,23 @@ if not doesDirExist("ux0:data/noboru/import") then
     createDirectory("ux0:data/noboru/import")
 end
 
+function MemToStr(bytes)
+    local str = "Bytes"
+    if bytes > 1024 then
+        bytes = bytes / 1024
+        str = "KB"
+        if bytes > 1024 then
+            bytes = bytes / 1024
+            str = "MB"
+            if bytes > 1024 then
+                bytes = bytes / 1024
+                str = "GB"
+            end
+        end
+    end
+    return string.format("%.2f %s", bytes, str)
+end
+
 ---@param Name string
 ---@param Link string
 ---@param ImageLink string
@@ -126,7 +143,7 @@ local function drawMangaName(Manga)
         local tf = false
         for c in it_utf8(Manga.Name) do
             if tf and Font.getTextWidth(FONT16, table.concat(s)) > MANGA_WIDTH - 40 then
-                s[#s + 1] = "..."
+                s[#s + 1] = "…"
                 break
             elseif tf then
                 s[#s + 1] = c
