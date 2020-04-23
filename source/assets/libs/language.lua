@@ -400,7 +400,7 @@ Language = {
             UseProxy = "Dùng proxy",
             ProxyIP = "Địa chỉ IP",
             ProxyPort = "Cổng",
-            UseProxyAuth = "Sử dụng proxy xác thực",
+            UseProxyAuth = "Xác thực proxy",
             ProxyAuth = "tài khoản:mật khẩu",
         },
         PAGINGCONTROLS = {
