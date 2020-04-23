@@ -334,6 +334,7 @@ function settings.back()
 end
 
 local last_vpk_link
+local last_vpk_size = "NaN"
 local changes
 
 ---Starting update for NOBORU Application
@@ -413,7 +414,10 @@ SettingsFunctions = {
                 OnComplete = function()
                     local content = file.string or ""
                     local late
-                    late, last_vpk_link = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"')
+                    late, last_vpk_link, last_vpk_size = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)".-<small.->(.-)</small>')
+                    if late == nil then
+                        late, last_vpk_link, last_vpk_size = content:match('d%-block mb%-1.-title=\"(.-)\".-"(%S-.vpk)"'), "NaN"
+                    end
                     settings.LateVersion = late or settings.LateVersion
                     local body = content:match('markdown%-body">(.-)</div>') or ""
                     changes = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
@@ -426,6 +430,9 @@ SettingsFunctions = {
         else
             Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
         end
+    end,
+    GetLastVpkSize = function()
+        return last_vpk_size
     end,
     ShowAuthor = function()
         Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")

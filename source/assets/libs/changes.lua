@@ -47,7 +47,12 @@ end
 function Changes.draw()
     if str and Offset < 544 then
         Graphics.fillRect(60, 900, Offset, Offset + Font.getTextHeight(FONT20, str) + 20, Color.new(0, 0, 0, 220))
-        Font.print(FONT20, 80, Offset + 10, updating and str:match("(.+)\n(.-)\n(.-)$") .. "\n" .. Language[Settings.Language].SETTINGS.PleaseWait or str, COLOR_WHITE)
+        local s = str
+        if updating then
+            s = (str:match("(.+)\n(.-)\n(.-)$") .. "\n".."("..MemToStr(Network.getDownloadedBytes()).."/"..SettingsFunctions.GetLastVpkSize()..") " .. Language[Settings.Language].SETTINGS.PleaseWait)
+        end
+        Font.print(FONT20, 80, Offset + 10, s, COLOR_WHITE)
+        
     end
 end
 
