@@ -75,6 +75,8 @@ CBR not supported (im working on the way to support RAR archives, some images br
     - Press Triangle to update parser list, so if that won't help create issue [here](https://github.com/Creckeryop/NOBORU/issues)
 - **How to setup proxy?**
     - You can write ip address like '192.169.0.1' or you can specify your proxy kind like 'socks5h://192.168.0.1' or "http", "https", "socks4a", "socks5", "socks5h"
+- **Application slows down sometimes, when new manga appears**
+    - That's a print function problem, all new characters that appears should be cached. In first launch, app can't load all glyphs because it's longtime process, so i load only Latin and Cryllic symbols.
 ## Compiling
 Execute `build.bat` to create working .vpk
 ## TODO
