@@ -1017,11 +1017,7 @@ function Reader.draw()
         local prepare_message = Language[Settings.Language].READER.PREPARING_PAGES .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
         local chapter_name = Chapters[current_chapter].Name
         if Font.getTextWidth(BONT30, manga_name) > 960 then
-            if Font.getTextWidth(FONT16, manga_name) > 960 then
-                Font.print(FONT12, 480 - Font.getTextWidth(FONT12, manga_name) / 2, 247, manga_name, COLOR_FONT)
-            else
-                Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
-            end
+            Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
         else
             Font.print(BONT30, 480 - Font.getTextWidth(BONT30, manga_name) / 2, 232, manga_name, COLOR_FONT)
         end

@@ -56,14 +56,12 @@ SCE_CTRL_REAL_CROSS = SCE_CTRL_CROSS
 SCE_CTRL_REAL_CIRCLE = SCE_CTRL_CIRCLE
 
 FONT16 = Font.load("app0:roboto.ttf")
-FONT12 = Font.load("app0:roboto.ttf")
 FONT20 = Font.load("app0:roboto.ttf")
 FONT26 = Font.load("app0:roboto.ttf")
 FONT30 = Font.load("app0:roboto.ttf")
 BONT16 = Font.load("app0:robboto.ttf")
 BONT30 = Font.load("app0:robboto.ttf")
 
-Font.setPixelSizes(FONT12, 12)
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT26, 26)
 Font.setPixelSizes(FONT30, 30)

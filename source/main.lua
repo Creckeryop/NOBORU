@@ -70,7 +70,6 @@ else
 end
 
 local fonts = {
-    FONT12,
     FONT16,
     FONT20,
     FONT26,

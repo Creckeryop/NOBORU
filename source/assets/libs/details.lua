@@ -100,7 +100,7 @@ local function updateContinueManga(Manga)
         if ContinueChapter > 0 then
             local ch_name = Chapters[ContinueChapter].Name or ("Chapter " .. ContinueChapter)
             ms_ch = 25 * string.len(ch_name)
-            dif_ch = math.max(Font.getTextWidth(FONT12, ch_name) - 220, 0)
+            dif_ch = math.max(Font.getTextWidth(FONT16, ch_name) - 220, 0)
             Timer.reset(chapter_timer)
         end
     end
@@ -351,9 +351,9 @@ function Details.draw()
                 local height = Font.getTextHeight(FONT20, continue_txt)
                 Font.print(FONT20, 140 - width / 2, shift + 505 - height / 2 + dy, continue_txt, WHITE)
                 if ch_name then
-                    width = math.min(Font.getTextWidth(FONT12, ch_name), 220)
+                    width = math.min(Font.getTextWidth(FONT16, ch_name), 220)
                     local t = math.min(math.max(0, Timer.getTime(chapter_timer) - 1500), ms_ch)
-                    Font.print(FONT12, 140 - width / 2 - dif_ch * t / ms_ch, shift + 505 - height / 2 + 18, ch_name, WHITE)
+                    Font.print(FONT16, 140 - width / 2 - dif_ch * t / ms_ch, shift + 505 - height / 2 + 18, ch_name, WHITE)
                 end
                 Graphics.fillRect(20, 30, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
                 Graphics.fillRect(250, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
