@@ -891,12 +891,12 @@ Language = {
             ResetAllSettings = "Restaurer tout les paramètres",
             Other = "Autres", 
             SilentDownloads = "Pad de notifications de Téléchargement",
-            Network = "Network", --Need to translate
-            UseProxy = "Use proxy", --Need to translate
-            ProxyIP = "IP address", --Need to translate
+            Network = "Réseau", --Need to translate
+            UseProxy = "Utiliser un proxy", --Need to translate
+            ProxyIP = "Adresse IP", --Need to translate
             ProxyPort = "Port", --Need to translate
-            UseProxyAuth = "Use proxy authentication", --Need to translate
-            ProxyAuth = "login:password", --Need to translate
+            UseProxyAuth = "Uriliser l'authentification Proxy", --Need to translate
+            ProxyAuth = "identifiant:mot de passe", --guess that's where the russian knew my password
         },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
