@@ -131,6 +131,31 @@ function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
     end
 end
 
+local CJK = {
+    {"㌀", "㏿"},
+    {"︰", "﹏"},
+    {"豈", "﫿"},
+    {"丽", "𯨟"},
+    {"぀", "ゟ"},
+    {"゠", "ヿ"},
+    {"⺀", "⻿"},
+    {"一", "鿿"},
+    {"㐀", "䶿"},
+    {"𠀀", "𪛟"},
+    {"𪜀", "𫜿"},
+    {"𫝀", "𫠟"},
+    {"𫠠", "𬺯"}
+}
+
+local function isCJK(letter)
+    for i = 1, #CJK do
+        if letter >= CJK[i][1] and letter <= CJK[i][2] then
+            return true
+        end
+    end
+    return false
+end
+
 local function drawMangaName(Manga)
     Manga.PrintName = {}
     local width = Font.getTextWidth(FONT16, Manga.Name)
@@ -141,15 +166,24 @@ local function drawMangaName(Manga)
         local tf = false
         for c in it_utf8(Manga.Name) do
             if tf and Font.getTextWidth(FONT16, table.concat(s)) > MANGA_WIDTH - 40 then
-                s[#s + 1] = "…"
+                s[#s] = "…"
+                if Font.getTextWidth(FONT16, table.concat(s)) > MANGA_WIDTH - 40 then
+                    s[#s] = nil
+                    s[#s] = "…"
+                end
                 break
             elseif tf then
                 s[#s + 1] = c
             elseif not tf and Font.getTextWidth(FONT16, table.concat(f)) > MANGA_WIDTH - 30 then
-                f = table.concat(f)
-                s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
-                s[#s + 1] = c
-                f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
+                if isCJK(f[#f]) then
+                    s[#s + 1] = f[#f]
+                    f[#f] = nil
+                else
+                    f = table.concat(f)
+                    s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
+                    s[#s + 1] = c
+                    f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
+                end
                 tf = true
             elseif not tf then
                 f[#f + 1] = c
