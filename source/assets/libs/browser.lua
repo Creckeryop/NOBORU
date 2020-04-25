@@ -35,7 +35,7 @@ end
 local callUri = System.executeUri
 local wait = System.wait
 function Browser.open(link)
-    callUri(link)
+    callUri("webmodal: "..link)
     wait(1500000)
 end
 
