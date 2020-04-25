@@ -33,6 +33,13 @@ function Browser.getCookies(domain)
 end
 
 local callUri = System.executeUri
+local wait = System.wait
 function Browser.open(link)
-    callUri("webmodal: "..link)
+    callUri(link)
+    wait(1500000)
+end
+
+local getVersion = System.getVersion
+function Browser.getUserAgent()
+    return "Mozilla/5.0 (PlayStation Vita "..getVersion()..") AppleWebKit/537.73 (KHTML, like Gecko) Silk/3.2"
 end
