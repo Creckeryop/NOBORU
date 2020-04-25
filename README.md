@@ -24,6 +24,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 - [Requirements](#requirements)
 - [Data structure](#data-structure)
 - [Importing](#importing-035)
+- [Backup](#backup)
 - [Known issues](#known-issues)
 - [FAQ](#faq)
 - [Compiling](#compiling)
@@ -57,6 +58,17 @@ Also if you want to read directly .cbz file you can just open file in import sec
 * No extra (non-image) files
 
 CBR not supported (im working on the way to support RAR archives, some images brakes and i just can't add that on this moment)
+## Backup
+If you want to backup here's what you can backup
+|Files|What saves|
+|---|---|
+|save.dat|Library list|
+|settings.ini|Settings|
+|history.dat + info.txt|History list|
+|info.txt + cache folders (as many you want)|Bookmarks + Covers|
+|c.c + chapters folders (as many you want)|Chapters|
+
+*Be careful, if you want to save chapters and don't search this chapter from internet you should backup History list*
 ## Known issues
 <b>Issue</b> After importing archive file, manga/comic shows "Unknown error (Parser's)"<br>
 <b>Advice</b> Make sure that archive file you imported is supported.<br>
