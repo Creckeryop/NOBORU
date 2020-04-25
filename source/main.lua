@@ -14,6 +14,7 @@ if logo then
 end
 Graphics.termBlend()
 
+loadlib("browser")
 loadlib("changes")
 loadlib("conmessage")
 loadlib("selector")
@@ -154,7 +155,7 @@ local fade = 1
 local function input()
     oldpad, pad = pad, Controls.read()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
-    
+
     Debug.input(oldpad, pad)
     
     if Changes.isActive() then
