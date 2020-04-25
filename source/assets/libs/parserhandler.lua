@@ -26,7 +26,7 @@ function ParserManager.update()
         end
     else
         if coroutine.status(Task.Update) == "dead" then
-            if Task.Type ~= "Update" and Task.Type ~= "updateCounters" then
+            if Task.Type ~= "UpdateParsers" and Task.Type ~= "UpdateCounters" then
                 Task.Table.Done = true
             end
             uniques[Task.Table] = nil
@@ -164,9 +164,9 @@ function ParserManager.loadPageImage(parserID, Link, Table, Insert)
 end
 
 function ParserManager.updateCounters()
-    if uniques["updateCounters"] then return end
+    if uniques["UpdateCounters"] then return end
     local T = {
-        Type = "updateCounters",
+        Type = "UpdateCounters",
         F = function()
             local list = Database.getMangaList()
             local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
@@ -248,10 +248,10 @@ function ParserManager.updateCounters()
             end
             Notifications.push(Language[Settings.Language].NOTIFICATIONS.REFRESH_COMPLETED)
         end,
-        Table = "updateCounters"
+        Table = "UpdateCounters"
     }
     table.insert(Order, 1, T)
-    uniques["updateCounters"] = T
+    uniques["UpdateCounters"] = T
 end
 
 ---@param Table table
@@ -279,9 +279,9 @@ end
 ---@param Insert boolean
 ---Updates list of parsers from NOBORU-parsers GitHub page
 function ParserManager.updateParserList(Table, Insert)
-    if uniques[Table] then return end
+    if uniques["UpdateParsers"] then return end
     local T = {
-        Type = "Update",
+        Type = "UpdateParsers",
         F = function()
             ClearParsers()
             local file = {}
@@ -313,14 +313,14 @@ function ParserManager.updateParserList(Table, Insert)
                 end
             end
         end,
-        Table = Table
+        Table = "UpdateParsers"
     }
     if Insert then
         table.insert(Order, 1, T)
     else
         Order[#Order + 1] = T
     end
-    uniques["Update"] = T
+    uniques["UpdateParsers"] = T
 end
 
 ---Clears ParserManager tasks
