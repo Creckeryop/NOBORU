@@ -172,6 +172,7 @@ function ParserManager.updateCounters()
             local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
             if connection then
                 for k, v in ipairs(list) do
+                    local old_name = v.Name
                     Cache.addManga(v)
                     local parser = GetParserByID(v.ParserID)
                     if parser then
@@ -217,7 +218,11 @@ function ParserManager.updateCounters()
                             v.Counter = 0
                         end
                     end
+                    if old_name~=v.Name then
+                        v.PrintName = nil
+                    end
                 end
+                Database.save()
             else
                 for k, v in ipairs(list) do
                     local chps = Cache.loadChapters(v, true)
