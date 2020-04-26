@@ -69,6 +69,8 @@ Font.setPixelSizes(BONT30, 30)
 
 local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
+local deleteFile = System.deleteFile
+local doesFileExist = System.doesFileExist
 
 MANGA_WIDTH = 160
 MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
@@ -92,6 +94,22 @@ end
 if not doesDirExist("ux0:data/noboru/import") then
     createDirectory("ux0:data/noboru/import")
 end
+
+if doesFileExist("ux0:data/noboru/auth.html") then
+    deleteFile("ux0:data/noboru/auth.html")
+end
+
+local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
+
+local function cpy_file(source_path, dest_path)
+    local fh1 = openFile(source_path, FREAD)
+    local fh2 = openFile(dest_path, FCREATE)
+    local contentFh1 = readFile(fh1, sizeFile(fh1))
+    writeFile(fh2, contentFh1, #contentFh1)
+    closeFile(fh1)
+    closeFile(fh2)
+end
+cpy_file("app0:assets/auth.html", "ux0:data/noboru/auth.html")
 
 function MemToStr(bytes)
     local str = "Bytes"
