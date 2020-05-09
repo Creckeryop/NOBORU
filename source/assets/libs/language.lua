@@ -72,7 +72,7 @@ Language = {
             ProxyPort = "Порт",
             UseProxyAuth = "Аунтентификация прокси",
             ProxyAuth = "логин:пароль",
-            SkipCacheChapterChecking = "Пропускать проверки целостности кеша при загрузке приложения",
+            SkipCacheChapterChecking = "Пропускать проверки целостности кеша при запуске приложения",
         },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
