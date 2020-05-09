@@ -328,7 +328,6 @@ function Details.draw()
         local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 80
-        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
         local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, BLUE
         if Database.check(Manga) then
             color = RED
@@ -359,6 +358,7 @@ function Details.draw()
                 Graphics.fillRect(250, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
             end
         end
+        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
         Graphics.fillRect(0, 20, 90, 544, BACK_COLOR)
         if ContinueChapter then
             if #Chapters > 0 then
