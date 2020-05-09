@@ -58,6 +58,7 @@ function ChapterSaver.update()
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
                     end
                     Downloading[Task.Key] = nil
+                    UpdatedTable = false
                     Task = nil
                 elseif msg == "update_count" then
                     Task.page = var1
