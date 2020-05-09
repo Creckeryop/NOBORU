@@ -139,7 +139,6 @@ while coroutine.status(f) ~= "dead" do
     end
     Graphics.termBlend()
     Screen.flip()
-    Screen.waitVblankStart()
 end
 
 if Settings.RefreshLibAtStart then

@@ -71,7 +71,8 @@ Language = {
             ProxyIP = "IP адрес прокси",
             ProxyPort = "Порт",
             UseProxyAuth = "Аунтентификация прокси",
-            ProxyAuth = "логин:пароль"
+            ProxyAuth = "логин:пароль",
+            SkipCacheChapterChecking = "Пропускать проверки целостности кеша при загрузке приложения",
         },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
@@ -236,7 +237,8 @@ Language = {
             ProxyIP = "IP address",
             ProxyPort = "Port",
             UseProxyAuth = "Use proxy authentication",
-            ProxyAuth = "login:password"
+            ProxyAuth = "login:password",
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen"
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
@@ -402,6 +404,7 @@ Language = {
             ProxyPort = "Cổng",
             UseProxyAuth = "Xác thực proxy",
             ProxyAuth = "tài khoản:mật khẩu",
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Sử dụng L và R",
@@ -567,6 +570,7 @@ Language = {
             ProxyPort = "Puerto:",
             UseProxyAuth = "Usar autenticación proxy:",
             ProxyAuth = "login:contraseña",
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botones L y R",
@@ -732,6 +736,7 @@ Language = {
             ProxyPort = "Porta",
             UseProxyAuth = "Utilizza autenticazione proxy",
             ProxyAuth = "login:password",
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "L e R triggers",
@@ -889,18 +894,19 @@ Language = {
             RightStickDeadZone = "Deadzone du joystick droit",
             RightStickSensitivity = "Sensibilité du joystick droit",
             ResetAllSettings = "Restaurer tout les paramètres",
-            Other = "Autres", 
+            Other = "Autres",
             SilentDownloads = "Pad de notifications de Téléchargement",
-            Network = "Réseau", --Need to translate
-            UseProxy = "Utiliser un proxy", --Need to translate
-            ProxyIP = "Adresse IP", --Need to translate
-            ProxyPort = "Port", --Need to translate
-            UseProxyAuth = "Uriliser l'authentification Proxy", --Need to translate
-            ProxyAuth = "identifiant:mot de passe", --guess that's where the russian knew my password
+            Network = "Réseau",
+            UseProxy = "Utiliser un proxy",
+            ProxyIP = "Adresse IP",
+            ProxyPort = "Port",
+            UseProxyAuth = "Uriliser l'authentification Proxy",
+            ProxyAuth = "identifiant:mot de passe",
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
-            ["DPAD"] = "Utiliser le Dpad" 
+            ["DPAD"] = "Utiliser le Dpad"
         },
         EXTRA = {
             ["DownloadAll"] = "Télécharger tout les chapitres", 

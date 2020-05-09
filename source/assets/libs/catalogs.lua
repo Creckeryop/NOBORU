@@ -704,6 +704,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 275, y - 44, Settings.ProxyPort, COLOR_GRAY)
             elseif task == "UseProxyAuth" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
+            elseif task == "SkipCacheChapterChecking" then
+                Font.print(FONT16, 275, y - 44, Language[Settings.Language].YORN[Settings.SkipCacheChapterChecking], COLOR_ROYAL_BLUE)
             elseif task == "ProxyAuth" then
                 Font.print(FONT16, 275, y - 44, Settings.ProxyAuth, COLOR_GRAY)
             elseif task == "ChapterSorting" then

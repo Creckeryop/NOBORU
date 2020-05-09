@@ -450,7 +450,7 @@ function Threads.getProgress(UniqueKey)
     if task then
         if Task == task then
             if task.Type == "ImageDownload" or task.Type == "StringRequest" or task.Type == "FileDownload" or (task.Type == "Image" and task.Link) then
-                return Network.getDownloadedBytes() / Network.getTotalBytes()
+                return math.max(math.min(1, Network.getDownloadedBytes() / Network.getTotalBytes()), 0)
             else
                 return 1
             end

@@ -24,7 +24,8 @@ Settings = {
     ProxyIP = "192.168.0.1",
     ProxyPort = "8080",
     UseProxyAuth = false,
-    ProxyAuth = "login:password"
+    ProxyAuth = "login:password",
+    SkipCacheChapterChecking = true
 }
 
 local SettingsDefaults = table.clone(Settings)
@@ -213,6 +214,7 @@ function settings.load()
             setSetting(new, "ProxyPort", {})
             setSetting(new, "UseProxyAuth", {true, false})
             setSetting(new, "ProxyAuth", {})
+            setSetting(new, "SkipCacheChapterChecking", {true, false})
         end
         closeFile(fh)
     end
@@ -280,7 +282,8 @@ local set_list = {
     Other = {
         "SkipFontLoading",
         "ChapterSorting",
-        "SilentDownloads"
+        "SilentDownloads",
+        "SkipCacheChapterChecking"
     },
     About = {
         "ShowVersion",
@@ -535,4 +538,7 @@ SettingsFunctions = {
         end
         Keyboard.clear()
     end,
+    SkipCacheChapterChecking = function()
+        settings.SkipCacheChapterChecking = not settings.SkipCacheChapterChecking
+    end
 }

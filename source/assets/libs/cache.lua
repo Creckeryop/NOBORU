@@ -307,17 +307,21 @@ function Cache.load()
             for k, v in pairs(new_data) do
                 local path = "ux0:data/noboru/cache/" .. k
                 coroutine.yield("Cache: Checking " .. path, i / count)
-                if doesDirExist(path) then
-                    if doesFileExist("ux0:data/noboru/" .. v.Path) then
-                        coroutine.yield("Cache: Checking ux0:data/noboru/" .. v.Path, i / count)
-                        local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
-                        if not image_size or image_size <= 0 then
-                            deleteFile("ux0:data/noboru/" .. v.Path)
+                if not Settings.SkipCacheChapterChecking then
+                    if doesDirExist(path) then
+                        if doesFileExist("ux0:data/noboru/" .. v.Path) then
+                            coroutine.yield("Cache: Checking ux0:data/noboru/" .. v.Path, i / count)
+                            local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
+                            if not image_size or image_size <= 0 then
+                                deleteFile("ux0:data/noboru/" .. v.Path)
+                            end
                         end
+                        data[k] = v
+                    else
+                        Notifications.push("cache_error\n" .. k)
                     end
-                    data[k] = v
                 else
-                    Notifications.push("cache_error\n" .. k)
+                    data[k] = v
                 end
                 i = i + 1
             end
