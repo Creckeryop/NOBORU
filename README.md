@@ -102,3 +102,4 @@ Execute `build.bat` to create working .vpk
 <br>[nguyenmao2101](https://github.com/nguyenmao2101) - Vietnamese translation
 <br>[theheroGAC](https://github.com/theheroGAC) - Italian translation
 <br>[Cimmerian-Iter](https://github.com/Cimmerian-Iter) - French translation
+<br>[Kemal Sanlı](https://github.com/kemalsanli) - Turkish translation
