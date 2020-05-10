@@ -654,7 +654,11 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
+                local dy_for_translators = 0
+                if list[i] == "Translators" then
+                    dy_for_translators = 50
+                end
+                Graphics.fillRect(265, 945, y - 75, y - 1 + dy_for_translators, COLOR_SELECTED)
             end
             if i > 1 then
                 Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
