@@ -1247,6 +1247,9 @@ if language_now == 8 then
 elseif language_now == 3 then
     Language.Default = Language.Spanish
     LanguageNames.Default = LanguageNames.Spanish
+elseif language_now == 19 then
+    Language.Default = Language.Turkish
+    LanguageNames.Default = LanguageNames.Turkish
 elseif language_now == 5 then
     Language.Default = Language.Italian
     LanguageNames.Default = LanguageNames.Italian
