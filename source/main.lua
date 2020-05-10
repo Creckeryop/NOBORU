@@ -118,12 +118,17 @@ AppMode = MENU
 
 local TouchLock = false
 
-local f = coroutine.create(preload_data)
+local LoadingTimer = Timer.new()
 
+local f = coroutine.create(preload_data)
 while coroutine.status(f) ~= "dead" do
     Graphics.initBlend()
     Screen.clear()
-    local _, text, prog = coroutine.resume(f)
+    local _, text, prog
+    Timer.reset(LoadingTimer)
+    repeat
+        _, text, prog = coroutine.resume(f)
+    until Timer.getTime(LoadingTimer) > 8
     if not _ then
         Console.error(text)
     end
@@ -140,6 +145,7 @@ while coroutine.status(f) ~= "dead" do
     Graphics.termBlend()
     Screen.flip()
 end
+Timer.destroy(LoadingTimer)
 
 if Settings.RefreshLibAtStart then
     ParserManager.updateCounters()
