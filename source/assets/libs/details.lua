@@ -358,7 +358,6 @@ function Details.draw()
                 Graphics.fillRect(250, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
             end
         end
-        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
         Graphics.fillRect(0, 20, 90, 544, BACK_COLOR)
         if ContinueChapter then
             if #Chapters > 0 then
@@ -387,6 +386,9 @@ function Details.draw()
                     Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, BACK_COLOR)
+                if n > 1 then
+                    Graphics.drawLine(270, 920, y, y, WHITE)
+                end
                 if n < ListCount then
                     Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
                 end
@@ -416,6 +418,7 @@ function Details.draw()
             y = y + 80
         end
         
+        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)

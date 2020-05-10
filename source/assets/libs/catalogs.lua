@@ -515,6 +515,9 @@ function Catalogs.draw()
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
             end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
+            end
             if i < #Parsers then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
@@ -577,6 +580,9 @@ function Catalogs.draw()
             if object.active and object.name ~= "..." then
                 Graphics.drawRotateImage(925 - 16, y - 38, imprt.e, 0, COLOR_ICON_EXTRACT)
             end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
+            end
             if i < #list then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
             end
@@ -606,6 +612,9 @@ function Catalogs.draw()
             local page = task.page or 0
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
+            end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
             end
             if i < #list then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
@@ -646,6 +655,9 @@ function Catalogs.draw()
             local task = list[i]
             if Slider.ItemID == i then
                 Graphics.fillRect(265, 945, y - 75, y - 1, COLOR_SELECTED)
+            end
+            if i > 1 then
+                Graphics.drawLine(265, 945, y - 75, y - 75, Color.new(200, 200, 200))
             end
             if i < #list then
                 Graphics.drawLine(265, 945, y, y, Color.new(200, 200, 200))
