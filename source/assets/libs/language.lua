@@ -2,6 +2,7 @@
 --Vietnamese translation created by nguyenmao2101
 --Italian translation created by theHeroGAC
 --French translation created by Samilop "Cimmerian" Iter
+--Turkish translation created by @kemalsanli
 Language = {
     Russian = {
         APP = {
@@ -333,6 +334,171 @@ Language = {
             UPDATE = "Refresh",
             CANCEL = "Cancel",
             DELETE = "Delete"
+        }
+    },Turkish = {
+        APP = {
+            LIBRARY = "KÜTÜPHANE",
+            CATALOGS = "KATALOG",
+            SETTINGS = "SEÇENEKLER",
+            DOWNLOAD = "İNDİRİLENLER",
+            IMPORT = "İÇE AKTAR",
+            HISTORY = "GEÇMİŞ",
+            SEARCH = "Ara"
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "Bağlantı kesildi\n\nBağlantı için bekleniyor...\n\n(Uygulamayı küçült, Wi-Fİ seçeneklerine git ve ağa bağlan)\n\nMesajı kapatmak ve bütün indirmeleri iptal etmek için X e basın\n\nAğa bağlanınca tüm indirmeler devam edecek.",
+            PRESS_TO_UPDATE = "Güncellemek için X e basın\nVazgeçmek için O ya basın."
+        },
+        SETTINGS = {
+            Language = "Dil",
+            ClearChapters = "Kaydedilen Bölümleri Sil",
+            ShowNSFW = "Uygunsuz İçeriği Göster",
+            ClearLibrary = "Kütüphaneyi Temizle",
+            ClearCache = "Bellekteki Takip Edilmeyen Mangaları Sil",
+            ClearAllCache = "Belleği Temizle",
+            ReaderOrientation = "Varsayılan Okuyucu Yönü",
+            DoubleTapReader = "Çift Tıkla Takınlaştırmayı Etkinleştir",
+            ZoomReader = "Okuyucu Ölçeklendirmesi",
+            SwapXO = "Tuş Düzenini Değiştir(X/O)",
+            ShowAuthor = "Geliştirici",
+            ShowVersion = "Uygulama Sürümü",
+            CheckUpdate = "Güncellemeleri Denetle",
+            SkipFontLoading = "Font Yüklemesini Atla",
+            LatestVersion = "En Son Sürüm:",
+            PleaseWait = "Lütfen Bekleyiniz",
+            FailedToUpdate = "Uygulamayı Güncelleme Başarısız Oldu",
+            NoConnection = "Bağlantı Yok",
+            HideInOffline = "Çevrimdışında Sadece İndirilmiş Bölümleri Göster",
+            UnzipingVPK = "Vpk Yüklemek İçin Çıkarılıyor",
+            CurrentVersionIs = "Mevcut Sürüm:",
+            Space = "Kullanılan Hafıza",
+            ReaderDirection = "Manga Okuyucu Yönü",
+            VersionIsUpToDate = "En Güncel Sürümü Kullanıyorsunuz",
+            EU = "Avrupa",
+            JP = "Japonya",
+            PressAgainToAccept = "Kabul Etmek İçin Tekrar Basın",
+            PressAgainToUpdate = "Güncellemek İçin Tekrar Basın:",
+            Reader = "Okuyucu",
+            Controls = "Kontrol Kurulumu",
+            Data = "Veri Seçenekleri",
+            About = "Program Hakkında",
+            Catalogs = "Kataloglar",
+            Library = "Kütüphane",
+            ChangeUI = "Tema",
+            PreferredCatalogLanguage = "Tercih Edilen Dil",
+            LibrarySorting = "Kütüphane Sıralama",
+            ChapterSorting = "Bölüm Sıralama",
+            RefreshLibAtStart = "Başlangıçta Kütüphaneyi Yenile",
+            Translators = "Çevirmenlere Teşekkürler",
+            ChangingPageButtons = "Sayfayı Çevirmeye Yarayan Tuşlar",
+            LeftStickDeadZone = "Sol Çubuk Ölü Alanı",
+            LeftStickSensitivity = "Sol Çubuk Hassasiyeti",
+            RightStickDeadZone = "Sağ Çubuk Ölü Alanı",
+            RightStickSensitivity = "Sağ Çubuk Hassasiyeti",
+            ResetAllSettings = "Tüm Seçenekleri Sıfırla",
+            Other = "Diğer",
+            SilentDownloads = "İndirme Bildirimleri Gösterme",
+            Network = "Ağ",
+            UseProxy = "Proxy Kullan",
+            ProxyIP = "IP Adresi",
+            ProxyPort = "Port",
+            UseProxyAuth = "Proxy Doğrulamayı Kullan",
+            ProxyAuth = "giriş bilgisi:şifre",
+            SkipCacheChapterChecking = "Yükleme Ekranında Bellek ve Bölüm Kontrolünü Atla"
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L(SAĞ) R(SOL) Tuşları",
+            ["DPAD"] = "DPAD Tuşları"
+        },
+        EXTRA = {
+            ["DownloadAll"] = "Tüm Bölümleri İndir",
+            ["RemoveAll"] = "Tüm Bölümleri Sil",
+            ["CancelAll"] = "Bölümleri İndirmeyi İptal Et",
+            ["ClearBookmarks"] = "Yer İmlerini Temizle"
+        },
+        THEME = {
+            Dark = "Karanlık",
+            Light = "Aydınlık",
+            Blue = "Mavi",
+            Crimson = "Kızıl"
+        },
+        NSFW = {
+            [true] = "Göster",
+            [false] = "Gösterme"
+        },
+        YORN = {
+            [true] = "Evet",
+            [false] = "Hayır"
+        },
+        PARSERS = {
+            RUS = "Rusça",
+            ENG = "İnglizce",
+            ESP = "İspanyolca",
+            PRT = "Portekizce",
+            FRA = "Fransızca",
+            JAP = "Japonca",
+            DIF = "Diğer",
+            TUR = "Türkçe",
+            ITA = "İtalyanca",
+            VIE = "Vietnam Dili",
+            DEU = "Almanca",
+            BRA = "Brezilya Dili",
+            POL = "Lehçe"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "Hiç Bölüm Yok"
+        },
+        READER = {
+            PREPARING_PAGES = "Sayfalar Hazırlanıyor",
+            LOADING_PAGE = "Sayfalar Yükleniyor",
+            LOADING_SEGMENT = "Segment Yükleniyor",
+            Horizontal = "Yatay",
+            Vertical = "Dikey",
+            Smart = "Akıllı",
+            Height = "Yükseklik",
+            Width = "Genişlik",
+            LEFT = "Sağa Gitmek İçin Sola Git",
+            RIGHT = "Sola Gitmek İçin Sağa Git",
+            DOWN = "Yukarı Çıkmak İçin Aşağı in"
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "Kütüphaneye Ekle",
+            REMOVE_FROM_LIBRARY = "Kütüphaneden Sil",
+            PAGE = "Sayfa : ",
+            CONTINUE = "Devam Et",
+            START = "Okumaya Başla"
+        },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "Kütüphaneye Eklendi",
+            REMOVED_FROM_LIBRARY = "Kütüphaneden Silindi",
+            SEARCHING = '"%s" Aranıyor',
+            START_DOWNLOAD = "%s: %s\nİndirme Başladı!",
+            END_DOWNLOAD = "%s: %s\nBaşarılı Bir Şekilde İndirildi!",
+            CANCEL_DOWNLOAD = "%s: %s\nİndirme İptal Edildi!",
+            CHAPTER_REMOVE = "%s Silindi!",
+            NET_PROBLEM = "Bağlantıda Sorular Var!",
+            CHAPTERS_CLEARED = "Tüm Kaydedilmiş Bölümler Temizlendi!",
+            LIBRARY_CLEARED = "Kütüphane Temizlendi!",
+            CACHE_CLEARED = "Bellek Temizlendi!",
+            DEVELOPER_THING = "Github'da Uygulamayı Yıldızlayın!",
+            NEW_UPDATE_AVAILABLE = "Yeni Güncelleme Mevcut",
+            NO_SPACE_LEFT = "Hafıza Yetersiz",
+            REFRESH_COMPLETED = "Yenileme Tamamlandı",
+            SETTINGS_RESET = "Seçenekler Sıfırlandı"
+        },
+        PANEL = {
+            BACK = "Geri",
+            MODE_POPULAR = "Mod: Popülerlik",
+            MODE_LATEST = "Mod: En Son",
+            MODE_SEARCHING = 'Mod:"%s" Aranıyor',
+            SEARCH = "Ara",
+            SELECT = "Seç",
+            CHOOSE = "Seç",
+            IMPORT = "İçe Aktar",
+            CHANGE_SECTION = "Bölümü Değiştir",
+            UPDATE = "Yenile",
+            CANCEL = "Vazgeç",
+            DELETE = "Sil"
         }
     },
     Vietnamese = {
@@ -1005,6 +1171,7 @@ LanguageNames = {
     Russian = {
         Russian = "Русский",
         English = "Английский",
+		Turkish = "Turkish",
         Spanish = "Испанский",
         Vietnamese = "Вьетнамский",
         French = "Французский",
@@ -1014,15 +1181,27 @@ LanguageNames = {
     English = {
         Russian = "Russian",
         English = "English",
+		Turkish = "Turkish",
         Spanish = "Spanish",
         Vietnamese = "Vietnamese",
         French = "French",
         Italian = "Italian",
         Default = "System"
     },
+	Turkish = {
+        Russian = "Rusça",
+        English = "İngilizce",
+		Turkish = "Türkçe",
+        Spanish = "İspanyolca",
+        Vietnamese = "Vietnam Dili",
+        French = "Fransızca",
+        Italian = "İtalyanca",
+        Default = "Sistem Dili"
+    },
     Spanish = {
         Russian = "Ruso",
         English = "Ingles",
+		Turkish = "Turkish",
         Spanish = "Español",
         Vietnamese = "Vietnamita",
         French = "Francés",
@@ -1032,6 +1211,7 @@ LanguageNames = {
     Vietnamese = {
         Russian = "Tiếng Nga",
         English = "Tiếng Anh",
+		Turkish = "Turkish",
         Spanish = "Tiếng Tây Ban Nha",
         Italian = "Italia",
         French = "PhápF",
@@ -1041,6 +1221,7 @@ LanguageNames = {
     Italian = {
         Russian = "Russo",
         English = "Inglese",
+		Turkish = "Turkish",
         Spanish = "Spagnolo",
         Italian = "Italiano",
         French = "Francese",
@@ -1050,6 +1231,7 @@ LanguageNames = {
     French = {
         Russian = "Russe",
         English = "Anglais",
+		Turkish = "Turkish",
         Spanish = "Espagnol",
         Italian = "Italien",
         French = "Français",
@@ -1065,6 +1247,9 @@ if language_now == 8 then
 elseif language_now == 3 then
     Language.Default = Language.Spanish
     LanguageNames.Default = LanguageNames.Spanish
+elseif language_now == 19 then
+    Language.Default = Language.Turkish
+    LanguageNames.Default = LanguageNames.Turkish
 elseif language_now == 5 then
     Language.Default = Language.Italian
     LanguageNames.Default = LanguageNames.Italian
