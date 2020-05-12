@@ -822,7 +822,7 @@ function Catalogs.draw()
             if mode == "LIBRARY" and Results[i].Counter then
                 local c = Results[i].Counter
                 if c > 0 then
-                    Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 10, y, y + 24, Themes[Settings.Theme].COLOR_LABEL)
+                    Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 11, y, y + 24, Themes[Settings.Theme].COLOR_LABEL)
                     Font.print(BONT16, x + 5, y + 2, tostring(c), COLOR_WHITE)
                 end
             end
