@@ -15,6 +15,8 @@ Checkbox_checked_icon = Image:new(Graphics.loadImage("app0:assets/icons/checkbox
 Checkbox_crossed_icon = Image:new(Graphics.loadImage("app0:assets/icons/checkbox_crossed.png"))
 Radio_icon = Image:new(Graphics.loadImage("app0:assets/icons/radio.png"))
 Radio_checked_icon = Image:new(Graphics.loadImage("app0:assets/icons/radio_checked.png"))
+Show_icon = Image:new(Graphics.loadImage("app0:assets/icons/show.png"))
+Hide_icon = Image:new(Graphics.loadImage("app0:assets/icons/hide.png"))
 
 local download_icon = Image:new(Graphics.loadImage("app0:assets/icons/download.png"))
 local options_icon = Image:new(Graphics.loadImage("app0:assets/icons/options.png"))

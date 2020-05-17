@@ -8,11 +8,11 @@ local animation_timer = Timer.new()
 
 local Modes = {}
 local Modes_fade = {}
-local Tags = {}
+
+local Filters = {}
+local Checked = {}
+
 local now_mode = 1
-local Tags_type = "check"
-local Checked_tags = {}
-local Radio_tag = 1
 local TOUCH = TOUCH()
 local Slider = Slider()
 local SelectedId = 0
@@ -20,6 +20,28 @@ local control_timer = Timer.new()
 local time_space = 400
 StartSearch = false
 local searchData = ""
+
+local function getFiltersHeight()
+    local h = 0
+    for _, v in ipairs(Filters) do
+        h = h + 50
+        if v.visible then
+            h = h + 50 * #v.Tags
+        end
+    end
+    return h
+end
+
+local function countFilterElements()
+    local c = 0
+    for _, v in ipairs(Filters) do
+        c = c + 1
+        if v.visible then
+            c = c + #v.Tags
+        end
+    end
+    return c
+end
 
 ---Updates scrolling movement
 local function scrollUpdate()
@@ -31,8 +53,8 @@ local function scrollUpdate()
     if Slider.Y < 0 then
         Slider.Y = 0
         Slider.V = 0
-    elseif Slider.Y > (#Tags * 50 - 544 + 8 + #Modes * 50 + 8 + 6) then
-        Slider.Y = math.max(0, #Tags * 50 - 544 + 8 + #Modes * 50 + 8 + 6)
+    elseif Slider.Y > (getFiltersHeight() - 544 + 8 + #Modes * 50 + 8 + 6) then
+        Slider.Y = math.max(0, getFiltersHeight() - 544 + 8 + #Modes * 50 + 8 + 6)
     end
 end
 
@@ -68,11 +90,17 @@ function CatalogModes.load(parser)
         for _, v in ipairs(Modes) do
             Modes_fade[v] = 0
         end
-        Checked_tags = {}
-        Tags = parser.Tags or {}
-        Tags_type = parser.Tags_type or "check"
-        for k, _ in ipairs(Tags) do
-            Checked_tags[k] = false
+        Filters = parser.Filters or {}
+        Checked = {}
+        for k, v in ipairs(Filters) do
+            if v.Type == "check" or v.Type == "checkcross" then
+                Checked[k] = {}
+                for i, _ in ipairs(v.Tags) do
+                    Checked[k][i] = false
+                end
+            elseif v.Type == "radio" then
+                Checked[k] = 1
+            end
         end
         now_mode = 1
         searchData = ""
@@ -112,18 +140,32 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                 if oldtouch.x > 960 - 350 * fade * old_fade then
                     if oldtouch.y > 8 + 8 + 50 * #Modes then
                         local id = math.floor((Slider.Y + oldtouch.y - (8 + 8 + 50 * #Modes)) / 50) + 1
-                        if id > 0 and id <= #Tags then
-                            if Tags_type == "check" then
-                                Checked_tags[id] = not Checked_tags[id]
-                            elseif Tags_type == "radio" then
-                                Radio_tag = id
-                            elseif Tags_type == "checkcross" then
-                                if Checked_tags[id] == "cross" then
-                                    Checked_tags[id] = false
-                                elseif Checked_tags[id] == false then
-                                    Checked_tags[id] = true
-                                elseif Checked_tags[id] == true then
-                                    Checked_tags[id] = "cross"
+                        if id > 0 then
+                            for i, f in ipairs(Filters) do
+                                id = id - 1
+                                if id == 0 then
+                                    f.visible = not f.visible
+                                    break
+                                end
+                                if f.visible then
+                                    if id <= #f.Tags then
+                                        if f.Type == "check" then
+                                            Checked[i][id] = not Checked[i][id]
+                                        elseif f.Type == "radio" then
+                                            Checked[i] = id
+                                        elseif f.Type == "checkcross" then
+                                            if Checked[i][id] == "cross" then
+                                                Checked[i][id] = false
+                                            elseif Checked[i][id] == false then
+                                                Checked[i][id] = true
+                                            elseif Checked[i][id] == true then
+                                                Checked[i][id] = "cross"
+                                            end
+                                        end
+                                        break
+                                    else
+                                        id = id - #f.Tags
+                                    end
                                 end
                             end
                         end
@@ -153,18 +195,32 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                     setMode(SelectedId)
                 else
                     local id = SelectedId - #Modes
-                    if id > 0 and id <= #Tags then
-                        if Tags_type == "check" then
-                            Checked_tags[id] = not Checked_tags[id]
-                        elseif Tags_type == "radio" then
-                            Radio_tag = id
-                        elseif Tags_type == "checkcross" then
-                            if Checked_tags[id] == "cross" then
-                                Checked_tags[id] = false
-                            elseif Checked_tags[id] == false then
-                                Checked_tags[id] = true
-                            elseif Checked_tags[id] == true then
-                                Checked_tags[id] = "cross"
+                    if id > 0 then
+                        for i, f in ipairs(Filters) do
+                            id = id - 1
+                            if id == 0 then
+                                f.visible = not f.visible
+                                break
+                            end
+                            if f.visible then
+                                if id <= #f.Tags then
+                                    if f.Type == "check" then
+                                        Checked[i][id] = not Checked[i][id]
+                                    elseif f.Type == "radio" then
+                                        Checked[i] = id
+                                    elseif f.Type == "checkcross" then
+                                        if Checked[i][id] == "cross" then
+                                            Checked[i][id] = false
+                                        elseif Checked[i][id] == false then
+                                            Checked[i][id] = true
+                                        elseif Checked[i][id] == true then
+                                            Checked[i][id] = "cross"
+                                        end
+                                    end
+                                    break
+                                else
+                                    id = id - #f.Tags
+                                end
                             end
                         end
                     end
@@ -185,7 +241,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                 elseif Controls.check(pad, SCE_CTRL_DOWN) then
                     if SelectedId == 0 then
                         SelectedId = 1
-                    elseif SelectedId < #Modes + #Tags then
+                    elseif SelectedId < #Modes + countFilterElements() then
                         SelectedId = SelectedId + 1
                     end
                 end
@@ -256,41 +312,52 @@ function CatalogModes.draw()
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
         Graphics.fillRect(960 - M * 350, 960, 8 + 8 + 50 * #Modes, 544, Color.new(0, 0, 0))
         local y = 8 + 50 * #Modes + 17 - Slider.Y
-        for i, v in ipairs(Tags) do
-            if y - 1 > 544 then
-                break
-            end
-            if y - 1 + 24 > 8 + 50 * #Modes + 8 then
-                if Tags_type == "check" then
-                    if Checked_tags[i] then
-                        Graphics.drawImage(960 - M * 350 + 14, y - 1, Checkbox_checked_icon.e)
-                    else
-                        Graphics.drawImage(960 - M * 350 + 14, y - 1, Checkbox_icon.e)
-                    end
-                elseif Tags_type == "checkcross" then
-                    if Checked_tags[i] then
-                        if Checked_tags[i] == "cross" then
-                            Graphics.drawImage(960 - M * 350 + 14, y - 1, Checkbox_crossed_icon.e, Color.new(255, 255, 255, 100))
-                        else
-                            Graphics.drawImage(960 - M * 350 + 14, y - 1, Checkbox_checked_icon.e)
-                        end
-                    else
-                        Graphics.drawImage(960 - M * 350 + 14, y - 1, Checkbox_icon.e)
-                    end
-                elseif Tags_type == "radio" then
-                    if Radio_tag == i then
-                        Graphics.drawImage(960 - M * 350 + 14, y - 1, Radio_checked_icon.e)
-                    else
-                        Graphics.drawImage(960 - M * 350 + 14, y - 1, Radio_icon.e)
-                    end
-                end
-                if Checked_tags[i] == "cross" then
-                    Font.print(FONT16, 960 - M * 350 + 52, y, Tags[i], Color.new(255, 255, 255, 100))
-                else
-                    Font.print(FONT16, 960 - M * 350 + 52, y, Tags[i], COLOR_WHITE)
-                end
+        for k, f in ipairs(Filters) do
+            Font.print(FONT16, 960 - M * 350 + 52, y, f.Name, COLOR_WHITE)
+            if not f.visible then
+                Graphics.drawImage(960 - M * 350 + 14, y - 1, Show_icon.e)
+            else
+                Graphics.drawImage(960 - M * 350 + 14, y - 1, Hide_icon.e)
             end
             y = y + 50
+            if f.visible then
+                for i, v in ipairs(f.Tags) do
+                    if y - 1 > 544 then
+                        break
+                    end
+                    if y - 1 + 24 > 8 + 50 * #Modes + 8 then
+                        if f.Type == "check" then
+                            if Checked[k][i] then
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_checked_icon.e)
+                            else
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_icon.e)
+                            end
+                        elseif f.Type == "checkcross" then
+                            if Checked[k][i] then
+                                if Checked[k][i] == "cross" then
+                                    Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_crossed_icon.e, Color.new(255, 255, 255, 100))
+                                else
+                                    Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_checked_icon.e)
+                                end
+                            else
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_icon.e)
+                            end
+                        elseif f.Type == "radio" then
+                            if Checked[k] == i then
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Radio_checked_icon.e)
+                            else
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Radio_icon.e)
+                            end
+                        end
+                        if type(Checked[k]) == "table" and Checked[k][i] == "cross" then
+                            Font.print(FONT16, 960 - M * 350 + 52 + 20, y, v, Color.new(255, 255, 255, 100))
+                        else
+                            Font.print(FONT16, 960 - M * 350 + 52 + 20, y, v, COLOR_WHITE)
+                        end
+                    end
+                    y = y + 50
+                end
+            end
         end
         Graphics.fillRect(960 - M * 350, 960, 0, 8 + 8 + 50 * #Modes, Color.new(0, 0, 0))
         for i, v in ipairs(Modes) do
@@ -313,8 +380,8 @@ function CatalogModes.draw()
                 local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
                 local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
                 for n = ks, ks + 1 do
-                    Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n, y + n + 2, y + 50 - n + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
-                    Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n, y + n + 2, y + 50 - n + 1, SELECTED_RED)
+                    Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
+                    Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, SELECTED_RED)
                 end
             end
         end
@@ -323,13 +390,13 @@ function CatalogModes.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for n = ks, ks + 1 do
-                Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n, y + n + 2, y + 50 - n + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
-                Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n, y + n + 2, y + 50 - n + 1, SELECTED_RED)
+                Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
+                Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, SELECTED_RED)
             end
         end
         Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 8 + 8 + 50 * #Modes, 544, COLOR_BLACK)
-        if #Tags > 7 then
-            local h = #Tags * 50 / (544 - 8 - 8 - 50 * #Modes)
+        if countFilterElements() > 7 then
+            local h = getFiltersHeight() / (544 - 8 - 8 - 50 * #Modes)
             Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 8 + 8 + 50 * #Modes + (Slider.Y) / h, 8 + 8 + 50 * #Modes + (Slider.Y + (544 - 8 - 8 - 50 * #Modes)) / h, COLOR_WHITE)
         end
     end
@@ -352,29 +419,39 @@ function CatalogModes.getSearchData()
 end
 
 function CatalogModes.getTagsData()
-    if Tags_type == "check" then
-        local list = {}
-        for i, v in pairs(Checked_tags) do
-            if v then
-                list[#list + 1] = Tags[i]
+    local filter = {}
+    for k, f in ipairs(Filters) do
+        if f.Type == "check" then
+            local list = {}
+            for i, v in ipairs(Checked[k]) do
+                if v then
+                    list[#list + 1] = f.Tags[i]
+                end
             end
-        end
-        return list
-    elseif Tags_type == "checkcross" then
-        local include = {}
-        for i, v in pairs(Checked_tags) do
-            if v == true then
-                include[#include + 1] = Tags[i]
+            filter[#filter + 1] = list
+            filter[f.Name] = list
+        elseif f.Type == "checkcross" then
+            local include = {}
+            for i, v in ipairs(Checked[k]) do
+                if v == true then
+                    include[#include + 1] = f.Tags[i]
+                end
             end
-        end
-        local exclude = {}
-        for i, v in pairs(Checked_tags) do
-            if v == "cross" then
-                exclude[#exclude + 1] = Tags[i]
+            local exclude = {}
+            for i, v in ipairs(Checked[k]) do
+                if v == "cross" then
+                    exclude[#exclude + 1] = f.Tags[i]
+                end
             end
+            filter[#filter + 1] = {
+                include = include,
+                exclude = exclude
+            }
+            filter[f.Name] = filter[#filter]
+        elseif f.Type == "radio" then
+            filter[#filter + 1] = f.Tags[Checked[k]] or ""
+            filter[f.Name] = f.Tags[Checked[k]] or ""
         end
-        return {include = include, exclude = exclude}
-    elseif Tags_type == "radio" then
-        return Tags[Radio_tag] or ""
     end
+    return filter
 end
