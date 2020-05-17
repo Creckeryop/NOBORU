@@ -75,7 +75,7 @@ function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
                 else
                     Console.write(parser.Name .. " doesn't support getLatestManga function", COLOR_GRAY)
                 end
-            elseif mode == "Alphaber" then
+            elseif mode == "Alphabet" then
                 if parser.getAZManga then
                     parser:getAZManga(i, Table, tag_data)
                 else
