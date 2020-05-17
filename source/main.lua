@@ -15,6 +15,7 @@ end
 Graphics.termBlend()
 
 loadlib("browser")
+loadlib("catalogmodes")
 loadlib("changes")
 loadlib("conmessage")
 loadlib("selector")
@@ -221,7 +222,7 @@ local function update()
     end
     if AppMode == MENU then
         Menu.update()
-        if Details.getMode() == "END" then
+        if Details.getMode() == "END" and CatalogModes.getMode() == "END" then
             Panel.show()
         else
             Panel.hide()

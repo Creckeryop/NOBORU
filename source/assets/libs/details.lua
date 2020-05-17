@@ -12,7 +12,7 @@ local Manga = nil
 local fade = 0
 local old_fade = 1
 
-local point = Point_t(MANGA_WIDTH * 1.25 / 2 + 40, MANGA_HEIGHT * 1.5 / 2 + 80)
+local point = Point_t(MANGA_WIDTH * (1+1/9) / 2 + 40, MANGA_HEIGHT * ((1.5) * 360/405) / 2 + 80)
 
 local cross = Image:new(Graphics.loadImage("app0:assets/images/cross.png"))
 local dwnld = Image:new(Graphics.loadImage("app0:assets/images/download.png"))
@@ -321,7 +321,7 @@ function Details.draw()
         local Alpha = 255 * M
         local BACK_COLOR = ChangeAlpha(Themes[Settings.Theme].COLOR_DETAILS_BACK, Alpha)
         Graphics.fillRect(20, 260, 90, 544, BACK_COLOR)
-        local WHITE = Color.new(255, 255, 255, Alpha)
+        local WHITE = Color.new(255, 255, 255, Alpha)   
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
         local RED = Color.new(137, 30, 43, Alpha)
@@ -369,7 +369,7 @@ function Details.draw()
         if textures_16x16.Triangle and textures_16x16.Triangle.e then
             Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         end
-        DrawManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 4)
+        DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 9)
         Graphics.fillRect(260, 920, 90, 544, BACK_COLOR)
         local ListCount = #Chapters
         for n = start, math.min(ListCount, start + 8) do
@@ -386,18 +386,12 @@ function Details.draw()
                     Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
                 Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, BACK_COLOR)
-                if n > 1 then
-                    Graphics.drawLine(270, 920, y, y, WHITE)
-                end
-                if n < ListCount then
-                    Graphics.drawLine(270, 920, y + 79, y + 79, WHITE)
-                end
                 if i == Slider.ItemID then
                     Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24 * M))
                 end
                 if Manga.ParserID ~= "IMPORTED" then
                     if ChapterSaver.check(Chapters[i]) then
-                        Graphics.drawRotateImage(920 - 32, y + 37, cross.e, 0)
+                        Graphics.drawImage(920 - 32 - 20, y + 19, cross.e)
                     else
                         local t = ChapterSaver.is_downloading(Chapters[i])
                         if t then
@@ -408,7 +402,7 @@ function Details.draw()
                             local width = Font.getTextWidth(FONT20, text)
                             Font.print(FONT20, 920 - 32 - width / 2, y + 26, text, COLOR_WHITE)
                         else
-                            Graphics.drawRotateImage(920 - 32, y + 37, dwnld.e, 0)
+                            Graphics.drawImage(920 - 32 - 20, y + 19, dwnld.e)
                         end
                     end
                 end

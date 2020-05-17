@@ -151,8 +151,8 @@ function Threads.update()
                         end
                     end
                     Console.write(Width .. "x" .. Height .. " Image got")
-
-                    if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY and Height <= 4096 and Height/Width<=2 then
+                    
+                    if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY and Height <= 4096 and Height / Width <= 2 then
                         Console.error("No enough memory to load image")
                         uniques[Task.UniqueKey] = nil
                         Task = nil
@@ -164,7 +164,7 @@ function Threads.update()
                                     uniques[Task.UniqueKey] = nil
                                     Task = nil
                                 else
-                                        Task.Image = {
+                                    Task.Image = {
                                         Width = Width / 2,
                                         Height = Height / 2,
                                         RealWidth = Width,
@@ -402,7 +402,7 @@ local function taskete(UniqueKey, T, foo)
         newTask.Link = newTask.Link:match("^(.-)%s*$") or ""
         newTask.Link = newTask.Link:gsub("([^%%])%%([^%%])", "%1%%%%%2"):gsub(" ", "%%%%20"):gsub("([^%%])%%$", "%1%%%%"):gsub("^%%([^%%])", "%%%%%1")
     end
-    newTask.Proxy = Settings.UseProxy and (Settings.ProxyIP..":"..Settings.ProxyPort) or "";
+    newTask.Proxy = Settings.UseProxy and (Settings.ProxyIP .. ":" .. Settings.ProxyPort) or "";
     newTask.ProxyAuth = Settings.UseProxyAuth and Settings.ProxyAuth or "";
     foo(newTask)
     uniques[UniqueKey] = newTask

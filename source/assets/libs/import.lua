@@ -15,11 +15,7 @@ function Import.listDir()
         local list = listDirectory(path) or {}
         local new_list = {}
         for _, v in ipairs(list) do
-            if v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$") then
-                v.active = true
-            else
-                v.active = false
-            end
+            v.active = v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$")
             new_list[#new_list + 1] = v
         end
         if path ~= fullpath then

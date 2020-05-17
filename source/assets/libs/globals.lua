@@ -44,6 +44,17 @@ COLOR_SELECTED = COLOR_WHITE
 COLOR_ICON_EXTRACT = COLOR_WHITE
 COLOR_PANEL = COLOR_WHITE
 
+function COLOR_GRADIENT(colorA, colorB, a)
+    if a <= 0 then
+        return colorA
+    elseif a >= 1 then
+        return colorB
+    end
+    local r1, g1, b1 = Color.getR(colorA), Color.getG(colorA), Color.getB(colorA)
+    local r2, g2, b2 = Color.getR(colorB), Color.getG(colorB), Color.getB(colorB)
+    return Color.new(r1 + (r2 - r1) * a, g1 + (g2 - g1) * a, b1 + (b2 - b1) * a)
+end
+
 SCE_CTRL_RIGHTPAGE = SCE_CTRL_RTRIGGER
 SCE_CTRL_LEFTPAGE = SCE_CTRL_LTRIGGER
 
@@ -72,7 +83,7 @@ local createDirectory = System.createDirectory
 local deleteFile = System.deleteFile
 local doesFileExist = System.doesFileExist
 
-MANGA_WIDTH = 160
+MANGA_WIDTH = 180
 MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
 
 GlobalTimer = Timer.new()
@@ -222,8 +233,43 @@ local function drawMangaName(Manga)
     end
 end
 
-function DrawManga(x, y, Manga, M)
-    local Mflag = M ~= nil
+function DrawManga(x, y, Manga)
+    if Manga.Image and Manga.Image.e then
+        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(0, 0, 0))
+        local width, height = Manga.Image.Width, Manga.Image.Height
+        local draw = false
+        if width < height then
+            local scale = MANGA_WIDTH / width
+            local h = MANGA_HEIGHT / scale
+            local s_y = (height - h) / 2
+            if s_y >= 0 then
+                Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale, scale)
+                draw = true
+            end
+        end
+        if not draw then
+            local scale = MANGA_HEIGHT / height
+            local w = MANGA_WIDTH / scale
+            local s_x = (width - w) / 2
+            Graphics.drawImageExtended(x, y, Manga.Image.e, s_x, 0, w, height, 0, scale, scale)
+        end
+    else
+        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(101, 115, 146))
+    end
+    Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT/ 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH, 1)
+    if Manga.Name then
+        if not Manga.PrintName then
+            pcall(drawMangaName, Manga)
+        else
+            if Manga.PrintName.f then
+                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 47, Manga.PrintName.f, COLOR_WHITE)
+            end
+            Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 27, Manga.PrintName.s, COLOR_WHITE)
+        end
+    end
+end
+
+function DrawDetailsManga(x, y, Manga, M)
     M = M or 1
     if Manga.Image and Manga.Image.e then
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(0, 0, 0))
@@ -246,17 +292,5 @@ function DrawManga(x, y, Manga, M)
         end
     else
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(101, 115, 146))
-    end
-    local alpha = Mflag and 5 - M / 0.25 or M
-    Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH * M, 1, Color.new(255, 255, 255, 255 * alpha))
-    if Manga.Name then
-        if not Manga.PrintName then
-            pcall(drawMangaName, Manga)
-        else
-            if Manga.PrintName.f then
-                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT * M / 2 - 47, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))
-            end
-            Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT * M / 2 - 27, Manga.PrintName.s, Color.new(255, 255, 255, 255 * alpha))
-        end
     end
 end
