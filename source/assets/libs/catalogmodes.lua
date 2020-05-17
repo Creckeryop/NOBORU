@@ -11,6 +11,7 @@ local Modes_fade = {}
 
 local Filters = {}
 local Checked = {}
+local ItemsDraw = {}
 
 local now_mode = 1
 local TOUCH = TOUCH()
@@ -20,6 +21,27 @@ local control_timer = Timer.new()
 local time_space = 400
 StartSearch = false
 local searchData = ""
+
+local function updateItemsDraw()
+    ItemsDraw = {}
+    for k, f in ipairs(Filters) do
+        ItemsDraw[#ItemsDraw + 1] = {
+            data = f,
+            type = "filter"
+        }
+        if f.visible then
+            for i, v in ipairs(f.Tags) do
+                ItemsDraw[#ItemsDraw + 1] = {
+                    data = v,
+                    type = "tag",
+                    k = k,
+                    i = i,
+                    f = f
+                }
+            end
+        end
+    end
+end
 
 local function getFiltersHeight()
     local h = 0
@@ -93,18 +115,54 @@ function CatalogModes.load(parser)
         Filters = parser.Filters or {}
         Checked = {}
         for k, v in ipairs(Filters) do
+            v.visible = false
+            local default = v.Default
             if v.Type == "check" or v.Type == "checkcross" then
                 Checked[k] = {}
                 for i, _ in ipairs(v.Tags) do
                     Checked[k][i] = false
                 end
+                if default then
+                    if v.Type == "checkcross" then
+                        for i = 1, #default.include do
+                            for e, t in ipairs(v.Tags) do
+                                if t == default.include[i] then
+                                    Checked[k][e] = true
+                                end
+                            end
+                        end
+                        for i = 1, #default.exclude do
+                            for e, t in ipairs(v.Tags) do
+                                if t == default.exclude[i] then
+                                    Checked[k][e] = "cross"
+                                end
+                            end
+                        end
+                    elseif v.Type =="check" then
+                        for i = 1, #default do
+                            for e, t in ipairs(v.Tags) do
+                                if t == default[i] then
+                                    Checked[k][e] = true
+                                end
+                            end
+                        end
+                    end
+                end
             elseif v.Type == "radio" then
                 Checked[k] = 1
+                if default then
+                    for e, t in ipairs(v.Tags) do
+                        if t == default then
+                            Checked[k] = e
+                        end
+                    end
+                end
             end
         end
         now_mode = 1
         searchData = ""
         Slider.Y = -50
+        updateItemsDraw()
     end
 end
 
@@ -145,6 +203,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                                 id = id - 1
                                 if id == 0 then
                                     f.visible = not f.visible
+                                    updateItemsDraw()
                                     break
                                 end
                                 if f.visible then
@@ -200,6 +259,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                             id = id - 1
                             if id == 0 then
                                 f.visible = not f.visible
+                                updateItemsDraw()
                                 break
                             end
                             if f.visible then
@@ -311,53 +371,57 @@ function CatalogModes.draw()
         local M = old_fade * fade
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
         Graphics.fillRect(960 - M * 350, 960, 8 + 8 + 50 * #Modes, 544, Color.new(0, 0, 0))
-        local y = 8 + 50 * #Modes + 17 - Slider.Y
-        for k, f in ipairs(Filters) do
-            Font.print(FONT16, 960 - M * 350 + 52, y, f.Name, COLOR_WHITE)
-            if not f.visible then
-                Graphics.drawImage(960 - M * 350 + 14, y - 1, Show_icon.e)
-            else
-                Graphics.drawImage(960 - M * 350 + 14, y - 1, Hide_icon.e)
-            end
-            y = y + 50
-            if f.visible then
-                for i, v in ipairs(f.Tags) do
-                    if y - 1 > 544 then
-                        break
-                    end
-                    if y - 1 + 24 > 8 + 50 * #Modes + 8 then
-                        if f.Type == "check" then
-                            if Checked[k][i] then
-                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_checked_icon.e)
-                            else
-                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_icon.e)
-                            end
-                        elseif f.Type == "checkcross" then
-                            if Checked[k][i] then
-                                if Checked[k][i] == "cross" then
-                                    Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_crossed_icon.e, Color.new(255, 255, 255, 100))
-                                else
-                                    Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_checked_icon.e)
-                                end
-                            else
-                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_icon.e)
-                            end
-                        elseif f.Type == "radio" then
-                            if Checked[k] == i then
-                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Radio_checked_icon.e)
-                            else
-                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Radio_icon.e)
-                            end
-                        end
-                        if type(Checked[k]) == "table" and Checked[k][i] == "cross" then
-                            Font.print(FONT16, 960 - M * 350 + 52 + 20, y, v, Color.new(255, 255, 255, 100))
+        local start_i = math.floor((Slider.Y - (8 + 8 + 50 * #Modes)) / 50) + 1
+        local y = 8 + 50 * #Modes + 17 - Slider.Y + (math.max(1, start_i) - 1) * 50
+        for n = math.max(1, start_i), math.min(#ItemsDraw, start_i + 12) do
+            if ItemsDraw[n].type == "filter" then
+                local f = ItemsDraw[n].data
+                Font.print(FONT16, 960 - M * 350 + 52, y, f.Name, COLOR_WHITE)
+                if not f.visible then
+                    Graphics.drawImage(960 - M * 350 + 14, y - 1, Show_icon.e)
+                else
+                    Graphics.drawImage(960 - M * 350 + 14, y - 1, Hide_icon.e)
+                end
+            elseif ItemsDraw[n].type == "tag" then
+                local f = ItemsDraw[n].f
+                local k = ItemsDraw[n].k
+                local i = ItemsDraw[n].i
+                local v = ItemsDraw[n].data
+                if y - 1 > 544 then
+                    break
+                end
+                if y - 1 + 24 > 8 + 50 * #Modes + 8 then
+                    if f.Type == "check" then
+                        if Checked[k][i] then
+                            Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_checked_icon.e)
                         else
-                            Font.print(FONT16, 960 - M * 350 + 52 + 20, y, v, COLOR_WHITE)
+                            Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_icon.e)
+                        end
+                    elseif f.Type == "checkcross" then
+                        if Checked[k][i] then
+                            if Checked[k][i] == "cross" then
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_crossed_icon.e, Color.new(255, 255, 255, 100))
+                            else
+                                Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_checked_icon.e)
+                            end
+                        else
+                            Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Checkbox_icon.e)
+                        end
+                    elseif f.Type == "radio" then
+                        if Checked[k] == i then
+                            Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Radio_checked_icon.e)
+                        else
+                            Graphics.drawImage(960 - M * 350 + 14 + 20, y - 1, Radio_icon.e)
                         end
                     end
-                    y = y + 50
+                    if type(Checked[k]) == "table" and Checked[k][i] == "cross" then
+                        Font.print(FONT16, 960 - M * 350 + 52 + 20, y, v, Color.new(255, 255, 255, 100))
+                    else
+                        Font.print(FONT16, 960 - M * 350 + 52 + 20, y, v, COLOR_WHITE)
+                    end
                 end
             end
+            y = y + 50
         end
         Graphics.fillRect(960 - M * 350, 960, 0, 8 + 8 + 50 * #Modes, Color.new(0, 0, 0))
         for i, v in ipairs(Modes) do
