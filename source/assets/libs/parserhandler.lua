@@ -65,21 +65,27 @@ function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
         F = function()
             if mode == "Popular" then
                 if parser.getPopularManga then
-                    parser:getPopularManga(i, Table, tag_data)
+                    parser:getPopularManga(i, Table)
                 else
                     Console.write(parser.Name .. " doesn't support getPopularManga function", COLOR_GRAY)
                 end
             elseif mode == "Latest" then
                 if parser.getLatestManga then
-                    parser:getLatestManga(i, Table, tag_data)
+                    parser:getLatestManga(i, Table)
                 else
                     Console.write(parser.Name .. " doesn't support getLatestManga function", COLOR_GRAY)
                 end
             elseif mode == "Alphabet" then
                 if parser.getAZManga then
-                    parser:getAZManga(i, Table, tag_data)
+                    parser:getAZManga(i, Table)
                 else
                     Console.write(parser.Name .. " doesn't support getAZManga function", COLOR_GRAY)
+                end
+            elseif mode == "ByLetter" then
+                if parser.getLetterManga then
+                    parser:getLetterManga(i, Table, CatalogModes.getLetter())
+                else
+                    Console.write(parser.Name .. " doesn't support getLetterManga function", COLOR_GRAY)
                 end
             elseif mode == "Search" then
                 if parser.searchManga then

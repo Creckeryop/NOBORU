@@ -14,9 +14,8 @@ local old_fade = 1
 
 local point = Point_t(MANGA_WIDTH * (1+1/9) / 2 + 40, MANGA_HEIGHT * ((1.5) * 360/405) / 2 + 80)
 
-local cross = Image:new(Graphics.loadImage("app0:assets/images/cross.png"))
-local dwnld = Image:new(Graphics.loadImage("app0:assets/images/download.png"))
-local brger = Image:new(Graphics.loadImage("app0:assets/images/burger.png"))
+local cross = Image:new(Graphics.loadImage("app0:assets/icons/cross.png"))
+local brger = Image:new(Graphics.loadImage("app0:assets/icons/menu.png"))
 
 local ms = 0
 local dif = 0
@@ -391,7 +390,7 @@ function Details.draw()
                 end
                 if Manga.ParserID ~= "IMPORTED" then
                     if ChapterSaver.check(Chapters[i]) then
-                        Graphics.drawImage(920 - 32 - 20, y + 19, cross.e)
+                        Graphics.drawImage(920 - 32 - 14, y + 40 - 12, cross.e)
                     else
                         local t = ChapterSaver.is_downloading(Chapters[i])
                         if t then
@@ -402,7 +401,7 @@ function Details.draw()
                             local width = Font.getTextWidth(FONT20, text)
                             Font.print(FONT20, 920 - 32 - width / 2, y + 26, text, COLOR_WHITE)
                         else
-                            Graphics.drawImage(920 - 32 - 20, y + 19, dwnld.e)
+                            Graphics.drawImage(920 - 32 - 14, y + 40 - 12, Download_icon.e)
                         end
                     end
                 end
@@ -436,7 +435,7 @@ function Details.draw()
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
         Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
         if chapters_loaded then
-            Graphics.drawImage(870, 0, brger.e, Color.new(255, 255, 255, Alpha))
+            Graphics.drawImage(903, 33, brger.e, Color.new(255, 255, 255, Alpha))
             if textures_16x16.Start and textures_16x16.Start.e then
                 Graphics.drawImage(883, 5 - (1 - M) * 32, textures_16x16.Start.e)
             end

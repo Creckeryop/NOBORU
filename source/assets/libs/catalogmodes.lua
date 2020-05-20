@@ -8,10 +8,16 @@ local animation_timer = Timer.new()
 
 local Modes = {}
 local Modes_fade = {}
+local Name = ""
 
 local Filters = {}
 local Checked = {}
 local ItemsDraw = {}
+local Letters = {}
+local Letter = 1
+local FinalLetter = 1
+
+local FinalTagsData = {}
 
 local now_mode = 1
 local TOUCH = TOUCH()
@@ -21,6 +27,44 @@ local control_timer = Timer.new()
 local time_space = 400
 StartSearch = false
 local searchData = ""
+
+local function setFinalTags()
+    local filter = {}
+    for k, f in ipairs(Filters) do
+        if f.Type == "check" then
+            local list = {}
+            for i, v in ipairs(Checked[k]) do
+                if v then
+                    list[#list + 1] = f.Tags[i]
+                end
+            end
+            filter[#filter + 1] = list
+            filter[f.Name] = list
+        elseif f.Type == "checkcross" then
+            local include = {}
+            for i, v in ipairs(Checked[k]) do
+                if v == true then
+                    include[#include + 1] = f.Tags[i]
+                end
+            end
+            local exclude = {}
+            for i, v in ipairs(Checked[k]) do
+                if v == "cross" then
+                    exclude[#exclude + 1] = f.Tags[i]
+                end
+            end
+            filter[#filter + 1] = {
+                include = include,
+                exclude = exclude
+            }
+            filter[f.Name] = filter[#filter]
+        elseif f.Type == "radio" then
+            filter[#filter + 1] = f.Tags[Checked[k]] or ""
+            filter[f.Name] = f.Tags[Checked[k]] or ""
+        end
+    end
+    FinalTagsData = filter
+end
 
 local function updateItemsDraw()
     ItemsDraw = {}
@@ -75,8 +119,8 @@ local function scrollUpdate()
     if Slider.Y < 0 then
         Slider.Y = 0
         Slider.V = 0
-    elseif Slider.Y > (getFiltersHeight() - 544 + 8 + #Modes * 50 + 8 + 6) then
-        Slider.Y = math.max(0, getFiltersHeight() - 544 + 8 + #Modes * 50 + 8 + 6)
+    elseif Slider.Y > (getFiltersHeight() - 544 + 40 + #Modes * 50 + 8 + 6) then
+        Slider.Y = math.max(0, getFiltersHeight() - 544 + 40 + #Modes * 50 + 8 + 6)
     end
 end
 
@@ -96,6 +140,9 @@ end
 function CatalogModes.load(parser)
     if parser and parser.ID and parser.ID ~= "IMPORTED" then
         Modes = {}
+        Name = parser.Name
+        FinalLetter = 1
+        FinalTagsData = {}
         if parser.getPopularManga then
             Modes[#Modes + 1] = "Popular"
         end
@@ -104,6 +151,11 @@ function CatalogModes.load(parser)
         end
         if parser.getAZManga then
             Modes[#Modes + 1] = "Alphabet"
+        end
+        if parser.getLetterManga and type(parser.Letters) == "table" then
+            Modes[#Modes + 1] = "ByLetter"
+            Letters = parser.Letters
+            Letter = 1
         end
         if parser.searchManga then
             Modes[#Modes + 1] = "Search"
@@ -138,7 +190,7 @@ function CatalogModes.load(parser)
                                 end
                             end
                         end
-                    elseif v.Type =="check" then
+                    elseif v.Type == "check" then
                         for i = 1, #default do
                             for e, t in ipairs(v.Tags) do
                                 if t == default[i] then
@@ -174,12 +226,14 @@ function CatalogModes.show()
 end
 
 local function setMode(id)
-    if now_mode ~= id or Modes[id] == "Search" then
+    if now_mode ~= id or Modes[id] == "Search" or Modes[id] == "ByLetter" then
         if Modes[id] == "Search" then
             Keyboard.show(Language[Settings.Language].APP.SEARCH, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
+            setFinalTags()
             StartSearch = true
         else
             now_mode = id
+            FinalLetter = Letter
             mode = "WAIT"
             Timer.reset(animation_timer)
             old_fade = fade
@@ -196,8 +250,8 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
         elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
             if TOUCH.MODE == TOUCH.READ and oldtouch.x then
                 if oldtouch.x > 960 - 350 * fade * old_fade then
-                    if oldtouch.y > 8 + 8 + 50 * #Modes then
-                        local id = math.floor((Slider.Y + oldtouch.y - (8 + 8 + 50 * #Modes)) / 50) + 1
+                    if oldtouch.y > 40 + 8 + 50 * #Modes then
+                        local id = math.floor((Slider.Y + oldtouch.y - (40 + 8 + 50 * #Modes)) / 50) + 1
                         if id > 0 then
                             for i, f in ipairs(Filters) do
                                 id = id - 1
@@ -229,7 +283,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                             end
                         end
                     else
-                        local id = math.floor((oldtouch.y - 8) / 50) + 1
+                        local id = math.floor((oldtouch.y - 40) / 50) + 1
                         if id > 0 and id <= #Modes then
                             setMode(id)
                         end
@@ -290,8 +344,8 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
         if touch.x then
             SelectedId = 0
             time_space = 400
-        elseif Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP)) then
-            if Controls.check(pad, SCE_CTRL_DOWN + SCE_CTRL_UP) then
+        elseif Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or (Modes[SelectedId] == "ByLetter" and (Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)))) then
+            if Controls.check(pad, SCE_CTRL_DOWN + SCE_CTRL_UP + SCE_CTRL_LEFT + SCE_CTRL_RIGHT) then
                 if Controls.check(pad, SCE_CTRL_UP) then
                     if SelectedId == 0 then
                         SelectedId = 1
@@ -303,6 +357,16 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                         SelectedId = 1
                     elseif SelectedId < #Modes + countFilterElements() then
                         SelectedId = SelectedId + 1
+                    end
+                elseif Controls.check(pad, SCE_CTRL_RIGHT) and Modes[SelectedId] == "ByLetter" then
+                    Letter = Letter + 1
+                    if Letter > #Letters then
+                        Letter = 1
+                    end
+                elseif Controls.check(pad, SCE_CTRL_LEFT) and Modes[SelectedId] == "ByLetter" then
+                    Letter = Letter - 1
+                    if Letter < 1 then
+                        Letter = #Letters
                     end
                 end
                 if time_space > 50 then
@@ -370,9 +434,9 @@ function CatalogModes.draw()
     if mode ~= "END" then
         local M = old_fade * fade
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
-        Graphics.fillRect(960 - M * 350, 960, 8 + 8 + 50 * #Modes, 544, Color.new(0, 0, 0))
-        local start_i = math.floor((Slider.Y - (8 + 8 + 50 * #Modes)) / 50) + 1
-        local y = 8 + 50 * #Modes + 17 - Slider.Y + (math.max(1, start_i) - 1) * 50
+        Graphics.fillRect(960 - M * 350, 960, 40 + 8 + 50 * #Modes, 544, Color.new(0, 0, 0))
+        local start_i = math.floor((Slider.Y - (40 + 8 + 50 * #Modes)) / 50) + 1
+        local y = 40 + 50 * #Modes + 17 - Slider.Y + (math.max(1, start_i) - 1) * 50
         for n = math.max(1, start_i), math.min(#ItemsDraw, start_i + 12) do
             if ItemsDraw[n].type == "filter" then
                 local f = ItemsDraw[n].data
@@ -423,24 +487,29 @@ function CatalogModes.draw()
             end
             y = y + 50
         end
-        Graphics.fillRect(960 - M * 350, 960, 0, 8 + 8 + 50 * #Modes, Color.new(0, 0, 0))
+        Graphics.fillRect(960 - M * 350, 960, 0, 40 + 8 + 50 * #Modes, Color.new(0, 0, 0))
         for i, v in ipairs(Modes) do
             if v == "Popular" then
-                Graphics.drawImage(960 - M * 350 + 14, 25 + (i - 1) * 50 - 1, Hot_icon.e, COLOR_GRADIENT(COLOR_WHITE, COLOR_ROYAL_BLUE, Modes_fade[v]))
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Hot_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 106, 0), Modes_fade[v]))
             elseif v == "Latest" then
-                Graphics.drawImage(960 - M * 350 + 14, 25 + (i - 1) * 50 - 1, History_icon.e, COLOR_GRADIENT(COLOR_WHITE, COLOR_ROYAL_BLUE, Modes_fade[v]))
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, History_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(0, 127, 14), Modes_fade[v]))
             elseif v == "Search" then
-                Graphics.drawImage(960 - M * 350 + 14, 25 + (i - 1) * 50 - 1, Search_icon.e, COLOR_GRADIENT(COLOR_WHITE, COLOR_ROYAL_BLUE, Modes_fade[v]))
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Search_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 74, 58), Modes_fade[v]))
+            elseif v == "ByLetter" then
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, A_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 216, 0), Modes_fade[v]))
             elseif v == "Alphabet" then
-                Graphics.drawImage(960 - M * 350 + 14, 25 + (i - 1) * 50 - 1, Az_icon.e, COLOR_GRADIENT(COLOR_WHITE, COLOR_ROYAL_BLUE, Modes_fade[v]))
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Az_icon.e, COLOR_GRADIENT(COLOR_GRAY, COLOR_ROYAL_BLUE, Modes_fade[v]))
             end
             local text = Modes[i]
             if Modes[i] == "Search" and searchData:gsub("%s", "") ~= "" then
                 text = text .. " : " .. searchData
             end
-            Font.print(FONT16, 960 - M * 350 + 52, 25 + (i - 1) * 50, text, COLOR_GRADIENT(COLOR_WHITE, COLOR_ROYAL_BLUE, Modes_fade[v]))
+            if Modes[i] == "ByLetter" then
+                text = text .. " < " .. Letters[Letter] .. " >"
+            end
+            Font.print(FONT16, 960 - M * 350 + 52, 17 + 40 + (i - 1) * 50, text, COLOR_GRADIENT(COLOR_GRAY, COLOR_WHITE, Modes_fade[v]))
             if i == SelectedId then
-                local y = 10 + (i - 1) * 50
+                local y = 42 + (i - 1) * 50
                 local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
                 local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
                 for n = ks, ks + 1 do
@@ -450,7 +519,7 @@ function CatalogModes.draw()
             end
         end
         if SelectedId > #Modes then
-            local y = 8 + 50 * #Modes - Slider.Y + 50 * (SelectedId - #Modes - 1) + 2
+            local y = 40 + 50 * #Modes - Slider.Y + 50 * (SelectedId - #Modes - 1) + 2
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for n = ks, ks + 1 do
@@ -458,11 +527,12 @@ function CatalogModes.draw()
                 Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, SELECTED_RED)
             end
         end
-        Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 8 + 8 + 50 * #Modes, 544, COLOR_BLACK)
+        Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 40 + 8 + 50 * #Modes, 544, COLOR_BLACK)
         if countFilterElements() > 7 then
-            local h = getFiltersHeight() / (544 - 8 - 8 - 50 * #Modes)
-            Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 8 + 8 + 50 * #Modes + (Slider.Y) / h, 8 + 8 + 50 * #Modes + (Slider.Y + (544 - 8 - 8 - 50 * #Modes)) / h, COLOR_WHITE)
+            local h = getFiltersHeight() / (544 - 40 - 8 - 50 * #Modes)
+            Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 40 + 8 + 50 * #Modes + (Slider.Y) / h, 8 + 8 + 50 * #Modes + (Slider.Y + (544 - 8 - 8 - 50 * #Modes)) / h, COLOR_WHITE)
         end
+        Font.print(BONT30, 960 - M * 350 + (350 / 2 - Font.getTextWidth(BONT30, Name) / 2), 4, Name, COLOR_WHITE)
     end
 end
 
@@ -483,39 +553,9 @@ function CatalogModes.getSearchData()
 end
 
 function CatalogModes.getTagsData()
-    local filter = {}
-    for k, f in ipairs(Filters) do
-        if f.Type == "check" then
-            local list = {}
-            for i, v in ipairs(Checked[k]) do
-                if v then
-                    list[#list + 1] = f.Tags[i]
-                end
-            end
-            filter[#filter + 1] = list
-            filter[f.Name] = list
-        elseif f.Type == "checkcross" then
-            local include = {}
-            for i, v in ipairs(Checked[k]) do
-                if v == true then
-                    include[#include + 1] = f.Tags[i]
-                end
-            end
-            local exclude = {}
-            for i, v in ipairs(Checked[k]) do
-                if v == "cross" then
-                    exclude[#exclude + 1] = f.Tags[i]
-                end
-            end
-            filter[#filter + 1] = {
-                include = include,
-                exclude = exclude
-            }
-            filter[f.Name] = filter[#filter]
-        elseif f.Type == "radio" then
-            filter[#filter + 1] = f.Tags[Checked[k]] or ""
-            filter[f.Name] = f.Tags[Checked[k]] or ""
-        end
-    end
-    return filter
+    return FinalTagsData
+end
+
+function CatalogModes.getLetter()
+    return Letters[FinalLetter] or ""
 end

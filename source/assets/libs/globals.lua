@@ -1,9 +1,17 @@
-Point_t = function(x, y)
-    return {
-        x = x or 0,
-        y = y or 0
-    }
-end
+local ffi = require("ffi")
+ffi.cdef [[
+    typedef struct Point {
+        int x, y;
+    } Point_t;
+    typedef struct Slider {
+        float Y;
+        float V;
+        float TouchY;
+        int ItemID;
+    } Slider;
+]]
+
+Point_t = ffi.typeof("Point_t")
 
 TOUCH = function()
     return {
@@ -14,14 +22,7 @@ TOUCH = function()
     }
 end
 
-Slider = function()
-    return {
-        Y = 0,
-        V = 0,
-        TouchY = 0,
-        ItemID = 0
-    }
-end
+Slider = ffi.typeof("Slider")
 
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
 LUA_GRADIENTH = Image:new(Graphics.loadImage("app0:assets/images/gradientH.png"))
@@ -256,7 +257,7 @@ function DrawManga(x, y, Manga)
     else
         Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(101, 115, 146))
     end
-    Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT/ 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH, 1)
+    Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH, 1)
     if Manga.Name then
         if not Manga.PrintName then
             pcall(drawMangaName, Manga)
