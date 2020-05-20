@@ -12,10 +12,10 @@ local Manga = nil
 local fade = 0
 local old_fade = 1
 
-local point = Point_t(MANGA_WIDTH * (1+1/9) / 2 + 40, MANGA_HEIGHT * ((1.5) * 360/405) / 2 + 80)
+local point = Point_t(MANGA_WIDTH * (1 + 1 / 9) / 2 + 40, MANGA_HEIGHT * ((1.5) * 360 / 405) / 2 + 80)
 
 local cross = Image:new(Graphics.loadImage("app0:assets/icons/cross.png"))
-local brger = Image:new(Graphics.loadImage("app0:assets/icons/menu.png"))
+local menu_icon = Image:new(Graphics.loadImage("app0:assets/icons/menu.png"))
 
 local ms = 0
 local dif = 0
@@ -318,12 +318,13 @@ function Details.draw()
     if mode ~= "END" then
         local M = old_fade * fade
         local Alpha = 255 * M
-        local BACK_COLOR = ChangeAlpha(Themes[Settings.Theme].COLOR_DETAILS_BACK, Alpha)
-        Graphics.fillRect(20, 260, 90, 544, BACK_COLOR)
-        local WHITE = Color.new(255, 255, 255, Alpha)   
+        local BLACK = Color.new(0, 0, 0, Alpha)
+        local WHITE = Color.new(255, 255, 255, Alpha)
         local GRAY = Color.new(128, 128, 128, Alpha)
         local BLUE = Color.new(42, 47, 78, Alpha)
         local RED = Color.new(137, 30, 43, Alpha)
+        local CONTINUE_COLOR = Color.new(19, 76, 76, Alpha)
+        Graphics.fillRect(20, 260, 90, 544, BLACK)
         local start = math.max(1, math.floor(Slider.Y / 80) + 1)
         local shift = (1 - M) * 544
         local y = shift - Slider.Y + start * 80
@@ -336,7 +337,7 @@ function Details.draw()
         Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, WHITE)
         if ContinueChapter then
             if #Chapters > 0 then
-                Graphics.fillRect(30, 250, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+                Graphics.fillRect(30, 250, shift + 480, shift + 539, CONTINUE_COLOR)
                 local continue_txt = Language[Settings.Language].DETAILS.START
                 local ch_name
                 local dy = 0
@@ -353,23 +354,17 @@ function Details.draw()
                     local t = math.min(math.max(0, Timer.getTime(chapter_timer) - 1500), ms_ch)
                     Font.print(FONT16, 140 - width / 2 - dif_ch * t / ms_ch, shift + 505 - height / 2 + 18, ch_name, WHITE)
                 end
-                Graphics.fillRect(20, 30, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
-                Graphics.fillRect(250, 260, shift + 480, shift + 539, Color.new(19, 76, 76, Alpha))
+                Graphics.fillRect(20, 30, shift + 480, shift + 539, CONTINUE_COLOR)
+                Graphics.fillRect(250, 260, shift + 480, shift + 539, CONTINUE_COLOR)
             end
         end
-        Graphics.fillRect(0, 20, 90, 544, BACK_COLOR)
-        if ContinueChapter then
-            if #Chapters > 0 then
-                if textures_16x16.Select and textures_16x16.Select.e then
-                    Graphics.drawImage(0, shift + 472, textures_16x16.Select.e)
-                end
-            end
+        Graphics.fillRect(0, 20, 90, 544, BLACK)
+        if ContinueChapter and #Chapters > 0 then
+            Graphics.drawImage(0, shift + 472, textures_16x16.Select.e)
         end
-        if textures_16x16.Triangle and textures_16x16.Triangle.e then
-            Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
-        end
+        Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 9)
-        Graphics.fillRect(260, 920, 90, 544, BACK_COLOR)
+        Graphics.fillRect(260, 920, 90, 544, BLACK)
         local ListCount = #Chapters
         for n = start, math.min(ListCount, start + 8) do
             local i = n
@@ -384,7 +379,7 @@ function Details.draw()
                 else
                     Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), WHITE)
                 end
-                Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, BACK_COLOR)
+                Graphics.drawScaleImage(850, y, LUA_GRADIENTH.e, 1, 79, BLACK)
                 if i == Slider.ItemID then
                     Graphics.fillRect(270, 920, y, y + 79, Color.new(255, 255, 255, 24 * M))
                 end
@@ -411,7 +406,7 @@ function Details.draw()
             y = y + 80
         end
         
-        Graphics.fillRect(920, 960, 90, 544, BACK_COLOR)
+        Graphics.fillRect(920, 960, 90, 544, BLACK)
         if mode == "START" and #Chapters == 0 and not ParserManager.check(Chapters) and not is_notification_showed then
             is_notification_showed = true
             Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
@@ -429,21 +424,19 @@ function Details.draw()
                 Graphics.drawImage(899 - ks, y + 5 + ks, textures_16x16.Square.e)
             end
         end
-        Graphics.fillRect(0, 870, 0, 90, BACK_COLOR)
+        Graphics.fillRect(0, 870, 0, 90, BLACK)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
         Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, WHITE)
         Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, GRAY)
-        Graphics.fillRect(870, 960, 0, 90, BACK_COLOR)
+        Graphics.fillRect(870, 960, 0, 90, BLACK)
         if chapters_loaded then
-            Graphics.drawImage(903, 33, brger.e, Color.new(255, 255, 255, Alpha))
-            if textures_16x16.Start and textures_16x16.Start.e then
-                Graphics.drawImage(883, 5 - (1 - M) * 32, textures_16x16.Start.e)
-            end
+            Graphics.drawImage(903, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
+            Graphics.drawImage(883, 5 - (1 - M) * 32, textures_16x16.Start.e)
         end
+        Graphics.fillRect(955, 960, 90, 544, BLACK)
         if mode == "START" and #Chapters > 5 then
             local h = #Chapters * 80 / 454
-            Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
-            Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
+            Graphics.fillRect(955, 960, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
         end
     end
 end
