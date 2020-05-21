@@ -1165,6 +1165,172 @@ Language = {
             CANCEL = "Annuler",
             DELETE = "Supprimer"
         }
+    },
+	PortugueseBR = {
+        APP = {
+            LIBRARY = "BIBLIOTECA",
+            CATALOGS = "CATÁLOGOS",
+            SETTINGS = "CONFIGURAÇÕES",
+            DOWNLOAD = "DOWNLOADS",
+            IMPORT = "IMPORTAR",
+            HISTORY = "HISTÓRICO",
+            SEARCH = "Pesquisa"
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "Conexão foi perdida\n\nEsperando por conexão...\n\n(Minimize a aplicação, vá para as configurações do Wi-Fi e pressione Conectar)\n\nAperte X para cancelar todos os downloads e fechar a mensagem\n\nTodos os downloads vão continuar se a conexão for restaurada",
+            PRESS_TO_UPDATE = "Aperte X para atualizar\nAperte O para cancelar"
+        },
+        SETTINGS = {
+            Language = "Idioma",
+            ClearChapters = "Limpar capítulos salvos",
+            ShowNSFW = "Mostrar sites NSFW",
+            ClearLibrary = "Limpar biblioteca",
+            ClearCache = "Limpar cache de mangas não seguidos",
+            ClearAllCache = "Limpar todo cache",
+            ReaderOrientation = "Orientação padrão do leitor",
+            DoubleTapReader = "Habilitar toque duplo para zoom",
+            ZoomReader = "Escala do leitor",
+            SwapXO = "Mudar tipo de tecla",
+            ShowAuthor = "Desenvolvedor",
+            ShowVersion = "Versão do programa",
+            CheckUpdate = "Verificar por atualizações",
+            SkipFontLoading = "Pular carregamento de fontes",
+            LatestVersion = "Última versão:",
+            PleaseWait = "Por favor aguarde",
+            FailedToUpdate = "Falha ao atualizar o aplicativo",
+            NoConnection = "Sem conexão",
+            HideInOffline = "Mostrar apenas capítulos baixados no modo offline",
+            UnzipingVPK = "Extraindo vpk para instalar",
+            CurrentVersionIs = "Versão atual:",
+            Space = "Memória usada",
+            ReaderDirection = "Direção de leitura do manga",
+            VersionIsUpToDate = "Sua versão está atualizada",
+            EU = "Europa",
+            JP = "Japão",
+            PressAgainToAccept = "Pressione novamente para aceitar",
+            PressAgainToUpdate = "Pressione novamente para atualizar:",
+            Reader = "Leitor",
+            Controls = "Configuração de controle",
+            Data = "Configurações de dados",
+            About = "Sobre o programa",
+            Catalogs = "Catálogos",
+            Library = "Biblioteca",
+            ChangeUI = "Tema",
+            PreferredCatalogLanguage = "Idioma preferido",
+            LibrarySorting = "Ordenação da biblioteca",
+            ChapterSorting = "Ordenação dos capítulos",
+            RefreshLibAtStart = "Atualizar biblioteca ao iniciar",
+            Translators = "Agradecimentos aos tradutores",
+            ChangingPageButtons = "Botões para mudar página",
+            LeftStickDeadZone = "Zona morta do analógico esquerdo",
+            LeftStickSensitivity = "Sensibilidade do analógico esquerdo",
+            RightStickDeadZone = "Zona morta do analógico direito",
+            RightStickSensitivity = "Sensibilidade do analógico direito",
+            ResetAllSettings = "Resetar todas as configurações",
+            Other = "Outros",
+            SilentDownloads = "Não exibir notificações de downloads",
+            Network = "Rede",
+            UseProxy = "Usar proxy",
+            ProxyIP = "Endereço IP",
+            ProxyPort = "Porta",
+            UseProxyAuth = "Usar autenticação de proxy",
+            ProxyAuth = "usuário:senha",
+            SkipCacheChapterChecking = "Pular verificação de cache e capítulo na tela de carregamento"
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "Botões L e R",
+            ["DPAD"] = "Usando DPad"
+        },
+        EXTRA = {
+            ["DownloadAll"] = "Baixar todos os capítulos",
+            ["RemoveAll"] = "Remover todos os capítulos",
+            ["CancelAll"] = "Cancelar download de capítulos",
+            ["ClearBookmarks"] = "Limpar marcadores de página"
+        },
+        THEME = {
+            Dark = "Escuro",
+            Light = "Claro",
+            Blue = "Azul",
+            Crimson = "Carmesin"
+        },
+        NSFW = {
+            [true] = "Exibir",
+            [false] = "Não exibir"
+        },
+        YORN = {
+            [true] = "Sim",
+            [false] = "Não"
+        },
+        PARSERS = {
+            RUS = "Russo",
+            ENG = "Inglês",
+            ESP = "Espanhol",
+            PRT = "Português",
+            FRA = "Francês",
+            JAP = "Japonês",
+            DIF = "Diferente",
+            TUR = "Turco",
+            ITA = "Italiano",
+            VIE = "Vietnamita",
+            DEU = "Alemão",
+            BRA = "Português-Brasil",
+            POL = "Polonês"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "Sem capítulos"
+        },
+        READER = {
+            PREPARING_PAGES = "Preparando páginas",
+            LOADING_PAGE = "Carregando página",
+            LOADING_SEGMENT = "Carregando segmento",
+            Horizontal = "Horizontal",
+            Vertical = "Vertical",
+            Smart = "Inteligente",
+            Height = "Altura",
+            Width = "Largura",
+            LEFT = "Direita para a esquerda",
+            RIGHT = "Esquerda para a direita",
+            DOWN = "Cima para baixo"
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "Adicionar a biblioteca",
+            REMOVE_FROM_LIBRARY = "Remover da biblioteca",
+            PAGE = "Página : ",
+            CONTINUE = "Continuar",
+            START = "Começar leitura"
+        },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "Adicionado a biblioteca",
+            REMOVED_FROM_LIBRARY = "Removido da biblioteca",
+            SEARCHING = 'Pesquisando "%s"',
+            START_DOWNLOAD = "%s: %s\ndownload iniciado!",
+            END_DOWNLOAD = "%s: %s\ndownload completado!",
+            CANCEL_DOWNLOAD = "%s: %s\ndownload foi cancelado!",
+            CHAPTER_REMOVE = "%s deletado!",
+            NET_PROBLEM = "Existem problemas com a conexão!",
+            CHAPTERS_CLEARED = "Todos os capítulos salvos foram apagados!",
+            LIBRARY_CLEARED = "Biblioteca foi apagada!",
+            CACHE_CLEARED = "Cache foi limpo!",
+            DEVELOPER_THING = "Dar uma estrela ao programa no Github!",
+            NEW_UPDATE_AVAILABLE = "Nova atualização disponível",
+            NO_SPACE_LEFT = "Sem espaço",
+            REFRESH_COMPLETED = "Atualização completada!",
+            SETTINGS_RESET = "Configurações foram resetadas"
+        },
+        PANEL = {
+            BACK = "Voltar",
+            MODE_POPULAR = "Modo: Popular",
+            MODE_LATEST = "Modo: Últimos",
+            MODE_SEARCHING = 'Modo: Pesquisando "%s"',
+            SEARCH = "Pesquisar",
+            SELECT = "Selecionar",
+            CHOOSE = "Escolher",
+            IMPORT = "Importar",
+            CHANGE_SECTION = "Mudar seção",
+            UPDATE = "Atualizar",
+            CANCEL = "Cancelar",
+            DELETE = "Deletar"
+        }
     }
 }
 
@@ -1177,6 +1343,7 @@ LanguageNames = {
         Vietnamese = "Вьетнамский",
         French = "Французский",
         Italian = "Итальянский",
+		PortugueseBR = "бразильский португальский",
         Default = "Системный"
     },
     English = {
@@ -1187,6 +1354,7 @@ LanguageNames = {
         Vietnamese = "Vietnamese",
         French = "French",
         Italian = "Italian",
+		PortugueseBR = "Brazilian portuguese",
         Default = "System"
     },
 	Turkish = {
@@ -1197,6 +1365,7 @@ LanguageNames = {
         Vietnamese = "Vietnam Dili",
         French = "Fransızca",
         Italian = "İtalyanca",
+		PortugueseBR = "Brezilya Portekizcesi",
         Default = "Sistem Dili"
     },
     Spanish = {
@@ -1207,6 +1376,7 @@ LanguageNames = {
         Vietnamese = "Vietnamita",
         French = "Francés",
         Italian = "Italiano",
+		PortugueseBR = "Portugués Brasileño",
         Default = "Sistema"
     },
     Vietnamese = {
@@ -1217,6 +1387,7 @@ LanguageNames = {
         Italian = "Italia",
         French = "PhápF",
         Vietnamese = "Tiếng Việt",
+		PortugueseBR = "Tiếng Bồ Đào Nha của người brazi",
         Default = "Hệ thống"
     },
     Italian = {
@@ -1227,6 +1398,7 @@ LanguageNames = {
         Italian = "Italiano",
         French = "Francese",
         Vietnamese = "Vietnamese",
+		PortugueseBR = "Portoghese Brasiliano",
         Default = "Sistema"
     },
     French = {
@@ -1237,7 +1409,19 @@ LanguageNames = {
         Italian = "Italien",
         French = "Français",
         Vietnamese = "Vietnamien",
+		PortugueseBR = "Portugais brésilien",
         Default = "Système"
+    },
+	PortugueseBR = {
+        Russian = "Russo",
+        English = "Inglês",
+		Turkish = "Turco",
+        Spanish = "Espanhol",
+        Italian = "Italiano",
+        French = "Francês",
+        Vietnamese = "Vietnamita",
+		PortugueseBR = "Português Brasileiro",
+        Default = "Sistema"
     }
 }
 
