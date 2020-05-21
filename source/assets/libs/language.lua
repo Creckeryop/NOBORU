@@ -1441,6 +1441,9 @@ elseif language_now == 5 then
 elseif language_now == 2 then
     Language.Default = Language.French
     LanguageNames.Default = LanguageNames.French
+elseif language_now == 17 then
+    Language.Default = Language.PortugueseBR
+    LanguageNames.Default = LanguageNames.PortugueseBR
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
