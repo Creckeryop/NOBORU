@@ -1166,7 +1166,7 @@ Language = {
             DELETE = "Supprimer"
         }
     },
-	PortugueseBR = {
+    PortugueseBR = {
         APP = {
             LIBRARY = "BIBLIOTECA",
             CATALOGS = "CATÁLOGOS",
@@ -1338,89 +1338,89 @@ LanguageNames = {
     Russian = {
         Russian = "Русский",
         English = "Английский",
-		Turkish = "Турецкий",
+        Turkish = "Турецкий",
         Spanish = "Испанский",
         Vietnamese = "Вьетнамский",
         French = "Французский",
         Italian = "Итальянский",
-		PortugueseBR = "бразильский португальский",
+        PortugueseBR = "бразильский португальский",
         Default = "Системный"
     },
     English = {
         Russian = "Russian",
         English = "English",
-		Turkish = "Turkish",
+        Turkish = "Turkish",
         Spanish = "Spanish",
         Vietnamese = "Vietnamese",
         French = "French",
         Italian = "Italian",
-		PortugueseBR = "Brazilian portuguese",
+        PortugueseBR = "Brazilian portuguese",
         Default = "System"
     },
-	Turkish = {
+    Turkish = {
         Russian = "Rusça",
         English = "İngilizce",
-		Turkish = "Türkçe",
+        Turkish = "Türkçe",
         Spanish = "İspanyolca",
         Vietnamese = "Vietnam Dili",
         French = "Fransızca",
         Italian = "İtalyanca",
-		PortugueseBR = "Brezilya Portekizcesi",
+        PortugueseBR = "Brezilya Portekizcesi",
         Default = "Sistem Dili"
     },
     Spanish = {
         Russian = "Ruso",
         English = "Ingles",
-		Turkish = "Turco",
+        Turkish = "Turco",
         Spanish = "Español",
         Vietnamese = "Vietnamita",
         French = "Francés",
         Italian = "Italiano",
-		PortugueseBR = "Portugués Brasileño",
+        PortugueseBR = "Portugués Brasileño",
         Default = "Sistema"
     },
     Vietnamese = {
         Russian = "Tiếng Nga",
         English = "Tiếng Anh",
-		Turkish = "Thổ Nhĩ Kỳ",
+        Turkish = "Thổ Nhĩ Kỳ",
         Spanish = "Tiếng Tây Ban Nha",
         Italian = "Italia",
         French = "PhápF",
         Vietnamese = "Tiếng Việt",
-		PortugueseBR = "Tiếng Bồ Đào Nha của người brazi",
+        PortugueseBR = "Tiếng Bồ Đào Nha của người brazi",
         Default = "Hệ thống"
     },
     Italian = {
         Russian = "Russo",
         English = "Inglese",
-		Turkish = "Turco",
+        Turkish = "Turco",
         Spanish = "Spagnolo",
         Italian = "Italiano",
         French = "Francese",
         Vietnamese = "Vietnamese",
-		PortugueseBR = "Portoghese Brasiliano",
+        PortugueseBR = "Portoghese Brasiliano",
         Default = "Sistema"
     },
     French = {
         Russian = "Russe",
         English = "Anglais",
-		Turkish = "Turque",
+        Turkish = "Turque",
         Spanish = "Espagnol",
         Italian = "Italien",
         French = "Français",
         Vietnamese = "Vietnamien",
-		PortugueseBR = "Portugais brésilien",
+        PortugueseBR = "Portugais brésilien",
         Default = "Système"
     },
-	PortugueseBR = {
+    PortugueseBR = {
         Russian = "Russo",
         English = "Inglês",
-		Turkish = "Turco",
+        Turkish = "Turco",
         Spanish = "Espanhol",
         Italian = "Italiano",
         French = "Francês",
         Vietnamese = "Vietnamita",
-		PortugueseBR = "Português Brasileiro",
+        PortugueseBR = "Português Brasileiro",
         Default = "Sistema"
     }
 }
