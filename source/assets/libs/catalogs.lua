@@ -198,6 +198,12 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
         if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
             ParserManager.updateParserList(Parsers)
         end
+        if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+            local item = Parsers[ParserSelector:getSelected()]
+            if item then
+                Settings.toggleFavouriteParser(item)
+            end
+        end
     elseif mode == "HISTORY" then
         if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local item = Results[MangaSelector:getSelected()]
@@ -317,6 +323,58 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
     end
 end
 
+Panels = {}
+
+function GenPanels()
+    Panels["MANGA"] = {
+        "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        Square = Language[Settings.Language].PANEL.MODE,
+        Circle = Language[Settings.Language].PANEL.BACK,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.SELECT
+    }
+    Panels["IMPORT"] = {
+        "L\\R", "DPad", "Circle", "Cross", "Square",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.SELECT
+    }
+    Panels["HISTORY"] = {
+        "L\\R", "DPad", "Cross", "Square",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.SELECT,
+        Square = Language[Settings.Language].PANEL.DELETE
+    }
+    Panels["LIBRARY"] = {
+        "L\\R", "DPad", "Triangle", "Cross",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.SELECT,
+        Triangle = Language[Settings.Language].PANEL.UPDATE
+    }
+    Panels["CATALOGS"] = {
+        "L\\R", "DPad", "Square", "Cross", "Triangle",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        Triangle = Language[Settings.Language].PANEL.UPDATE,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.SELECT
+    }
+    Panels["DOWNLOAD"] = {
+        "L\\R", "DPad", "Cross",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.CANCEL
+    }
+    Panels["SETTINGS"] = {
+        "L\\R", "DPad", "Circle", "Cross",
+        ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+        DPad = Language[Settings.Language].PANEL.CHOOSE,
+        Cross = Language[Settings.Language].PANEL.SELECT
+    }
+end
+
 function Catalogs.update()
     if abs(Slider.V) < 1 then
         Slider.V = 0
@@ -327,35 +385,9 @@ function Catalogs.update()
     if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
         UpdateMangas()
         if ParserManager.check(Results) then
-            Loading.setMode(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 600, 272)
+            Loading.setMode(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 580, 272)
         elseif Details.getMode() == "END" then
             Loading.setMode("NONE")
-        end
-        if mode == "MANGA" then
-            Panel.set{
-                "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
-                ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-                Square = Language[Settings.Language].PANEL.MODE_POPULAR,
-                Circle = Language[Settings.Language].PANEL.BACK,
-                DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT
-            }
-        elseif mode == "LIBRARY" then
-            Panel.set{
-                "L\\R", "DPad", "Triangle", "Cross",
-                ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-                DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT,
-                Triangle = Language[Settings.Language].PANEL.UPDATE
-            }
-        elseif mode == "HISTORY" then
-            Panel.set{
-                "L\\R", "DPad", "Cross", "Square",
-                ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-                DPad = Language[Settings.Language].PANEL.CHOOSE,
-                Cross = Language[Settings.Language].PANEL.SELECT,
-                Square = Language[Settings.Language].PANEL.DELETE
-            }
         end
         local item = MangaSelector:getSelected()
         if item ~= 0 then
@@ -387,76 +419,27 @@ function Catalogs.update()
         elseif mode == "HISTORY" then
             Results = Cache.getHistory()
         end
-    elseif mode == "CATALOGS" then
-        Parsers = GetParserList()
-        Panel.set{
-            "L\\R", "Triangle", "DPad", "Cross",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            Triangle = Language[Settings.Language].PANEL.UPDATE,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.SELECT
-        }
-        local item = ParserSelector:getSelected()
-        if item ~= 0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
+    else
+        local list = {}
+        local item = 0
+        if mode == "CATALOGS" then
+            Parsers = GetParserList()
+            list = Parsers
+            item = ParserSelector:getSelected()
+            Panels["CATALOGS"].Square = Parsers[item] and (Settings.FavouriteParsers[Parsers[item].ID] and Language[Settings.Language].PANEL.UNFOLLOW or Language[Settings.Language].PANEL.FOLLOW)
+        elseif mode == "DOWNLOAD" then
+            list = ChapterSaver.getDownloadingList()
+            item = DownloadSelector:getSelected()
+        elseif mode == "SETTINGS" then
+            list = Settings.list()
+            Panels["SETTINGS"].Cirlce = Settings.inTab() and Language[Settings.Language].PANEL.BACK
+            item = SettingSelector:getSelected()
+        elseif mode == "IMPORT" then
+            list = Import.listDir()
+            item = ImportSelector:getSelected()
+            Panels["IMPORT"].Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT
+            Panels["IMPORT"].Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
         end
-        if Slider.Y < -10 then
-            Slider.Y = -10
-            Slider.V = 0
-        elseif Slider.Y > ceil(#Parsers) * 75 - 514 then
-            Slider.Y = max(-10, ceil(#Parsers) * 75 - 514)
-            Slider.V = 0
-        end
-    elseif mode == "DOWNLOAD" then
-        local list = ChapterSaver.getDownloadingList()
-        Panel.set{
-            "L\\R", "DPad", "Cross",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.CANCEL
-        }
-        local item = DownloadSelector:getSelected()
-        if item ~= 0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
-        end
-        if Slider.Y < -10 then
-            Slider.Y = -10
-            Slider.V = 0
-        elseif Slider.Y > ceil(#list) * 75 - 514 then
-            Slider.Y = max(-10, ceil(#list) * 75 - 514)
-            Slider.V = 0
-        end
-    elseif mode == "SETTINGS" then
-        local list = Settings.list()
-        Panel.set{
-            "L\\R", "DPad", "Circle", "Cross",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Cross = Language[Settings.Language].PANEL.SELECT,
-            Circle = Settings.inTab() and Language[Settings.Language].PANEL.BACK
-        }
-        local item = SettingSelector:getSelected()
-        if item ~= 0 then
-            Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
-        end
-        if Slider.Y < -10 then
-            Slider.Y = -10
-            Slider.V = 0
-        elseif Slider.Y > ceil(#list) * 75 - 514 then
-            Slider.Y = max(-10, ceil(#list) * 75 - 514)
-            Slider.V = 0
-        end
-    elseif mode == "IMPORT" then
-        local list = Import.listDir()
-        local item = ImportSelector:getSelected()
-        Panel.set{
-            "L\\R", "DPad", "Circle", "Cross", "Square",
-            ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-            DPad = Language[Settings.Language].PANEL.CHOOSE,
-            Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT,
-            Cross = Language[Settings.Language].PANEL.SELECT,
-            Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
-        }
         if item ~= 0 then
             Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
         end
@@ -468,6 +451,7 @@ function Catalogs.update()
             Slider.V = 0
         end
     end
+    Panel.set(Panels[mode] or {})
 end
 
 local download_bar = 0
@@ -485,8 +469,12 @@ function Catalogs.draw()
             end
             Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
             local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
-            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 10 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
+            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
             local width = Font.getTextWidth(FONT26, parser.Name)
+            if Settings.FavouriteParsers[parser.ID] then
+                Graphics.drawImage(230 + width, y - 70 + 8, Mini_star_icon.e, COLOR_ROYAL_BLUE)
+                width = width + 16 + 5
+            end
             if parser.NSFW then
                 Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
                 width = width + Font.getTextWidth(FONT16, "NSFW") + 5
@@ -531,7 +519,7 @@ function Catalogs.draw()
                 Graphics.fillRect(910, 955, y - 75, y, COLOR_BACK)
             end
             if object.active and object.name ~= "..." then
-                Graphics.drawImage(925 - 16-12, y - 38-14, Import_icon.e, COLOR_ICON_EXTRACT)
+                Graphics.drawImage(925 - 16 - 12, y - 38 - 14, Import_icon.e, COLOR_ICON_EXTRACT)
             end
             y = y + 75
         end
@@ -626,6 +614,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 225, y - 44, Settings.LibrarySorting, COLOR_GRAY)
             elseif task == "ChapterSorting" then
                 Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+            elseif task == "ConnectionTime" then
+                Font.print(FONT16, 225, y - 44, Settings.ConnectionTime, COLOR_ROYAL_BLUE)
             elseif task == "UseProxy" then
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxy], COLOR_ROYAL_BLUE)
             elseif task == "ProxyIP" then

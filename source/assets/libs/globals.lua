@@ -210,7 +210,10 @@ local function drawMangaName(Manga)
                     f[#f] = nil
                 else
                     f = table.concat(f)
-                    s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
+                    local cut = f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f
+                    for k in it_utf8(cut) do
+                        s[#s + 1] = k
+                    end
                     s[#s + 1] = c
                     f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
                 end

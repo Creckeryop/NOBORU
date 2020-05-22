@@ -74,6 +74,8 @@ Language = {
             UseProxyAuth = "Аунтентификация прокси",
             ProxyAuth = "логин:пароль",
             SkipCacheChapterChecking = "Пропускать проверки целостности кеша при запуске приложения",
+            ConnectionTime = "Время подсоединения к серверу",
+            InputValue = "Введите значение",
         },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
@@ -157,9 +159,10 @@ Language = {
         },
         PANEL = {
             BACK = "Назад",
-            MODE_POPULAR = "Режим: Популярность",
-            MODE_LATEST = "Режим: Недавнее",
-            MODE_SEARCHING = 'Режим: Поиск "%s"',
+            MODE = "Режим",
+            --MODE_POPULAR = "Режим: Популярность",
+            --MODE_LATEST = "Режим: Недавнее",
+            --MODE_SEARCHING = 'Режим: Поиск "%s"',
             SEARCH = "Поиск",
             SELECT = "Выбрать",
             CHOOSE = "Сменить выделение",
@@ -167,7 +170,9 @@ Language = {
             CHANGE_SECTION = "Сменить меню",
             UPDATE = "Обновить",
             CANCEL = "Отменить",
-            DELETE = "Удалить"
+            DELETE = "Удалить",
+            FOLLOW = "Отслеживать",
+            UNFOLLOW = "Не отслеживать"
         }
     },
     English = {
@@ -239,7 +244,9 @@ Language = {
             ProxyPort = "Port",
             UseProxyAuth = "Use proxy authentication",
             ProxyAuth = "login:password",
-            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen"
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen",
+            ConnectionTime = "Connection time for server",
+            InputValue = "Input value",
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
@@ -323,9 +330,10 @@ Language = {
         },
         PANEL = {
             BACK = "Back",
-            MODE_POPULAR = "Mode: Popular",
-            MODE_LATEST = "Mode: Latest",
-            MODE_SEARCHING = 'Mode: Searching "%s"',
+            MODE = "Mode",
+            --MODE_POPULAR = "Mode: Popular",
+            --MODE_LATEST = "Mode: Latest",
+            --MODE_SEARCHING = 'Mode: Searching "%s"',
             SEARCH = "Search",
             SELECT = "Select",
             CHOOSE = "Choose",
@@ -333,7 +341,9 @@ Language = {
             CHANGE_SECTION = "Change section",
             UPDATE = "Refresh",
             CANCEL = "Cancel",
-            DELETE = "Delete"
+            DELETE = "Delete",
+            FOLLOW = "Follow",
+            UNFOLLOW = "Unfollow"
         }
     },
     Turkish = {
@@ -405,7 +415,9 @@ Language = {
             ProxyPort = "Port",
             UseProxyAuth = "Proxy Doğrulamayı Kullan",
             ProxyAuth = "GirişBilgisi:Şifre",
-            SkipCacheChapterChecking = "Yükleme Ekranında Bellek ve Bölüm Kontrolünü Atla"
+            SkipCacheChapterChecking = "Yükleme Ekranında Bellek ve Bölüm Kontrolünü Atla",
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "L1 R1 Tuşları",
@@ -489,9 +501,10 @@ Language = {
         },
         PANEL = {
             BACK = "Geri",
-            MODE_POPULAR = "Mod: Önce En Popüler",
-            MODE_LATEST = "Mod: Önce En Yeni",
-            MODE_SEARCHING = 'Mod:"%s" Aranıyor',
+            MODE = "Mod",
+            --MODE_POPULAR = "Mod: Önce En Popüler",
+            --MODE_LATEST = "Mod: Önce En Yeni",
+            --MODE_SEARCHING = 'Mod:"%s" Aranıyor',
             SEARCH = "Ara",
             SELECT = "Seç",
             CHOOSE = "Seç",
@@ -499,7 +512,9 @@ Language = {
             CHANGE_SECTION = "Kategoriyi Değiştir",
             UPDATE = "Yenile",
             CANCEL = "Vazgeç",
-            DELETE = "Sil"
+            DELETE = "Sil",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     Vietnamese = {
@@ -572,6 +587,8 @@ Language = {
             UseProxyAuth = "Xác thực proxy",
             ProxyAuth = "tài khoản:mật khẩu",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Sử dụng L và R",
@@ -655,9 +672,10 @@ Language = {
         },
         PANEL = {
             BACK = "Trở về",
-            MODE_POPULAR = "Chế độ: Phổ biến",
-            MODE_LATEST = "Chế độ: Mới nhất",
-            MODE_SEARCHING = 'Chế độ: Tìm kiếm "%s"',
+            MODE = "Chế độ",
+            --MODE_POPULAR = "Chế độ: Phổ biến",
+            --MODE_LATEST = "Chế độ: Mới nhất",
+            --MODE_SEARCHING = 'Chế độ: Tìm kiếm "%s"',
             SEARCH = "Tìm",
             SELECT = "Chọn",
             CHOOSE = "Điều khiển",
@@ -665,7 +683,9 @@ Language = {
             CHANGE_SECTION = "Thay đổi danh mục",
             UPDATE = "Cập nhật",
             CANCEL = "Hủy bỏ",
-            DELETE = "Xóa bỏ"
+            DELETE = "Xóa bỏ",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     Spanish = {
@@ -738,6 +758,8 @@ Language = {
             UseProxyAuth = "Usar autenticación proxy:",
             ProxyAuth = "login:contraseña",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botones L y R",
@@ -821,9 +843,10 @@ Language = {
         },
         PANEL = {
             BACK = "Volver",
-            MODE_POPULAR = "Modo: Populares",
-            MODE_LATEST = "Modo: Recientes",
-            MODE_SEARCHING = 'Modo: Buscando "%s"',
+            MODE = "Modo",
+            --MODE_POPULAR = "Modo: Populares",
+            --MODE_LATEST = "Modo: Recientes",
+            --MODE_SEARCHING = 'Modo: Buscando "%s"',
             SEARCH = "Buscar",
             SELECT = "Seleccionar",
             CHOOSE = "Escoger",
@@ -831,7 +854,9 @@ Language = {
             CHANGE_SECTION = "Cambiar sección",
             UPDATE = "Actualizar",
             CANCEL = "Cancelar",
-            DELETE = "Eliminar"
+            DELETE = "Eliminar",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     Italian = {
@@ -904,6 +929,8 @@ Language = {
             UseProxyAuth = "Utilizza autenticazione proxy",
             ProxyAuth = "login:password",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "L e R triggers",
@@ -987,9 +1014,10 @@ Language = {
         },
         PANEL = {
             BACK = "Indietro",
-            MODE_POPULAR = "Modalità: Popolare",
-            MODE_LATEST = "Modalità: più recente",
-            MODE_SEARCHING = 'Modalità: ricerca "%s"',
+            MODE = "Modalità",
+            --MODE_POPULAR = "Modalità: Popolare",
+            --MODE_LATEST = "Modalità: più recente",
+            --MODE_SEARCHING = 'Modalità: ricerca "%s"',
             SEARCH = "Ricerca",
             SELECT = "Seleziona",
             CHOOSE = "Scegli",
@@ -997,7 +1025,9 @@ Language = {
             CHANGE_SECTION = "Cambia sezione",
             UPDATE = "Aggiorna",
             CANCEL = "Cancella",
-            DELETE = "Elimina"
+            DELETE = "Elimina",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     French = {
@@ -1070,6 +1100,8 @@ Language = {
             UseProxyAuth = "Uriliser l'authentification Proxy",
             ProxyAuth = "identifiant:mot de passe",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
@@ -1153,9 +1185,10 @@ Language = {
         },
         PANEL = {
             BACK = "Retourner",
-            MODE_POPULAR = "Mode: populaire",
-            MODE_LATEST = "Mode: plus récent",
-            MODE_SEARCHING = 'Mode: recherche "%s"',
+            MODE = "Mode",
+            --MODE_POPULAR = "Mode: populaire",
+            --MODE_LATEST = "Mode: plus récent",
+            --MODE_SEARCHING = 'Mode: recherche "%s"',
             SEARCH = "Rechercher",
             SELECT = "Sélectionner",
             CHOOSE = "Choisir",
@@ -1163,7 +1196,9 @@ Language = {
             CHANGE_SECTION = "Changer de section",
             UPDATE = "Mettre à jour",
             CANCEL = "Annuler",
-            DELETE = "Supprimer"
+            DELETE = "Supprimer",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     }
 }

@@ -25,7 +25,9 @@ Settings = {
     ProxyPort = "8080",
     UseProxyAuth = false,
     ProxyAuth = "login:password",
-    SkipCacheChapterChecking = true
+    SkipCacheChapterChecking = true,
+    ConnectionTime = 10,
+    FavouriteParsers = {}
 }
 
 local SettingsDefaults = table.clone(Settings)
@@ -128,6 +130,14 @@ local function UpdateApp()
     end
 end
 
+function Settings.toggleFavouriteParser(Parser)
+    if Parser and Parser.ID then
+        settings.FavouriteParsers[Parser.ID] = not settings.FavouriteParsers[Parser.ID] and true or nil
+        ChangeNSFW()
+        Settings.save()
+    end
+end
+
 ---@param source table
 ---@param setting_name string
 ---@param values table
@@ -215,10 +225,14 @@ function settings.load()
             setSetting(new, "UseProxyAuth", {true, false})
             setSetting(new, "ProxyAuth", {})
             setSetting(new, "SkipCacheChapterChecking", {true, false})
+            setSetting(new, "ConnectionTime", {})
+            setSetting(new, "FavouriteParsers", {})
         end
         closeFile(fh)
     end
     settings.save()
+    GenPanels()
+    Network.setConnectionTime(settings.ConnectionTime or 10)
     SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
     SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
     SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
@@ -266,6 +280,7 @@ local set_list = {
         "DoubleTapReader"
     },
     Network = {
+        "ConnectionTime",
         "UseProxy",
         "ProxyIP",
         "ProxyPort",
@@ -364,6 +379,7 @@ end
 SettingsFunctions = {
     Language = function()
         settings.Language = nextTableValue(settings.Language, GetLanguages())
+        GenPanels()
     end,
     SkipFontLoading = function()
         settings.SkipFontLoad = not settings.SkipFontLoad
@@ -540,5 +556,23 @@ SettingsFunctions = {
     end,
     SkipCacheChapterChecking = function()
         settings.SkipCacheChapterChecking = not settings.SkipCacheChapterChecking
+    end,
+    ConnectionTime = function()
+        Keyboard.show(Language[settings.Language].SETTINGS.InputValue, settings.ConnectionTime, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+        while Keyboard.getState() == RUNNING do
+            Graphics.initBlend()
+            Screen.clear()
+            Graphics.termBlend()
+            Screen.waitVblankStart()
+            Screen.flip()
+        end
+        if Keyboard.getState() == FINISHED then
+            local new_time = tonumber(Keyboard.getInput())
+            if new_time and new_time > 0 then
+                settings.ConnectionTime = Keyboard.getInput()
+                Network.setConnectionTime(settings.ConnectionTime or 10)
+            end
+        end
+        Keyboard.clear()
     end
 }

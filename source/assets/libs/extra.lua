@@ -199,16 +199,9 @@ function Extra.draw()
         local ListCount = #ExtraMenu
         Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y_srt + shift, y_srt + 80 * ListCount + shift - 1, WHITE)
         for i = start, math.min(ListCount, start + 8) do
-            if y < 544 then
-                Font.print(BONT16, 480 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) / 2, y + 28 - 79, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i], BLACK)
-                if i < ListCount then
-                    Graphics.drawLine(480 - w_max / 2 + 5, 480 + w_max / 2 - 5, y, y, BLACK)
-                end
-                if i == Slider.ItemID then
-                    Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
-                end
-            else
-                break
+            Font.print(BONT16, 480 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) / 2, y + 28 - 79, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i], BLACK)
+            if i == Slider.ItemID then
+                Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
             end
             y = y + 80
         end

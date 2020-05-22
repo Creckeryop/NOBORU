@@ -492,7 +492,7 @@ function CatalogModes.draw()
             if v == "Popular" then
                 Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Hot_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 106, 0), Modes_fade[v]))
             elseif v == "Latest" then
-                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, History_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(0, 127, 14), Modes_fade[v]))
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, History_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(0, 188, 18), Modes_fade[v]))
             elseif v == "Search" then
                 Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Search_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 74, 58), Modes_fade[v]))
             elseif v == "ByLetter" then
@@ -527,12 +527,12 @@ function CatalogModes.draw()
                 Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, SELECTED_RED)
             end
         end
-        Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 40 + 8 + 50 * #Modes, 544, COLOR_BLACK)
+        Graphics.fillRect(960 - (M - 1) * 350 - 5, 960, 40 + 8 + 50 * #Modes, 544, COLOR_BLACK)
         if countFilterElements() > 7 then
             local h = getFiltersHeight() / (544 - 40 - 8 - 50 * #Modes)
-            Graphics.fillRect(960 - M * 350 + (350 - 5), 960, 40 + 8 + 50 * #Modes + (Slider.Y) / h, 8 + 8 + 50 * #Modes + (Slider.Y + (544 - 8 - 8 - 50 * #Modes)) / h, COLOR_WHITE)
+            Graphics.fillRect(960 - (M - 1) * 350 - 5, 960, 40 + 8 + 50 * #Modes + (Slider.Y) / h, 8 + 8 + 50 * #Modes + (Slider.Y + (544 - 8 - 8 - 50 * #Modes)) / h, COLOR_WHITE)
         end
-        Font.print(BONT30, 960 - M * 350 + (350 / 2 - Font.getTextWidth(BONT30, Name) / 2), 4, Name, COLOR_WHITE)
+        Font.print(BONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT30, Name) / 2, 4, Name, COLOR_WHITE)
     end
 end
 

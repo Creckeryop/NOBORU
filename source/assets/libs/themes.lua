@@ -23,6 +23,7 @@ Themes = {
         COLOR_SELECTOR_DETAILS = Color.new(255, 0, 51),
         COLOR_SELECTOR_MENU = Color.new(65, 105, 226)
     },
+    --[[
     Blue = {
         COLOR_LEFT_BACK = Color.new(15, 17, 50),
         COLOR_FONT = Color.new(0, 0, 0),
@@ -47,6 +48,7 @@ Themes = {
         COLOR_SELECTOR_DETAILS = Color.new(255, 0, 51),
         COLOR_SELECTOR_MENU = Color.new(65, 105, 226)
     },
+    --]]
     PiCrestOne = {
         COLOR_LEFT_BACK = Color.new(0, 0, 0),
         COLOR_FONT = Color.new(255, 255, 255),
