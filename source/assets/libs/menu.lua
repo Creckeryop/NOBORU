@@ -11,6 +11,7 @@ Hot_icon = Image:new(Graphics.loadImage("app0:assets/icons/hot.png"))
 Search_icon = Image:new(Graphics.loadImage("app0:assets/icons/search.png"))
 Az_icon = Image:new(Graphics.loadImage("app0:assets/icons/az.png"))
 A_icon = Image:new(Graphics.loadImage("app0:assets/icons/a.png"))
+Tag_icon = Image:new(Graphics.loadImage("app0:assets/icons/tag.png"))
 
 Checkbox_icon = Image:new(Graphics.loadImage("app0:assets/icons/checkbox.png"))
 Checkbox_checked_icon = Image:new(Graphics.loadImage("app0:assets/icons/checkbox_checked.png"))

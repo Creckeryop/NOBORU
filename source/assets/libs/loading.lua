@@ -12,7 +12,8 @@ local center = {
     y = 272
 }
 
-local circle = Image:new(Graphics.loadImage("app0:assets/icons/circle.png"))
+Circle_icon = Image:new(Graphics.loadImage("app0:assets/icons/circle.png"))
+Circle_large_icon = Image:new(Graphics.loadImage("app0:assets/icons/circle-large.png"))
 
 ---Animation timer
 local animation_timer = Timer.new()
@@ -42,6 +43,6 @@ function Loading.draw()
     time = math.min(math.max(mode == "NONE" and 1 - time or time, 0), 1)
     for i = 1, 4 do
         local a = math.max(math.sin(Timer.getTime(GlobalTimer) / 500 * PI + i * PI / 2), 0)
-        Graphics.drawImage(center.x + (i - 3) * 13, center.y - 1 - 16 * a, circle.e, Color.new(color, color, color, (127 + 128 * a) * time))
+        Graphics.drawImage(center.x + (i - 3) * 13, center.y - 1 - 16 * a, Circle_icon.e, Color.new(color, color, color, (127 + 128 * a) * time))
     end
 end

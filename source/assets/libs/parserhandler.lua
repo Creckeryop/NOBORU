@@ -87,6 +87,12 @@ function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
                 else
                     Console.write(parser.Name .. " doesn't support getLetterManga function", COLOR_GRAY)
                 end
+            elseif mode == "ByTag" then
+                if parser.getTagManga then
+                    parser:getTagManga(i, Table, CatalogModes.getTag())
+                else
+                    Console.write(parser.Name .. " doesn't support getTagManga function", COLOR_GRAY)
+                end
             elseif mode == "Search" then
                 if parser.searchManga then
                     parser:searchManga(data, i, Table, tag_data)
@@ -282,6 +288,7 @@ function ParserManager.remove(Table)
         if uniques[Table] == Task then
             Task.Table = Trash
             Task.Stop = true
+            Network.stopCurrentDownload()
         else
             uniques[Table].Type = "Skip"
         end
@@ -343,5 +350,6 @@ function ParserManager.clear()
     uniques = {}
     if Task then
         Task.Stop = true
+        Network.stopCurrentDownload()
     end
 end

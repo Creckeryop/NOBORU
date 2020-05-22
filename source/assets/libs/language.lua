@@ -158,6 +158,14 @@ Language = {
             REFRESH_COMPLETED = "Обновление выполнено!",
             SETTINGS_RESET = "Настройки были сброшены"
         },
+        MODES = {
+            Popular = "Популярная",
+            Latest = "Последняя",
+            Search = "Поиск",
+            Alphabet = "Алфавит",
+            ByLetter = "По букве",
+            ByTag = "По тегу",
+        },
         PANEL = {
             BACK = "Назад",
             MODE = "Режим",
@@ -328,6 +336,14 @@ Language = {
             NO_SPACE_LEFT = "No space left",
             REFRESH_COMPLETED = "Refresh completed!",
             SETTINGS_RESET = "Settings have been reset"
+        },
+        MODES = {
+            Popular = "Popular",
+            Latest = "Latest",
+            Search = "Search",
+            Alphabet = "Alphabet",
+            ByLetter = "By Letter",
+            ByTag = "By Tag",
         },
         PANEL = {
             BACK = "Back",
@@ -500,6 +516,14 @@ Language = {
             REFRESH_COMPLETED = "Yenileme Tamamlandı",
             SETTINGS_RESET = "Seçenekler Sıfırlandı"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Geri",
             MODE = "Mod",
@@ -670,6 +694,14 @@ Language = {
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
             REFRESH_COMPLETED = "Làm mới hoàn tất!",
             SETTINGS_RESET = "Đã đặt lại các cài đặt!"
+        },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
         },
         PANEL = {
             BACK = "Trở về",
@@ -842,6 +874,14 @@ Language = {
             REFRESH_COMPLETED = "Refresco completado!", 
             SETTINGS_RESET = "Los ajustes han sido resteados"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Volver",
             MODE = "Modo",
@@ -1012,6 +1052,14 @@ Language = {
             NO_SPACE_LEFT = "Non è rimasto spazio",
             REFRESH_COMPLETED = "Aggiornamento completato!",
             SETTINGS_RESET = "Le impostazioni sono state ripristinate"
+        },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
         },
         PANEL = {
             BACK = "Indietro",
@@ -1184,6 +1232,14 @@ Language = {
             REFRESH_COMPLETED = "Mise à jour complète!",
             SETTINGS_RESET = "Les paramètres vont être restauré"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Retourner",
             MODE = "Mode",
@@ -1354,6 +1410,14 @@ Language = {
             NO_SPACE_LEFT = "Sem espaço",
             REFRESH_COMPLETED = "Atualização completada!",
             SETTINGS_RESET = "Configurações foram resetadas"
+        },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
         },
         PANEL = {
             BACK = "Voltar",

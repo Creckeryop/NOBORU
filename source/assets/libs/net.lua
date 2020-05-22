@@ -317,6 +317,7 @@ function Threads.clear()
     if Task ~= nil then
         Task.Table = Trash
         Task.Index = "Garbadge"
+        Network.stopCurrentDownload()
     end
 end
 
@@ -467,6 +468,7 @@ function Threads.remove(UniqueKey)
     if uniques[UniqueKey] then
         if Task == uniques[UniqueKey] then
             Task.Table, Task.Index = Trash, "Garbadge"
+            Network.stopCurrentDownload()
         else
             uniques[UniqueKey].Type = "Skip"
         end

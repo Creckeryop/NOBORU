@@ -185,7 +185,7 @@ DownloadSelector:xaction(function(item)
 end)
 SettingSelector:xaction(selectSetting)
 ImportSelector:xaction(selectImport)
-
+local keyboard_mode = "NONE"
 function Catalogs.input(oldpad, pad, oldtouch, touch)
     if mode == "MANGA" then
         if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
@@ -193,6 +193,9 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             Catalogs.terminate()
         elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             CatalogModes.show()
+        elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+            Keyboard.show(Language[Settings.Language].SETTINGS.InputValue, 1, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+            keyboard_mode = "JUMP_PAGE"
         end
     elseif mode == "CATALOGS" then
         if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
@@ -452,6 +455,17 @@ function Catalogs.update()
         end
     end
     Panel.set(Panels[mode] or {})
+    if keyboard_mode ~= "NONE" and Keyboard.getState() == FINISHED then
+        if keyboard_mode == "JUMP_PAGE" then
+            local new_page = tonumber(Keyboard.getInput())
+            if new_page and new_page > 0 then
+                Catalogs.terminate()
+                page = new_page
+            end
+            keyboard_mode = "NONE"
+        end
+        Keyboard.clear()
+    end
 end
 
 local download_bar = 0
@@ -657,7 +671,7 @@ function Catalogs.draw()
             elseif task == "ChangingPageButtons" then
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
-                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish \n@rutantan - PortugueseBR "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 225, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish \n@rutantan - PortugueseBR "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)

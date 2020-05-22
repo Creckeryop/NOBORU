@@ -41,6 +41,11 @@ local doubleClickTimer = Timer.new()
 local last_click = {x = -100, y = -100}
 local gesture_zoom = false
 
+local ContextMenu = false
+local MenuFade = 0
+local OpenCloseContextMenu = false
+local OpenCloseContextMenuTimer = Timer.new()
+
 local function gesture_touch_input(touch, oldtouch, page)
     if Settings.DoubleTapReader then
         if gesture_zoom then
@@ -49,12 +54,13 @@ local function gesture_touch_input(touch, oldtouch, page)
         if not page or not page.Zoom then
             return
         end
-        if touch.x == nil and oldtouch.x ~= nil and not gesture_zoom and touchMode == TOUCH_READ then
+        if touch.x == nil and oldtouch.x ~= nil and (not ContextMenu or (oldtouch.y >= 80 and oldtouch.y <= 544 - 80)) and not gesture_zoom and touchMode == TOUCH_READ then
             gesture_zoom = false
             local update_last = true
             if Timer.getTime(doubleClickTimer) < 300 then
                 local len = math.sqrt((last_click.x - oldtouch.x) * (last_click.x - oldtouch.x) + (last_click.y - oldtouch.y) * (last_click.y - oldtouch.y))
                 if len < 80 then
+                    OpenCloseContextMenu = false
                     if page.Zoom >= max_Zoom - (max_Zoom - page.min_Zoom) / 2 then
                         gesture_zoom = {
                             Zoom = page.start_Zoom,
@@ -140,7 +146,7 @@ local function deletePageImage(page)
             end
         end
         Pages[page].Image = nil
-        Console.write("Removed "..tostring(page))
+        Console.write("Removed " .. tostring(page))
     else
         ParserManager.remove(Pages[page])
         Threads.remove(Pages[page])
@@ -375,8 +381,8 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         if touch.x ~= nil or pad ~= 0 then
             Timer.reset(hideCounterTimer)
         end
-        gesture_touch_input(touch, oldtouch, Pages[Pages.Page])
         local page = Pages[Pages.Page]
+        gesture_touch_input(touch, oldtouch, Pages[Pages.Page])
         if page.Zoom then
             local x, y = Controls.readLeftAnalog()
             x = x - 127
@@ -436,7 +442,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 end
             end
         end
-        if touch.y and oldtouch.y then
+        if touch.y and oldtouch.y and (not ContextMenu or touch.y < 544 - 80 and touch.y > 80 and oldtouch.y < 544 - 80 and oldtouch.y > 80) then
             if touchMode ~= TOUCH_MULTI then
                 if touchMode == TOUCH_IDLE then
                     touchTemp.x = touch.x
@@ -459,6 +465,28 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 page.y = page.y - (center.y - 272) * (n - 1)
                 page.x = page.x - (center.x - 480) * (n - 1)
             end
+        elseif ContextMenu and touch.y and oldtouch.y and (touch.y >= 544 - 80 or touch.y <= 80) and (oldtouch.y >= 544 - 80 or oldtouch.y <= 80) then
+            if touch.x > 180 and touch.x < 780 and Pages.Count > 1 then
+                local new_page = math.min(math.max(1, math.floor((touch.x-200)/(560/(Pages.Count-1))+1)), Pages.Count)
+                if new_page < Pages.Page then
+                    repeat
+                        if orientation == "Vertical" and is_down then
+                            swipe("LEFT")
+                        else
+                            swipe("RIGHT")
+                        end
+                    until new_page == Pages.Page
+                elseif new_page > Pages.Page then
+                    repeat
+                        if orientation == "Vertical" and is_down then
+                            swipe("RIGHT")
+                        else
+                            swipe("LEFT")
+                        end
+                    until new_page == Pages.Page
+                end
+
+            end
         else
             if touchMode == TOUCH_SWIPE then
                 if offset.x > 90 or offset.y > 90 then
@@ -479,6 +507,10 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 pageMode = PAGE_NONE
             end
             if touchMode ~= TOUCH_LOCK then
+                if touchMode == TOUCH_READ then
+                    OpenCloseContextMenu = true
+                    Timer.reset(OpenCloseContextMenuTimer)
+                end
                 touchMode = TOUCH_IDLE
             end
         end
@@ -516,6 +548,14 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 end
             end
         end
+    elseif STATE == STATE_LOADING then
+        if touch.x ~= nil then
+            OpenCloseContextMenu = true
+            Timer.reset(OpenCloseContextMenuTimer)
+        end
+    end
+    if Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) then
+        ContextMenu = not ContextMenu
     end
 end
 
@@ -1002,11 +1042,20 @@ function Reader.update()
                 end
             end
         end
-        if Timer.getTime(hideCounterTimer) > 1500 then
+        if Timer.getTime(hideCounterTimer) > 1500 or MenuFade > 0 then
             counterShift = math.max(counterShift - 1.5, -30)
         else
             counterShift = math.min(counterShift + 1.5, 0)
         end
+    end
+    if OpenCloseContextMenu and Timer.getTime(OpenCloseContextMenuTimer) > 300 then
+        ContextMenu = not ContextMenu
+        OpenCloseContextMenu = false
+    end
+    if ContextMenu then
+        MenuFade = math.min(MenuFade + 0.1, 1)
+    else
+        MenuFade = math.max(MenuFade - 0.1, 0)
     end
 end
 
@@ -1086,6 +1135,31 @@ function Reader.draw()
             local Width = Font.getTextWidth(FONT16, Counter) + 20
             Graphics.fillRect(960 - Width, 960, counterShift, counterShift + Font.getTextHeight(FONT16, Counter) + 4, Color.new(0, 0, 0, 128))
             Font.print(FONT16, 970 - Width, counterShift, Counter, COLOR_WHITE)
+        end
+    end
+    if MenuFade > 0 then
+        local BACK_COLOR = Color.new(0, 0, 0, 255 * MenuFade)
+        local GRAY_COLOR = Color.new(128, 128, 128, 255 * MenuFade)
+        local BLUE_COLOR = ChangeAlpha(COLOR_ROYAL_BLUE, 255 * MenuFade)
+        Graphics.fillRect(0, 960, 0, 80 * MenuFade, BACK_COLOR)
+        Graphics.fillRect(0, 960, 544 - 80 * MenuFade, 544, BACK_COLOR)
+        if STATE == STATE_READING then
+            local current_page = Pages.Page
+            if Settings.ReaderDirection == "LEFT" then
+                current_page = (Pages.Count - Pages.Page + 1)
+            end
+            current_page = math.max(1, math.min(current_page, Pages.Count))
+            local point = 0
+            if Pages.Count == 1 then
+                point = 560
+            else
+                point = ((current_page - 1) * 560 / (Pages.Count - 1))
+            end
+            Graphics.fillRect(200, 760, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, GRAY_COLOR)
+            Graphics.fillRect(200, 200 + point, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, BLUE_COLOR)
+            Graphics.drawImage(200 + point - 6, 544 - 80 * MenuFade + 40 - 6, Circle_icon.e, BLUE_COLOR)
+            Font.print(FONT26, 150 - Font.getTextWidth(FONT26, current_page) / 2, 544 - 80 * MenuFade + 23, current_page, COLOR_WHITE)
+            Font.print(FONT26, 810 - Font.getTextWidth(FONT26, Pages.Count) / 2, 544 - 80 * MenuFade + 23, Pages.Count, COLOR_WHITE)
         end
     end
 end

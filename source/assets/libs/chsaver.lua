@@ -468,6 +468,7 @@ local function stop(key, silent)
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
             Downloading[key].Notify = silent == nil
+            Network.stopCurrentDownload()
             rem_dir(FOLDER .. key)
         else
             local new_order = {}
@@ -500,6 +501,7 @@ function ChapterSaver.stopList(chapters, silent)
             if d == Task then
                 d.Destroy = true
                 d.Notify = silent == nil
+                Network.stopCurrentDownload()
                 rem_dir(FOLDER .. key)
             else
                 for i, od in pairs(Order) do

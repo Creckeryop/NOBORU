@@ -16,6 +16,9 @@ local ItemsDraw = {}
 local Letters = {}
 local Letter = 1
 local FinalLetter = 1
+local Tags = {}
+local Tag = 1
+local FinalTag = 1
 
 local FinalTagsData = {}
 
@@ -157,6 +160,11 @@ function CatalogModes.load(parser)
             Letters = parser.Letters
             Letter = 1
         end
+        if parser.getTagManga and type(parser.Tags) == "table" then
+            Modes[#Modes + 1] = "ByTag"
+            Tags = parser.Tags
+            Tag = 1
+        end
         if parser.searchManga then
             Modes[#Modes + 1] = "Search"
         end
@@ -226,7 +234,7 @@ function CatalogModes.show()
 end
 
 local function setMode(id)
-    if now_mode ~= id or Modes[id] == "Search" or Modes[id] == "ByLetter" then
+    if now_mode ~= id or Modes[id] == "Search" or Modes[id] == "ByLetter" or Modes[id] == "ByTag" then
         if Modes[id] == "Search" then
             Keyboard.show(Language[Settings.Language].APP.SEARCH, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
             setFinalTags()
@@ -234,6 +242,7 @@ local function setMode(id)
         else
             now_mode = id
             FinalLetter = Letter
+            FinalTag = Tag
             mode = "WAIT"
             Timer.reset(animation_timer)
             old_fade = fade
@@ -344,7 +353,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
         if touch.x then
             SelectedId = 0
             time_space = 400
-        elseif Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or (Modes[SelectedId] == "ByLetter" and (Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)))) then
+        elseif Timer.getTime(control_timer) > time_space or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or ((Modes[SelectedId] == "ByLetter" or Modes[SelectedId] == "ByTag") and (Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)))) then
             if Controls.check(pad, SCE_CTRL_DOWN + SCE_CTRL_UP + SCE_CTRL_LEFT + SCE_CTRL_RIGHT) then
                 if Controls.check(pad, SCE_CTRL_UP) then
                     if SelectedId == 0 then
@@ -358,15 +367,29 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
                     elseif SelectedId < #Modes + countFilterElements() then
                         SelectedId = SelectedId + 1
                     end
-                elseif Controls.check(pad, SCE_CTRL_RIGHT) and Modes[SelectedId] == "ByLetter" then
-                    Letter = Letter + 1
-                    if Letter > #Letters then
-                        Letter = 1
+                elseif Controls.check(pad, SCE_CTRL_RIGHT) then
+                    if Modes[SelectedId] == "ByLetter" then
+                        Letter = Letter + 1
+                        if Letter > #Letters then
+                            Letter = 1
+                        end
+                    elseif Modes[SelectedId] == "ByTag" then
+                        Tag = Tag + 1
+                        if Tag > #Tags then
+                            Tag = 1
+                        end
                     end
-                elseif Controls.check(pad, SCE_CTRL_LEFT) and Modes[SelectedId] == "ByLetter" then
-                    Letter = Letter - 1
-                    if Letter < 1 then
-                        Letter = #Letters
+                elseif Controls.check(pad, SCE_CTRL_LEFT) then
+                    if Modes[SelectedId] == "ByLetter" then
+                        Letter = Letter - 1
+                        if Letter < 1 then
+                            Letter = #Letters
+                        end
+                    elseif Modes[SelectedId] == "ByTag" then
+                        Tag = Tag - 1
+                        if Tag < 1 then
+                            Tag = #Tags
+                        end
                     end
                 end
                 if time_space > 50 then
@@ -398,6 +421,12 @@ function CatalogModes.update()
         for i, v in ipairs(Modes) do
             if now_mode == i then
                 Modes_fade[v] = math.min(Modes_fade[v] + 0.1, 1)
+            elseif SelectedId == i then
+                if Modes_fade[v] > 0.3 then
+                    Modes_fade[v] = math.max(Modes_fade[v] - 0.1, 0.3)
+                else
+                    Modes_fade[v] = math.min(Modes_fade[v] + 0.1, 0.3)
+                end
             else
                 Modes_fade[v] = math.max(Modes_fade[v] - 0.1, 0)
             end
@@ -497,15 +526,20 @@ function CatalogModes.draw()
                 Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Search_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 74, 58), Modes_fade[v]))
             elseif v == "ByLetter" then
                 Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, A_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 216, 0), Modes_fade[v]))
+            elseif v == "ByTag" then
+                Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Tag_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(127, 201, 255), Modes_fade[v]))
             elseif v == "Alphabet" then
                 Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Az_icon.e, COLOR_GRADIENT(COLOR_GRAY, COLOR_ROYAL_BLUE, Modes_fade[v]))
             end
-            local text = Modes[i]
+            local text = Language[Settings.Language].MODES[Modes[i]] or Modes[i] or ""
             if Modes[i] == "Search" and searchData:gsub("%s", "") ~= "" then
                 text = text .. " : " .. searchData
             end
             if Modes[i] == "ByLetter" then
                 text = text .. " < " .. Letters[Letter] .. " >"
+            end
+            if Modes[i] == "ByTag" then
+                text = text .. " < " .. Tags[Tag] .. " >"
             end
             Font.print(FONT16, 960 - M * 350 + 52, 17 + 40 + (i - 1) * 50, text, COLOR_GRADIENT(COLOR_GRAY, COLOR_WHITE, Modes_fade[v]))
             if i == SelectedId then
@@ -558,4 +592,8 @@ end
 
 function CatalogModes.getLetter()
     return Letters[FinalLetter] or ""
+end
+
+function CatalogModes.getTag()
+    return Tags[FinalTag] or ""
 end
