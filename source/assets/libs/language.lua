@@ -3,6 +3,7 @@
 --Italian translation created by theHeroGAC
 --French translation created by Samilop "Cimmerian" Iter
 --Turkish translation created by @kemalsanli
+--PortugueseBR translation created by @rutantan
 Language = {
     Russian = {
         APP = {
@@ -1343,7 +1344,7 @@ LanguageNames = {
         Vietnamese = "Вьетнамский",
         French = "Французский",
         Italian = "Итальянский",
-        PortugueseBR = "бразильский португальский",
+        PortugueseBR = "Бразильский португальский",
         Default = "Системный"
     },
     English = {

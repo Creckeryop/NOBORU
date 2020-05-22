@@ -112,7 +112,12 @@ function Menu.draw()
         download_led = math.max(download_led - 0.1, 0)
     end
     Graphics.fillCircle(15, 428, 6, Color.new(65, 105, 226, 255 * download_led - 160 * download_led * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000))))
-    Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    local settings_width = Font.getTextWidth(FONT30, Language[Settings.Language].APP.SETTINGS)
+    if settings_width > 225 then
+        Font.print(FONT20, 30, 475, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    else
+        Font.print(FONT30, 30, 468, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 255 - 128 * button_a["SETTINGS"]))
+    end
     if Details.getFade() ~= 1 then
         Catalogs.draw()
     end

@@ -656,7 +656,7 @@ function Catalogs.draw()
             if Slider.ItemID == i then
                 local dy_for_translators = 0
                 if list[i] == "Translators" then
-                    dy_for_translators = 50
+                    dy_for_translators = 70
                 end
                 Graphics.fillRect(265, 945, y - 75, y - 1 + dy_for_translators, COLOR_SELECTED)
             end
@@ -753,7 +753,7 @@ function Catalogs.draw()
             elseif task == "ChangingPageButtons" then
                 Font.print(FONT16, 275, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
-                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish \n@rutantan - PortugueseBR "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 275, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
@@ -806,7 +806,7 @@ function Catalogs.draw()
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             local dy_for_translators = 0
             if list[item] == "Translators" then
-                dy_for_translators = 50
+                dy_for_translators = 70
             end
             for i = ks, ks + 1 do
                 Graphics.fillEmptyRect(268 + i, 942 - i + 1, y - i - 5 + dy_for_translators, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
