@@ -1271,7 +1271,9 @@ Language = {
             ProxyPort = "Porta",
             UseProxyAuth = "Usar autenticação de proxy",
             ProxyAuth = "usuário:senha",
-            SkipCacheChapterChecking = "Pular verificação de cache e capítulo na tela de carregamento"
+            SkipCacheChapterChecking = "Pular verificação de cache e capítulo na tela de carregamento",
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botões L e R",
@@ -1355,9 +1357,12 @@ Language = {
         },
         PANEL = {
             BACK = "Voltar",
+            MODE = "Modo:",
+            --[[
             MODE_POPULAR = "Modo: Popular",
             MODE_LATEST = "Modo: Últimos",
             MODE_SEARCHING = 'Modo: Pesquisando "%s"',
+            ]]
             SEARCH = "Pesquisar",
             SELECT = "Selecionar",
             CHOOSE = "Escolher",
@@ -1365,7 +1370,9 @@ Language = {
             CHANGE_SECTION = "Mudar seção",
             UPDATE = "Atualizar",
             CANCEL = "Cancelar",
-            DELETE = "Deletar"
+            DELETE = "Deletar",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     }
 }
