@@ -565,7 +565,7 @@ function Catalogs.draw()
         for i = start, min(#list, start + 9) do
             local task = list[i]
             if Slider.ItemID == i then
-                local dy_for_translators = list[i] == "Translators" and 50 or 0
+                local dy_for_translators = list[i] == "Translators" and 70 or 0
                 Graphics.fillRect(215, 945, y - 75, y - 1 + dy_for_translators, COLOR_SELECTED)
             end
             Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
@@ -657,7 +657,7 @@ function Catalogs.draw()
             elseif task == "ChangingPageButtons" then
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
             elseif task == "Translators" then
-                Font.print(FONT16, 225, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
+                Font.print(FONT16, 275, y - 44, ("@SamuEDL98 - Spanish \n@nguyenmao2101 - Vietnamese \n@theheroGAC - Italian \n@Cimmerian_Iter - French \n@kemalsanli - Turkish \n@rutantan - PortugueseBR "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
             elseif task == "ClearLibrary" then
                 if sure_clear_library > 0 then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
@@ -703,7 +703,7 @@ function Catalogs.draw()
             scroll_height = elements_count * 75 / 524
         end
         item = SettingSelector:getSelected()
-        item_h = list[item] == "Translators" and 50 or 0
+        item_h = list[item] == "Translators" and 70 or 0
     elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
         for i = start, min(#Results, start + 15) do
