@@ -330,9 +330,10 @@ Panels = {}
 
 function GenPanels()
     Panels["MANGA"] = {
-        "L\\R", "Square", "Triangle", "DPad", "Cross", "Circle",
+        "L\\R", "Square", "DPad", "Cross", "Circle", "Triangle",
         ["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
         Square = Language[Settings.Language].PANEL.MODE,
+        Triangle = Language[Settings.Language].PANEL.JUMPTOPAGE,
         Circle = Language[Settings.Language].PANEL.BACK,
         DPad = Language[Settings.Language].PANEL.CHOOSE,
         Cross = Language[Settings.Language].PANEL.SELECT
@@ -522,16 +523,16 @@ function Catalogs.draw()
             else
                 Font.print(FONT26, 225, y - 70, object.name, COLOR_GRAY)
             end
+            Graphics.fillRect(945, 955, y - 75, y-1, COLOR_BACK)
+            if object.active and object.name ~= "..." then
+                if Slider.ItemID == i then
+                    Graphics.fillRect(925 - 16 - 12 - 34+10, 945, y - 75, y-1, COLOR_SELECTED)
+                else
+                    Graphics.fillRect(925 - 16 - 12 - 34+10, 945, y - 75, y-1, COLOR_BACK)
+                end
+            end
             local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
             Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
-            if Slider.ItemID == i then
-                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, COLOR_SELECTED)
-                Graphics.fillRect(910, 955, y - 75, y, COLOR_SELECTED)
-                Graphics.fillRect(945, 955, y - 75, y, COLOR_BACK)
-            else
-                Graphics.drawScaleImage(840, y - 75, LUA_GRADIENTH.e, 1, 75, COLOR_BACK)
-                Graphics.fillRect(910, 955, y - 75, y, COLOR_BACK)
-            end
             if object.active and object.name ~= "..." then
                 Graphics.drawImage(925 - 16 - 12, y - 38 - 14, Import_icon.e, COLOR_ICON_EXTRACT)
             end
@@ -600,7 +601,7 @@ function Catalogs.draw()
                     end
                     get_space_dir("ux0:data/noboru/chapters")
                 end
-                Font.print(FONT16, 225, y - 44, MemToStr(chapters_space, Language[Settings.Language].SETTINGS.Space), COLOR_GRAY)
+                Font.print(FONT16, 225, y - 44, MemToStr(chapters_space), COLOR_GRAY)
                 if sure_clear_chapters > 0 then
                     Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                 end
@@ -695,12 +696,12 @@ function Catalogs.draw()
                     end
                     get_space_dir("ux0:data/noboru/cache")
                 end
-                Font.print(FONT16, 225, y - 44, MemToStr(cache_space, Language[Settings.Language].SETTINGS.Space), COLOR_GRAY)
+                Font.print(FONT16, 225, y - 44, MemToStr(cache_space), COLOR_GRAY)
                 if sure_clear_all_cache > 0 then
                     Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                 end
             elseif task == "ShowAuthor" then
-                Graphics.drawImage(225, y - 44, DEV_LOGO.e)
+                Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_GRAY)
             elseif task == "ShowVersion" then
                 Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_GRAY)
             elseif task == "ReaderDirection" then
@@ -739,7 +740,7 @@ function Catalogs.draw()
             local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks + 1, ks + 3 do
-                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
+                Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, Themes[Settings.Theme].COLOR_SELECTOR)
                 Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
             end
         end
@@ -752,7 +753,7 @@ function Catalogs.draw()
         local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
         local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
         for i = ks, ks + 1 do
-            Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + item_h, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
+            Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + item_h, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR)
             Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + item_h, y - 71 + i + 1, wh)
         end
     end
@@ -779,6 +780,11 @@ function Catalogs.terminate()
     Results = {}
     page = 1
     Slider.Y = -100
+    MangaSelector:resetSelected()
+    ParserSelector:resetSelected()
+    DownloadSelector:resetSelected()
+    SettingSelector:resetSelected()
+    ImportSelector:resetSelected()
 end
 
 ---@param new_mode string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
@@ -790,10 +796,5 @@ function Catalogs.setMode(new_mode)
     sure_clear_chapters = 0
     sure_clear_cache = 0
     sure_clear_all_cache = 0
-    MangaSelector:resetSelected()
-    ParserSelector:resetSelected()
-    DownloadSelector:resetSelected()
-    SettingSelector:resetSelected()
-    ImportSelector:resetSelected()
     Catalogs.terminate()
 end

@@ -48,7 +48,7 @@ function Import.go(item)
             Path = path .. item.name,
             Pages = {},
             Manga = {
-                Name = item.name:match("(.*)%..-$)"),
+                Name = item.name:match("(.*)%..-$"),
                 Link = "AABBCCDDEEFFGG",
                 ImageLink = "",
                 ParserID = "IMPORTED"

@@ -3,6 +3,21 @@ local listDirectory = System.listDirectory
 local deleteFile = System.deleteFile
 local deleteDirectory = System.deleteDirectory
 
+DRAW_PHASE = false
+
+local old_init = Graphics.initBlend
+local old_term = Graphics.termBlend
+
+function Graphics.initBlend()
+    DRAW_PHASE = true
+    old_init()
+end
+
+function Graphics.termBlend()
+    DRAW_PHASE = false
+    old_term()
+end
+
 local function r_dir(path)
     if doesDirExist(path) then
         local dir = listDirectory(path) or {}
@@ -29,7 +44,11 @@ local df = dofile
 function loadlib(str)
     df("app0:assets/libs/" .. str .. ".lua")
 end
-local suc, err = xpcall(function()dofile "app0:main.lua" end, debug.traceback)
+
+local suc, err = xpcall(dofile, debug.traceback, "app0:main.lua")
 if not suc then
+    if DRAW_PHASE then
+        old_term()
+    end
     error(err)
 end

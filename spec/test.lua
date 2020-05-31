@@ -103,12 +103,12 @@ test("Settings-Language test", function()
     if not success then
         error("Watch log to see conflicts")
     end
-    end)
+end)
 
 function scandir(directory)
     local i, t, popen = 0, {}, io.popen
     local pfile
-    pfile = popen('ls -a "'..directory..'"')
+    pfile = popen('ls -a "' .. directory .. '"')
     for filename in pfile:lines() do
         i = i + 1
         t[i] = filename
@@ -119,10 +119,10 @@ end
 
 function lines_from(file)
     local lines = {}
-    for line in io.lines(file) do 
+    for line in io.lines(file) do
         lines[#lines + 1] = line
     end
-    return table.concat(lines,"\n")
+    return table.concat(lines, "\n")
 end
 
 test("All-files Language test", function()
@@ -140,23 +140,57 @@ test("All-files Language test", function()
     for _, b in ipairs(blacklist) do
         for i = 1, #files do
             if files[i] == b then
-                table.remove(files,i)
+                table.remove(files, i)
                 break
             end
         end
     end
     for _, file in ipairs(files) do
-        local content = lines_from("../source/assets/libs/"..file)
+        local content = lines_from("../source/assets/libs/" .. file)
         local a = 0
         for k in content:gmatch("(Language%[%s-Settings.Language%s-%][%.A-Za-z_]+)") do
             for lang, _ in pairs(Language) do
-                local has = pcall(load("return "..k:gsub("Settings%.Language",'"'..lang..'"').."~=nil"))
+                local has = pcall(load("return " .. k:gsub("Settings%.Language", '"' .. lang .. '"') .. "~=nil"))
                 if not has then
-                    print("\27[31m"..k.." for "..lang.." not found!\27[00m")
+                    print("\27[31m" .. k .. " for " .. lang .. " not found!\27[00m")
                     success = false
                 end
             end
         end
+    end
+    if not success then
+        error("Watch log to see conflicts")
+    end
+end)
+
+test("Utils checking", function()
+    local success = true
+    System = {}
+    dofile("../source/assets/libs/utils.lua")
+    print("Checking table.next")
+    if table.next("a", {"a", "b", "c"}) ~= "b" then
+        error('error table.next("a", {"a", "b", "c"})')
+        success = false
+    end
+    if table.next("c", {"a", "b", "c"}) ~= "a" then
+        error('error table.next("c", {"a", "b", "c"})')
+        success = false
+    end
+    if table.next("d", {"a", "b", "c"}) ~= "a" then
+        error('error table.next("d", {"a", "b", "c"})')
+        success = false
+    end
+    if table.next("d", {}) ~= nil then
+        error('error table.next("d", {})')
+        success = false
+    end
+    if table.next(nil, {"p", "r"}) ~= "p" then
+        error('error table.next(nil, {"p", "r"})')
+        success = false
+    end
+    if table.next(nil, {nil}) ~= nil then
+        error('error table.next(nil, {nil})')
+        success = false
     end
     if not success then
         error("Watch log to see conflicts")

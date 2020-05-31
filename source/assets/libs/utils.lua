@@ -95,44 +95,49 @@ function string.sub(str, i, k)
 end
 
 ---@param t table
----@param name string
 ---@return string
 ---Converts table to string
-function table.serialize(t, name)
+function table.serialize(t, fast)
     local concat = table.concat
     local type = type
-    local function serialize(_t, _name)
+    local function serialize(_t, _tab)
         local P = {}
         for k, v in pairs(_t) do
-            if type(v) == "string" then
-                if type(k) == "string" then
-                    P[#P + 1] = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]="' .. v:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"'
+            local key
+            if type(k) == "string" then
+                if fast or not k:find("^[%a_][%w_]-$") then
+                    key = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"] = '
                 else
-                    P[#P + 1] = '[' .. k .. ']="' .. v:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"'
-                end
-            elseif type(v) == "table" then
-                if type(k) == "string" then
-                    P[#P + 1] = serialize(v, '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]')
-                else
-                    P[#P + 1] = serialize(v, '[' .. k .. ']')
-                end
-            elseif type(v) == "boolean" or type(v) == "number" then
-                if type(k) == "string" then
-                    P[#P + 1] = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]=' .. tostring(v) .. ''
-                else
-                    P[#P + 1] = '[' .. k .. ']=' .. tostring(v) .. ''
+                    key = k .. ' = '
                 end
             else
-                if type(k) == "string" then
-                    P[#P + 1] = '["' .. k:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"]="' .. tostring(v) .. '"'
-                else
-                    P[#P + 1] = '[' .. k .. ']="' .. tostring(v) .. '"'
-                end
+                key = '[' .. k .. '] = '
+            end
+            if type(v) == "string" then
+                P[#P + 1] = key .. '"' .. v:gsub("\\", "\\\\"):gsub("\"", "\\\"") .. '"'
+            elseif type(v) == "table" then
+                P[#P + 1] = key .. serialize(v, _tab + 1)
+            elseif type(v) == "boolean" or type(v) == "number" then
+                P[#P + 1] = key .. tostring(v)
+            else
+                P[#P + 1] = key .. '"' .. tostring(v) .. '"'
             end
         end
-        return _name .. " = {" .. concat(P, ", ") .. "}"
+        return #P > 0 and "{\n" .. string.rep("\t", _tab) .. concat(P, ",\n" .. string.rep("\t", _tab)) .. "\n" .. string.rep("\t", _tab - 1) .. "}" or "{ }"
     end
-    return serialize(t, name)
+    return serialize(t, 1)
+end
+
+function table.next(old_value, values)
+    local found = false
+    for _, v in ipairs(values) do
+        if found then
+            return v
+        else
+            found = old_value == v
+        end
+    end
+    return values[1]
 end
 
 ---@param t table

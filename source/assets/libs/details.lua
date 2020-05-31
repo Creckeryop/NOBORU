@@ -113,7 +113,7 @@ function Details.setManga(manga)
     if manga then
         Manga = manga
         ms = 50 * string.len(manga.Name)
-        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 830, 0)
+        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960+88+88, 0)
         Chapters = {}
         Slider.Y = -50
         DetailsSelector:resetSelected()
@@ -142,15 +142,13 @@ function Details.setManga(manga)
 end
 
 local function press_add_to_library()
-    if Manga then
-        if Database.check(Manga) then
-            Database.remove(Manga)
-            Notifications.push(Language[Settings.Language].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
-        else
-            Database.add(Manga)
-            Cache.addManga(Manga)
-            Notifications.push(Language[Settings.Language].NOTIFICATIONS.ADDED_TO_LIBRARY)
-        end
+    if Database.check(Manga) then
+        Database.remove(Manga)
+        Notifications.push(Language[Settings.Language].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
+    else
+        Database.add(Manga)
+        Cache.addManga(Manga)
+        Notifications.push(Language[Settings.Language].NOTIFICATIONS.ADDED_TO_LIBRARY)
     end
 end
 
@@ -198,7 +196,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
                     if Settings.ChapterSorting == "N->1" then
                         id = #Chapters - id + 1
                     end
-                    if oldtouch.x < 890 or Manga.ParserID == "IMPORTED" then
+                    if oldtouch.x < 866 or Manga.ParserID == "IMPORTED" then
                         press_manga(id)
                     else
                         press_download(id)
@@ -226,7 +224,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
                 id = #Chapters - id + 1
             end
             press_manga(id)
-        elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
+        elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) or (touch.x and not oldtouch.x and touch.x < 88 and touch.y < 90) then
             mode = "WAIT"
             Loading.setMode("NONE")
             ParserManager.remove(Chapters)
@@ -356,7 +354,7 @@ function Details.draw()
         end
         Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
         DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 9)
-        Graphics.fillRect(260, 890, 90, 544, BACKGROUND_COLOR)
+        Graphics.fillRect(260, 890 - 18, 90, 544, BACKGROUND_COLOR)
         local ListCount = #Chapters
         for n = start, math.min(ListCount, start + 8) do
             local i = Settings.ChapterSorting ~= "N->1" and n or ListCount - n + 1
@@ -364,18 +362,21 @@ function Details.draw()
             if bookmark ~= nil and bookmark ~= true then
                 Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, TEXT_COLOR)
                 Font.print(BONT16, 290, y + 14, Chapters[i].Name or ("Chapter " .. i), TEXT_COLOR)
+            elseif bookmark == true then
+                Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.DONE, SECOND_TEXT_COLOR)
+                Font.print(BONT16, 290, y + 14, Chapters[i].Name or ("Chapter " .. i), SECOND_TEXT_COLOR)
             else
                 Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), TEXT_COLOR)
             end
             y = y + 80
         end
-        Graphics.fillRect(890, 955, 90, 544, BACKGROUND_COLOR)
+        Graphics.fillRect(890 - 18, 955, 90, 544, BACKGROUND_COLOR)
         y = shift - Slider.Y + start * 80
         for n = start, math.min(ListCount, start + 8) do
             local i = Settings.ChapterSorting ~= "N->1" and n or ListCount - n + 1
             if Manga.ParserID ~= "IMPORTED" then
                 if ChapterSaver.check(Chapters[i]) then
-                    Graphics.drawImage(920 - 14, y + 40 - 12, cross.e)
+                    Graphics.drawImage(920 - 14 - 18, y + 40 - 12, cross.e)
                 else
                     local t = ChapterSaver.is_downloading(Chapters[i])
                     if t then
@@ -384,9 +385,9 @@ function Details.draw()
                             text = math.ceil(100 * t.page / t.page_count) .. "%"
                         end
                         local width = Font.getTextWidth(FONT20, text)
-                        Font.print(FONT20, 920 - width / 2, y + 26, text, COLOR_WHITE)
+                        Font.print(FONT20, 920 - width / 2 - 18, y + 26, text, COLOR_WHITE)
                     else
-                        Graphics.drawImage(920 - 14, y + 40 - 12, Download_icon.e)
+                        Graphics.drawImage(920 - 14 - 18, y + 40 - 12, Download_icon.e)
                     end
                 end
             end
@@ -405,21 +406,23 @@ function Details.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
+                Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
                 Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
             end
             if Manga.ParserID ~= "IMPORTED" then
                 Graphics.drawImage(929 - ks, y + 5 + ks, textures_16x16.Square.e)
             end
         end
-        Graphics.fillRect(0, 870, 0, 90, BACKGROUND_COLOR)
+        Graphics.fillRect(88, 960-32-24-32, 0, 90, BACKGROUND_COLOR)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
-        Font.print(BONT30, 20 - dif * t / ms, 70 * M - 45, Manga.Name, TEXT_COLOR)
-        Font.print(FONT16, 40, 70 * M - 5, Manga.RawLink, SECOND_TEXT_COLOR)
-        Graphics.fillRect(870, 960, 0, 90, BACKGROUND_COLOR)
+        Font.print(BONT30, 88 - dif * t / ms, 70 * M - 56, Manga.Name, TEXT_COLOR)
+        Font.print(FONT16, 88, 70 * M - 16, Manga.RawLink, SECOND_TEXT_COLOR)
+        Graphics.fillRect(0, 88, 0, 90, BACKGROUND_COLOR)
+        Graphics.drawImage(32, 90 * M - 45 - 12, Back_icon.e, COLOR_WHITE)
+        Graphics.fillRect(960-32-24-32, 960, 0, 90, BACKGROUND_COLOR)
         if chapters_loaded then
-            Graphics.drawImage(903, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
-            Graphics.drawImage(883, 5 - (1 - M) * 32, textures_16x16.Start.e)
+            Graphics.drawImage(960-32-24, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
+            Graphics.drawImage(960-32-24-20, 5 - (1 - M) * 32, textures_16x16.Start.e)
         end
         Graphics.fillRect(955, 960, 90, 544, BACKGROUND_COLOR)
         if mode == "START" and #Chapters > 5 then

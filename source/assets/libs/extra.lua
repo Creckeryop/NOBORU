@@ -20,8 +20,24 @@ ExtraMenuNormal = {
     "CancelAll",
     "ClearBookmarks"
 }
+
+ExtraMenuNormalWithBrowser = {
+    "OpenMangaInBrowser",
+    "DownloadAll",
+    "RemoveAll",
+    "CancelAll",
+    "ClearBookmarks",
+}
+
 ExtraMenuImported = {
     "ClearBookmarks"
+}
+
+ExtraMenuReader = {
+    "OpenInBrowser",
+    "ReaderOrientation",
+    "ReaderDirection",
+    "ZoomReader"
 }
 
 local w_max = 0
@@ -60,17 +76,26 @@ local function animationUpdate()
 end
 
 local ExtraSelector = Selector:new(-1, 1, 0, 0, function() return math.floor((Slider.Y + y_srt) / 80) end)
-
-function Extra.setChapters(manga, chapters)
+local Page = nil
+local CustomSettings = {}
+function Extra.setChapters(manga, chapters, page)
     if manga then
         bookmarks_update = false
         Manga = manga
         Chapters = chapters
         Slider.Y = -50
-        if manga.ParserID == "IMPORTED" then
+        if page then
+            ExtraMenu = ExtraMenuReader
+            Page = page
+            CustomSettings = CuSettings.load(Manga)
+        elseif manga.ParserID == "IMPORTED" then
             ExtraMenu = ExtraMenuImported
         else
-            ExtraMenu = ExtraMenuNormal
+            if Manga.BrowserLink then
+                ExtraMenu = ExtraMenuNormalWithBrowser
+            else
+                ExtraMenu = ExtraMenuNormal
+            end
         end
         ExtraSelector:resetSelected()
         mode = "START"
@@ -87,6 +112,16 @@ function Extra.setChapters(manga, chapters)
     end
 end
 
+
+local writeFile = System.writeFile
+local closeFile = System.closeFile
+local deleteFile = System.deleteFile
+local openFile = System.openFile
+local readFile = System.readFile
+local sizeFile = System.sizeFile
+local doesFileExist = System.doesFileExist
+local callUri = System.executeUri
+local extractZip = System.extractFromZip
 local function press_action(id)
     if ExtraMenu[id] == "DownloadAll" then
         Cache.addManga(Manga)
@@ -107,6 +142,67 @@ local function press_action(id)
     elseif ExtraMenu[id] == "ClearBookmarks" then
         Cache.clearBookmarks(Manga)
         bookmarks_update = true
+    elseif ExtraMenu[id] == "OpenInBrowser" then
+        if doesFileExist("ux0:data/noboru/temp/image.html") then
+            deleteFile("ux0:data/noboru/temp/image.html")
+        end
+        local file = openFile("ux0:data/noboru/temp/image.html", FCREATE)
+        if type(Page)=="table" then
+            if Manga.ParserID == "IMPORTED" then
+                extractZip("ux0:data/noboru/"..Page.Path, Page.Extract, "ux0:data/noboru/temp/page.image")
+                Page = "file:///ux0:data/noboru/temp/page.image"
+            elseif Page.Path then
+                Page = "file:///ux0:data/noboru/"..Page.Path
+            elseif type(Page.Link)=="string" then
+                if Page.Link:find("$http") then
+                    Page = Page.Link
+                else
+                    Page = "http://"..Page.Link
+                end
+            elseif type(Page.Link)=="table" then
+                local img = {}
+                Threads.insertTask(img, {
+                    Type = "FileDownload",
+                    Link = Page.Link,
+                    Table = img
+                })
+                while Threads.check(img) do
+                    Threads.update()
+                end
+                Page = "file:///ux0:data/noboru/temp/cache.image"
+            else
+                return
+            end
+        end
+        local content = ([[
+<html>
+    <head>
+    <title>%s</title>
+    </head>
+    <body style="background-color: black;">
+        <div style="text-align: center;">
+            <img src="%s" width="100%%">
+        </div>
+    </body>
+</html>
+        ]]):format("NOBORU: "..Manga.Name.." | "..Chapters.Name, Page)
+        writeFile(file, content, #content)
+        closeFile(file)
+        callUri("webmodal: file:///ux0:data/noboru/temp/image.html")
+    elseif ExtraMenu[id] == "ReaderOrientation" then
+        CuSettings.changeOrientation(Manga)
+        Reader.updateSettings()
+        CustomSettings = CuSettings.load(Manga)
+    elseif ExtraMenu[id] == "ReaderDirection" then
+        CuSettings.changeDirection(Manga)
+        Reader.updateSettings()
+        CustomSettings = CuSettings.load(Manga)
+    elseif ExtraMenu[id] == "ZoomReader" then
+        CuSettings.changeZoom(Manga)
+        Reader.updateSettings()
+        CustomSettings = CuSettings.load(Manga)
+    elseif ExtraMenu[id] == "OpenMangaInBrowser" then
+        callUri("webmodal: "..Manga.BrowserLink)
     end
 end
 
@@ -197,9 +293,23 @@ function Extra.draw()
         local BLACK = Color.new(0, 0, 0, Alpha)
         local y = shift - Slider.Y + start * 80 + y_srt
         local ListCount = #ExtraMenu
+        Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
         Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y_srt + shift, y_srt + 80 * ListCount + shift - 1, WHITE)
         for i = start, math.min(ListCount, start + 8) do
-            Font.print(BONT16, 480 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) / 2, y + 28 - 79, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i], BLACK)
+            if ExtraMenu == ExtraMenuReader then
+                local text = Language[Settings.Language].SETTINGS[ExtraMenu[i]] or ExtraMenu[i]
+                if ExtraMenu[i] == "ReaderOrientation" then
+                    text = text..": "..Language[Settings.Language].READER[CustomSettings.Orientation]
+                elseif ExtraMenu[i] == "ReaderDirection" then
+                    text = text..": "..Language[Settings.Language].READER[CustomSettings.ReaderDirection]
+                elseif ExtraMenu[i] == "ZoomReader" then
+                    text = text..": "..Language[Settings.Language].READER[CustomSettings.ZoomReader]
+                end
+                Font.print(BONT16, 480 - Font.getTextWidth(BONT16, text) / 2, y + 28 - 79, text, BLACK)
+
+            else
+                Font.print(BONT16, 480 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) / 2, y + 28 - 79, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i], BLACK)
+            end
             if i == Slider.ItemID then
                 Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
             end
@@ -211,7 +321,7 @@ function Extra.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for i = ks, ks + 1 do
-                Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, Themes[Settings.Theme].COLOR_SELECTOR_MENU)
+                Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, Themes[Settings.Theme].COLOR_SELECTOR)
                 Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, SELECTED_RED)
             end
         end

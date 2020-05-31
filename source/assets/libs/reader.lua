@@ -34,6 +34,7 @@ local StartPage
 
 local orientation
 local is_down
+local autozoom
 
 local hideCounterTimer = Timer.new()
 
@@ -45,6 +46,14 @@ local ContextMenu = false
 local MenuFade = 0
 local OpenCloseContextMenu = false
 local OpenCloseContextMenuTimer = Timer.new()
+
+local name_timer = Timer.new()
+local chapter_timer = Timer.new()
+
+local left_arrow_icon = Image:new(Graphics.loadImage("app0:assets/icons/left.png"))
+local right_arrow_icon = Image:new(Graphics.loadImage("app0:assets/icons/right.png"))
+
+local readDirection = Settings.ReaderDirection
 
 local function gesture_touch_input(touch, oldtouch, page)
     if Settings.DoubleTapReader then
@@ -118,6 +127,12 @@ end
 local Chapters = {}
 local current_chapter = 1
 
+local function updateMeasurements()
+    for i = 1, #Pages do
+        Pages[i].Zoom = nil
+    end
+end
+
 local function scale(dZoom, Page)
     if math.abs(1 - dZoom) < 0.005 or not Page.Zoom then return end
     local old_Zoom = Page.Zoom
@@ -135,6 +150,7 @@ local function deletePageImage(page)
     if Pages[page].Image then
         if type(Pages[page].Image.e or Pages[page].Image) == "table" then
             Threads.remove(Pages[page])
+            ParserManager.remove(Pages[page])
             for i = 1, Pages[page].Image.Parts do
                 if Pages[page].Image[i] and Pages[page].Image[i].e then
                     Pages[page].Image[i]:free()
@@ -153,83 +169,84 @@ local function deletePageImage(page)
     end
 end
 
+local function loadPageImage(page)
+    local PageTable = Pages[page]
+    if not PageTable.Image and not (PageTable.Link == "LoadPrev" or PageTable.Link == "LoadNext") then
+        if PageTable.Extract then
+            Threads.insertTask(PageTable, {
+                Type = "UnZipFile",
+                Path = PageTable.Path,
+                Extract = PageTable.Extract,
+                DestPath = "ux0:data/noboru/temp/cache.image",
+                OnComplete = function()
+                    Threads.insertTask(PageTable, {
+                        Type = "Image",
+                        Table = PageTable,
+                        Path = "temp/cache.image",
+                        Index = "Image"
+                    })
+                end
+            })
+        elseif PageTable.Path then
+            Threads.insertTask(PageTable, {
+                Type = "Image",
+                Path = PageTable.Path,
+                Table = PageTable,
+                Index = "Image"
+            })
+        elseif PageTable.Link then
+            Threads.insertTask(PageTable, {
+                Type = "ImageDownload",
+                Link = PageTable.Link,
+                Table = PageTable,
+                Index = "Image"
+            })
+        else
+            ParserManager.loadPageImage(Chapters[current_chapter].Manga.ParserID, PageTable[1], PageTable, true)
+        end
+    end
+end
 ---@param page integer
 local function changePage(page)
     if page < 0 and current_chapter > 1 or page > #Pages then
         return false
     end
-    local prev_page = Pages.Page
+    Pages.PrevPage = Pages.Page
     Pages.Page = page
-    Pages.PrevPage = prev_page
     if Pages[Pages.Page].Link == "LoadNext" or Pages[Pages.Page].Link == "LoadPrev" then
         return true
     end
     local o = {0}
     for k = 1, #o do
         local p = page + o[k]
-        if p > 0 and p <= #Pages then
-            if not Pages[p].Image and not (Pages[p].Link == "LoadPrev" or Pages[p].Link == "LoadNext") then
-                if Pages[p].Extract then
-                    local new_page = Pages[p]
-                    Threads.insertTask(new_page, {
-                        Type = "UnZipFile",
-                        Path = new_page.Path,
-                        Extract = new_page.Extract,
-                        DestPath = "ux0:data/noboru/cache.image",
-                        OnComplete = function()
-                            Threads.insertTask(new_page, {
-                                Type = "Image",
-                                Table = new_page,
-                                Path = "cache.image",
-                                Index = "Image"
-                            })
-                        end
-                    })
-                elseif Pages[p].Path then
-                    Threads.insertTask(Pages[p], {
-                        Type = "Image",
-                        Path = Pages[p].Path,
-                        Table = Pages[p],
-                        Index = "Image"
-                    })
-                elseif Pages[p].Link then
-                    Threads.insertTask(Pages[p], {
-                        Type = "ImageDownload",
-                        Link = Pages[p].Link,
-                        Table = Pages[p],
-                        Index = "Image"
-                    })
-                else
-                    ParserManager.loadPageImage(Chapters[current_chapter].Manga.ParserID, Pages[p][1], Pages[p], p, true)
-                end
-            end
+        if Pages[p] then
+            loadPageImage(p)
         end
     end
     for i = page - 2, page + 2, 4 do
         if i > 0 and i <= #Pages then
             deletePageImage(i)
-            Pages[i] = {
-                Pages[i][1],
-                Link = Pages[i].Link,
-                Path = Pages[i].Path,
-                Extract = Pages[i].Extract,
-                x = 0,
-                y = 0
-            }
+            local OldOne = Pages[i][1]
+            local OldLink = Pages[i].Link
+            local OldPath = Pages[i].Path
+            local OldExtr = Pages[i].Extract
+            for k, v in pairs(Pages[i]) do
+                Pages[i][k] = nil
+            end
+            Pages[i][1] = OldOne
+            Pages[i].Link = OldLink
+            Pages[i].Path = OldPath
+            Pages[i].Extract = OldExtr
+            Pages[i].x = 0
+            Pages[i].y = 0
         end
     end
     return true
 end
 
 local function changeOrientation()
-    if orientation == "Vertical" then
-        orientation = "Horizontal"
-    else
-        orientation = "Vertical"
-    end
-    for i = 1, #Pages do
-        Pages[i].Zoom = nil
-    end
+    orientation = table.next(orientation, {"Horizontal", "Vertical"})
+    updateMeasurements()
 end
 
 local buttonTimer = Timer.new()
@@ -349,11 +366,27 @@ local function swipe(direction)
     end
 end
 
+
+local function exit()
+    for i = 1, #Pages do
+        deletePageImage(i)
+    end
+    Pages = {
+        Page = 0
+    }
+    ParserManager.remove((((Chapters or {})[current_chapter or 0] or {}).Pages) or 0)
+    collectgarbage("collect")
+    AppMode = MENU
+    ContextMenu = false
+    MenuFade = 0
+    OpenCloseContextMenu = false
+end
+
 function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
-    if Controls.check(pad, SCE_CTRL_CIRCLE) then
+    if Controls.check(pad, SCE_CTRL_CIRCLE) or ContextMenu and touch.x and touch.x < 88 and touch.y < 80 * MenuFade and not oldtouch.x then
         if Pages.Page > 0 then
             local bookmark
-            if Settings.ReaderDirection == "LEFT" then
+            if readDirection == "LEFT" then
                 bookmark = Pages.Count - Pages.Page + 1
             else
                 bookmark = Pages.Page
@@ -367,15 +400,21 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 Cache.setBookmark(Chapters[current_chapter], bookmark)
             end
         end
-        for i = 1, #Pages do
-            Threads.remove(Pages[i])
+        exit()
+    end
+    if ContextMenu then
+        if touch.x and touch.y < 80 * MenuFade and not oldtouch.x then
+            if touch.x > 960-88 then
+                if Pages[Pages.Page or -1] and Pages[Pages.Page or -1].Link then
+                    Extra.setChapters(Chapters[current_chapter].Manga, Chapters[current_chapter], Pages[Pages.Page])
+                end
+            elseif touch.x > 960-88-88 then
+                if Pages[Pages.Page or -1] then
+                    deletePageImage(Pages.Page)
+                    loadPageImage(Pages.Page)
+                end
+            end
         end
-        Pages = {
-            Page = 0
-        }
-        ParserManager.clear()
-        collectgarbage("collect")
-        AppMode = MENU
     end
     if STATE == STATE_READING and Pages[Pages.Page] then
         if touch.x ~= nil or pad ~= 0 then
@@ -465,28 +504,8 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 page.y = page.y - (center.y - 272) * (n - 1)
                 page.x = page.x - (center.x - 480) * (n - 1)
             end
-        elseif ContextMenu and touch.y and oldtouch.y and (touch.y >= 544 - 80 or touch.y <= 80) and (oldtouch.y >= 544 - 80 or oldtouch.y <= 80) then
-            if touch.x > 180 and touch.x < 780 and Pages.Count > 1 then
-                local new_page = math.min(math.max(1, math.floor((touch.x-200)/(560/(Pages.Count-1))+1)), Pages.Count)
-                if new_page < Pages.Page then
-                    repeat
-                        if orientation == "Vertical" and is_down then
-                            swipe("LEFT")
-                        else
-                            swipe("RIGHT")
-                        end
-                    until new_page == Pages.Page
-                elseif new_page > Pages.Page then
-                    repeat
-                        if orientation == "Vertical" and is_down then
-                            swipe("RIGHT")
-                        else
-                            swipe("LEFT")
-                        end
-                    until new_page == Pages.Page
-                end
-
-            end
+        elseif ContextMenu and ((touch.y and (touch.y >= 544 - 80 or touch.y <= 80)) or (oldtouch.y and (oldtouch.y >= 544 - 80 or oldtouch.y <= 80))) then
+            do end
         else
             if touchMode == TOUCH_SWIPE then
                 if offset.x > 90 or offset.y > 90 then
@@ -549,9 +568,54 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             end
         end
     elseif STATE == STATE_LOADING then
-        if touch.x ~= nil then
+        if touch.x == nil and oldtouch.x ~= nil and (not ContextMenu or (oldtouch.y <= 544 - 80 and oldtouch.y >= 80)) then
             OpenCloseContextMenu = true
             Timer.reset(OpenCloseContextMenuTimer)
+        end
+    end
+    if ContextMenu and ((touch.y and (touch.y >= 544 - 80 or touch.y <= 80)) or (oldtouch.y and (oldtouch.y >= 544 - 80 or oldtouch.y <= 80))) then
+        if (touch.y and touch.y >= 544 - 80 or oldtouch.y and oldtouch.y >= 544 - 80) and (touchMode == TOUCH_IDLE or touchMode == TOUCH_READ) then
+            if touch.x and touch.x > 180 and touch.x < 780 and Pages.Count and Pages.Count > 1 then
+                local new_page = math.min(math.max(1, math.floor((touch.x - 200) / (560 / (Pages.Count - 1)) + 1)), Pages.Count)
+                if is_down and orientation == "Vertical" then
+                    new_page = Pages.Count - new_page + 1
+                end
+                if new_page < Pages.Page then
+                    repeat
+                        swipe("RIGHT")
+                    until new_page == Pages.Page
+                    if readDirection == "LEFT" then
+                        Pages.PrevPage = Pages.Page + 1
+                    else
+                        Pages.PrevPage = Pages.Page - 1
+                    end
+                elseif new_page > Pages.Page then
+                    repeat
+                        swipe("LEFT")
+                    until new_page == Pages.Page
+                    if readDirection == "LEFT" then
+                        Pages.PrevPage = Pages.Page + 1
+                    else
+                        Pages.PrevPage = Pages.Page - 1
+                    end
+                end
+            elseif not oldtouch.x and touch.x then
+                if readDirection == "LEFT" or is_down and orientation == "Vertical" then
+                    if touch.x < 88 and current_chapter < #Chapters then
+                        Reader.loadChapter(current_chapter + 1)
+                    elseif touch.x > 960 - 88 and current_chapter > 1 then
+                        Reader.loadChapter(current_chapter - 1)
+                        StartPage = false
+                    end
+                else
+                    if touch.x < 88 and current_chapter > 1 then
+                        Reader.loadChapter(current_chapter - 1)
+                        StartPage = false
+                    elseif touch.x > 960 - 88 and current_chapter < #Chapters then
+                        Reader.loadChapter(current_chapter + 1)
+                    end
+                end
+            end
         end
     end
     if Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) then
@@ -561,12 +625,19 @@ end
 
 local counterShift = 0
 
+
 function Reader.update()
+    if OpenCloseContextMenu and Timer.getTime(OpenCloseContextMenuTimer) > 300 then
+        Timer.reset(chapter_timer)
+        Timer.reset(name_timer)
+        ContextMenu = not ContextMenu
+        OpenCloseContextMenu = false
+    end
     if STATE == STATE_LOADING then
         if Chapters[current_chapter].Pages.Done then
             if #Chapters[current_chapter].Pages == 0 then
                 Console.error("Error loading chapter")
-                ParserManager.clear()
+                ParserManager.remove((((Chapters or {})[current_chapter or 0] or {}).Pages) or 0)
                 collectgarbage("collect")
                 if Threads.netActionUnSafe(Network.isWifiEnabled) then
                     Notifications.push("Unknown error (Parser's)")
@@ -579,7 +650,7 @@ function Reader.update()
             STATE = STATE_READING
             local chapter = Chapters[current_chapter]
             Pages.Count = #chapter.Pages
-            if Settings.ReaderDirection == "RIGHT" or is_down then
+            if readDirection == "RIGHT" or is_down then
                 for i = 1, #chapter.Pages do
                     Pages[#Pages + 1] = {
                         chapter.Pages[i],
@@ -589,7 +660,7 @@ function Reader.update()
                         y = 0
                     }
                 end
-            elseif Settings.ReaderDirection == "LEFT" then
+            elseif readDirection == "LEFT" then
                 for i = #chapter.Pages, 1, -1 do
                     Pages[#Pages + 1] = {
                         chapter.Pages[i],
@@ -600,7 +671,7 @@ function Reader.update()
                     }
                 end
             end
-            if Settings.ReaderDirection == "RIGHT" or is_down then
+            if readDirection == "RIGHT" or is_down then
                 StartPage = StartPage and StartPage > 0 and StartPage <= Pages.Count and StartPage or StartPage == false and -1 or nil
                 if StartPage == -1 then
                     StartPage = false
@@ -630,7 +701,7 @@ function Reader.update()
                     changePage(1)
                 end
                 StartPage = nil
-            elseif Settings.ReaderDirection == "LEFT" then
+            elseif readDirection == "LEFT" then
                 StartPage = StartPage and StartPage > 0 and StartPage <= Pages.Count and StartPage or StartPage == false and -1 or nil
                 if StartPage == -1 then
                     StartPage = false
@@ -681,12 +752,12 @@ function Reader.update()
                             Type = "UnZipFile",
                             Path = new_page.Path,
                             Extract = new_page.Extract,
-                            DestPath = "ux0:data/noboru/cache.image",
+                            DestPath = "ux0:data/noboru/temp/cache.image",
                             OnComplete = function()
                                 Threads.insertTask(new_page, {
                                     Type = "Image",
                                     Table = new_page,
-                                    Path = "cache.image",
+                                    Path = "temp/cache.image",
                                     Index = "Image"
                                 })
                             end
@@ -711,7 +782,7 @@ function Reader.update()
                 end
             end
         end
-        local o = Settings.ReaderDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
+        local o = readDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
         for _, i in ipairs(o) do
             local page = Pages[Pages.Page + i]
             if page and not page.Zoom and page.Image then
@@ -720,16 +791,18 @@ function Reader.update()
                     if is_down then
                         page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
                         Console.write("Added " .. Pages.Page + i)
-                        if Settings.ZoomReader == "Smart" then
+                        if autozoom == "Smart" then
                             if page.Width < page.Height then
                                 page.Zoom = 960 / page.Width
                             else
                                 page.Zoom = 544 / page.Height
                             end
-                        elseif Settings.ZoomReader == "Width" then
+                        elseif autozoom == "Width" then
                             page.Zoom = 960 / page.Width
-                        elseif Settings.ZoomReader == "Height" then
+                        elseif autozoom == "Height" then
                             page.Zoom = 544 / page.Height
+                        else
+                            page.Zoom = 960 / page.Width
                         end
                         if page.Height * page.Zoom >= 544 then
                             if i == 0 then
@@ -750,15 +823,15 @@ function Reader.update()
                     else
                         page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
                         Console.write("Added " .. Pages.Page + i)
-                        if Settings.ZoomReader == "Smart" then
+                        if autozoom == "Smart" then
                             if page.Width > page.Height then
                                 page.Zoom = 544 / page.Height
                             else
                                 page.Zoom = 960 / page.Width
                             end
-                        elseif Settings.ZoomReader == "Width" then
+                        elseif autozoom == "Width" then
                             page.Zoom = 960 / page.Width
-                        elseif Settings.ZoomReader == "Height" then
+                        elseif autozoom == "Height" then
                             page.Zoom = 544 / page.Height
                         end
                         if page.Width * page.Zoom >= 960 then
@@ -782,16 +855,18 @@ function Reader.update()
                     if is_down then
                         page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 - i * 960, 272
                         Console.write("Added " .. Pages.Page + i)
-                        if Settings.ZoomReader == "Smart" then
+                        if autozoom == "Smart" then
                             if page.Width > page.Height then
                                 page.Zoom = 960 / page.Height
                             else
                                 page.Zoom = 544 / page.Width
                             end
-                        elseif Settings.ZoomReader == "Width" then
+                        elseif autozoom == "Width" then
                             page.Zoom = 544 / page.Width
-                        elseif Settings.ZoomReader == "Height" then
+                        elseif autozoom == "Height" then
                             page.Zoom = 960 / page.Height
+                        else
+                            page.Zoom = 544 / page.Width
                         end
                         if page.Height * page.Zoom >= 960 then
                             if i == 0 then
@@ -812,15 +887,15 @@ function Reader.update()
                     else
                         page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
                         Console.write("Added " .. Pages.Page + i)
-                        if Settings.ZoomReader == "Smart" then
+                        if autozoom == "Smart" then
                             if page.Width > page.Height then
                                 page.Zoom = 960 / page.Height
                             else
                                 page.Zoom = 544 / page.Width
                             end
-                        elseif Settings.ZoomReader == "Width" then
+                        elseif autozoom == "Width" then
                             page.Zoom = 544 / page.Width
-                        elseif Settings.ZoomReader == "Height" then
+                        elseif autozoom == "Height" then
                             page.Zoom = 960 / page.Height
                         end
                         if page.Width * page.Zoom >= 544 then
@@ -1048,10 +1123,6 @@ function Reader.update()
             counterShift = math.min(counterShift + 1.5, 0)
         end
     end
-    if OpenCloseContextMenu and Timer.getTime(OpenCloseContextMenuTimer) > 300 then
-        ContextMenu = not ContextMenu
-        OpenCloseContextMenu = false
-    end
     if ContextMenu then
         MenuFade = math.min(MenuFade + 0.1, 1)
     else
@@ -1073,7 +1144,7 @@ function Reader.draw()
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_FONT)
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_FONT)
     elseif STATE == STATE_READING then
-        local o = Settings.ReaderDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
+        local o = readDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
         for _, i in ipairs(o) do
             local page = Pages[Pages.Page + i]
             if page and page.Image then
@@ -1129,7 +1200,7 @@ function Reader.draw()
         end
         if Pages.Page <= (Pages.Count or 0) and Pages.Page > 0 then
             local Counter = Pages.Page .. "/" .. Pages.Count
-            if Settings.ReaderDirection == "LEFT" then
+            if readDirection == "LEFT" then
                 Counter = (Pages.Count - Pages.Page + 1) .. "/" .. Pages.Count
             end
             local Width = Font.getTextWidth(FONT16, Counter) + 20
@@ -1141,13 +1212,10 @@ function Reader.draw()
         local BACK_COLOR = Color.new(0, 0, 0, 255 * MenuFade)
         local GRAY_COLOR = Color.new(128, 128, 128, 255 * MenuFade)
         local BLUE_COLOR = ChangeAlpha(COLOR_ROYAL_BLUE, 255 * MenuFade)
-        Graphics.fillRect(0, 960, 0, 80 * MenuFade, BACK_COLOR)
+        Graphics.fillRect(88, 960 - 88 - 32 - 24 - 32, 0, 80 * MenuFade, BACK_COLOR)
         Graphics.fillRect(0, 960, 544 - 80 * MenuFade, 544, BACK_COLOR)
         if STATE == STATE_READING then
             local current_page = Pages.Page
-            if Settings.ReaderDirection == "LEFT" then
-                current_page = (Pages.Count - Pages.Page + 1)
-            end
             current_page = math.max(1, math.min(current_page, Pages.Count))
             local point = 0
             if Pages.Count == 1 then
@@ -1155,28 +1223,85 @@ function Reader.draw()
             else
                 point = ((current_page - 1) * 560 / (Pages.Count - 1))
             end
-            Graphics.fillRect(200, 760, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, GRAY_COLOR)
-            Graphics.fillRect(200, 200 + point, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, BLUE_COLOR)
-            Graphics.drawImage(200 + point - 6, 544 - 80 * MenuFade + 40 - 6, Circle_icon.e, BLUE_COLOR)
-            Font.print(FONT26, 150 - Font.getTextWidth(FONT26, current_page) / 2, 544 - 80 * MenuFade + 23, current_page, COLOR_WHITE)
-            Font.print(FONT26, 810 - Font.getTextWidth(FONT26, Pages.Count) / 2, 544 - 80 * MenuFade + 23, Pages.Count, COLOR_WHITE)
+            if readDirection == "LEFT" then
+                Graphics.fillRect(200, 760, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, BLUE_COLOR)
+                Graphics.fillRect(200, 200 + point, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, GRAY_COLOR)
+                Graphics.drawImage(200 + point - 6, 544 - 80 * MenuFade + 40 - 6, Circle_icon.e, BLUE_COLOR)
+                current_page = (Pages.Count - Pages.Page + 1)
+                current_page = math.max(1, math.min(current_page, Pages.Count))
+                Font.print(FONT26, 180 - Font.getTextWidth(FONT26, Pages.Count), 544 - 80 * MenuFade + 23, Pages.Count, COLOR_WHITE)
+                Font.print(FONT26, 780, 544 - 80 * MenuFade + 23, current_page, COLOR_WHITE)
+            elseif orientation == "Vertical" and is_down then
+                if Pages.Count == 1 then
+                    point = 560
+                else
+                    point = (((Pages.Count - Pages.Page + 1) - 1) * 560 / (Pages.Count - 1))
+                end
+                Graphics.fillRect(200, 760, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, BLUE_COLOR)
+                Graphics.fillRect(200, 200 + point, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, GRAY_COLOR)
+                Graphics.drawImage(200 + point - 6, 544 - 80 * MenuFade + 40 - 6, Circle_icon.e, BLUE_COLOR)
+                Font.print(FONT26, 180 - Font.getTextWidth(FONT26, Pages.Count), 544 - 80 * MenuFade + 23, Pages.Count, COLOR_WHITE)
+                Font.print(FONT26, 780, 544 - 80 * MenuFade + 23, current_page, COLOR_WHITE)
+            else
+                Graphics.fillRect(200, 760, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, GRAY_COLOR)
+                Graphics.fillRect(200, 200 + point, 544 - 80 * MenuFade + 39, 544 - 80 * MenuFade + 41, BLUE_COLOR)
+                Graphics.drawImage(200 + point - 6, 544 - 80 * MenuFade + 40 - 6, Circle_icon.e, BLUE_COLOR)
+                Font.print(FONT26, 180 - Font.getTextWidth(FONT26, current_page), 544 - 80 * MenuFade + 23, current_page, COLOR_WHITE)
+                Font.print(FONT26, 780, 544 - 80 * MenuFade + 23, Pages.Count, COLOR_WHITE)
+            end
+        end
+        if current_chapter > 1 and not (orientation == "Vertical" and is_down or readDirection == "LEFT") or current_chapter < #Chapters and (orientation == "Vertical" and is_down or readDirection == "LEFT") then
+            Graphics.drawImage(32, 544 - 80 * MenuFade + 40 - 12, left_arrow_icon.e, COLOR_WHITE)
+        else
+            Graphics.drawImage(32, 544 - 80 * MenuFade + 40 - 12, left_arrow_icon.e, COLOR_GRAY)
+        end
+        if current_chapter < #Chapters and not (orientation == "Vertical" and is_down or readDirection == "LEFT") or current_chapter > 1 and (orientation == "Vertical" and is_down or readDirection == "LEFT") then
+            Graphics.drawImage(960 - 32 - 24, 544 - 80 * MenuFade + 40 - 12, right_arrow_icon.e, COLOR_WHITE)
+        else
+            Graphics.drawImage(960 - 32 - 24, 544 - 80 * MenuFade + 40 - 12, right_arrow_icon.e, COLOR_GRAY)
+        end
+        if Chapters[current_chapter] then
+            local manga_name = Chapters[current_chapter].Manga.Name
+            local chapter_name = Chapters[current_chapter].Name
+            local dif = math.max(Font.getTextWidth(BONT30, manga_name) - 960 + 88 + 32 + 24 + 32 + 24 + 32 + 32, 0)
+            local dif_ch = math.max(Font.getTextWidth(FONT16, chapter_name) - 960 + 88 + 32 + 24 + 32 + 24 + 32 + 32, 0)
+            local ms = 50 * string.len(manga_name)
+            local ms_ch = 50 * string.len(chapter_name)
+            local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
+            local t_ch = math.min(math.max(0, Timer.getTime(chapter_timer) - 1500), ms_ch)
+            Font.print(BONT30, 88 - dif * t / ms, 80 * MenuFade - 73, manga_name, COLOR_WHITE)
+            Font.print(FONT16, 88 - dif_ch * t_ch / ms_ch, 80 * MenuFade - 32, chapter_name, COLOR_WHITE)
+            Graphics.fillRect(0, 88, 0, 80 * MenuFade, BACK_COLOR)
+            Graphics.drawImage(32, 80 * MenuFade - 40 - 12, Back_icon.e, COLOR_WHITE)
+            Graphics.fillRect(960 - 88 - 32 - 24 - 32, 960, 0, 80 * MenuFade, BACK_COLOR)
+            if Pages[Pages.Page] and Pages[Pages.Page].Link or Chapters[current_chapter].Manga.ParserID == "IMPORTED" then
+                Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_WHITE)
+                Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_WHITE)
+            else
+                Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_GRAY)
+                Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_GRAY)
+            end
+            if Timer.getTime(name_timer) > 3500 + ms then
+                Timer.reset(name_timer)
+            end
+            if Timer.getTime(chapter_timer) > 3500 + ms_ch then
+                Timer.reset(chapter_timer)
+            end
+        else
+            Graphics.fillRect(0, 88, 0, 80 * MenuFade, BACK_COLOR)
+            Graphics.fillRect(960 - 88 - 32 - 24 - 32, 960, 0, 80 * MenuFade, BACK_COLOR)
         end
     end
 end
 
 function Reader.loadChapter(chapter)
     STATE = STATE_LOADING
-    current_chapter = chapter
-    for i = 1, #Pages do
-        Threads.remove(Pages[i])
-    end
     if not Chapters[chapter] then
         Console.error("Error loading chapter")
-        ParserManager.clear()
-        collectgarbage("collect")
-        AppMode = MENU
+        exit()
         return
     end
+    current_chapter = chapter
     Chapters[chapter].Pages = {}
     Pages = {
         Page = 0
@@ -1187,11 +1312,58 @@ function Reader.loadChapter(chapter)
     else
         ParserManager.prepareChapter(Chapters[chapter], Chapters[chapter].Pages)
     end
+    Timer.reset(chapter_timer)
+    Timer.reset(name_timer)
+end
+
+function Reader.updateSettings()
+    local settings = CuSettings.load(Chapters[1].Manga)
+    local old_read_dir = readDirection
+    if settings then
+        readDirection = settings.ReaderDirection == "Default" and Settings.ReaderDirection or settings.ReaderDirection
+        is_down = readDirection == "DOWN"
+        orientation = settings.Orientation == "Default" and Settings.Orientation or settings.Orientation
+        autozoom = settings.ZoomReader == "Default" and Settings.ZoomReader or settings.ZoomReader
+    end
+    if old_read_dir == "LEFT" and readDirection ~= old_read_dir or (old_read_dir == "RIGHT" or old_read_dir == "DOWN") and readDirection == "LEFT" then
+        if Pages and Pages.Count and Pages.Page and Pages.PrevPage then
+            local i, j = 1, Pages.Count
+            while i < j do
+                Pages[i], Pages[j] = Pages[j], Pages[i]
+                i = i + 1
+                j = j - 1
+            end
+            local zpage = Pages[0]
+            if Pages[#Pages].Link == "LoadNext" or Pages[#Pages].Link == "LoadPrev" then
+                Pages[0] = Pages[#Pages]
+                Pages[#Pages] = nil
+            end
+            if zpage then
+                Pages[#Pages + 1] = zpage
+                if Pages[0] == zpage then
+                    Pages[0] = nil
+                end
+            end
+            Pages.Page = Pages.Count - Pages.Page + 1
+            Pages.PrevPage = Pages.Count - Pages.PrevPage + 1
+        end
+    end
+    updateMeasurements()
 end
 
 function Reader.load(chapters, num)
-    is_down = Settings.ReaderDirection == "DOWN"
-    orientation = Settings.Orientation
+    if not chapters[1] then
+        Console.error("Error loading chapter")
+        AppMode = MENU
+        return
+    end
+    local settings = CuSettings.load(chapters[1].Manga)
+    if settings then
+        readDirection = settings.ReaderDirection == "Default" and Settings.ReaderDirection or settings.ReaderDirection
+        is_down = readDirection == "DOWN"
+        orientation = settings.Orientation == "Default" and Settings.Orientation or settings.Orientation
+        autozoom = settings.ZoomReader == "Default" and Settings.ZoomReader or settings.ZoomReader
+    end
     Chapters = chapters
     StartPage = Cache.getBookmark(chapters[num])
     if StartPage == true or StartPage == nil then

@@ -28,7 +28,6 @@ local Slider = Slider()
 local SelectedId = 0
 local control_timer = Timer.new()
 local time_space = 400
-StartSearch = false
 local searchData = ""
 
 local function setFinalTags()
@@ -238,7 +237,6 @@ local function setMode(id)
         if Modes[id] == "Search" then
             Keyboard.show(Language[Settings.Language].APP.SEARCH, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
             setFinalTags()
-            StartSearch = true
         else
             now_mode = id
             FinalLetter = Letter
@@ -432,7 +430,6 @@ function CatalogModes.update()
             end
         end
         scrollUpdate()
-        if StartSearch then
             if Keyboard.getState() ~= RUNNING then
                 if Keyboard.getState() == FINISHED then
                     local data = Keyboard.getInput()
@@ -452,10 +449,8 @@ function CatalogModes.update()
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.SEARCHING, data))
                     end
                 end
-                StartSearch = false
                 Keyboard.clear()
             end
-        end
     end
 end
 
@@ -547,7 +542,7 @@ function CatalogModes.draw()
                 local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
                 local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
                 for n = ks, ks + 1 do
-                    Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
+                    Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, Color.new(255, 0, 51))
                     Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, SELECTED_RED)
                 end
             end
@@ -557,7 +552,7 @@ function CatalogModes.draw()
             local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
             local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
             for n = ks, ks + 1 do
-                Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, Themes[Settings.Theme].COLOR_SELECTOR_DETAILS)
+                Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, Color.new(255, 0, 51))
                 Graphics.fillEmptyRect(960 + 5 - 350 * M + n, 960 - 10 - n - 350 * M + 350, y + n + 2, y + 50 - n + 1, SELECTED_RED)
             end
         end

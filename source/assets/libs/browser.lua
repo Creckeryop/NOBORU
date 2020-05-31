@@ -60,7 +60,7 @@ local wait = System.wait
 function Browser.open(link)
     callUri("webmodal: " .. link)
     wait(1500000)
-    callUri("webmodal: file:///ux0:/data/noboru/auth.html")
+    callUri("webmodal: file:///ux0:/data/noboru/temp/auth.html")
     wait(1500000)
 end
 

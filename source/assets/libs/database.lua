@@ -22,9 +22,13 @@ function Database.getMangaList()
         b[k] = v
     end
     if Settings.LibrarySorting == "A-Z" then
-        table.sort(b, function(a, b) return a.Name < b.Name end)
+        table.sort(b, function(a, b)
+            return a.Name < b.Name
+        end)
     elseif Settings.LibrarySorting == "Z-A" then
-        table.sort(b, function(a, b) return a.Name > b.Name end)
+        table.sort(b, function(a, b)
+            return a.Name > b.Name
+        end)
     end
     return b
 end
@@ -71,12 +75,12 @@ function Database.save()
     local manga_table = {}
     for k, v in ipairs(base) do
         local key = get_key(v)
-        manga_table[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
+        manga_table[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink, v.BrowserLink)
         manga_table[k].Data = v.Data
         manga_table[k].Path = "cache/" .. key .. "/cover.image"
         manga_table[key] = k
     end
-    local save = "local " .. table.serialize(manga_table, "base") .. "\nreturn base"
+    local save = "return " .. table.serialize(manga_table, true)
     if doesFileExist("ux0:data/noboru/save.dat") then
         deleteFile("ux0:data/noboru/save.dat")
     end
@@ -89,10 +93,10 @@ end
 function Database.load()
     if doesFileExist("ux0:data/noboru/save.dat") then
         local f = openFile("ux0:data/noboru/save.dat", FREAD)
-        local suc, new_base = pcall(function() return load(readFile(f, sizeFile(f)))() end)
+        local load_data = load(readFile(f, sizeFile(f)))
         closeFile(f)
-        if suc then
-            base = new_base
+        if load_data then
+            base = load_data() or {}
         end
     end
     Database.save()

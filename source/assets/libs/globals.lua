@@ -25,9 +25,6 @@ end
 Slider = ffi.typeof("Slider")
 
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
-LUA_GRADIENTH = Image:new(Graphics.loadImage("app0:assets/images/gradientH.png"))
-LUA_PANEL = Image:new(Graphics.loadImage("app0:assets/images/panel.png"))
-DEV_LOGO = Image:new(Graphics.loadImage("app0:assets/images/devlogo.png"))
 
 USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 
@@ -51,9 +48,9 @@ function COLOR_GRADIENT(colorA, colorB, a)
     elseif a >= 1 then
         return colorB
     end
-    local r1, g1, b1 = Color.getR(colorA), Color.getG(colorA), Color.getB(colorA)
-    local r2, g2, b2 = Color.getR(colorB), Color.getG(colorB), Color.getB(colorB)
-    return Color.new(r1 + (r2 - r1) * a, g1 + (g2 - g1) * a, b1 + (b2 - b1) * a)
+    local r1, g1, b1, a1 = Color.getR(colorA), Color.getG(colorA), Color.getB(colorA), Color.getA(colorA)
+    local r2, g2, b2, a2 = Color.getR(colorB), Color.getG(colorB), Color.getB(colorB), Color.getA(colorB)
+    return Color.new(r1 + (r2 - r1) * a, g1 + (g2 - g1) * a, b1 + (b2 - b1) * a, a1 + (a2 - a1) * a)
 end
 
 SCE_CTRL_RIGHTPAGE = SCE_CTRL_RTRIGGER
@@ -70,13 +67,11 @@ SCE_CTRL_REAL_CIRCLE = SCE_CTRL_CIRCLE
 FONT16 = Font.load("app0:roboto.ttf")
 FONT20 = Font.load("app0:roboto.ttf")
 FONT26 = Font.load("app0:roboto.ttf")
-FONT30 = Font.load("app0:roboto.ttf")
 BONT16 = Font.load("app0:robboto.ttf")
 BONT30 = Font.load("app0:robboto.ttf")
 
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT26, 26)
-Font.setPixelSizes(FONT30, 30)
 Font.setPixelSizes(BONT30, 30)
 
 local doesDirExist = System.doesDirExist
@@ -107,8 +102,19 @@ if not doesDirExist("ux0:data/noboru/import") then
     createDirectory("ux0:data/noboru/import")
 end
 
-if doesFileExist("ux0:data/noboru/auth.html") then
-    deleteFile("ux0:data/noboru/auth.html")
+if not doesDirExist("ux0:data/noboru/temp") then
+    createDirectory("ux0:data/noboru/temp")
+end
+
+if not doesDirExist("ux0:data/noboru/cusettings") then
+    createDirectory("ux0:data/noboru/cusettings")
+end
+
+if doesFileExist("ux0:data/noboru/temp/auth.html") then
+    deleteFile("ux0:data/noboru/temp/auth.html")
+end
+if doesFileExist("ux0:data/noboru/temp/logo.png") then
+    deleteFile("ux0:data/noboru/temp/logo.png")
 end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
@@ -121,7 +127,8 @@ local function cpy_file(source_path, dest_path)
     closeFile(fh1)
     closeFile(fh2)
 end
-cpy_file("app0:assets/auth.html", "ux0:data/noboru/auth.html")
+cpy_file("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
+cpy_file("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")
 
 function MemToStr(bytes)
     local str = "Bytes"
@@ -146,7 +153,7 @@ end
 ---@param ParserID integer
 ---@param RawLink string
 ---Creates `Manga-Info` table
-function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
+function CreateManga(Name, Link, ImageLink, ParserID, RawLink, BrowserLink)
     if Name and Link and ImageLink and ParserID then
         return {
             Name = Name,
@@ -154,6 +161,7 @@ function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
             ImageLink = ImageLink,
             ParserID = ParserID,
             RawLink = RawLink or "",
+            BrowserLink = BrowserLink,
             Data = {}
         }
     else

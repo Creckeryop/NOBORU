@@ -197,36 +197,39 @@ local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
 function settings.load()
     if doesFileExist(SETTINGS_SAVE_PATH) then
         local fh = openFile(SETTINGS_SAVE_PATH, FREAD)
-        local suc, new = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")() end)
-        if suc and type(new) == "table" then
-            setSetting(new, "Language", Language)
-            setSetting(new, "NSFW", {true, false})
-            setSetting(new, "SkipFontLoad", {true, false})
-            setSetting(new, "Orientation", {"Horizontal", "Vertical"})
-            setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
-            setSetting(new, "ReaderDirection", {"LEFT", "RIGHT", "DOWN"})
-            setSetting(new, "KeyType", {"JP", "EU"})
-            setSetting(new, "HideInOffline", {true, false})
-            setSetting(new, "DoubleTapReader", {true, false})
-            setSetting(new, "Theme", Themes)
-            setSetting(new, "ParserLanguage", GetParserLanguages())
-            setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
-            setSetting(new, "ChapterSorting", {"1->N", "N->1"})
-            setSetting(new, "RefreshLibAtStart", {true, false})
-            setSetting(new, "ChangingPageButtons", {"DPAD", "LR"})
-            setSetting(new, "LeftStickDeadZone", DeadZoneValues)
-            setSetting(new, "LeftStickSensitivity", SensitivityValues)
-            setSetting(new, "RightStickDeadZone", DeadZoneValues)
-            setSetting(new, "RightStickSensitivity", SensitivityValues)
-            setSetting(new, "SilentDownloads", {true, false})
-            setSetting(new, "UseProxy", {true, false})
-            setSetting(new, "ProxyIP", {})
-            setSetting(new, "ProxyPort", {})
-            setSetting(new, "UseProxyAuth", {true, false})
-            setSetting(new, "ProxyAuth", {})
-            setSetting(new, "SkipCacheChapterChecking", {true, false})
-            setSetting(new, "ConnectionTime", {})
-            setSetting(new, "FavouriteParsers", {})
+        local suc = load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")
+        if suc then
+            local new = suc()
+            if type(new) == "table" then
+                setSetting(new, "Language", Language)
+                setSetting(new, "NSFW", {true, false})
+                setSetting(new, "SkipFontLoad", {true, false})
+                setSetting(new, "Orientation", {"Horizontal", "Vertical"})
+                setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
+                setSetting(new, "ReaderDirection", {"LEFT", "RIGHT", "DOWN"})
+                setSetting(new, "KeyType", {"JP", "EU"})
+                setSetting(new, "HideInOffline", {true, false})
+                setSetting(new, "DoubleTapReader", {true, false})
+                setSetting(new, "Theme", Themes)
+                setSetting(new, "ParserLanguage", GetParserLanguages())
+                setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
+                setSetting(new, "ChapterSorting", {"1->N", "N->1"})
+                setSetting(new, "RefreshLibAtStart", {true, false})
+                setSetting(new, "ChangingPageButtons", {"DPAD", "LR"})
+                setSetting(new, "LeftStickDeadZone", DeadZoneValues)
+                setSetting(new, "LeftStickSensitivity", SensitivityValues)
+                setSetting(new, "RightStickDeadZone", DeadZoneValues)
+                setSetting(new, "RightStickSensitivity", SensitivityValues)
+                setSetting(new, "SilentDownloads", {true, false})
+                setSetting(new, "UseProxy", {true, false})
+                setSetting(new, "ProxyIP", {})
+                setSetting(new, "ProxyPort", {})
+                setSetting(new, "UseProxyAuth", {true, false})
+                setSetting(new, "ProxyAuth", {})
+                setSetting(new, "SkipCacheChapterChecking", {true, false})
+                setSetting(new, "ConnectionTime", {})
+                setSetting(new, "FavouriteParsers", {})
+            end
         end
         closeFile(fh)
     end
@@ -256,7 +259,7 @@ function settings.save()
             copy_settings[k] = v
         end
     end
-    local save_content = table.serialize(copy_settings, "Settings")
+    local save_content = "Settings = " .. table.serialize(copy_settings)
     writeFile(fh, save_content, #save_content)
     closeFile(fh)
 end
@@ -378,14 +381,14 @@ end
 ---Table with Option Names and their Functions
 SettingsFunctions = {
     Language = function()
-        settings.Language = nextTableValue(settings.Language, GetLanguages())
+        settings.Language = table.next(settings.Language, GetLanguages())
         GenPanels()
     end,
     SkipFontLoading = function()
         settings.SkipFontLoad = not settings.SkipFontLoad
     end,
     ChangeUI = function()
-        settings.Theme = nextTableValue(settings.Theme, GetThemes())
+        settings.Theme = table.next(settings.Theme, GetThemes())
         setTheme(settings.Theme)
     end,
     ShowNSFW = function()
@@ -396,13 +399,13 @@ SettingsFunctions = {
         settings.HideInOffline = not settings.HideInOffline
     end,
     ReaderOrientation = function()
-        settings.Orientation = nextTableValue(settings.Orientation, {"Horizontal", "Vertical"})
+        settings.Orientation = table.next(settings.Orientation, {"Horizontal", "Vertical"})
     end,
     ZoomReader = function()
-        settings.ZoomReader = nextTableValue(settings.ZoomReader, {"Width", "Height", "Smart"})
+        settings.ZoomReader = table.next(settings.ZoomReader, {"Width", "Height", "Smart"})
     end,
     ReaderDirection = function()
-        settings.ReaderDirection = nextTableValue(settings.ReaderDirection, {"LEFT", "RIGHT", "DOWN"})
+        settings.ReaderDirection = table.next(settings.ReaderDirection, {"LEFT", "RIGHT", "DOWN"})
     end,
     DoubleTapReader = function()
         settings.DoubleTapReader = not settings.DoubleTapReader
@@ -457,47 +460,47 @@ SettingsFunctions = {
         Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
     end,
     SwapXO = function()
-        settings.KeyType = nextTableValue(settings.KeyType, {"JP", "EU"})
+        settings.KeyType = table.next(settings.KeyType, {"JP", "EU"})
         SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
         SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
     end,
     PreferredCatalogLanguage = function()
-        settings.ParserLanguage = nextTableValue(settings.ParserLanguage, GetParserLanguages())
+        settings.ParserLanguage = table.next(settings.ParserLanguage, GetParserLanguages())
         ChangeNSFW()
     end,
     LibrarySorting = function()
-        settings.LibrarySorting = nextTableValue(settings.LibrarySorting, {"Date added", "A-Z", "Z-A"})
+        settings.LibrarySorting = table.next(settings.LibrarySorting, {"Date added", "A-Z", "Z-A"})
     end,
     ChapterSorting = function()
-        settings.ChapterSorting = nextTableValue(settings.ChapterSorting, {"1->N", "N->1"})
+        settings.ChapterSorting = table.next(settings.ChapterSorting, {"1->N", "N->1"})
     end,
     RefreshLibAtStart = function()
-        settings.RefreshLibAtStart = nextTableValue(settings.RefreshLibAtStart, {true, false})
+        settings.RefreshLibAtStart = table.next(settings.RefreshLibAtStart, {true, false})
     end,
     ChangingPageButtons = function()
-        settings.ChangingPageButtons = nextTableValue(settings.ChangingPageButtons, {"DPAD", "LR"})
+        settings.ChangingPageButtons = table.next(settings.ChangingPageButtons, {"DPAD", "LR"})
         SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
         SCE_CTRL_LEFTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_LEFT or SCE_CTRL_LTRIGGER
     end,
     LeftStickDeadZone = function()
-        settings.LeftStickDeadZone = nextTableValue(settings.LeftStickDeadZone, DeadZoneValues)
+        settings.LeftStickDeadZone = table.next(settings.LeftStickDeadZone, DeadZoneValues)
         SCE_LEFT_STICK_DEADZONE = settings.LeftStickDeadZone
     end,
     LeftStickSensitivity = function()
-        settings.LeftStickSensitivity = nextTableValue(settings.LeftStickSensitivity, SensitivityValues)
+        settings.LeftStickSensitivity = table.next(settings.LeftStickSensitivity, SensitivityValues)
         SCE_LEFT_STICK_SENSITIVITY = settings.LeftStickSensitivity
     end,
     RightStickDeadZone = function()
-        settings.RightStickDeadZone = nextTableValue(settings.RightStickDeadZone, DeadZoneValues)
+        settings.RightStickDeadZone = table.next(settings.RightStickDeadZone, DeadZoneValues)
         SCE_RIGHT_STICK_DEADZONE = settings.RightStickDeadZone
     end,
     RightStickSensitivity = function()
-        settings.RightStickSensitivity = nextTableValue(settings.RightStickSensitivity, SensitivityValues)
+        settings.RightStickSensitivity = table.next(settings.RightStickSensitivity, SensitivityValues)
         SCE_RIGHT_STICK_SENSITIVITY = settings.RightStickSensitivity
     end,
     ResetAllSettings = function()
         for k, v in pairs(SettingsDefaults) do
-            if k ~= "Language" and k ~= "Theme" then
+            if k~="FavouriteParsers" and k ~= "Language" and k ~= "Theme" then
                 settings[k] = v
             end
         end
