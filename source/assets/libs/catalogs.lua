@@ -52,7 +52,7 @@ local function loadMangaImage(manga)
 end
 
 local function UpdateMangas()
-    if Slider.V == 0 and Timer.getTime(TouchTimer) > 300 then
+    if Slider.V == 0 and Timer.getTime(TouchTimer) > 200 then
         local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
         if #DownloadedImage > 12 then
             local new_table = {}
@@ -236,7 +236,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             ParserManager.updateCounters()
         end
     end
-    if touch.x or pad ~= 0 then
+    if Slider.V ~= 0 or Controls.check(pad, SCE_CTRL_RTRIGGER)or Controls.check(pad, SCE_CTRL_LTRIGGER) or touch.x then
         Timer.reset(TouchTimer)
     end
     if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then

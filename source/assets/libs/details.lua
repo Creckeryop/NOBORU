@@ -12,7 +12,7 @@ local Manga = nil
 local fade = 0
 local old_fade = 1
 
-local point = Point_t(MANGA_WIDTH * (1 + 1 / 9) / 2 + 40, MANGA_HEIGHT * ((1.5) * 360 / 405) / 2 + 80)
+local point = Point_t(140, 326 / 2 + 85)
 
 local cross = Image:new(Graphics.loadImage("app0:assets/icons/cross.png"))
 local menu_icon = Image:new(Graphics.loadImage("app0:assets/icons/menu.png"))
@@ -37,8 +37,8 @@ local function scrollUpdate()
     if math.abs(Slider.V) < 0.1 then
         Slider.V = 0
     end
-    if Slider.Y < -20 then
-        Slider.Y = -20
+    if Slider.Y < -15 then
+        Slider.Y = -15
         Slider.V = 0
     elseif Slider.Y > (#Chapters * 80 - 464) then
         Slider.Y = math.max(-20, #Chapters * 80 - 464)
@@ -113,7 +113,7 @@ function Details.setManga(manga)
     if manga then
         Manga = manga
         ms = 50 * string.len(manga.Name)
-        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960+88+88, 0)
+        dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960 + 88 + 88, 0)
         Chapters = {}
         Slider.Y = -50
         DetailsSelector:resetSelected()
@@ -353,7 +353,7 @@ function Details.draw()
             Graphics.drawImage(0, shift + 472, textures_16x16.Select.e)
         end
         Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
-        DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 1 + M / 9)
+        DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 326 / MANGA_HEIGHT)
         Graphics.fillRect(260, 890 - 18, 90, 544, BACKGROUND_COLOR)
         local ListCount = #Chapters
         for n = start, math.min(ListCount, start + 8) do
@@ -369,6 +369,7 @@ function Details.draw()
                 Font.print(BONT16, 290, y + 28, Chapters[i].Name or ("Chapter " .. i), TEXT_COLOR)
             end
             y = y + 80
+            if y > 544 then break end
         end
         Graphics.fillRect(890 - 18, 955, 90, 544, BACKGROUND_COLOR)
         y = shift - Slider.Y + start * 80
@@ -413,16 +414,16 @@ function Details.draw()
                 Graphics.drawImage(929 - ks, y + 5 + ks, textures_16x16.Square.e)
             end
         end
-        Graphics.fillRect(88, 960-32-24-32, 0, 90, BACKGROUND_COLOR)
+        Graphics.fillRect(88, 960 - 88, 0, 90, BACKGROUND_COLOR)
         local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
-        Font.print(BONT30, 88 - dif * t / ms, 70 * M - 56, Manga.Name, TEXT_COLOR)
-        Font.print(FONT16, 88, 70 * M - 16, Manga.RawLink, SECOND_TEXT_COLOR)
+        Font.print(BONT30, 88 - dif * t / ms, 70 * M - 63, Manga.Name, TEXT_COLOR)
+        Font.print(FONT16, 88, 70 * M - 22, Manga.RawLink, SECOND_TEXT_COLOR)
         Graphics.fillRect(0, 88, 0, 90, BACKGROUND_COLOR)
-        Graphics.drawImage(32, 90 * M - 45 - 12, Back_icon.e, COLOR_WHITE)
-        Graphics.fillRect(960-32-24-32, 960, 0, 90, BACKGROUND_COLOR)
+        Graphics.drawImage(32, 90 * M - 50 - 12, Back_icon.e, COLOR_WHITE)
+        Graphics.fillRect(960 - 88, 960, 0, 90, BACKGROUND_COLOR)
         if chapters_loaded then
-            Graphics.drawImage(960-32-24, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
-            Graphics.drawImage(960-32-24-20, 5 - (1 - M) * 32, textures_16x16.Start.e)
+            Graphics.drawImage(960 - 32 - 24, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
+            Graphics.drawImage(960 - 32 - 24 - 20, 5 - (1 - M) * 32, textures_16x16.Start.e)
         end
         Graphics.fillRect(955, 960, 90, 544, BACKGROUND_COLOR)
         if mode == "START" and #Chapters > 5 then

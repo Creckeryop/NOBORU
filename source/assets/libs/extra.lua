@@ -154,7 +154,7 @@ local function press_action(id)
             elseif Page.Path then
                 Page = "file:///ux0:data/noboru/"..Page.Path
             elseif type(Page.Link)=="string" then
-                if Page.Link:find("$http") then
+                if Page.Link:find("^http") then
                     Page = Page.Link
                 else
                     Page = "http://"..Page.Link

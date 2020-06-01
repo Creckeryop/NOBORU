@@ -274,9 +274,13 @@ function DrawManga(x, y, Manga)
             pcall(drawMangaName, Manga)
         else
             if Manga.PrintName.f then
-                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 47, Manga.PrintName.f, COLOR_WHITE)
+                if y + MANGA_HEIGHT / 2 - 47 < 544 and y + MANGA_HEIGHT / 2 - 47 > -16 then
+                    Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 47, Manga.PrintName.f, COLOR_WHITE)
+                end
             end
-            Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 27, Manga.PrintName.s, COLOR_WHITE)
+            if y + MANGA_HEIGHT / 2 - 27 < 544 and y + MANGA_HEIGHT / 2 - 27 > -16 then
+                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 27, Manga.PrintName.s, COLOR_WHITE)
+            end
         end
     end
 end

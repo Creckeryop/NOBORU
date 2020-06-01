@@ -46,6 +46,7 @@ local ContextMenu = false
 local MenuFade = 0
 local OpenCloseContextMenu = false
 local OpenCloseContextMenuTimer = Timer.new()
+local OnTouchMenu = false
 
 local name_timer = Timer.new()
 local chapter_timer = Timer.new()
@@ -405,7 +406,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
     if ContextMenu then
         if touch.x and touch.y < 80 * MenuFade and not oldtouch.x then
             if touch.x > 960-88 then
-                if Pages[Pages.Page or -1] and Pages[Pages.Page or -1].Link then
+                if Pages[Pages.Page or -1] and (Pages[Pages.Page or -1].Link or Pages[Pages.Page or -1].Path) then
                     Extra.setChapters(Chapters[current_chapter].Manga, Chapters[current_chapter], Pages[Pages.Page])
                 end
             elseif touch.x > 960-88-88 then
@@ -602,6 +603,9 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             elseif not oldtouch.x and touch.x then
                 if readDirection == "LEFT" or is_down and orientation == "Vertical" then
                     if touch.x < 88 and current_chapter < #Chapters then
+                        if Cache.isCached(Chapters[current_chapter].Manga) then
+                            Cache.setBookmark(Chapters[current_chapter], true)
+                        end
                         Reader.loadChapter(current_chapter + 1)
                     elseif touch.x > 960 - 88 and current_chapter > 1 then
                         Reader.loadChapter(current_chapter - 1)
@@ -612,11 +616,17 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                         Reader.loadChapter(current_chapter - 1)
                         StartPage = false
                     elseif touch.x > 960 - 88 and current_chapter < #Chapters then
+                        if Cache.isCached(Chapters[current_chapter].Manga) then
+                            Cache.setBookmark(Chapters[current_chapter], true)
+                        end
                         Reader.loadChapter(current_chapter + 1)
                     end
                 end
             end
         end
+        OnTouchMenu = true
+    else
+        OnTouchMenu = false
     end
     if Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) then
         ContextMenu = not ContextMenu
@@ -924,7 +934,7 @@ function Reader.update()
                 page.x = page.x + velX
                 page.y = page.y + velY
             end
-            if touchMode == TOUCH_IDLE then
+            if touchMode == TOUCH_IDLE or OnTouchMenu then
                 velY = velY * 0.9
                 velX = velX * 0.9
             end
@@ -1274,11 +1284,10 @@ function Reader.draw()
             Graphics.fillRect(0, 88, 0, 80 * MenuFade, BACK_COLOR)
             Graphics.drawImage(32, 80 * MenuFade - 40 - 12, Back_icon.e, COLOR_WHITE)
             Graphics.fillRect(960 - 88 - 32 - 24 - 32, 960, 0, 80 * MenuFade, BACK_COLOR)
-            if Pages[Pages.Page] and Pages[Pages.Page].Link or Chapters[current_chapter].Manga.ParserID == "IMPORTED" then
-                Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_WHITE)
+            Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_WHITE)
+            if Pages[Pages.Page] and (Pages[Pages.Page].Link or Chapters[current_chapter].Manga.ParserID == "IMPORTED" or Pages[Pages.Page].Path) then
                 Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_WHITE)
             else
-                Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_GRAY)
                 Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_GRAY)
             end
             if Timer.getTime(name_timer) > 3500 + ms then
