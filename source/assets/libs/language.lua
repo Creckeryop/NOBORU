@@ -810,10 +810,10 @@ Language = {
             ProxyPort = "Puerto:",
             UseProxyAuth = "Usar autenticación proxy:",
             ProxyAuth = "login:contraseña",
-            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
-            ConnectionTime = "Connection time for server", --Translate pls
-            InputValue = "Input value", --Translate pls
-            OpenInBrowser = "Open in browser", --Translate pls
+            SkipCacheChapterChecking = "Saltar chequeo de cache y capitulos en la pantalla de carga",
+            ConnectionTime = "Tiempo de conexion con el servidor"
+            InputValue = "Introduce un valor",
+            OpenInBrowser = "Abrir en navegador",
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botones L y R",
@@ -824,7 +824,7 @@ Language = {
             ["RemoveAll"] = "Eliminar todos los capítulos",
             ["CancelAll"] = "Cancelar la descarga de los capítulos",
             ["ClearBookmarks"] = "Eliminar marcadores",
-            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
+            ["OpenMangaInBrowser"] = "Abrir el manga en el navegador",
         },
         THEME = {
             Dark = "Oscuro",
@@ -870,7 +870,7 @@ Language = {
             LEFT = "Derecha a izquierda",
             RIGHT = "Izquierda a derecha",
             DOWN = "Arriba a abajo",
-            Default = "Default", --Translate please
+            Default = "Por defecto",
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Añadir a la libreria",
@@ -878,7 +878,7 @@ Language = {
             PAGE = "Página : ",
             CONTINUE = "Continuar",
             START = "Comenzar lectura",
-            DONE = "Сompleted!", --Translate please
+            DONE = "Сompletado!",
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Añadir a la librería",
@@ -899,12 +899,12 @@ Language = {
             SETTINGS_RESET = "Los ajustes han sido resteados"
         },
         MODES = {
-            Popular = "Popular", --Need to translate
-            Latest = "Latest", --Need to translate
-            Search = "Search", --Need to translate
-            Alphabet = "Alphabet", --Need to translate
-            ByLetter = "By Letter", --Need to translate
-            ByTag = "By Tag", --Need to translate
+            Popular = "Populares",
+            Latest = "Ultimos",
+            Search = "Buscar",
+            Alphabet = "Alfabeticamente",
+            ByLetter = "Por letra",
+            ByTag = "Por tag",
         },
         PANEL = {
             BACK = "Volver",
@@ -912,7 +912,7 @@ Language = {
             --MODE_POPULAR = "Modo: Populares",
             --MODE_LATEST = "Modo: Recientes",
             --MODE_SEARCHING = 'Modo: Buscando "%s"',
-            JUMPTOPAGE = "Jump to page", -- Need to translate
+            JUMPTOPAGE = "Saltar a la pagina",
             SEARCH = "Buscar",
             SELECT = "Seleccionar",
             CHOOSE = "Escoger",
@@ -921,8 +921,8 @@ Language = {
             UPDATE = "Actualizar",
             CANCEL = "Cancelar",
             DELETE = "Eliminar",
-            FOLLOW = "Follow", --Need to translate
-            UNFOLLOW = "Unfollow", --Need to translate
+            FOLLOW = "Seguir",
+            UNFOLLOW = "Dejar de seguir",
         }
     },
     Italian = {
