@@ -443,9 +443,9 @@ Language = {
             UseProxyAuth = "Proxy Doğrulamayı Kullan",
             ProxyAuth = "GirişBilgisi:Şifre",
             SkipCacheChapterChecking = "Yükleme Ekranında Bellek ve Bölüm Kontrolünü Atla",
-            ConnectionTime = "Connection time for server", --Translate pls
-            InputValue = "Input value", --Translate pls
-            OpenInBrowser = "Open in browser", --Translate pls
+            ConnectionTime = "Server'a Bağlanmak İçin Gereken Zaman", --Translate pls
+            InputValue = "Giriş Değeri", --Translate pls
+            OpenInBrowser = "Tarayıcıda Aç", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "L1 R1 Tuşları",
@@ -456,7 +456,7 @@ Language = {
             ["RemoveAll"] = "Tüm Bölümleri Sil",
             ["CancelAll"] = "Bölümleri İndirmeyi İptal Et",
             ["ClearBookmarks"] = "Yer İmlerini Temizle",
-            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
+            ["OpenMangaInBrowser"] = "Manga'yı Tarayıcıda Aç", --Translate pls
         },
         THEME = {
             Dark = "Karanlık",
@@ -502,7 +502,7 @@ Language = {
             LEFT = "Sola Doğru",
             RIGHT = "Sağa Doğru",
             DOWN = "Aşağı Doğru",
-            Default = "Default", --Translate please
+            Default = "Varsayılan", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Kütüphaneye Ekle",
@@ -510,7 +510,7 @@ Language = {
             PAGE = "Sayfa : ",
             CONTINUE = "Devam Et",
             START = "Okumaya Başla",
-            DONE = "Сompleted!", --Translate please
+            DONE = "Tamamlandı!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Kütüphaneye Eklendi",
@@ -531,12 +531,12 @@ Language = {
             SETTINGS_RESET = "Seçenekler Sıfırlandı"
         },
         MODES = {
-            Popular = "Popular", --Need to translate
-            Latest = "Latest", --Need to translate
-            Search = "Search", --Need to translate
-            Alphabet = "Alphabet", --Need to translate
-            ByLetter = "By Letter", --Need to translate
-            ByTag = "By Tag", --Need to translate
+            Popular = "Popüler", --Need to translate
+            Latest = "En Yeni", --Need to translate
+            Search = "Ara", --Need to translate
+            Alphabet = "Alfabetik", --Need to translate
+            ByLetter = "Harflerle", --Need to translate
+            ByTag = "Tag'a Göre", --Need to translate
         },
         PANEL = {
             BACK = "Geri",
@@ -544,7 +544,7 @@ Language = {
             --MODE_POPULAR = "Mod: Önce En Popüler",
             --MODE_LATEST = "Mod: Önce En Yeni",
             --MODE_SEARCHING = 'Mod:"%s" Aranıyor',
-            JUMPTOPAGE = "Jump to page", -- Need to translate
+            JUMPTOPAGE = "Sayfaya Atla", -- Need to translate
             SEARCH = "Ara",
             SELECT = "Seç",
             CHOOSE = "Seç",
@@ -553,8 +553,8 @@ Language = {
             UPDATE = "Yenile",
             CANCEL = "Vazgeç",
             DELETE = "Sil",
-            FOLLOW = "Follow", --Need to translate
-            UNFOLLOW = "Unfollow", --Need to translate
+            FOLLOW = "Takip Et", --Need to translate
+            UNFOLLOW = "Takibi Bırak", --Need to translate
         }
     },
     Vietnamese = {
