@@ -1310,6 +1310,9 @@ function Reader.loadChapter(chapter)
         exit()
         return
     end
+    if Chapters and Chapters[current_chapter] then
+        ParserManager.remove(Chapters[current_chapter].Pages)
+    end
     current_chapter = chapter
     Chapters[chapter].Pages = {}
     Pages = {

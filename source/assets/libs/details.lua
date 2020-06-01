@@ -41,7 +41,7 @@ local function scrollUpdate()
         Slider.Y = -15
         Slider.V = 0
     elseif Slider.Y > (#Chapters * 80 - 464) then
-        Slider.Y = math.max(-20, #Chapters * 80 - 464)
+        Slider.Y = math.max(-15, #Chapters * 80 - 464)
         Slider.V = 0
     end
 end
