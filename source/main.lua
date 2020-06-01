@@ -15,6 +15,8 @@ end
 Graphics.termBlend()
 
 loadlib("browser")
+loadlib("customsettings")
+loadlib("catalogmodes")
 loadlib("changes")
 loadlib("conmessage")
 loadlib("selector")
@@ -74,7 +76,6 @@ local fonts = {
     FONT16,
     FONT20,
     FONT26,
-    FONT30,
     BONT30,
     BONT16
 }
@@ -133,14 +134,14 @@ while coroutine.status(f) ~= "dead" do
         Console.error(text)
     end
     if text then
-        Font.print(FONT16, 5, 518, text, Color.new(100, 100, 100))
+        Font.print(FONT16, 960/2-Font.getTextWidth(FONT16,text)/2, 272 + 172 / 2 + 10, text, Color.new(100, 100, 100))
     end
-    if prog then
-        Graphics.fillRect(0, 960 * prog, 542, 544, COLOR_WHITE)
+    if prog and not Settings.SkipCacheChapterChecking then
+        Graphics.fillRect(150, 150 + 660, 272 + 172 / 2 + 42, 272 + 172 / 2 + 45, Color.new(100, 100, 100))
+        Graphics.fillRect(150, 150 + 660 * prog, 272 + 172 / 2 + 42, 272 + 172 / 2 + 45, COLOR_WHITE)
     end
     if logo then
         Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e)
-        Graphics.drawImage(960-172, 0, DEV_LOGO.e)
     end
     Graphics.termBlend()
     Screen.flip()
@@ -152,16 +153,16 @@ if Settings.RefreshLibAtStart then
 end
 
 local pad, oldpad = Controls.read()
-local oldtouch, touch = {}, {x = nil, y = nil}
-local oldtouch2, touch2 = {}, {x = nil, y = nil}
+local oldtouch, touch = {}, {}
+local oldtouch2, touch2 = {}, {}
 
 local fade = 1
 
 local function input()
     oldpad, pad = pad, Controls.read()
     oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
-
-    Debug.input(oldpad, pad)
+    
+    Debug.input()
     
     if Changes.isActive() then
         if touch.x or pad ~= 0 then
@@ -194,11 +195,15 @@ local function input()
         oldtouch2.y = nil
     end
     
-    if not StartSearch then
+    if Keyboard.getState() ~= RUNNING then
         if AppMode == MENU then
             Menu.input(oldpad, pad, oldtouch, touch)
         elseif AppMode == READER then
-            Reader.input(oldpad, pad, oldtouch, touch, oldtouch2, touch2)
+            if Extra.getMode() == "END" then
+                Reader.input(oldpad, pad, oldtouch, touch, oldtouch2, touch2)
+            else
+                Extra.input(oldpad, pad, oldtouch, touch)
+            end
         end
     end
 end
@@ -221,7 +226,7 @@ local function update()
     end
     if AppMode == MENU then
         Menu.update()
-        if Details.getMode() == "END" then
+        if Details.getMode() == "END" and CatalogModes.getMode() == "END" then
             Panel.show()
         else
             Panel.hide()
@@ -230,6 +235,7 @@ local function update()
         Reader.update()
         Panel.hide()
     end
+    Extra.update()
     Notifications.update()
 end
 
@@ -240,13 +246,13 @@ local function draw()
     elseif AppMode == READER then
         Reader.draw()
     end
+    Extra.draw()
     Loading.draw()
     if fade > 0 then
         Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 255 * fade))
         if logo then
             Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e, Color.new(255, 255, 255, 255 * fade))
         end
-        Graphics.drawImage(960-172, -32*(1-fade), DEV_LOGO.e, Color.new(255, 255, 255, 255 * fade))
     elseif logo then
         logo:free()
         logo = nil

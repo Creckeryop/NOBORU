@@ -75,6 +75,9 @@ Language = {
             UseProxyAuth = "Аунтентификация прокси",
             ProxyAuth = "логин:пароль",
             SkipCacheChapterChecking = "Пропускать проверки целостности кеша при запуске приложения",
+            ConnectionTime = "Время подсоединения к серверу",
+            InputValue = "Введите значение",
+            OpenInBrowser = "Открыть в браузере"
         },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
@@ -84,7 +87,8 @@ Language = {
             ["DownloadAll"] = "Скачать все главы",
             ["RemoveAll"] = "Удалить все главы",
             ["CancelAll"] = "Отменить загрузку глав",
-            ["ClearBookmarks"] = "Очистить закладки"
+            ["ClearBookmarks"] = "Очистить закладки",
+            ["OpenMangaInBrowser"] = "Открыть мангу в браузере",
         },
         THEME = {
             Dark = "Тёмная",
@@ -129,14 +133,16 @@ Language = {
             Width = "По ширине",
             LEFT = "Справа налево",
             RIGHT = "Слева направо",
-            DOWN = "Сверху вниз"
+            DOWN = "Сверху вниз",
+            Default = "По умолчанию",
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Добавить в библиотеку",
             REMOVE_FROM_LIBRARY = "Удалить из библиотеки",
             PAGE = "Страница : ",
             CONTINUE = "Продолжить",
-            START = "Начать чтение"
+            START = "Начать чтение",
+            DONE = "Прочитано!",
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Добавлено в библиотеку",
@@ -156,11 +162,21 @@ Language = {
             REFRESH_COMPLETED = "Обновление выполнено!",
             SETTINGS_RESET = "Настройки были сброшены"
         },
+        MODES = {
+            Popular = "Популярная",
+            Latest = "Последняя",
+            Search = "Поиск",
+            Alphabet = "Алфавит",
+            ByLetter = "По букве",
+            ByTag = "По тегу",
+        },
         PANEL = {
             BACK = "Назад",
-            MODE_POPULAR = "Режим: Популярность",
-            MODE_LATEST = "Режим: Недавнее",
-            MODE_SEARCHING = 'Режим: Поиск "%s"',
+            MODE = "Режим",
+            --MODE_POPULAR = "Режим: Популярность",
+            --MODE_LATEST = "Режим: Недавнее",
+            --MODE_SEARCHING = 'Режим: Поиск "%s"',
+            JUMPTOPAGE = "Страница",
             SEARCH = "Поиск",
             SELECT = "Выбрать",
             CHOOSE = "Сменить выделение",
@@ -168,7 +184,9 @@ Language = {
             CHANGE_SECTION = "Сменить меню",
             UPDATE = "Обновить",
             CANCEL = "Отменить",
-            DELETE = "Удалить"
+            DELETE = "Удалить",
+            FOLLOW = "Отслеживать",
+            UNFOLLOW = "Не отслеживать"
         }
     },
     English = {
@@ -240,7 +258,10 @@ Language = {
             ProxyPort = "Port",
             UseProxyAuth = "Use proxy authentication",
             ProxyAuth = "login:password",
-            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen"
+            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen",
+            ConnectionTime = "Connection time for server",
+            InputValue = "Input value",
+            OpenInBrowser = "Open in browser",
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
@@ -250,7 +271,8 @@ Language = {
             ["DownloadAll"] = "Download all chapters",
             ["RemoveAll"] = "Remove all chapters",
             ["CancelAll"] = "Cancel downloading chapters",
-            ["ClearBookmarks"] = "Clear bookmarks"
+            ["ClearBookmarks"] = "Clear bookmarks",
+            ["OpenMangaInBrowser"] = "Open manga in browser",
         },
         THEME = {
             Dark = "Dark",
@@ -295,14 +317,16 @@ Language = {
             Width = "Width",
             LEFT = "Right to left",
             RIGHT = "Left to right",
-            DOWN = "Up to down"
+            DOWN = "Up to down",
+            Default = "Default",
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Add to library",
             REMOVE_FROM_LIBRARY = "Remove from library",
             PAGE = "Page : ",
             CONTINUE = "Continue",
-            START = "Start reading"
+            START = "Start reading",
+            DONE = "Сompleted!",
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Added to library",
@@ -322,11 +346,21 @@ Language = {
             REFRESH_COMPLETED = "Refresh completed!",
             SETTINGS_RESET = "Settings have been reset"
         },
+        MODES = {
+            Popular = "Popular",
+            Latest = "Latest",
+            Search = "Search",
+            Alphabet = "Alphabet",
+            ByLetter = "By Letter",
+            ByTag = "By Tag",
+        },
         PANEL = {
             BACK = "Back",
-            MODE_POPULAR = "Mode: Popular",
-            MODE_LATEST = "Mode: Latest",
-            MODE_SEARCHING = 'Mode: Searching "%s"',
+            MODE = "Mode",
+            --MODE_POPULAR = "Mode: Popular",
+            --MODE_LATEST = "Mode: Latest",
+            --MODE_SEARCHING = 'Mode: Searching "%s"',
+            JUMPTOPAGE = "Jump to page",
             SEARCH = "Search",
             SELECT = "Select",
             CHOOSE = "Choose",
@@ -334,7 +368,9 @@ Language = {
             CHANGE_SECTION = "Change section",
             UPDATE = "Refresh",
             CANCEL = "Cancel",
-            DELETE = "Delete"
+            DELETE = "Delete",
+            FOLLOW = "Follow",
+            UNFOLLOW = "Unfollow"
         }
     },
     Turkish = {
@@ -406,7 +442,10 @@ Language = {
             ProxyPort = "Port",
             UseProxyAuth = "Proxy Doğrulamayı Kullan",
             ProxyAuth = "GirişBilgisi:Şifre",
-            SkipCacheChapterChecking = "Yükleme Ekranında Bellek ve Bölüm Kontrolünü Atla"
+            SkipCacheChapterChecking = "Yükleme Ekranında Bellek ve Bölüm Kontrolünü Atla",
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
+            OpenInBrowser = "Open in browser", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "L1 R1 Tuşları",
@@ -416,7 +455,8 @@ Language = {
             ["DownloadAll"] = "Tüm Bölümleri İndir",
             ["RemoveAll"] = "Tüm Bölümleri Sil",
             ["CancelAll"] = "Bölümleri İndirmeyi İptal Et",
-            ["ClearBookmarks"] = "Yer İmlerini Temizle"
+            ["ClearBookmarks"] = "Yer İmlerini Temizle",
+            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
         },
         THEME = {
             Dark = "Karanlık",
@@ -461,14 +501,16 @@ Language = {
             Width = "Genişliğe Göre",
             LEFT = "Sola Doğru",
             RIGHT = "Sağa Doğru",
-            DOWN = "Aşağı Doğru"
+            DOWN = "Aşağı Doğru",
+            Default = "Default", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Kütüphaneye Ekle",
             REMOVE_FROM_LIBRARY = "Kütüphaneden Sil",
             PAGE = "Sayfa : ",
             CONTINUE = "Devam Et",
-            START = "Okumaya Başla"
+            START = "Okumaya Başla",
+            DONE = "Сompleted!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Kütüphaneye Eklendi",
@@ -488,11 +530,21 @@ Language = {
             REFRESH_COMPLETED = "Yenileme Tamamlandı",
             SETTINGS_RESET = "Seçenekler Sıfırlandı"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Geri",
-            MODE_POPULAR = "Mod: Önce En Popüler",
-            MODE_LATEST = "Mod: Önce En Yeni",
-            MODE_SEARCHING = 'Mod:"%s" Aranıyor',
+            MODE = "Mod",
+            --MODE_POPULAR = "Mod: Önce En Popüler",
+            --MODE_LATEST = "Mod: Önce En Yeni",
+            --MODE_SEARCHING = 'Mod:"%s" Aranıyor',
+            JUMPTOPAGE = "Jump to page", -- Need to translate
             SEARCH = "Ara",
             SELECT = "Seç",
             CHOOSE = "Seç",
@@ -500,7 +552,9 @@ Language = {
             CHANGE_SECTION = "Kategoriyi Değiştir",
             UPDATE = "Yenile",
             CANCEL = "Vazgeç",
-            DELETE = "Sil"
+            DELETE = "Sil",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     Vietnamese = {
@@ -573,6 +627,9 @@ Language = {
             UseProxyAuth = "Xác thực proxy",
             ProxyAuth = "tài khoản:mật khẩu",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
+            OpenInBrowser = "Open in browser", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Sử dụng L và R",
@@ -582,7 +639,8 @@ Language = {
             ["DownloadAll"] = "Tải xuống tất cả chương",
             ["RemoveAll"] = "Xóa tất cả chương",
             ["CancelAll"] = "Hủy bỏ việc tải xuống",
-            ["ClearBookmarks"] = "Xóa dấu trang"
+            ["ClearBookmarks"] = "Xóa dấu trang",
+            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
         },
         THEME = {
             Dark = "Tối",
@@ -627,14 +685,16 @@ Language = {
             Width = "Chiều rộng",
             LEFT = "Phải sang trái",
             RIGHT = "Trái sang phải",
-            DOWN = "Trên xuống dưới"
+            DOWN = "Trên xuống dưới",
+            Default = "Default", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Thêm vào thư viện",
             REMOVE_FROM_LIBRARY = "Xóa khỏi thư viện",
             PAGE = "Trang : ",
             CONTINUE = "Đọc tiếp",
-            START = "Đọc truyện"
+            START = "Đọc truyện",
+            DONE = "Сompleted!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Đã thêm vào thư viện",
@@ -654,11 +714,21 @@ Language = {
             REFRESH_COMPLETED = "Làm mới hoàn tất!",
             SETTINGS_RESET = "Đã đặt lại các cài đặt!"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Trở về",
-            MODE_POPULAR = "Chế độ: Phổ biến",
-            MODE_LATEST = "Chế độ: Mới nhất",
-            MODE_SEARCHING = 'Chế độ: Tìm kiếm "%s"',
+            MODE = "Chế độ",
+            --MODE_POPULAR = "Chế độ: Phổ biến",
+            --MODE_LATEST = "Chế độ: Mới nhất",
+            --MODE_SEARCHING = 'Chế độ: Tìm kiếm "%s"',
+            JUMPTOPAGE = "Jump to page", -- Need to translate
             SEARCH = "Tìm",
             SELECT = "Chọn",
             CHOOSE = "Điều khiển",
@@ -666,7 +736,9 @@ Language = {
             CHANGE_SECTION = "Thay đổi danh mục",
             UPDATE = "Cập nhật",
             CANCEL = "Hủy bỏ",
-            DELETE = "Xóa bỏ"
+            DELETE = "Xóa bỏ",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     Spanish = {
@@ -739,6 +811,9 @@ Language = {
             UseProxyAuth = "Usar autenticación proxy:",
             ProxyAuth = "login:contraseña",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
+            OpenInBrowser = "Open in browser", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botones L y R",
@@ -748,7 +823,8 @@ Language = {
             ["DownloadAll"] = "Descargar todos los capítulos",
             ["RemoveAll"] = "Eliminar todos los capítulos",
             ["CancelAll"] = "Cancelar la descarga de los capítulos",
-            ["ClearBookmarks"] = "Eliminar marcadores"
+            ["ClearBookmarks"] = "Eliminar marcadores",
+            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
         },
         THEME = {
             Dark = "Oscuro",
@@ -793,14 +869,16 @@ Language = {
             Width = "Ancho",
             LEFT = "Derecha a izquierda",
             RIGHT = "Izquierda a derecha",
-            DOWN = "Arriba a abajo"
+            DOWN = "Arriba a abajo",
+            Default = "Default", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Añadir a la libreria",
             REMOVE_FROM_LIBRARY = "Eliminar de la librería",
             PAGE = "Página : ",
             CONTINUE = "Continuar",
-            START = "Comenzar lectura"
+            START = "Comenzar lectura",
+            DONE = "Сompleted!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Añadir a la librería",
@@ -820,11 +898,21 @@ Language = {
             REFRESH_COMPLETED = "Refresco completado!", 
             SETTINGS_RESET = "Los ajustes han sido resteados"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Volver",
-            MODE_POPULAR = "Modo: Populares",
-            MODE_LATEST = "Modo: Recientes",
-            MODE_SEARCHING = 'Modo: Buscando "%s"',
+            MODE = "Modo",
+            --MODE_POPULAR = "Modo: Populares",
+            --MODE_LATEST = "Modo: Recientes",
+            --MODE_SEARCHING = 'Modo: Buscando "%s"',
+            JUMPTOPAGE = "Jump to page", -- Need to translate
             SEARCH = "Buscar",
             SELECT = "Seleccionar",
             CHOOSE = "Escoger",
@@ -832,7 +920,9 @@ Language = {
             CHANGE_SECTION = "Cambiar sección",
             UPDATE = "Actualizar",
             CANCEL = "Cancelar",
-            DELETE = "Eliminar"
+            DELETE = "Eliminar",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     Italian = {
@@ -905,6 +995,9 @@ Language = {
             UseProxyAuth = "Utilizza autenticazione proxy",
             ProxyAuth = "login:password",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
+            OpenInBrowser = "Open in browser", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "L e R triggers",
@@ -914,7 +1007,8 @@ Language = {
             ["DownloadAll"] = "Scarica tutti i capitoli", 
             ["RemoveAll"] = "Rimuovi tutti i capitoli",
             ["CancelAll"] = "Annulla il download dei capitoli",
-            ["ClearBookmarks"] = "Cancella segnalibri"
+            ["ClearBookmarks"] = "Cancella segnalibri",
+            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
         },
         THEME = {
             Dark = "Scuro",
@@ -959,14 +1053,16 @@ Language = {
             Width = "Larghezza",
             LEFT = "Da destra a sinistra",
             RIGHT = "Da sinistra a destra",
-            DOWN = "Dall'alto verso il basso"
+            DOWN = "Dall'alto verso il basso",
+            Default = "Default", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Aggiungi alla libreria",
             REMOVE_FROM_LIBRARY = "Rimuovi dalla libreria",
             PAGE = "Pagina : ",
             CONTINUE = "Continua",
-            START = "Inizia a leggere"
+            START = "Inizia a leggere",
+            DONE = "Сompleted!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Aggiunto alla libreria",
@@ -986,11 +1082,21 @@ Language = {
             REFRESH_COMPLETED = "Aggiornamento completato!",
             SETTINGS_RESET = "Le impostazioni sono state ripristinate"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Indietro",
-            MODE_POPULAR = "Modalità: Popolare",
-            MODE_LATEST = "Modalità: più recente",
-            MODE_SEARCHING = 'Modalità: ricerca "%s"',
+            MODE = "Modalità",
+            --MODE_POPULAR = "Modalità: Popolare",
+            --MODE_LATEST = "Modalità: più recente",
+            --MODE_SEARCHING = 'Modalità: ricerca "%s"',
+            JUMPTOPAGE = "Jump to page", -- Need to translate
             SEARCH = "Ricerca",
             SELECT = "Seleziona",
             CHOOSE = "Scegli",
@@ -998,7 +1104,9 @@ Language = {
             CHANGE_SECTION = "Cambia sezione",
             UPDATE = "Aggiorna",
             CANCEL = "Cancella",
-            DELETE = "Elimina"
+            DELETE = "Elimina",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     French = {
@@ -1071,6 +1179,9 @@ Language = {
             UseProxyAuth = "Uriliser l'authentification Proxy",
             ProxyAuth = "identifiant:mot de passe",
             SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
+            OpenInBrowser = "Open in browser", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
@@ -1080,7 +1191,8 @@ Language = {
             ["DownloadAll"] = "Télécharger tout les chapitres", 
             ["RemoveAll"] = "Retirer tout les chapitres",
             ["CancelAll"] = "Annuler le téléchargement des chapitres",
-            ["ClearBookmarks"] = "Vider les marques pages"
+            ["ClearBookmarks"] = "Vider les marques pages",
+            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
         },
         THEME = {
             Dark = "Sombre",
@@ -1125,14 +1237,16 @@ Language = {
             Width = "Longueur",
             LEFT = "Droite à gauche",
             RIGHT = "Gauche à droite",
-            DOWN = "Haut en bas"
+            DOWN = "Haut en bas",
+            Default = "Default", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Ajouter à la librairie",
             REMOVE_FROM_LIBRARY = "Enlever de la librairie",
             PAGE = "Page : ",
             CONTINUE = "Continuer",
-            START = "Commencer à lire"
+            START = "Commencer à lire",
+            DONE = "Сompleted!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Ajouté à la librairie",
@@ -1152,11 +1266,21 @@ Language = {
             REFRESH_COMPLETED = "Mise à jour complète!",
             SETTINGS_RESET = "Les paramètres vont être restauré"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Retourner",
-            MODE_POPULAR = "Mode: populaire",
-            MODE_LATEST = "Mode: plus récent",
-            MODE_SEARCHING = 'Mode: recherche "%s"',
+            MODE = "Mode",
+            --MODE_POPULAR = "Mode: populaire",
+            --MODE_LATEST = "Mode: plus récent",
+            --MODE_SEARCHING = 'Mode: recherche "%s"',
+            JUMPTOPAGE = "Jump to page", -- Need to translate
             SEARCH = "Rechercher",
             SELECT = "Sélectionner",
             CHOOSE = "Choisir",
@@ -1164,7 +1288,9 @@ Language = {
             CHANGE_SECTION = "Changer de section",
             UPDATE = "Mettre à jour",
             CANCEL = "Annuler",
-            DELETE = "Supprimer"
+            DELETE = "Supprimer",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     },
     PortugueseBR = {
@@ -1236,7 +1362,10 @@ Language = {
             ProxyPort = "Porta",
             UseProxyAuth = "Usar autenticação de proxy",
             ProxyAuth = "usuário:senha",
-            SkipCacheChapterChecking = "Pular verificação de cache e capítulo na tela de carregamento"
+            SkipCacheChapterChecking = "Pular verificação de cache e capítulo na tela de carregamento",
+            ConnectionTime = "Connection time for server", --Translate pls
+            InputValue = "Input value", --Translate pls
+            OpenInBrowser = "Open in browser", --Translate pls
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botões L e R",
@@ -1246,7 +1375,8 @@ Language = {
             ["DownloadAll"] = "Baixar todos os capítulos",
             ["RemoveAll"] = "Remover todos os capítulos",
             ["CancelAll"] = "Cancelar download de capítulos",
-            ["ClearBookmarks"] = "Limpar marcadores de página"
+            ["ClearBookmarks"] = "Limpar marcadores de página",
+            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
         },
         THEME = {
             Dark = "Escuro",
@@ -1291,14 +1421,16 @@ Language = {
             Width = "Largura",
             LEFT = "Direita para a esquerda",
             RIGHT = "Esquerda para a direita",
-            DOWN = "Cima para baixo"
+            DOWN = "Cima para baixo",
+            Default = "Default", --Translate please
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Adicionar a biblioteca",
             REMOVE_FROM_LIBRARY = "Remover da biblioteca",
             PAGE = "Página : ",
             CONTINUE = "Continuar",
-            START = "Começar leitura"
+            START = "Começar leitura",
+            DONE = "Сompleted!", --Translate please
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Adicionado a biblioteca",
@@ -1318,11 +1450,23 @@ Language = {
             REFRESH_COMPLETED = "Atualização completada!",
             SETTINGS_RESET = "Configurações foram resetadas"
         },
+        MODES = {
+            Popular = "Popular", --Need to translate
+            Latest = "Latest", --Need to translate
+            Search = "Search", --Need to translate
+            Alphabet = "Alphabet", --Need to translate
+            ByLetter = "By Letter", --Need to translate
+            ByTag = "By Tag", --Need to translate
+        },
         PANEL = {
             BACK = "Voltar",
+            MODE = "Modo:",
+            --[[
             MODE_POPULAR = "Modo: Popular",
             MODE_LATEST = "Modo: Últimos",
             MODE_SEARCHING = 'Modo: Pesquisando "%s"',
+            ]]
+            JUMPTOPAGE = "Jump to page", -- Need to translate
             SEARCH = "Pesquisar",
             SELECT = "Selecionar",
             CHOOSE = "Escolher",
@@ -1330,7 +1474,9 @@ Language = {
             CHANGE_SECTION = "Mudar seção",
             UPDATE = "Atualizar",
             CANCEL = "Cancelar",
-            DELETE = "Deletar"
+            DELETE = "Deletar",
+            FOLLOW = "Follow", --Need to translate
+            UNFOLLOW = "Unfollow", --Need to translate
         }
     }
 }

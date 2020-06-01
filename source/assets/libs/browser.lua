@@ -2,11 +2,11 @@ Browser = {}
 
 local function makeCookie(line)
     local args = {}
-    line:gsub("[\t]?(.-)[\t\n]", function(a) args[#args+1] = a end)
+    line:gsub("[\t]?(.-)[\t\n]", function(a)args[#args + 1] = a end)
     if #args == 7 then
         return {
             HttpOnly = args[1]:find("#HttpOnly_") and true,
-            Domain = args[1]:gsub("#HttpOnly_",""):gsub("^%.",""),
+            Domain = args[1]:gsub("#HttpOnly_", ""):gsub("^%.", ""),
             SubDomains = args[2] == "TRUE",
             Path = args[3],
             Secure = args[4] == "TRUE",
@@ -35,7 +35,7 @@ function Browser.getCookies(domain)
     local cookies = {}
     if doesFileExist("ur0:user/00/savedata/NPXS10083/Cookie.jar.txt") then
         local fd = openFile("ur0:user/00/savedata/NPXS10083/Cookie.jar.txt", FREAD)
-        local content = readFile(fd, sizeFile(fd)).."\n"
+        local content = readFile(fd, sizeFile(fd)) .. "\n"
         closeFile(fd)
         for line in content:gmatch("(.-\n)") do
             if line:find(domain) then
@@ -58,9 +58,9 @@ local wait = System.wait
 ---@param link string
 ---Opens browser on `link`
 function Browser.open(link)
-    callUri("webmodal: "..link)
+    callUri("webmodal: " .. link)
     wait(1500000)
-    callUri("webmodal: file:///ux0:/data/noboru/auth.html")
+    callUri("webmodal: file:///ux0:/data/noboru/temp/auth.html")
     wait(1500000)
 end
 
@@ -69,5 +69,5 @@ local getVersion = System.getVersion
 ---@return string
 ---Gives user agent of browser
 function Browser.getUserAgent()
-    return "Mozilla/5.0 (PlayStation Vita "..getVersion()..") AppleWebKit/537.73 (KHTML, like Gecko) Silk/3.2"
+    return "Mozilla/5.0 (PlayStation Vita " .. getVersion() .. ") AppleWebKit/537.73 (KHTML, like Gecko) Silk/3.2"
 end

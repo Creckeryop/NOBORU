@@ -33,10 +33,15 @@ function ParserManager.update()
             Task = nil
         else
             local _, isSafeToleave = coroutine.resume(Task.Update)
-            if Task.Stop and isSafeToleave then
+            if Task.Stop then
+                Network.stopCurrentDownload()
                 uniques[Task.Table] = nil
                 Task = nil
             end
+            --[[if Task.Stop and isSafeToleave then
+            uniques[Task.Table] = nil
+            Task = nil
+            end]]
             if not _ then
                 Console.error(isSafeToleave)
             end
@@ -44,41 +49,61 @@ function ParserManager.update()
     end
 end
 
----@param mode string | "POPULAR" | "LATEST" | "SEARCH"
+---@param mode string | "Popular" | "Latest" | "Search"
 ---@param parser Parser
 ---@param i number
 ---@param Table table
 ---@param data string | nil
+---@param tag_data string | table | nil
 ---Puts all manga on `i` page in `mode` to `Table`
 ---
----`data` is search string works only if `mode` == "SEARCH"
-function ParserManager.getMangaListAsync(mode, parser, i, Table, data)
+---`data` is search string works only if `mode` == "Search"
+---`tag_data` is search string works only if `mode` == "Search"
+function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
     if not parser or uniques[Table] then return end
     Console.write("Task created")
-    if mode == "SEARCH" then
+    if mode == "Search" then
         data = data:gsub("%%", "%%%%25"):gsub("!", "%%%%21"):gsub("#", "%%%%23"):gsub("%$", "%%%%24"):gsub("&", "%%%%26"):gsub("'", "%%%%27"):gsub("%(", "%%%%28"):gsub("%)", "%%%%29"):gsub("%*", "%%%%2A"):gsub("%+", "%%%%2B"):gsub(",", "%%%%2C"):gsub("%.", "%%%%2E"):gsub("/", "%%%%2F"):gsub(" ", "%+")
     end
     local T = {
         Type = "MangaList",
         F = function()
-            if mode == "POPULAR" then
+            if mode == "Popular" then
                 if parser.getPopularManga then
                     parser:getPopularManga(i, Table)
                 else
                     Console.write(parser.Name .. " doesn't support getPopularManga function", COLOR_GRAY)
-                end
-            elseif mode == "LATEST" then
+                    end
+            elseif mode == "Latest" then
                 if parser.getLatestManga then
                     parser:getLatestManga(i, Table)
                 else
                     Console.write(parser.Name .. " doesn't support getLatestManga function", COLOR_GRAY)
-                end
-            elseif mode == "SEARCH" then
+                    end
+            elseif mode == "Alphabet" then
+                if parser.getAZManga then
+                    parser:getAZManga(i, Table)
+                else
+                    Console.write(parser.Name .. " doesn't support getAZManga function", COLOR_GRAY)
+                    end
+            elseif mode == "ByLetter" then
+                if parser.getLetterManga then
+                    parser:getLetterManga(i, Table, CatalogModes.getLetter())
+                else
+                    Console.write(parser.Name .. " doesn't support getLetterManga function", COLOR_GRAY)
+                    end
+            elseif mode == "ByTag" then
+                if parser.getTagManga then
+                    parser:getTagManga(i, Table, CatalogModes.getTag())
+                else
+                    Console.write(parser.Name .. " doesn't support getTagManga function", COLOR_GRAY)
+                    end
+            elseif mode == "Search" then
                 if parser.searchManga then
-                    parser:searchManga(data, i, Table)
+                    parser:searchManga(data, i, Table, tag_data)
                 else
                     Console.write(parser.Name .. " doesn't support searchManga function", COLOR_GRAY)
-                end
+                    end
             end
         end,
         Table = Table
@@ -218,7 +243,7 @@ function ParserManager.updateCounters()
                             v.Counter = 0
                         end
                     end
-                    if old_name~=v.Name then
+                    if old_name ~= v.Name then
                         v.PrintName = nil
                     end
                 end
@@ -268,6 +293,7 @@ function ParserManager.remove(Table)
         if uniques[Table] == Task then
             Task.Table = Trash
             Task.Stop = true
+            Network.stopCurrentDownload()
         else
             uniques[Table].Type = "Skip"
         end
@@ -312,6 +338,7 @@ function ParserManager.updateParserList(Table, Insert)
                     end
                 end
             end
+            Notifications.push(Language[Settings.Language].NOTIFICATIONS.REFRESH_COMPLETED)
         end,
         Table = "UpdateParsers"
     }
@@ -329,5 +356,6 @@ function ParserManager.clear()
     uniques = {}
     if Task then
         Task.Stop = true
+        Network.stopCurrentDownload()
     end
 end

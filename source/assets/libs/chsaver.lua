@@ -468,6 +468,7 @@ local function stop(key, silent)
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
             Downloading[key].Notify = silent == nil
+            Network.stopCurrentDownload()
             rem_dir(FOLDER .. key)
         else
             local new_order = {}
@@ -500,6 +501,7 @@ function ChapterSaver.stopList(chapters, silent)
             if d == Task then
                 d.Destroy = true
                 d.Notify = silent == nil
+                Network.stopCurrentDownload()
                 rem_dir(FOLDER .. key)
             else
                 for i, od in pairs(Order) do
@@ -678,7 +680,7 @@ function ChapterSaver.save()
         deleteFile(CHAPTERSAV_PATH)
     end
     local fh = openFile(CHAPTERSAV_PATH, FCREATE)
-    local save_data = table.serialize(Keys, "Keys")
+    local save_data = "Keys = "..table.serialize(Keys, true)
     writeFile(fh, save_data, #save_data)
     closeFile(fh)
 end
@@ -688,8 +690,9 @@ function ChapterSaver.load()
     Keys = {}
     if doesFileExist(CHAPTERSAV_PATH) then
         local fh = openFile(CHAPTERSAV_PATH, FREAD)
-        local suc, keys = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")() end)
-        if suc then
+        local load_keys = load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")
+        if load_keys then
+            local keys = load_keys() or {}
             local cnt = 0
             for _, _ in pairs(keys) do
                 cnt = cnt + 1

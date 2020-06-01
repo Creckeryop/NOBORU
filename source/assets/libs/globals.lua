@@ -1,9 +1,17 @@
-Point_t = function(x, y)
-    return {
-        x = x or 0,
-        y = y or 0
-    }
-end
+local ffi = require("ffi")
+ffi.cdef [[
+    typedef struct Point {
+        int x, y;
+    } Point_t;
+    typedef struct Slider {
+        float Y;
+        float V;
+        float TouchY;
+        int ItemID;
+    } Slider;
+]]
+
+Point_t = ffi.typeof("Point_t")
 
 TOUCH = function()
     return {
@@ -14,19 +22,9 @@ TOUCH = function()
     }
 end
 
-Slider = function()
-    return {
-        Y = 0,
-        V = 0,
-        TouchY = 0,
-        ItemID = 0
-    }
-end
+Slider = ffi.typeof("Slider")
 
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
-LUA_GRADIENTH = Image:new(Graphics.loadImage("app0:assets/images/gradientH.png"))
-LUA_PANEL = Image:new(Graphics.loadImage("app0:assets/images/panel.png"))
-DEV_LOGO = Image:new(Graphics.loadImage("app0:assets/images/devlogo.png"))
 
 USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 
@@ -44,6 +42,17 @@ COLOR_SELECTED = COLOR_WHITE
 COLOR_ICON_EXTRACT = COLOR_WHITE
 COLOR_PANEL = COLOR_WHITE
 
+function COLOR_GRADIENT(colorA, colorB, a)
+    if a <= 0 then
+        return colorA
+    elseif a >= 1 then
+        return colorB
+    end
+    local r1, g1, b1, a1 = Color.getR(colorA), Color.getG(colorA), Color.getB(colorA), Color.getA(colorA)
+    local r2, g2, b2, a2 = Color.getR(colorB), Color.getG(colorB), Color.getB(colorB), Color.getA(colorB)
+    return Color.new(r1 + (r2 - r1) * a, g1 + (g2 - g1) * a, b1 + (b2 - b1) * a, a1 + (a2 - a1) * a)
+end
+
 SCE_CTRL_RIGHTPAGE = SCE_CTRL_RTRIGGER
 SCE_CTRL_LEFTPAGE = SCE_CTRL_LTRIGGER
 
@@ -58,13 +67,11 @@ SCE_CTRL_REAL_CIRCLE = SCE_CTRL_CIRCLE
 FONT16 = Font.load("app0:roboto.ttf")
 FONT20 = Font.load("app0:roboto.ttf")
 FONT26 = Font.load("app0:roboto.ttf")
-FONT30 = Font.load("app0:roboto.ttf")
 BONT16 = Font.load("app0:robboto.ttf")
 BONT30 = Font.load("app0:robboto.ttf")
 
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT26, 26)
-Font.setPixelSizes(FONT30, 30)
 Font.setPixelSizes(BONT30, 30)
 
 local doesDirExist = System.doesDirExist
@@ -72,7 +79,7 @@ local createDirectory = System.createDirectory
 local deleteFile = System.deleteFile
 local doesFileExist = System.doesFileExist
 
-MANGA_WIDTH = 160
+MANGA_WIDTH = 180
 MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
 
 GlobalTimer = Timer.new()
@@ -95,8 +102,19 @@ if not doesDirExist("ux0:data/noboru/import") then
     createDirectory("ux0:data/noboru/import")
 end
 
-if doesFileExist("ux0:data/noboru/auth.html") then
-    deleteFile("ux0:data/noboru/auth.html")
+if not doesDirExist("ux0:data/noboru/temp") then
+    createDirectory("ux0:data/noboru/temp")
+end
+
+if not doesDirExist("ux0:data/noboru/cusettings") then
+    createDirectory("ux0:data/noboru/cusettings")
+end
+
+if doesFileExist("ux0:data/noboru/temp/auth.html") then
+    deleteFile("ux0:data/noboru/temp/auth.html")
+end
+if doesFileExist("ux0:data/noboru/temp/logo.png") then
+    deleteFile("ux0:data/noboru/temp/logo.png")
 end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
@@ -109,7 +127,8 @@ local function cpy_file(source_path, dest_path)
     closeFile(fh1)
     closeFile(fh2)
 end
-cpy_file("app0:assets/auth.html", "ux0:data/noboru/auth.html")
+cpy_file("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
+cpy_file("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")
 
 function MemToStr(bytes)
     local str = "Bytes"
@@ -134,7 +153,7 @@ end
 ---@param ParserID integer
 ---@param RawLink string
 ---Creates `Manga-Info` table
-function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
+function CreateManga(Name, Link, ImageLink, ParserID, RawLink, BrowserLink)
     if Name and Link and ImageLink and ParserID then
         return {
             Name = Name,
@@ -142,6 +161,7 @@ function CreateManga(Name, Link, ImageLink, ParserID, RawLink)
             ImageLink = ImageLink,
             ParserID = ParserID,
             RawLink = RawLink or "",
+            BrowserLink = BrowserLink,
             Data = {}
         }
     else
@@ -198,7 +218,10 @@ local function drawMangaName(Manga)
                     f[#f] = nil
                 else
                     f = table.concat(f)
-                    s[#s + 1] = (f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f)
+                    local cut = f:match(".+%s(.-)$") or f:match(".+-(.-)$") or f
+                    for k in it_utf8(cut) do
+                        s[#s + 1] = k
+                    end
                     s[#s + 1] = c
                     f = f:match("^(.+)%s.-$") or f:match("(.+-).-$") or ""
                 end
@@ -222,8 +245,47 @@ local function drawMangaName(Manga)
     end
 end
 
-function DrawManga(x, y, Manga, M)
-    local Mflag = M ~= nil
+function DrawManga(x, y, Manga)
+    if Manga.Image and Manga.Image.e then
+        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(0, 0, 0))
+        local width, height = Manga.Image.Width, Manga.Image.Height
+        local draw = false
+        if width < height then
+            local scale = MANGA_WIDTH / width
+            local h = MANGA_HEIGHT / scale
+            local s_y = (height - h) / 2
+            if s_y >= 0 then
+                Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale, scale)
+                draw = true
+            end
+        end
+        if not draw then
+            local scale = MANGA_HEIGHT / height
+            local w = MANGA_WIDTH / scale
+            local s_x = (width - w) / 2
+            Graphics.drawImageExtended(x, y, Manga.Image.e, s_x, 0, w, height, 0, scale, scale)
+        end
+    else
+        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(101, 115, 146))
+    end
+    Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH, 1)
+    if Manga.Name then
+        if not Manga.PrintName then
+            pcall(drawMangaName, Manga)
+        else
+            if Manga.PrintName.f then
+                if y + MANGA_HEIGHT / 2 - 47 < 544 and y + MANGA_HEIGHT / 2 - 47 > -16 then
+                    Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 47, Manga.PrintName.f, COLOR_WHITE)
+                end
+            end
+            if y + MANGA_HEIGHT / 2 - 27 < 544 and y + MANGA_HEIGHT / 2 - 27 > -16 then
+                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 27, Manga.PrintName.s, COLOR_WHITE)
+            end
+        end
+    end
+end
+
+function DrawDetailsManga(x, y, Manga, M)
     M = M or 1
     if Manga.Image and Manga.Image.e then
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(0, 0, 0))
@@ -246,17 +308,5 @@ function DrawManga(x, y, Manga, M)
         end
     else
         Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(101, 115, 146))
-    end
-    local alpha = Mflag and 5 - M / 0.25 or M
-    Graphics.drawScaleImage(x - MANGA_WIDTH * M / 2, y + MANGA_HEIGHT * M / 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH * M, 1, Color.new(255, 255, 255, 255 * alpha))
-    if Manga.Name then
-        if not Manga.PrintName then
-            pcall(drawMangaName, Manga)
-        else
-            if Manga.PrintName.f then
-                Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT * M / 2 - 47, Manga.PrintName.f, Color.new(255, 255, 255, 255 * alpha))
-            end
-            Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT * M / 2 - 27, Manga.PrintName.s, Color.new(255, 255, 255, 255 * alpha))
-        end
     end
 end
