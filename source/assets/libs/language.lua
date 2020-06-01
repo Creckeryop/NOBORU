@@ -811,7 +811,7 @@ Language = {
             UseProxyAuth = "Usar autenticación proxy:",
             ProxyAuth = "login:contraseña",
             SkipCacheChapterChecking = "Saltar chequeo de cache y capitulos en la pantalla de carga",
-            ConnectionTime = "Tiempo de conexion con el servidor"
+            ConnectionTime = "Tiempo de conexion con el servidor",
             InputValue = "Introduce un valor",
             OpenInBrowser = "Abrir en navegador",
         },
