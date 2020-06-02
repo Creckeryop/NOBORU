@@ -1363,9 +1363,9 @@ Language = {
             UseProxyAuth = "Usar autenticação de proxy",
             ProxyAuth = "usuário:senha",
             SkipCacheChapterChecking = "Pular verificação de cache e capítulo na tela de carregamento",
-            ConnectionTime = "Connection time for server", --Translate pls
-            InputValue = "Input value", --Translate pls
-            OpenInBrowser = "Open in browser", --Translate pls
+            ConnectionTime = "Tempo de conexão com o servidor",
+            InputValue = "Insira um valor",
+            OpenInBrowser = "Abrir no navegador",
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botões L e R",
@@ -1376,7 +1376,7 @@ Language = {
             ["RemoveAll"] = "Remover todos os capítulos",
             ["CancelAll"] = "Cancelar download de capítulos",
             ["ClearBookmarks"] = "Limpar marcadores de página",
-            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
+            ["OpenMangaInBrowser"] = "Abrir manga no navegador",
         },
         THEME = {
             Dark = "Escuro",
@@ -1422,7 +1422,7 @@ Language = {
             LEFT = "Direita para a esquerda",
             RIGHT = "Esquerda para a direita",
             DOWN = "Cima para baixo",
-            Default = "Default", --Translate please
+            Default = "Padrão",
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Adicionar a biblioteca",
@@ -1430,7 +1430,7 @@ Language = {
             PAGE = "Página : ",
             CONTINUE = "Continuar",
             START = "Começar leitura",
-            DONE = "Сompleted!", --Translate please
+            DONE = "Completado!",
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Adicionado a biblioteca",
@@ -1451,12 +1451,12 @@ Language = {
             SETTINGS_RESET = "Configurações foram resetadas"
         },
         MODES = {
-            Popular = "Popular", --Need to translate
-            Latest = "Latest", --Need to translate
-            Search = "Search", --Need to translate
-            Alphabet = "Alphabet", --Need to translate
-            ByLetter = "By Letter", --Need to translate
-            ByTag = "By Tag", --Need to translate
+            Popular = "Popular",
+            Latest = "Últimos",
+            Search = "Pesquisar",
+            Alphabet = "Alfabeto",
+            ByLetter = "Por letra",
+            ByTag = "Por marcador",
         },
         PANEL = {
             BACK = "Voltar",
@@ -1466,7 +1466,7 @@ Language = {
             MODE_LATEST = "Modo: Últimos",
             MODE_SEARCHING = 'Modo: Pesquisando "%s"',
             ]]
-            JUMPTOPAGE = "Jump to page", -- Need to translate
+            JUMPTOPAGE = "Ir para página",
             SEARCH = "Pesquisar",
             SELECT = "Selecionar",
             CHOOSE = "Escolher",
@@ -1475,8 +1475,8 @@ Language = {
             UPDATE = "Atualizar",
             CANCEL = "Cancelar",
             DELETE = "Deletar",
-            FOLLOW = "Follow", --Need to translate
-            UNFOLLOW = "Unfollow", --Need to translate
+            FOLLOW = "Seguir",
+            UNFOLLOW = "Parar de seguir",
         }
     }
 }
