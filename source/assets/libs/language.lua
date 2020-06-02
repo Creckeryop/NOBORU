@@ -1,6 +1,6 @@
 --Spanish translation created by SamuEDL98
 --Vietnamese translation created by nguyenmao2101
---Italian translation created by theHeroGAC
+--Italian translation created by theHeroGAC and some strings by Rinnegatamante
 --French translation created by Samilop "Cimmerian" Iter
 --Turkish translation created by @kemalsanli
 --PortugueseBR translation created by @rutantan
@@ -206,12 +206,12 @@ Language = {
         SETTINGS = {
             Language = "Language",
             ClearChapters = "Clear saved chapters",
-            ShowNSFW = "Show NSFW parsers",
+            ShowNSFW = "Show NSFW catalogs",
             ClearLibrary = "Clear library",
             ClearCache = "Clear cache of non followed manga",
             ClearAllCache = "Clear all cache",
             ReaderOrientation = "Default reader orientation",
-            DoubleTapReader = "Enable double tap to zoom feature",
+            DoubleTapReader = "Enable double tap zoom",
             ZoomReader = "Reader scaling",
             SwapXO = "Change KeyType",
             ShowAuthor = "Developer",
@@ -222,7 +222,7 @@ Language = {
             PleaseWait = "Please wait",
             FailedToUpdate = "Failed to update app",
             NoConnection = "No connection",
-            HideInOffline = "Show only downloaded chapters in offline",
+            HideInOffline = "Show only downloaded chapters in offline mode",
             UnzipingVPK = "Extracting vpk to install",
             CurrentVersionIs = "Current version is:",
             Space = "Memory used",
@@ -258,7 +258,7 @@ Language = {
             ProxyPort = "Port",
             UseProxyAuth = "Use proxy authentication",
             ProxyAuth = "login:password",
-            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen",
+            SkipCacheChapterChecking = "Skip checking cache and saved chapters while loading",
             ConnectionTime = "Connection time for server",
             InputValue = "Input value",
             OpenInBrowser = "Open in browser",
