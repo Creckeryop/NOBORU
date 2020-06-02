@@ -544,7 +544,7 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 touchMode = TOUCH_IDLE
             end
         end
-        if touchMode == TOUCH_READ then
+        if touchMode == TOUCH_READ and touchTemp.x and touch.x then
             local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
             if len > 10 then
                 if orientation == "Horizontal" then
