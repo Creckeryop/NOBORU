@@ -1,7 +1,7 @@
 local ffi = require("ffi")
 ffi.cdef [[
     typedef struct Point {
-        int x, y;
+        float x, y;
     } Point_t;
     typedef struct Slider {
         float Y;

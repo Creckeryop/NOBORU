@@ -47,6 +47,12 @@ local MenuFade = 0
 local OpenCloseContextMenu = false
 local OpenCloseContextMenuTimer = Timer.new()
 local OnTouchMenu = false
+local CursorIndex = -1
+local CursorFade = 0
+local CursorPoint = Point_t(0, 0)
+local CursorDestination = Point_t(0, 0)
+local CursorPlaces = {Point_t(32 + 12, 40), Point_t(960 - 88 - 88 + 32 + 12, 40), Point_t(960 - 32 - 12, 40), Point_t(32 + 12, 544 - 40), Point_t(0, 0), Point_t(960 - 32 - 12, 544 - 40)}
+
 
 local name_timer = Timer.new()
 local chapter_timer = Timer.new()
@@ -403,21 +409,21 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         end
         exit()
     end
-    if ContextMenu then
-        if touch.x and touch.y < 80 * MenuFade and not oldtouch.x then
-            if touch.x > 960-88 then
-                if Pages[Pages.Page or -1] and (Pages[Pages.Page or -1].Link or Pages[Pages.Page or -1].Path) then
-                    Extra.setChapters(Chapters[current_chapter].Manga, Chapters[current_chapter], Pages[Pages.Page])
-                end
-            elseif touch.x > 960-88-88 then
-                if Pages[Pages.Page or -1] then
-                    deletePageImage(Pages.Page)
-                    loadPageImage(Pages.Page)
+    if STATE == STATE_READING and Pages[Pages.Page] then
+        if ContextMenu then
+            if touch.x and touch.y < 80 * MenuFade and not oldtouch.x then
+                if touch.x > 960 - 88 then
+                    if Pages[Pages.Page or -1] and (Pages[Pages.Page or -1].Link or Pages[Pages.Page or -1].Path) then
+                        Extra.setChapters(Chapters[current_chapter].Manga, Chapters[current_chapter], Pages[Pages.Page])
+                    end
+                elseif touch.x > 960 - 88 - 88 then
+                    if Pages[Pages.Page or -1] then
+                        deletePageImage(Pages.Page)
+                        loadPageImage(Pages.Page)
+                    end
                 end
             end
         end
-    end
-    if STATE == STATE_READING and Pages[Pages.Page] then
         if touch.x ~= nil or pad ~= 0 then
             Timer.reset(hideCounterTimer)
         end
@@ -433,39 +439,43 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
             if math.abs(y) > SCE_LEFT_STICK_DEADZONE then
                 page.y = page.y - SCE_LEFT_STICK_SENSITIVITY * 25 * (y - SCE_LEFT_STICK_DEADZONE * math.sign(y)) / (128 - SCE_LEFT_STICK_DEADZONE)
             end
-            if Settings.ChangingPageButtons == "LR" then
-                if Controls.check(pad, SCE_CTRL_UP) then
-                    page.y = page.y + 20
-                elseif Controls.check(pad, SCE_CTRL_DOWN) then
-                    page.y = page.y - 20
-                end
-                if Controls.check(pad, SCE_CTRL_LEFT) then
-                    page.x = page.x + 20
-                elseif Controls.check(pad, SCE_CTRL_RIGHT) then
-                    page.x = page.x - 20
+            if not ContextMenu then
+                if Settings.ChangingPageButtons == "LR" then
+                    if Controls.check(pad, SCE_CTRL_UP) then
+                        page.y = page.y + 20
+                    elseif Controls.check(pad, SCE_CTRL_DOWN) then
+                        page.y = page.y - 20
+                    end
+                    if Controls.check(pad, SCE_CTRL_LEFT) then
+                        page.x = page.x + 20
+                    elseif Controls.check(pad, SCE_CTRL_RIGHT) then
+                        page.x = page.x - 20
+                    end
                 end
             end
         end
         if math.abs(offset.x) < 80 and math.abs(offset.y) < 80 then
-            if not (Controls.check(pad, SCE_CTRL_RIGHTPAGE) or Controls.check(pad, SCE_CTRL_LEFTPAGE) or (Settings.ChangingPageButtons == "DPAD" and (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP)))) then
-                buttonTimeSpace = 800
-            end
-            local right_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_DOWN or SCE_CTRL_RIGHT) or (orientation == "Vertical" and (is_down and SCE_CTRL_LEFT or SCE_CTRL_DOWN))) or SCE_CTRL_RIGHTPAGE
-            local left_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_UP or SCE_CTRL_LEFT) or (orientation == "Vertical" and (is_down and SCE_CTRL_RIGHT or SCE_CTRL_UP))) or SCE_CTRL_LEFTPAGE
-            if Controls.check(pad, right_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, right_page_button)) then
-                swipe("LEFT")
-                buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
-                Timer.reset(buttonTimer)
-            elseif Controls.check(pad, left_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, left_page_button)) then
-                swipe("RIGHT")
-                buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
-                Timer.reset(buttonTimer)
-            elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
-                changeOrientation()
-            elseif Controls.check(pad, SCE_CTRL_SQUARE) then
-                scale(0.95, page)
-            elseif Controls.check(pad, SCE_CTRL_TRIANGLE) then
-                scale(1.05, page)
+            if not ContextMenu then
+                if not (Controls.check(pad, SCE_CTRL_RIGHTPAGE) or Controls.check(pad, SCE_CTRL_LEFTPAGE) or (Settings.ChangingPageButtons == "DPAD" and (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP)))) then
+                    buttonTimeSpace = 800
+                end
+                local right_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_DOWN or SCE_CTRL_RIGHT) or (orientation == "Vertical" and (is_down and SCE_CTRL_LEFT or SCE_CTRL_DOWN))) or SCE_CTRL_RIGHTPAGE
+                local left_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_UP or SCE_CTRL_LEFT) or (orientation == "Vertical" and (is_down and SCE_CTRL_RIGHT or SCE_CTRL_UP))) or SCE_CTRL_LEFTPAGE
+                if Controls.check(pad, right_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, right_page_button)) then
+                    swipe("LEFT")
+                    buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
+                    Timer.reset(buttonTimer)
+                elseif Controls.check(pad, left_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, left_page_button)) then
+                    swipe("RIGHT")
+                    buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
+                    Timer.reset(buttonTimer)
+                elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) then
+                    changeOrientation()
+                elseif Controls.check(pad, SCE_CTRL_SQUARE) then
+                    scale(0.95, page)
+                elseif Controls.check(pad, SCE_CTRL_TRIANGLE) then
+                    scale(1.05, page)
+                end
             end
             local x, y = Controls.readRightAnalog()
             if orientation == "Horizontal" then
@@ -627,6 +637,152 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
         OnTouchMenu = true
     else
         OnTouchMenu = false
+    end
+    if ContextMenu then
+        if CursorIndex == -1 and (Controls.check(pad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) or Controls.check(pad, SCE_CTRL_UP) or Controls.check(pad, SCE_CTRL_DOWN)) then
+            CursorIndex = 0
+            CursorPoint = Point_t(32 + 12, 35)
+            CursorDestination = Point_t(32 + 12, 35)
+        elseif CursorIndex >= 0 and CursorIndex < #CursorPlaces then
+            if not Controls.check(pad, SCE_CTRL_CROSS) then
+                if STATE == STATE_READING then
+                    if CursorIndex > 2 then
+                        if Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) then
+                            CursorIndex = CursorIndex - 3
+                        elseif Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) and CursorIndex > 3 then
+                            CursorIndex = CursorIndex - 1
+                        elseif Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT) and CursorIndex < 5 then
+                            CursorIndex = CursorIndex + 1
+                        end
+                    else
+                        if Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) then
+                            CursorIndex = CursorIndex + 3
+                            if CursorIndex == 4 then
+                                CursorIndex = 5
+                            end
+                        elseif Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) and CursorIndex > 0 then
+                            CursorIndex = CursorIndex - 1
+                        elseif Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT) and CursorIndex < 2 then
+                            CursorIndex = CursorIndex + 1
+                        end
+                    end
+                elseif STATE == STATE_LOADING then
+                    if CursorIndex > 2 then
+                        if Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) then
+                            CursorIndex = 0
+                        end
+                    else
+                        if Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) then
+                            CursorIndex = 3
+                        elseif Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) then
+                            CursorIndex = 3
+                        elseif Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT) then
+                            CursorIndex = 5
+                        end
+                    end
+                end
+            end
+            if CursorIndex >= 0 then
+                if Controls.check(pad, SCE_CTRL_CROSS) then
+                    if CursorIndex == 4 then
+                        if not (Controls.check(pad, SCE_CTRL_RIGHT) or Controls.check(pad, SCE_CTRL_LEFT)) then
+                            buttonTimeSpace = 400
+                        end
+                        local left = is_down and orientation == "Vertical" and SCE_CTRL_RIGHT or SCE_CTRL_LEFT
+                        local right = is_down and orientation == "Vertical" and SCE_CTRL_LEFT or SCE_CTRL_RIGHT
+                        if Pages.Page < Pages.Count and Controls.check(pad, right) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, right)) then
+                            swipe("LEFT")
+                            buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
+                            Timer.reset(buttonTimer)
+                        elseif Pages.Page > 1 and Controls.check(pad, left) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldpad, left)) then
+                            swipe("RIGHT")
+                            buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
+                            Timer.reset(buttonTimer)
+                        end
+                    elseif not Controls.check(oldpad, SCE_CTRL_CROSS) then
+                        if CursorIndex == 0 then
+                            if Pages.Page > 0 then
+                                local bookmark
+                                if readDirection == "LEFT" then
+                                    bookmark = Pages.Count - Pages.Page + 1
+                                else
+                                    bookmark = Pages.Page
+                                end
+                                if bookmark == 1 then
+                                    bookmark = nil
+                                elseif bookmark == Pages.Count then
+                                    bookmark = true
+                                end
+                                if Cache.isCached(Chapters[current_chapter].Manga) then
+                                    Cache.setBookmark(Chapters[current_chapter], bookmark)
+                                end
+                            end
+                            exit()
+                        elseif CursorIndex == 1 and STATE == STATE_READING then
+                            if Pages[Pages.Page or -1] then
+                                deletePageImage(Pages.Page)
+                                loadPageImage(Pages.Page)
+                            end
+                        elseif CursorIndex == 2 and STATE == STATE_READING then
+                            if Pages[Pages.Page or -1] and (Pages[Pages.Page or -1].Link or Pages[Pages.Page or -1].Path) then
+                                Extra.setChapters(Chapters[current_chapter].Manga, Chapters[current_chapter], Pages[Pages.Page])
+                            end
+                        else
+                            if readDirection == "LEFT" or is_down and orientation == "Vertical" then
+                                if CursorIndex == 3 and current_chapter < #Chapters then
+                                    if Cache.isCached(Chapters[current_chapter].Manga) then
+                                        Cache.setBookmark(Chapters[current_chapter], true)
+                                    end
+                                    Reader.loadChapter(current_chapter + 1)
+                                elseif CursorIndex == 5 and current_chapter > 1 then
+                                    Reader.loadChapter(current_chapter - 1)
+                                    StartPage = false
+                                end
+                            else
+                                if CursorIndex == 3 and current_chapter > 1 then
+                                    Reader.loadChapter(current_chapter - 1)
+                                    StartPage = false
+                                elseif CursorIndex == 5 and current_chapter < #Chapters then
+                                    if Cache.isCached(Chapters[current_chapter].Manga) then
+                                        Cache.setBookmark(Chapters[current_chapter], true)
+                                    end
+                                    Reader.loadChapter(current_chapter + 1)
+                                end
+                            end
+                        end
+                    end
+                end
+                if CursorIndex == 4 and STATE == STATE_READING then
+                    local current_page = Pages.Page
+                    current_page = math.max(1, math.min(current_page, Pages.Count))
+                    local point = 0
+                    if Pages.Count == 1 then
+                        point = 560
+                    else
+                        point = ((current_page - 1) * 560 / (Pages.Count - 1))
+                    end
+                    if readDirection == "LEFT" then
+                        CursorDestination = Point_t(200 + point, 544 - 40)
+                    elseif orientation == "Vertical" and is_down then
+                        if Pages.Count == 1 then
+                            point = 560
+                        else
+                            point = (((Pages.Count - Pages.Page + 1) - 1) * 560 / (Pages.Count - 1))
+                        end
+                        CursorDestination = Point_t(200 + point, 544 - 40)
+                    else
+                        CursorDestination = Point_t(200 + point, 544 - 40)
+                    end
+                else
+                    CursorDestination = CursorPlaces[CursorIndex + 1]
+                end
+                CursorPoint.x = CursorPoint.x + (CursorDestination.x - CursorPoint.x) / 4
+                CursorPoint.y = CursorPoint.y + (CursorDestination.y - CursorPoint.y) / 4
+            end
+        end
+    end
+    if touch.x or not ContextMenu then
+        CursorIndex = -1
     end
     if Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) then
         ContextMenu = not ContextMenu
@@ -1138,6 +1294,11 @@ function Reader.update()
     else
         MenuFade = math.max(MenuFade - 0.1, 0)
     end
+    if CursorIndex >= 0 then
+        CursorFade = math.min(CursorFade + 0.1, 1)
+    else
+        CursorFade = math.max(CursorFade - 0.1, 0)
+    end
 end
 
 function Reader.draw()
@@ -1284,11 +1445,13 @@ function Reader.draw()
             Graphics.fillRect(0, 88, 0, 80 * MenuFade, BACK_COLOR)
             Graphics.drawImage(32, 80 * MenuFade - 40 - 12, Back_icon.e, COLOR_WHITE)
             Graphics.fillRect(960 - 88 - 32 - 24 - 32, 960, 0, 80 * MenuFade, BACK_COLOR)
-            Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_WHITE)
-            if Pages[Pages.Page] and (Pages[Pages.Page].Link or Chapters[current_chapter].Manga.ParserID == "IMPORTED" or Pages[Pages.Page].Path) then
-                Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_WHITE)
-            else
-                Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_GRAY)
+            if STATE == STATE_READING then
+                Graphics.drawImage(960 - 32 - 24 - 32 - 32 - 24, 80 * MenuFade - 40 - 12, Refresh_icon.e, COLOR_WHITE)
+                if Pages[Pages.Page] and (Pages[Pages.Page].Link or Chapters[current_chapter].Manga.ParserID == "IMPORTED" or Pages[Pages.Page].Path) then
+                    Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_WHITE)
+                else
+                    Graphics.drawImage(960 - 32 - 24, 80 * MenuFade - 40 - 12, Options_icon.e, COLOR_GRAY)
+                end
             end
             if Timer.getTime(name_timer) > 3500 + ms then
                 Timer.reset(name_timer)
@@ -1299,6 +1462,17 @@ function Reader.draw()
         else
             Graphics.fillRect(0, 88, 0, 80 * MenuFade, BACK_COLOR)
             Graphics.fillRect(960 - 88 - 32 - 24 - 32, 960, 0, 80 * MenuFade, BACK_COLOR)
+        end
+        if CursorFade >= 0 then
+            local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
+            local shift = 80 * (1 - MenuFade)
+            for i = ks, ks + 1 do
+                if CursorPoint.y > 272 then
+                    Graphics.fillEmptyRect(CursorPoint.x - 20 - i, CursorPoint.x + 20 + i + 2, CursorPoint.y - 20 - i + shift, CursorPoint.y + 20 + i + 2 + shift, Color.new(255, 0, 51, 255 * CursorFade))
+                else
+                    Graphics.fillEmptyRect(CursorPoint.x - 20 - i, CursorPoint.x + 20 + i + 2, CursorPoint.y - 20 - i - shift, CursorPoint.y + 20 + i + 2 - shift, Color.new(255, 0, 51, 255 * CursorFade))
+                end
+            end
         end
     end
 end
