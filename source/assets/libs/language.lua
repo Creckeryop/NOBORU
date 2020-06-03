@@ -117,7 +117,8 @@ Language = {
             VIE = "Вьетнамский",
             DEU = "Немецкий",
             BRA = "Бразильский",
-            POL = "Польский"
+            POL = "Польский",
+            IDN = "Индонезийский"
         },
         WARNINGS = {
             NO_CHAPTERS = "Главы не найдены"
@@ -301,7 +302,8 @@ Language = {
             VIE = "Vietnamese",
             DEU = "German",
             BRA = "Brazil",
-            POL = "Polish"
+            POL = "Polish",
+            IDN = "Indonesian"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
@@ -485,7 +487,8 @@ Language = {
             VIE = "Vietnam Dili",
             DEU = "Almanca",
             BRA = "Brezilya Dili",
-            POL = "Lehçe"
+            POL = "Lehçe",
+            IDN = "Endonezya"
         },
         WARNINGS = {
             NO_CHAPTERS = "Hiç Bölüm Yok"
@@ -669,7 +672,8 @@ Language = {
             VIE = "Việt Nam",
             DEU = "Tiếng Đức",
             BRA = "Brazil",
-            POL = "Ba Lan"
+            POL = "Ba Lan",
+            IDN = "Tiếng Indonesia"
         },
         WARNINGS = {
             NO_CHAPTERS = "Không có tập nào!"
@@ -853,7 +857,8 @@ Language = {
             VIE = "Vietnamita",
             DEU = "Aleman",
             BRA = "Brasileño",
-            POL = "Polaco"
+            POL = "Polaco",
+            IDN = "Indonesia"
         },
         WARNINGS = {
             NO_CHAPTERS = "No hay capítulos"
@@ -1037,7 +1042,8 @@ Language = {
             VIE = "Vietnamese",
             DEU = "Tedesco",
             BRA = "Brasiliano",
-            POL = "Polacco"
+            POL = "Polacco",
+            IDN = "Indonesiano"
         },
         WARNINGS = {
             NO_CHAPTERS = "Nessun capitolo"
@@ -1221,7 +1227,8 @@ Language = {
             VIE = "Vietnamien",
             DEU = "Allemand",
             BRA = "Brésilien",
-            POL = "Polonais"
+            POL = "Polonais",
+            IDN = "Indonésien"
         },
         WARNINGS = {
             NO_CHAPTERS = "Pas de chapitres"
@@ -1405,7 +1412,8 @@ Language = {
             VIE = "Vietnamita",
             DEU = "Alemão",
             BRA = "Português-Brasil",
-            POL = "Polonês"
+            POL = "Polonês",
+            IDN = "Indonésien"
         },
         WARNINGS = {
             NO_CHAPTERS = "Sem capítulos"
