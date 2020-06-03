@@ -18,12 +18,14 @@ Application for PlayStation Vita to read manga or comics<br>
 * Supports CBZ format
 * Multilanguage
 * Reading without network (Offline mode !!Don't forget to add manga in library!! (you can also check `History` tab))
+* Advanced search
+* Custom settings for mangas
 
 All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBORU-parsers">this repo</a>
 ## Table of Contents
 - [Requirements](#requirements)
 - [Data structure](#data-structure)
-- [Importing](#importing-035)
+- [Importing](#importing)
 - [Backup](#backup)
 - [Known issues](#known-issues)
 - [FAQ](#faq)
@@ -38,12 +40,13 @@ ux0:data/noboru/cache/ - folder that holds cached manga info (also history)
 ux0:data/noboru/chapters/ - folder that holds chapters saved
 ux0:data/noboru/import/ - folder where you can store files you want to read locally or import to Library (0.35+)
 ux0:data/noboru/parsers/ - folder for parsers
+ux0:data/noboru/cusettings/ - folder for manga's custom settings
 ux0:data/noboru/save.dat - library savefile
 ux0:data/noboru/c.c - saved chapters info
 ux0:data/noboru/settings.ini - application settings
 ```
 You can simply delete `noboru` folder to reset all settings
-## Importing (0.35+)
+## Importing
 So if you want to add your manga to library, you have four ways:
 * You can import folder with images
 * You can import folder with folders with images
@@ -67,6 +70,7 @@ If you want to backup here's what you can backup
 |history.dat + info.txt|History list|
 |info.txt + cache folders (as many you want)|Bookmarks + Covers|
 |c.c + chapters folders (as many you want)|Chapters|
+|cusettings/*.ini|Custom settings for manga|
 
 *Be careful, if you want to save chapters and don't search this chapter from internet you should backup History list*
 ## Known issues
