@@ -629,10 +629,10 @@ Language = {
             ProxyPort = "Cổng",
             UseProxyAuth = "Xác thực proxy",
             ProxyAuth = "tài khoản:mật khẩu",
-            SkipCacheChapterChecking = "Skip checking cache and chapter on loading screen", --Need to translate
-            ConnectionTime = "Connection time for server", --Translate pls
-            InputValue = "Input value", --Translate pls
-            OpenInBrowser = "Open in browser", --Translate pls
+            SkipCacheChapterChecking = "Bỏ qua kiểm tra bộ nhớ tạm",
+            ConnectionTime = "Thời gian kết nối máy chủ",
+            InputValue = "Giá trị đầu vào",
+            OpenInBrowser = "Mở trong trình duyệt",
         },
         PAGINGCONTROLS = {
             ["LR"] = "Sử dụng L và R",
@@ -643,7 +643,7 @@ Language = {
             ["RemoveAll"] = "Xóa tất cả chương",
             ["CancelAll"] = "Hủy bỏ việc tải xuống",
             ["ClearBookmarks"] = "Xóa dấu trang",
-            ["OpenMangaInBrowser"] = "Open manga in browser", --Translate pls
+            ["OpenMangaInBrowser"] = "Mở truyện trong trình duyệt",
         },
         THEME = {
             Dark = "Tối",
@@ -690,7 +690,7 @@ Language = {
             LEFT = "Phải sang trái",
             RIGHT = "Trái sang phải",
             DOWN = "Trên xuống dưới",
-            Default = "Default", --Translate please
+            Default = "Mặc định",
         },
         DETAILS = {
             ADD_TO_LIBRARY = "Thêm vào thư viện",
@@ -698,7 +698,7 @@ Language = {
             PAGE = "Trang : ",
             CONTINUE = "Đọc tiếp",
             START = "Đọc truyện",
-            DONE = "Сompleted!", --Translate please
+            DONE = "Hoàn thành!",
         },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "Đã thêm vào thư viện",
@@ -719,12 +719,12 @@ Language = {
             SETTINGS_RESET = "Đã đặt lại các cài đặt!"
         },
         MODES = {
-            Popular = "Popular", --Need to translate
-            Latest = "Latest", --Need to translate
-            Search = "Search", --Need to translate
-            Alphabet = "Alphabet", --Need to translate
-            ByLetter = "By Letter", --Need to translate
-            ByTag = "By Tag", --Need to translate
+            Popular = "Phổ biến",
+            Latest = "Mới nhất",
+            Search = "Tìm kiếm",
+            Alphabet = "Bảng chữ cái",
+            ByLetter = "Bằng chữ",
+            ByTag = "Bằng nhãn",
         },
         PANEL = {
             BACK = "Trở về",
@@ -732,7 +732,7 @@ Language = {
             --MODE_POPULAR = "Chế độ: Phổ biến",
             --MODE_LATEST = "Chế độ: Mới nhất",
             --MODE_SEARCHING = 'Chế độ: Tìm kiếm "%s"',
-            JUMPTOPAGE = "Jump to page", -- Need to translate
+            JUMPTOPAGE = "Đi đến trang",
             SEARCH = "Tìm",
             SELECT = "Chọn",
             CHOOSE = "Điều khiển",
@@ -741,8 +741,8 @@ Language = {
             UPDATE = "Cập nhật",
             CANCEL = "Hủy bỏ",
             DELETE = "Xóa bỏ",
-            FOLLOW = "Follow", --Need to translate
-            UNFOLLOW = "Unfollow", --Need to translate
+            FOLLOW = "Theo dõi",
+            UNFOLLOW = "Bỏ theo dõi",
         }
     },
     Spanish = {
