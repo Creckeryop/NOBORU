@@ -78,7 +78,7 @@ function Cache.setBookmark(Chapter, mode)
         deleteFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat")
     end
     local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FCREATE)
-    local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
+    local serialized_bookmarks = "return " .. table.serialize(bookmarks[mkey], true)
     writeFile(fh, serialized_bookmarks, #serialized_bookmarks)
     closeFile(fh)
 end
@@ -115,7 +115,7 @@ function Cache.saveBookmarks(Manga)
             deleteFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat")
         end
         local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FCREATE)
-        local serialized_bookmarks = "local " .. table.serialize(bookmarks[mkey], "bookmarks") .. "\nreturn bookmarks"
+        local serialized_bookmarks = "return " .. table.serialize(bookmarks[mkey], true)
         writeFile(fh, serialized_bookmarks, #serialized_bookmarks)
         closeFile(fh)
     end
@@ -127,10 +127,10 @@ function Cache.loadBookmarks(Manga)
     local mkey = get_key(Manga)
     if doesFileExist("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat") then
         local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FREAD)
-        local suc, new_bookmarks = pcall(function() return load(readFile(fh, sizeFile(fh)))() end)
+        local load_bookmarks = load(readFile(fh, sizeFile(fh)))
         closeFile(fh)
-        if suc then
-            bookmarks[mkey] = new_bookmarks
+        if load_bookmarks then
+            bookmarks[mkey] = load_bookmarks() or {}
         end
     end
 end
@@ -210,7 +210,7 @@ function Cache.saveHistory()
         deleteFile("ux0:data/noboru/cache/history.dat")
     end
     local fh = openFile("ux0:data/noboru/cache/history.dat", FCREATE)
-    local serialized_history = "local " .. table.serialize(history, "history") .. "\nreturn history"
+    local serialized_history = "return " .. table.serialize(history, true)
     writeFile(fh, serialized_history, #serialized_history)
     closeFile(fh)
 end
@@ -219,10 +219,10 @@ end
 function Cache.loadHistory()
     if doesFileExist("ux0:data/noboru/cache/history.dat") then
         local fh = openFile("ux0:data/noboru/cache/history.dat", FREAD)
-        local suc, new_history = pcall(function() return load(readFile(fh, sizeFile(fh)))() end)
+        local load_history = load(readFile(fh, sizeFile(fh)))
         closeFile(fh)
-        if suc then
-            history = new_history
+        if load_history then
+            history = load_history() or {}
         end
     end
     Cache.saveHistory()
@@ -252,7 +252,7 @@ function Cache.saveChapters(Manga, Chapters)
         end
     end
     local fh = openFile(path, FCREATE)
-    local serialized_chlist = "local " .. table.serialize(chlist, "chlist") .. "\nreturn chlist"
+    local serialized_chlist = "return " .. table.serialize(chlist, true)
     writeFile(fh, serialized_chlist, #serialized_chlist)
     closeFile(fh)
 end
@@ -297,8 +297,9 @@ function Cache.load()
     data = {}
     if doesFileExist(CACHE_INFO_PATH) then
         local fh = openFile(CACHE_INFO_PATH, FREAD)
-        local suc, new_data = pcall(function() return load(readFile(fh, sizeFile(fh)))() end)
-        if suc then
+        local load_data = load(readFile(fh, sizeFile(fh)))
+        if load_data then
+            local new_data = load_data() or {}
             local count = 0
             for _ in pairs(new_data) do
                 count = count + 1
@@ -307,17 +308,21 @@ function Cache.load()
             for k, v in pairs(new_data) do
                 local path = "ux0:data/noboru/cache/" .. k
                 coroutine.yield("Cache: Checking " .. path, i / count)
-                if doesDirExist(path) then
-                    if doesFileExist("ux0:data/noboru/" .. v.Path) then
-                        coroutine.yield("Cache: Checking ux0:data/noboru/" .. v.Path, i / count)
-                        local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
-                        if not image_size or image_size <= 0 then
-                            deleteFile("ux0:data/noboru/" .. v.Path)
+                if not Settings.SkipCacheChapterChecking then
+                    if doesDirExist(path) then
+                        if doesFileExist("ux0:data/noboru/" .. v.Path) then
+                            coroutine.yield("Cache: Checking ux0:data/noboru/" .. v.Path, i / count)
+                            local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
+                            if not image_size or image_size <= 0 then
+                                deleteFile("ux0:data/noboru/" .. v.Path)
+                            end
                         end
+                        data[k] = v
+                    else
+                        Notifications.push("cache_error\n" .. k)
                     end
-                    data[k] = v
                 else
-                    Notifications.push("cache_error\n" .. k)
+                    data[k] = v
                 end
                 i = i + 1
             end
@@ -339,7 +344,7 @@ function Cache.save()
         save_data[k].Data = v.Data
         save_data[k].Path = "cache/" .. k .. "/cover.image"
     end
-    local serialized_data = "local " .. table.serialize(save_data, "data") .. "\nreturn data"
+    local serialized_data = "return " .. table.serialize(save_data, true)
     writeFile(fh, serialized_data, #serialized_data)
     closeFile(fh)
 end

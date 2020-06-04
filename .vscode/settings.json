@@ -136,5 +136,7 @@
     "terminal.integrated.env.windows": {
         "MSYSTEM": "MINGW64",
         "CHERE_INVOKING": "1"
-    }
+    },
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
 }

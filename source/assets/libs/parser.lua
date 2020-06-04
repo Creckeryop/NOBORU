@@ -73,10 +73,14 @@ function GetParserList()
     end
     cachedList = list
     table.sort(list, function(a, b)
-        if a.isChanged ~= b.isChanged then
-            return a.isChanged > b.isChanged
+        if Settings.FavouriteParsers[a.ID] == Settings.FavouriteParsers[b.ID] then
+            if a.isChanged ~= b.isChanged then
+                return a.isChanged > b.isChanged
+            else
+                return a.Name < b.Name
+            end
         else
-            return a.Name < b.Name
+            return Settings.FavouriteParsers[a.ID] == true
         end
     end)
     return list
@@ -94,7 +98,9 @@ function GetParserLanguages()
     for k, _ in pairs(t) do
         new_t[#new_t + 1] = k
     end
-    table.sort(new_t, function(a, b) return a < b end)
+    table.sort(new_t, function(a, b)
+        return a < b
+    end)
     table.insert(new_t, 1, "DIF")
     return new_t
 end

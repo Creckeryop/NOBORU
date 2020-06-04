@@ -11,7 +11,7 @@ local animation_timer = Timer.new()
 function Changes.load(string)
     str = string .. "\n\n" .. Language[Settings.Language].MESSAGE.PRESS_TO_UPDATE
     active = true
-    FinalY = 544 / 2 - (Font.getTextHeight(FONT20, str) + 20) / 2
+    FinalY = (544 - (Font.getTextHeight(FONT20, str) + 20)) / 2
     Timer.reset(animation_timer)
 end
 
@@ -52,7 +52,6 @@ function Changes.draw()
             s = (str:match("(.+)\n(.-)\n(.-)$") .. "\n".."("..MemToStr(Network.getDownloadedBytes()).."/"..SettingsFunctions.GetLastVpkSize()..") " .. Language[Settings.Language].SETTINGS.PleaseWait)
         end
         Font.print(FONT20, 80, Offset + 10, s, COLOR_WHITE)
-        
     end
 end
 

@@ -1,6 +1,6 @@
 Threads = {}
 
-local IMAGE_CACHE_PATH = "ux0:data/noboru/cache.image"
+local IMAGE_CACHE_PATH = "ux0:data/noboru/temp/cache.image"
 
 local Order = {}
 local Task = nil
@@ -46,7 +46,7 @@ function Threads.update()
         for _, v in ipairs(Order) do
             if v.Type == "Skip" then
                 Console.write("NET: Skip", Color.new(255, 255, 0))
-            else
+                else
                 new_order[#new_order + 1] = v
             end
         end
@@ -121,7 +121,7 @@ function Threads.update()
         end
         if Task then
             Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
-        end
+            end
     else
         Console.write("(" .. Task.Type .. ")" .. (Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
         local f_save = function()
@@ -134,7 +134,7 @@ function Threads.update()
                     bytes = bytes + len
                     if len < 100 then
                         Console.write("NET:" .. Task.Table[Task.Index])
-                    end
+                        end
                 end
             elseif Task.Type == "Image" then
                 if doesFileExist(Task.Path) then
@@ -151,8 +151,7 @@ function Threads.update()
                         end
                     end
                     Console.write(Width .. "x" .. Height .. " Image got")
-
-                    if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY and Height <= 4096 and Height/Width<=2 then
+                    if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY and Height <= 4096 and Height / Width <= 2 then
                         Console.error("No enough memory to load image")
                         uniques[Task.UniqueKey] = nil
                         Task = nil
@@ -164,7 +163,7 @@ function Threads.update()
                                     uniques[Task.UniqueKey] = nil
                                     Task = nil
                                 else
-                                        Task.Image = {
+                                    Task.Image = {
                                         Width = Width / 2,
                                         Height = Height / 2,
                                         RealWidth = Width,
@@ -247,7 +246,7 @@ function Threads.update()
                         error("error with part function")
                     else
                         Console.write(string.format("Got %s image", Task.Image.i))
-                    end
+                        end
                 else
                     uniques[Task.UniqueKey] = nil
                     Task = nil
@@ -284,13 +283,13 @@ function Threads.update()
             if Task == nil then
                 if TempTask.OnComplete then
                     TempTask.OnComplete()
-                    Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
+                Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
                 end
             end
         else
             Console.error("NET: " .. err)
             Task.Retry = Task.Retry - 1
-            if Task.Retry > 0 then
+            if Task.Retry > 0 and Task.Table ~= Trash then
                 table.insert(Order, Task)
             else
                 uniques[Task.UniqueKey] = nil
@@ -317,6 +316,7 @@ function Threads.clear()
     if Task ~= nil then
         Task.Table = Trash
         Task.Index = "Garbadge"
+        Network.stopCurrentDownload()
     end
 end
 
@@ -402,7 +402,7 @@ local function taskete(UniqueKey, T, foo)
         newTask.Link = newTask.Link:match("^(.-)%s*$") or ""
         newTask.Link = newTask.Link:gsub("([^%%])%%([^%%])", "%1%%%%%2"):gsub(" ", "%%%%20"):gsub("([^%%])%%$", "%1%%%%"):gsub("^%%([^%%])", "%%%%%1")
     end
-    newTask.Proxy = Settings.UseProxy and (Settings.ProxyIP..":"..Settings.ProxyPort) or "";
+    newTask.Proxy = Settings.UseProxy and (Settings.ProxyIP .. ":" .. Settings.ProxyPort) or "";
     newTask.ProxyAuth = Settings.UseProxyAuth and Settings.ProxyAuth or "";
     foo(newTask)
     uniques[UniqueKey] = newTask
@@ -450,7 +450,7 @@ function Threads.getProgress(UniqueKey)
     if task then
         if Task == task then
             if task.Type == "ImageDownload" or task.Type == "StringRequest" or task.Type == "FileDownload" or (task.Type == "Image" and task.Link) then
-                return Network.getDownloadedBytes() / Network.getTotalBytes()
+                return math.max(math.min(1, Network.getDownloadedBytes() / Network.getTotalBytes()), 0)
             else
                 return 1
             end
@@ -467,6 +467,7 @@ function Threads.remove(UniqueKey)
     if uniques[UniqueKey] then
         if Task == uniques[UniqueKey] then
             Task.Table, Task.Index = Trash, "Garbadge"
+            Network.stopCurrentDownload()
         else
             uniques[UniqueKey].Type = "Skip"
         end
@@ -490,4 +491,14 @@ end
 ---Returns quantity of tasks in order
 function Threads.getTasksNum()
     return #Order + (Task and 1 or 0)
+end
+
+function Threads.getNonSkipTasksNum()
+    local c = 0
+    for i = 1, #Order do
+        if Order[i].Type ~= "Skip" then
+            c = c + 1
+        end
+    end
+    return c + (Task and Task.Type ~= "Skip" and 1 or 0)
 end

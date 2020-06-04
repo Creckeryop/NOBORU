@@ -58,6 +58,7 @@ function ChapterSaver.update()
                         Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
                     end
                     Downloading[Task.Key] = nil
+                    UpdatedTable = false
                     Task = nil
                 elseif msg == "update_count" then
                     Task.page = var1
@@ -137,7 +138,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
             end
             local parser = GetParserByID(chapter.Manga.ParserID)
             for i = 1, #t do
-                coroutine.yield("update_count", i-1, #t)
+                coroutine.yield("update_count", i - 1, #t)
                 local result = {}
                 parser:loadChapterPage(t[i], result)
                 coroutine.yield(false)
@@ -150,7 +151,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
                     })
                     while Threads.check(result) do
                         local progress = Threads.getProgress(result)
-                        coroutine.yield("update_count+false", i-1+progress, #t)
+                        coroutine.yield("update_count+false", i - 1 + progress, #t)
                     end
                     if doesFileExist("ux0:data/noboru/chapters/" .. k .. "/" .. i .. ".image") then
                         local size = System.getPictureResolution("ux0:data/noboru/chapters/" .. k .. "/" .. i .. ".image")
@@ -467,6 +468,7 @@ local function stop(key, silent)
         if Downloading[key] == Task then
             Downloading[key].Destroy = true
             Downloading[key].Notify = silent == nil
+            Network.stopCurrentDownload()
             rem_dir(FOLDER .. key)
         else
             local new_order = {}
@@ -499,6 +501,7 @@ function ChapterSaver.stopList(chapters, silent)
             if d == Task then
                 d.Destroy = true
                 d.Notify = silent == nil
+                Network.stopCurrentDownload()
                 rem_dir(FOLDER .. key)
             else
                 for i, od in pairs(Order) do
@@ -677,7 +680,7 @@ function ChapterSaver.save()
         deleteFile(CHAPTERSAV_PATH)
     end
     local fh = openFile(CHAPTERSAV_PATH, FCREATE)
-    local save_data = table.serialize(Keys, "Keys")
+    local save_data = "Keys = "..table.serialize(Keys, true)
     writeFile(fh, save_data, #save_data)
     closeFile(fh)
 end
@@ -687,8 +690,9 @@ function ChapterSaver.load()
     Keys = {}
     if doesFileExist(CHAPTERSAV_PATH) then
         local fh = openFile(CHAPTERSAV_PATH, FREAD)
-        local suc, keys = pcall(function() return load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")() end)
-        if suc then
+        local load_keys = load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")
+        if load_keys then
+            local keys = load_keys() or {}
             local cnt = 0
             for _, _ in pairs(keys) do
                 cnt = cnt + 1
@@ -696,49 +700,53 @@ function ChapterSaver.load()
             local cntr = 1
             for k, _ in pairs(keys) do
                 coroutine.yield("ChapterSaver: Checking " .. FOLDER .. k, cntr / cnt)
-                if doesFileExist(FOLDER .. k .. "/custom.txt") then
-                    local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
-                    local pathes = readFile(fh_2, sizeFile(fh_2))
-                    closeFile(fh_2)
-                    for _, path in ipairs(to_lines(pathes)) do
-                        if not doesFileExist(path) then
-                            rem_dir(FOLDER .. k)
-                            Notifications.push("here chapters_error\n" .. k)
+                if not Settings.SkipCacheChapterChecking then
+                    if doesFileExist(FOLDER .. k .. "/custom.txt") then
+                        local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
+                        local pathes = readFile(fh_2, sizeFile(fh_2))
+                        closeFile(fh_2)
+                        for _, path in ipairs(to_lines(pathes)) do
+                            if not doesFileExist(path) then
+                                rem_dir(FOLDER .. k)
+                                Notifications.push("here chapters_error\n" .. k)
+                                break
+                            end
+                        end
+                        Keys[k] = true
+                    elseif doesFileExist(FOLDER .. k .. "/done.txt") then
+                        local fh_2 = openFile(FOLDER .. k .. "/done.txt", FREAD)
+                        local pages = readFile(fh_2, sizeFile(fh_2))
+                        closeFile(fh_2)
+                        local lDir = listDirectory(FOLDER .. k) or {}
+                        if tonumber(pages) == #lDir - 1 then
+                            --[[
+                            -- This code checks all images in cache, their type (more safer)
+                            local count = 0
+                            for i = 1, #lDir do
+                            local width = System.getPictureResolution(FOLDER .. k .. "/" .. lDir[i].name)
+                            if not width or width <= 0 then
+                            count = count + 1
+                            if count == 2 then
+                            rem_dir("ux0:data/noboru/chapters/" .. k)
+                            Notifications.push("chapters_error_wrong_image\n" .. k)
                             break
+                            end
+                            end
+                            end
+                            if count < 2 then
+                            Keys[k] = true
+                            end]]
+                            Keys[k] = true
+                        else
+                            rem_dir("ux0:data/noboru/chapters/" .. k)
+                            Notifications.push("chapters_error\n" .. k)
                         end
-                    end
-                    Keys[k] = true
-                elseif doesFileExist(FOLDER .. k .. "/done.txt") then
-                    local fh_2 = openFile(FOLDER .. k .. "/done.txt", FREAD)
-                    local pages = readFile(fh_2, sizeFile(fh_2))
-                    closeFile(fh_2)
-                    local lDir = listDirectory(FOLDER .. k) or {}
-                    if tonumber(pages) == #lDir - 1 then
-                        --[[
-                        -- This code checks all images in cache, their type (more safer)
-                        local count = 0
-                        for i = 1, #lDir do
-                        local width = System.getPictureResolution(FOLDER .. k .. "/" .. lDir[i].name)
-                        if not width or width <= 0 then
-                        count = count + 1
-                        if count == 2 then
-                        rem_dir("ux0:data/noboru/chapters/" .. k)
-                        Notifications.push("chapters_error_wrong_image\n" .. k)
-                        break
-                        end
-                        end
-                        end
-                        if count < 2 then
-                        Keys[k] = true
-                        end]]
-                        Keys[k] = true
                     else
                         rem_dir("ux0:data/noboru/chapters/" .. k)
                         Notifications.push("chapters_error\n" .. k)
                     end
                 else
-                    rem_dir("ux0:data/noboru/chapters/" .. k)
-                    Notifications.push("chapters_error\n" .. k)
+                    Keys[k] = true
                 end
                 cntr = cntr + 1
             end
