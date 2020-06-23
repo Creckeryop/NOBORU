@@ -1,4 +1,4 @@
---Spanish translation created by SamuEDL98
+--Spanish translation created by SamuEDL
 --Vietnamese translation created by nguyenmao2101
 --Italian translation created by theHeroGAC and some strings by Rinnegatamante
 --French translation created by Samilop "Cimmerian" Iter
@@ -800,22 +800,22 @@ Language = {
             ChapterSorting = "Organización de capitulos:",
             RefreshLibAtStart = "Refrescar libreria al iniciar:",
             Translators = "Traductores",
-            ChangingPageButtons = "Botones para cambiar de pagina", 
-            LeftStickDeadZone = "Zona muerta del jostick izquierdo",
-            LeftStickSensitivity = "Sensibilidad del jostick izquierdo",
-            RightStickDeadZone = "Zona muerta del jostick derecho", 
-            RightStickSensitivity = "Sensibilidad del jostick derecho", 
+            ChangingPageButtons = "Botones para cambiar de pagina:", 
+            LeftStickDeadZone = "Zona muerta del jostick izquierdo:",
+            LeftStickSensitivity = "Sensibilidad del jostick izquierdo:",
+            RightStickDeadZone = "Zona muerta del jostick derecho:", 
+            RightStickSensitivity = "Sensibilidad del jostick derecho:", 
             ResetAllSettings = "Resetear todos los ajustes",
             Other = "Otros", 
-            SilentDownloads = "No mostrar notificaciones de descargas",
+            SilentDownloads = "No mostrar notificaciones de descargas:",
             Network = "Red",
-            UseProxy = "Usar Proxy", 
+            UseProxy = "Usar Proxy:", 
             ProxyIP = "Dirección IP:",
             ProxyPort = "Puerto:",
             UseProxyAuth = "Usar autenticación proxy:",
             ProxyAuth = "login:contraseña",
-            SkipCacheChapterChecking = "Saltar chequeo de cache y capitulos en la pantalla de carga",
-            ConnectionTime = "Tiempo de conexion con el servidor",
+            SkipCacheChapterChecking = "Saltar chequeo de cache y capitulos en la pantalla de carga:",
+            ConnectionTime = "Tiempo de conexion con el servidor:",
             InputValue = "Introduce un valor",
             OpenInBrowser = "Abrir en navegador",
         },
