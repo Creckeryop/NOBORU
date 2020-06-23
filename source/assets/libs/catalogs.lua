@@ -456,15 +456,15 @@ function Catalogs.update()
         end
     end
     Panel.set(Panels[mode] or {})
-    if keyboard_mode ~= "NONE" and Keyboard.getState() == FINISHED then
+    if keyboard_mode ~= "NONE" and Keyboard.getState() ~= RUNNING then
         if keyboard_mode == "JUMP_PAGE" then
             local new_page = tonumber(Keyboard.getInput())
             if new_page and new_page > 0 then
                 Catalogs.terminate()
                 page = new_page
             end
-            keyboard_mode = "NONE"
         end
+        keyboard_mode = "NONE"
         Keyboard.clear()
     end
 end

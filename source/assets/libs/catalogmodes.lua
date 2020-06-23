@@ -430,27 +430,27 @@ function CatalogModes.update()
             end
         end
         scrollUpdate()
-            if Keyboard.getState() ~= RUNNING then
-                if Keyboard.getState() == FINISHED then
-                    local data = Keyboard.getInput()
-                    Console.write('Searching for "' .. data .. '"')
-                    Catalogs.terminate()
-                    for i, v in ipairs(Modes) do
-                        if v == "Search" then
-                            now_mode = i
-                            break
-                        end
-                    end
-                    searchData = data
-                    mode = "WAIT"
-                    Timer.reset(animation_timer)
-                    old_fade = fade
-                    if data:gsub("%s", "") ~= "" then
-                        Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.SEARCHING, data))
+        if Keyboard.getState() ~= RUNNING then
+            if Keyboard.getState() == FINISHED then
+                local data = Keyboard.getInput()
+                Console.write('Searching for "' .. data .. '"')
+                Catalogs.terminate()
+                for i, v in ipairs(Modes) do
+                    if v == "Search" then
+                        now_mode = i
+                        break
                     end
                 end
-                Keyboard.clear()
+                searchData = data
+                mode = "WAIT"
+                Timer.reset(animation_timer)
+                old_fade = fade
+                if data:gsub("%s", "") ~= "" then
+                    Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.SEARCHING, data))
+                end
             end
+            Keyboard.clear()
+        end
     end
 end
 
