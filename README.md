@@ -102,7 +102,7 @@ Execute `build.bat` to create working .vpk
 <br>[VitaSDK](https://github.com/vitasdk) - vitaSDK
 <br>[xerpi](https://github.com/xerpi) - [libvita2d](https://github.com/xerpi/libvita2d)
 <br>[theFloW](https://github.com/theOfficialFlow) - [VitaShell](https://github.com/TheOfficialFloW/VitaShell) for some functions
-<br>[SamuEDL98](https://github.com/SamuEDL98) - Spanish translation
+<br>[SamuEDL](https://github.com/SamuEDL) - Spanish translation
 <br>[nguyenmao2101](https://github.com/nguyenmao2101) - Vietnamese translation
 <br>[theheroGAC](https://github.com/theheroGAC) - Italian translation
 <br>[Cimmerian-Iter](https://github.com/Cimmerian-Iter) - French translation
