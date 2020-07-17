@@ -710,6 +710,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
             elseif task == "CheckUpdate" then
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
+            elseif task == "SaveDataPath" then
+                Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_GRAY)
             end
             y = y + 75
         end

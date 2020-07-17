@@ -150,6 +150,7 @@ local function cpy_file(source_path, dest_path)
     closeFile(fh1)
     closeFile(fh2)
 end
+
 cpy_file("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
 cpy_file("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")
 

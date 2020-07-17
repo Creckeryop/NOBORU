@@ -232,7 +232,7 @@ function settings.load()
                 setSetting(new, "ConnectionTime", {})
                 setSetting(new, "FavouriteParsers", {})
                 setSetting(new, "SaveDataPath", {"ux0", "ur0"})
-                if not System.doesDirExist("ur0:data/noboru") then
+                if not doesDirExist("ur0:data/noboru") then
                     settings.SaveDataPath = "ux0"
                 end
             end
