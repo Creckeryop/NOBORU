@@ -113,8 +113,31 @@ end
 if doesFileExist("ux0:data/noboru/temp/auth.html") then
     deleteFile("ux0:data/noboru/temp/auth.html")
 end
+
 if doesFileExist("ux0:data/noboru/temp/logo.png") then
     deleteFile("ux0:data/noboru/temp/logo.png")
+end
+
+if doesDirExist("ur0") then
+    if not doesDirExist("ur0:data") then
+        createDirectory("ur0:data")
+    end
+
+    if not doesDirExist("ur0:data/noboru") then
+        createDirectory("ur0:data/noboru")
+    end
+
+    if not doesDirExist("ur0:data/noboru/cache") then
+        createDirectory("ur0:data/noboru/cache")
+    end
+
+    if not doesDirExist("ur0:data/noboru/chapters") then
+        createDirectory("ur0:data/noboru/chapters")
+    end
+
+    if not doesDirExist("ur0:data/noboru/import") then
+        createDirectory("ur0:data/noboru/import")
+    end
 end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile

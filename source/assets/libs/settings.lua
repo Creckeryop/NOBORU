@@ -27,7 +27,8 @@ Settings = {
     ProxyAuth = "login:password",
     SkipCacheChapterChecking = true,
     ConnectionTime = 10,
-    FavouriteParsers = {}
+    FavouriteParsers = {},
+    SaveDataPath = "ux0"
 }
 
 local SettingsDefaults = table.clone(Settings)
@@ -48,6 +49,7 @@ local openFile = System.openFile
 local readFile = System.readFile
 local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
+local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
 local rem_dir = RemoveDirectory
 
@@ -229,6 +231,10 @@ function settings.load()
                 setSetting(new, "SkipCacheChapterChecking", {true, false})
                 setSetting(new, "ConnectionTime", {})
                 setSetting(new, "FavouriteParsers", {})
+                setSetting(new, "SaveDataPath", {"ux0", "ur0"})
+                if not System.doesDirExist("ur0:data/noboru") then
+                    settings.SaveDataPath = "ux0"
+                end
             end
         end
         closeFile(fh)
@@ -291,6 +297,7 @@ local set_list = {
         "ProxyAuth"
     },
     Data = {
+        "SaveDataPath",
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
@@ -500,7 +507,7 @@ SettingsFunctions = {
     end,
     ResetAllSettings = function()
         for k, v in pairs(SettingsDefaults) do
-            if k~="FavouriteParsers" and k ~= "Language" and k ~= "Theme" then
+            if k ~= "FavouriteParsers" and k ~= "Language" and k ~= "Theme" then
                 settings[k] = v
             end
         end
@@ -577,5 +584,11 @@ SettingsFunctions = {
             end
         end
         Keyboard.clear()
+    end,
+    SaveDataPath = function()
+        settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "ur0"})
+        if not doesDirExist("ur0:data/noboru") then
+            settings.SaveDataPath = "ux0"
+        end
     end
 }
