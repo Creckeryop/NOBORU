@@ -118,25 +118,25 @@ if doesFileExist("ux0:data/noboru/temp/logo.png") then
     deleteFile("ux0:data/noboru/temp/logo.png")
 end
 
-if doesDirExist("ur0") then
-    if not doesDirExist("ur0:data") then
-        createDirectory("ur0:data")
+if doesDirExist("uma0:") then
+    if not doesDirExist("uma0:data") then
+        createDirectory("uma0:data")
     end
 
-    if not doesDirExist("ur0:data/noboru") then
-        createDirectory("ur0:data/noboru")
+    if not doesDirExist("uma0:data/noboru") then
+        createDirectory("uma0:data/noboru")
     end
 
-    if not doesDirExist("ur0:data/noboru/cache") then
-        createDirectory("ur0:data/noboru/cache")
+    if not doesDirExist("uma0:data/noboru/cache") then
+        createDirectory("uma0:data/noboru/cache")
     end
 
-    if not doesDirExist("ur0:data/noboru/chapters") then
-        createDirectory("ur0:data/noboru/chapters")
+    if not doesDirExist("uma0:data/noboru/chapters") then
+        createDirectory("uma0:data/noboru/chapters")
     end
 
-    if not doesDirExist("ur0:data/noboru/import") then
-        createDirectory("ur0:data/noboru/import")
+    if not doesDirExist("uma0:data/noboru/import") then
+        createDirectory("uma0:data/noboru/import")
     end
 end
 

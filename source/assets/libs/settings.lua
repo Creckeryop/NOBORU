@@ -231,8 +231,8 @@ function settings.load()
                 setSetting(new, "SkipCacheChapterChecking", {true, false})
                 setSetting(new, "ConnectionTime", {})
                 setSetting(new, "FavouriteParsers", {})
-                setSetting(new, "SaveDataPath", {"ux0", "ur0"})
-                if not doesDirExist("ur0:data/noboru") then
+                setSetting(new, "SaveDataPath", {"ux0", "uma0"})
+                if not doesDirExist("uma0:data/noboru") then
                     settings.SaveDataPath = "ux0"
                 end
             end
@@ -586,8 +586,8 @@ SettingsFunctions = {
         Keyboard.clear()
     end,
     SaveDataPath = function()
-        settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "ur0"})
-        if not doesDirExist("ur0:data/noboru") then
+        settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "uma0"})
+        if not doesDirExist("uma0:data/noboru") then
             settings.SaveDataPath = "ux0"
         end
     end
