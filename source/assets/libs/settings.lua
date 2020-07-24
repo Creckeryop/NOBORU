@@ -140,6 +140,14 @@ function Settings.toggleFavouriteParser(Parser)
     end
 end
 
+function Settings.getSaveDrivePath()
+    if settings.SaveDataPath == "uma0" and not doesDirExist("uma0:data/noboru") then
+        return "ux0"
+    else
+        return settings.SaveDataPath
+    end
+end
+
 ---@param source table
 ---@param setting_name string
 ---@param values table
@@ -232,9 +240,6 @@ function settings.load()
                 setSetting(new, "ConnectionTime", {})
                 setSetting(new, "FavouriteParsers", {})
                 setSetting(new, "SaveDataPath", {"ux0", "uma0"})
-                if not doesDirExist("uma0:data/noboru") then
-                    settings.SaveDataPath = "ux0"
-                end
             end
         end
         closeFile(fh)
@@ -587,8 +592,5 @@ SettingsFunctions = {
     end,
     SaveDataPath = function()
         settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "uma0"})
-        if not doesDirExist("uma0:data/noboru") then
-            settings.SaveDataPath = "ux0"
-        end
     end
 }
