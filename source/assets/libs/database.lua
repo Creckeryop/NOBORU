@@ -11,6 +11,7 @@ local openFile = System.openFile
 local readFile = System.readFile
 local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
+local doesDirExist = System.doesDirExist
 
 local function get_key(Manga)
     return (Manga.ParserID .. Manga.Link):gsub("%p", "")
@@ -18,8 +19,11 @@ end
 ---Gets Manga list from database
 function Database.getMangaList()
     local b = {}
+    local uma0_flag = doesDirExist("uma0:data/noboru")
     for k, v in ipairs(base) do
-        b[k] = v
+        if v.Location ~= "uma0" or uma0_flag then
+            b[#b + 1] = v
+        end
     end
     if Settings.LibrarySorting == "A-Z" then
         table.sort(b, function(a, b)
@@ -78,6 +82,7 @@ function Database.save()
         manga_table[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink, v.BrowserLink)
         manga_table[k].Data = v.Data
         manga_table[k].Path = "cache/" .. key .. "/cover.image"
+        manga_table[k].Location = v.Location or "ux0"
         manga_table[key] = k
     end
     local save = "return " .. table.serialize(manga_table, true)

@@ -229,6 +229,11 @@ function ChapterSaver.importManga(path)
     local h, mn, s = getTime()
     local _, d, mo, y = getDate()
     local Manga = CreateManga(path:match(".*/(.*)%..-$") or path:match(".*/(.-)$"), table.concat({h, mn, s, d, mo, y}, "A"), "", "IMPORTED", "local:book")
+    if path:find("^uma0:") then
+        Manga.Location = "uma0"
+    else
+        Manga.Location = "ux0"
+    end
     Downloading[path] = {
         Type = "Import",
         Key = path,

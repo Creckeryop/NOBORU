@@ -189,6 +189,14 @@ Language = {
             DELETE = "Удалить",
             FOLLOW = "Отслеживать",
             UNFOLLOW = "Не отслеживать"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "Внешняя Память",
+            DRIVE = "Раздел",
+            FOLDER = "Папка",
+            GOBACK = "Вернуться",
+            FILE = "Файл",
+            UNSUPFILE = "Неподдерживаемый файл"
         }
     },
     English = {
@@ -375,6 +383,14 @@ Language = {
             DELETE = "Delete",
             FOLLOW = "Follow",
             UNFOLLOW = "Unfollow"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory",
+            DRIVE = "Drive",
+            FOLDER = "Folder",
+            GOBACK = "Go back",
+            FILE = "File",
+            UNSUPFILE = "Unsupported file"
         }
     },
     Turkish = {
@@ -561,6 +577,14 @@ Language = {
             DELETE = "Sil",
             FOLLOW = "Takip Et",
             UNFOLLOW = "Takibi Bırak",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     Vietnamese = {
@@ -747,6 +771,14 @@ Language = {
             DELETE = "Xóa bỏ",
             FOLLOW = "Theo dõi",
             UNFOLLOW = "Bỏ theo dõi",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     Spanish = {
@@ -933,6 +965,14 @@ Language = {
             DELETE = "Eliminar",
             FOLLOW = "Seguir",
             UNFOLLOW = "Dejar de seguir",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     Italian = {
@@ -1119,6 +1159,14 @@ Language = {
             DELETE = "Elimina",
             FOLLOW = "Segui",
             UNFOLLOW = "Smetti di seguire",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     French = {
@@ -1305,6 +1353,14 @@ Language = {
             DELETE = "Supprimer",
             FOLLOW = "Suivre", 
             UNFOLLOW = "Ne plus suivre",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     PortugueseBR = {
@@ -1493,6 +1549,14 @@ Language = {
             DELETE = "Deletar",
             FOLLOW = "Seguir",
             UNFOLLOW = "Parar de seguir",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     }
 }
