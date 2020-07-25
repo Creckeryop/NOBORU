@@ -99,9 +99,11 @@ function ChapterSaver.downloadChapter(chapter, silent)
         Key = k,
         MangaName = chapter.Manga.Name,
         ChapterName = chapter.Name,
+        Drive = Settings.getSaveDrivePath(),
         F = function()
-            if not doesDirExist(FOLDER .. k) then
-                createDirectory(FOLDER .. k)
+            local FolderPath = Downloading[k].Drive..":data/noboru/chapters/"
+            if not doesDirExist(FolderPath .. k) then
+                createDirectory(FolderPath .. k)
             end
             local t = {}
             local connection
@@ -131,7 +133,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
             end
             if retry_get_chptrs == 3 then
                 Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM .. "\nMaybe chapter has 0 pages")
-                rem_dir("ux0:data/noboru/chapters/" .. k)
+                rem_dir(FolderPath .. k)
                 Downloading[k].Fail = true
                 Downloading[k] = nil
                 return
@@ -147,14 +149,14 @@ function ChapterSaver.downloadChapter(chapter, silent)
                     Threads.insertTask(result, {
                         Type = "FileDownload",
                         Link = result.Link,
-                        Path = "chapters/" .. k .. "/" .. i .. ".image"
+                        Path = FolderPath .. k .. "/" .. i .. ".image"
                     })
                     while Threads.check(result) do
                         local progress = Threads.getProgress(result)
                         coroutine.yield("update_count+false", i - 1 + progress, #t)
                     end
-                    if doesFileExist("ux0:data/noboru/chapters/" .. k .. "/" .. i .. ".image") then
-                        local size = System.getPictureResolution("ux0:data/noboru/chapters/" .. k .. "/" .. i .. ".image")
+                    if doesFileExist(FolderPath .. k .. "/" .. i .. ".image") then
+                        local size = System.getPictureResolution(FolderPath .. k .. "/" .. i .. ".image")
                         if not size or size <= 0 then
                             Console.error("error loading picture for " .. k .. " " .. i)
                             retry = retry + 1
@@ -189,16 +191,16 @@ function ChapterSaver.downloadChapter(chapter, silent)
                 end
                 if retry == 3 then
                     Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
-                    rem_dir("ux0:data/noboru/chapters/" .. k)
+                    rem_dir(FolderPath .. k)
                     Downloading[k].Fail = true
                     Downloading[k] = nil
                     return
                 end
             end
-            local fh = openFile(FOLDER .. k .. "/done.txt", FCREATE)
+            local fh = openFile(FolderPath .. k .. "/done.txt", FCREATE)
             writeFile(fh, #t, string.len(#t))
             closeFile(fh)
-            Keys[k] = true
+            Keys[k] = Downloading[k].Drive
             ChapterSaver.save()
             Downloading[k] = nil
         end
@@ -238,6 +240,7 @@ function ChapterSaver.importManga(path)
         Type = "Import",
         Key = path,
         MangaName = Manga.Name,
+        Drive = "ux0",
         ChapterName = "Importing"
     }
     local this = Downloading[path]
@@ -474,7 +477,8 @@ local function stop(key, silent)
             Downloading[key].Destroy = true
             Downloading[key].Notify = silent == nil
             Network.stopCurrentDownload()
-            rem_dir(FOLDER .. key)
+            local FolderPath = Downloading[key].Drive..":data/noboru/chapters/"
+            rem_dir(FolderPath .. key)
         else
             local new_order = {}
             for _, v in ipairs(Order) do
@@ -507,7 +511,8 @@ function ChapterSaver.stopList(chapters, silent)
                 d.Destroy = true
                 d.Notify = silent == nil
                 Network.stopCurrentDownload()
-                rem_dir(FOLDER .. key)
+                local FolderPath = Downloading[key].Drive..":data/noboru/chapters/"
+                rem_dir(FolderPath .. key)
             else
                 for i, od in pairs(Order) do
                     if od == d then
@@ -546,7 +551,8 @@ end
 function ChapterSaver.delete(chapter, silent)
     local k = get_key(chapter)
     if Keys[k] then
-        rem_dir(FOLDER .. k)
+        local FolderPath = (Keys[k] == true and "ux0" or Keys[k])..":data/noboru/chapters/"
+        rem_dir(FolderPath .. k)
         Keys[k] = nil
         ChapterSaver.save()
         if not silent and not Settings.SilentDownloads then
@@ -577,8 +583,9 @@ function ChapterSaver.clearDownloadingList()
     end
     for i = 1, #Order do
         local key = Order[i].Key
+        local FolderPath = Downloading[key].Drive..":data/noboru/chapters/"
         Downloading[key] = nil
-        rem_dir(FOLDER .. key)
+        rem_dir(FolderPath .. key)
     end
     Order = {}
 end
@@ -587,7 +594,8 @@ end
 ---@return boolean
 ---Gives `true` if chapter is downloaded
 function ChapterSaver.check(chapter)
-    return Keys[get_key(chapter)] == true or chapter and chapter.FastLoad
+    local key = Keys[get_key(chapter)]
+    return key == true or key == "uma0" and doesDirExist("uma0:data/noboru") or key == "ux0" or chapter and chapter.FastLoad
 end
 
 
@@ -629,7 +637,7 @@ function ChapterSaver.getChapter(chapter)
             if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
                 _table_[#_table_ + 1] = {
                     Extract = file.name,
-                    Path = chapter.Path:match("/noboru/(.*)$")
+                    Path = chapter.Path
                 }
             end
         end
@@ -640,8 +648,9 @@ function ChapterSaver.getChapter(chapter)
         Done = true
     }
     if Keys[k] then
-        if doesFileExist(FOLDER .. k .. "/custom.txt") then
-            local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
+        local FolderPath = (Keys[k] == true and "ux0" or Keys[k])..":data/noboru/chapters/"
+        if doesFileExist(FolderPath .. k .. "/custom.txt") then
+            local fh_2 = openFile(FolderPath .. k .. "/custom.txt", FREAD)
             local pathes = readFile(fh_2, sizeFile(fh_2))
             closeFile(fh_2)
             local lines = to_lines(pathes)
@@ -654,22 +663,22 @@ function ChapterSaver.getChapter(chapter)
                     if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
                         _table_[#_table_ + 1] = {
                             Extract = file.name,
-                            Path = lines[1]:match("/noboru/(.*)$")
+                            Path = lines[1]
                         }
                     end
                 end
             else
                 for _, path in ipairs(lines) do
                     _table_[_] = {
-                        Path = path:match("/noboru/(.*)$")
+                        Path = path
                     }
                 end
             end
         else
-            local pages = #(listDirectory(FOLDER .. k) or {}) - 1
+            local pages = #(listDirectory(FolderPath .. k) or {}) - 1
             for i = 1, pages do
                 _table_[i] = {
-                    Path = "chapters/" .. k .. "/" .. i .. ".image"
+                    Path = FolderPath .. k .. "/" .. i .. ".image"
                 }
             end
         end
@@ -704,25 +713,26 @@ function ChapterSaver.load()
             end
             local cntr = 1
             for k, _ in pairs(keys) do
-                coroutine.yield("ChapterSaver: Checking " .. FOLDER .. k, cntr / cnt)
+                local FolderPath = (_ == true and "ux0" or _)..":data/noboru/chapters/"
+                coroutine.yield("ChapterSaver: Checking " .. FolderPath .. k, cntr / cnt)
                 if not Settings.SkipCacheChapterChecking then
-                    if doesFileExist(FOLDER .. k .. "/custom.txt") then
-                        local fh_2 = openFile(FOLDER .. k .. "/custom.txt", FREAD)
+                    if doesFileExist(FolderPath .. k .. "/custom.txt") then
+                        local fh_2 = openFile(FolderPath .. k .. "/custom.txt", FREAD)
                         local pathes = readFile(fh_2, sizeFile(fh_2))
                         closeFile(fh_2)
                         for _, path in ipairs(to_lines(pathes)) do
                             if not doesFileExist(path) then
-                                rem_dir(FOLDER .. k)
+                                rem_dir(FolderPath .. k)
                                 Notifications.push("here chapters_error\n" .. k)
                                 break
                             end
                         end
                         Keys[k] = true
-                    elseif doesFileExist(FOLDER .. k .. "/done.txt") then
-                        local fh_2 = openFile(FOLDER .. k .. "/done.txt", FREAD)
+                    elseif doesFileExist(FolderPath .. k .. "/done.txt") then
+                        local fh_2 = openFile(FolderPath .. k .. "/done.txt", FREAD)
                         local pages = readFile(fh_2, sizeFile(fh_2))
                         closeFile(fh_2)
-                        local lDir = listDirectory(FOLDER .. k) or {}
+                        local lDir = listDirectory(FolderPath .. k) or {}
                         if tonumber(pages) == #lDir - 1 then
                             --[[
                             -- This code checks all images in cache, their type (more safer)
@@ -741,17 +751,17 @@ function ChapterSaver.load()
                             if count < 2 then
                             Keys[k] = true
                             end]]
-                            Keys[k] = true
+                            Keys[k] = _
                         else
-                            rem_dir("ux0:data/noboru/chapters/" .. k)
+                            rem_dir(FolderPath .. k)
                             Notifications.push("chapters_error\n" .. k)
                         end
                     else
-                        rem_dir("ux0:data/noboru/chapters/" .. k)
+                        rem_dir(FolderPath .. k)
                         Notifications.push("chapters_error\n" .. k)
                     end
                 else
-                    Keys[k] = true
+                    Keys[k] = _
                 end
                 cntr = cntr + 1
             end
@@ -781,6 +791,10 @@ function ChapterSaver.clear()
     notify = true
     rem_dir("ux0:data/noboru/chapters")
     createDirectory("ux0:data/noboru/chapters")
+    if doesDirExist("uma0:data/noboru") then
+        rem_dir("uma0:data/noboru/chapters")
+        createDirectory("uma0:data/noboru/chapters")
+    end
     Keys = {}
     ChapterSaver.save()
     if not Settings.SilentDownloads then

@@ -378,7 +378,7 @@ local function taskete(UniqueKey, T, foo)
         MaxWidth = T.MaxWidth,
         OnComplete = T.OnComplete,
         Extract = T.Extract,
-        Path = T.Path and ((T.Drive or "ux0")..":data/noboru/" .. T.Path) or IMAGE_CACHE_PATH,
+        Path = T.Path and (T.Path:find("^...?0:") and T.Path or ("ux0:data/noboru/" .. T.Path)) or IMAGE_CACHE_PATH,
         Retry = 3,
         HttpMethod = T.HttpMethod or GET_METHOD,
         PostData = T.PostData or "",
