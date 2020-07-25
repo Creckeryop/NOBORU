@@ -77,7 +77,8 @@ Language = {
             SkipCacheChapterChecking = "Пропускать проверки целостности кеша при запуске приложения",
             ConnectionTime = "Время подсоединения к серверу",
             InputValue = "Введите значение",
-            OpenInBrowser = "Открыть в браузере"
+            OpenInBrowser = "Открыть в браузере",
+            SaveDataPath = "Место сохранения данных",
         },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
@@ -188,6 +189,14 @@ Language = {
             DELETE = "Удалить",
             FOLLOW = "Отслеживать",
             UNFOLLOW = "Не отслеживать"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "Внешняя Память",
+            DRIVE = "Раздел",
+            FOLDER = "Папка",
+            GOBACK = "Вернуться",
+            FILE = "Файл",
+            UNSUPFILE = "Неподдерживаемый файл"
         }
     },
     English = {
@@ -263,6 +272,7 @@ Language = {
             ConnectionTime = "Connection time for server",
             InputValue = "Input value",
             OpenInBrowser = "Open in browser",
+            SaveDataPath = "Save data path", 
         },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
@@ -373,6 +383,14 @@ Language = {
             DELETE = "Delete",
             FOLLOW = "Follow",
             UNFOLLOW = "Unfollow"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory",
+            DRIVE = "Drive",
+            FOLDER = "Folder",
+            GOBACK = "Go back",
+            FILE = "File",
+            UNSUPFILE = "Unsupported file"
         }
     },
     Turkish = {
@@ -448,6 +466,7 @@ Language = {
             ConnectionTime = "Server'a Bağlanmak İçin Gereken Zaman",
             InputValue = "Giriş Değeri",
             OpenInBrowser = "Tarayıcıda Aç",
+            SaveDataPath = "Save data path", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "L1 R1 Tuşları",
@@ -558,6 +577,14 @@ Language = {
             DELETE = "Sil",
             FOLLOW = "Takip Et",
             UNFOLLOW = "Takibi Bırak",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     Vietnamese = {
@@ -633,6 +660,7 @@ Language = {
             ConnectionTime = "Thời gian kết nối máy chủ",
             InputValue = "Giá trị đầu vào",
             OpenInBrowser = "Mở trong trình duyệt",
+            SaveDataPath = "Save data path", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Sử dụng L và R",
@@ -743,6 +771,14 @@ Language = {
             DELETE = "Xóa bỏ",
             FOLLOW = "Theo dõi",
             UNFOLLOW = "Bỏ theo dõi",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     Spanish = {
@@ -818,6 +854,7 @@ Language = {
             ConnectionTime = "Tiempo de conexion con el servidor:",
             InputValue = "Introduce un valor",
             OpenInBrowser = "Abrir en navegador",
+            SaveDataPath = "Save data path", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botones L y R",
@@ -928,6 +965,14 @@ Language = {
             DELETE = "Eliminar",
             FOLLOW = "Seguir",
             UNFOLLOW = "Dejar de seguir",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     Italian = {
@@ -1003,6 +1048,7 @@ Language = {
             ConnectionTime = "Tempo di connessione per server",
             InputValue = "Valore di Input",
             OpenInBrowser = "Apri nel browser",
+            SaveDataPath = "Save data path", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "L e R triggers",
@@ -1113,6 +1159,14 @@ Language = {
             DELETE = "Elimina",
             FOLLOW = "Segui",
             UNFOLLOW = "Smetti di seguire",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     French = {
@@ -1187,7 +1241,8 @@ Language = {
             SkipCacheChapterChecking = "Passer la vérification du cache et chapitre pendant l'écran de chargement",
             ConnectionTime = "Temps de connection au serveur",
             InputValue = "Insérer une valeur", 
-            OpenInBrowser = "Ouvrir dans le navigateur", 
+            OpenInBrowser = "Ouvrir dans le navigateur",
+            SaveDataPath = "Save data path", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
@@ -1298,6 +1353,14 @@ Language = {
             DELETE = "Supprimer",
             FOLLOW = "Suivre", 
             UNFOLLOW = "Ne plus suivre",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     },
     PortugueseBR = {
@@ -1373,6 +1436,7 @@ Language = {
             ConnectionTime = "Tempo de conexão com o servidor",
             InputValue = "Insira um valor",
             OpenInBrowser = "Abrir no navegador",
+            SaveDataPath = "Save data path", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Botões L e R",
@@ -1485,6 +1549,14 @@ Language = {
             DELETE = "Deletar",
             FOLLOW = "Seguir",
             UNFOLLOW = "Parar de seguir",
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "External Memory", --Translate please
+            DRIVE = "Drive", --Translate please
+            FOLDER = "Folder", --Translate please
+            GOBACK = "Go back", --Translate please
+            FILE = "File", --Translate please
+            UNSUPFILE = "Unsupported file" --Translate please
         }
     }
 }

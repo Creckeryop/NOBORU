@@ -113,8 +113,27 @@ end
 if doesFileExist("ux0:data/noboru/temp/auth.html") then
     deleteFile("ux0:data/noboru/temp/auth.html")
 end
+
 if doesFileExist("ux0:data/noboru/temp/logo.png") then
     deleteFile("ux0:data/noboru/temp/logo.png")
+end
+
+if doesDirExist("uma0:") then
+    if not doesDirExist("uma0:data") then
+        createDirectory("uma0:data")
+    end
+
+    if not doesDirExist("uma0:data/noboru") then
+        createDirectory("uma0:data/noboru")
+    end
+    
+    if not doesDirExist("uma0:data/noboru/chapters") then
+        createDirectory("uma0:data/noboru/chapters")
+    end
+
+    if not doesDirExist("uma0:data/noboru/import") then
+        createDirectory("uma0:data/noboru/import")
+    end
 end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
@@ -127,6 +146,7 @@ local function cpy_file(source_path, dest_path)
     closeFile(fh1)
     closeFile(fh2)
 end
+
 cpy_file("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
 cpy_file("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")
 

@@ -1,6 +1,7 @@
 Import = {}
 
 local listDirectory = System.listDirectory
+local doesDirExist = System.doesDirExist
 
 local fullpath = "ux0:data/noboru/import/"
 local path = fullpath
@@ -12,7 +13,7 @@ local dir_list
 ---Table elements: {`name`: string, `directory`: boolean, `active`: boolean, `size`: number}
 function Import.listDir()
     if dir_list == nil then
-        local list = listDirectory(path) or {}
+        local list = listDirectory(path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/","uma0:data/noboru/import/")) or {}
         local new_list = {}
         for _, v in ipairs(list) do
             v.active = v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$")
@@ -25,6 +26,13 @@ function Import.listDir()
                 active = true,
                 size = 0
             })
+        elseif doesDirExist("uma0:") then
+            table.insert(new_list, 1, {
+                name = "uma0:data/noboru/import",
+                directory = true,
+                active = false,
+                size = 0
+            })
         end
         dir_list = new_list
     end
@@ -35,8 +43,7 @@ end
 ---Opens `item` directory / file
 function Import.go(item)
     if item.name == "..." and path ~= fullpath then
-        path = path:match("(.*/).-/$")
-        dir_list = nil
+        Import.back()
     elseif item.directory then
         path = path .. item.name .. "/"
         dir_list = nil
@@ -45,7 +52,7 @@ function Import.go(item)
             FastLoad = true,
             Name = item.name:match("(.*)%..-$"),
             Link = "AABBCCDDEEFFGG",
-            Path = path .. item.name,
+            Path = path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/","uma0:data/noboru/import/") .. item.name,
             Pages = {},
             Manga = {
                 Name = item.name:match("(.*)%..-$"),
@@ -69,13 +76,17 @@ end
 ---@return string
 ---Returns fullpath of given item
 function Import.getPath(item)
-    return item and path .. item.name
+    return item and path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/","uma0:data/noboru/import/") .. item.name
 end
 
 ---Go parent directory of current directory if it is possible
 function Import.back()
     if path ~= fullpath then
-        path = path:match("(.*/).-/$")
+        if path=="ux0:data/noboru/import/uma0:data/noboru/import/" then
+            path = "ux0:data/noboru/import/"
+        else
+            path = path:match("(.*/).-/$")
+        end
         dir_list = nil
     end
 end

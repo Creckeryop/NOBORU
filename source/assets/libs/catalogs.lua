@@ -236,7 +236,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
             ParserManager.updateCounters()
         end
     end
-    if Slider.V ~= 0 or Controls.check(pad, SCE_CTRL_RTRIGGER)or Controls.check(pad, SCE_CTRL_LTRIGGER) or touch.x then
+    if Slider.V ~= 0 or Controls.check(pad, SCE_CTRL_RTRIGGER) or Controls.check(pad, SCE_CTRL_LTRIGGER) or touch.x then
         Timer.reset(TouchTimer)
     end
     if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
@@ -520,18 +520,20 @@ function Catalogs.draw()
             end
             if object.active then
                 Font.print(FONT26, 225, y - 70, object.name, COLOR_FONT)
+            elseif object.directory then
+                Font.print(FONT26, 225, y - 70, "*" .. Language[Settings.Language].IMPORT.EXTERNAL_MEMORY .. "*", COLOR_ROYAL_BLUE)
             else
                 Font.print(FONT26, 225, y - 70, object.name, COLOR_GRAY)
             end
-            Graphics.fillRect(945, 955, y - 75, y-1, COLOR_BACK)
+            Graphics.fillRect(945, 955, y - 75, y - 1, COLOR_BACK)
             if object.active and object.name ~= "..." then
                 if Slider.ItemID == i then
-                    Graphics.fillRect(925 - 16 - 12 - 34+10, 945, y - 75, y-1, COLOR_SELECTED)
+                    Graphics.fillRect(925 - 16 - 12 - 34 + 10, 945, y - 75, y - 1, COLOR_SELECTED)
                 else
-                    Graphics.fillRect(925 - 16 - 12 - 34+10, 945, y - 75, y-1, COLOR_BACK)
+                    Graphics.fillRect(925 - 16 - 12 - 34 + 10, 945, y - 75, y - 1, COLOR_BACK)
                 end
             end
-            local text_dis = object.name == "..." and "Go back" or object.directory and "Folder" or object.active and "File" or "Unsupported file"
+            local text_dis = object.name == "..." and Language[Settings.Language].IMPORT.GOBACK or object.directory and (object.active and Language[Settings.Language].IMPORT.FOLDER or Language[Settings.Language].IMPORT.DRIVE .. " \"" .. object.name .. "\"") or object.active and Language[Settings.Language].IMPORT.FILE or Language[Settings.Language].IMPORT.UNSUPFILE
             Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
             if object.active and object.name ~= "..." then
                 Graphics.drawImage(925 - 16 - 12, y - 38 - 14, Import_icon.e, COLOR_ICON_EXTRACT)
@@ -710,6 +712,8 @@ function Catalogs.draw()
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
             elseif task == "CheckUpdate" then
                 Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
+            elseif task == "SaveDataPath" then
+                Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_GRAY)
             end
             y = y + 75
         end
