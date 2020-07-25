@@ -771,6 +771,14 @@ function ChapterSaver.load()
                     rem_dir("ux0:data/noboru/chapters/" .. v.name)
                 end
             end
+            if doesDirExist("uma0:data/noboru") then
+                dir_list = listDirectory("uma0:data/noboru/chapters") or {}
+                for _, v in ipairs(dir_list) do
+                    if not Keys[v.name] and v.directory then
+                        rem_dir("uma0:data/noboru/chapters/" .. v.name)
+                    end
+                end
+            end
         end
         closeFile(fh)
         ChapterSaver.save()

@@ -126,11 +126,7 @@ if doesDirExist("uma0:") then
     if not doesDirExist("uma0:data/noboru") then
         createDirectory("uma0:data/noboru")
     end
-
-    if not doesDirExist("uma0:data/noboru/cache") then
-        createDirectory("uma0:data/noboru/cache")
-    end
-
+    
     if not doesDirExist("uma0:data/noboru/chapters") then
         createDirectory("uma0:data/noboru/chapters")
     end
