@@ -37,8 +37,8 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 ## Data structure
 ```
 ux0:data/noboru/cache/ - folder that holds cached manga info (also history)
-ux0:data/noboru/chapters/ - folder that holds chapters saved
-ux0:data/noboru/import/ - folder where you can store files you want to read locally or import to Library (0.35+)
+(ux0/uma0):data/noboru/chapters/ - folder that holds chapters saved
+(ux0/uma0):data/noboru/import/ - folder where you can store files you want to read locally or import to Library (0.35+)
 ux0:data/noboru/parsers/ - folder for parsers
 ux0:data/noboru/cusettings/ - folder for manga's custom settings
 ux0:data/noboru/save.dat - library savefile
