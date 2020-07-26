@@ -29,7 +29,7 @@ All issues with parsers should be in <a href="https://github.com/Creckeryop/NOBO
 - [Backup](#backup)
 - [Known issues](#known-issues)
 - [FAQ](#faq)
-- [Compiling](#compiling)
+- [Building](#building)
 - [ToDo List](#todo)
 - [Credits](#credits)
 ## Requirements
@@ -93,7 +93,7 @@ If you want to backup, here's what you can backup
     - You can write ip address like '192.169.0.1' or you can specify your proxy kind like 'socks5h://192.168.0.1' or "http", "https", "socks4a", "socks5", "socks5h"
 - **Application slows down sometimes, when new manga is appearing**
     - That's a print function problem, all new characters that appear should be cached. In the first launch, app can't load all glyphs because it's a longtime process, so I load only Latin and Cryllic symbols.
-## Compiling
+## Building
 Execute `build.bat` to create working .vpk
 ## TODO
 * More languages

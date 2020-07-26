@@ -193,9 +193,12 @@ local cached_history = {}
 function Cache.getHistory()
     if updated then
         local new_history = {}
+        local uma0_flag = doesDirExist("uma0:data/noboru")
         for _, v in ipairs(history) do
             if data[v] then
-                new_history[#new_history + 1] = data[v]
+                if data[v].Location ~= "uma0" or uma0_flag then
+                    new_history[#new_history + 1] = data[v]
+                end
             end
         end
         updated = false
@@ -343,6 +346,7 @@ function Cache.save()
         save_data[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
         save_data[k].Data = v.Data
         save_data[k].Path = "cache/" .. k .. "/cover.image"
+        save_data[k].Location = v.Location or "ux0"
     end
     local serialized_data = "return " .. table.serialize(save_data, true)
     writeFile(fh, serialized_data, #serialized_data)
