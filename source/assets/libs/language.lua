@@ -466,7 +466,7 @@ Language = {
             ConnectionTime = "Server'a Bağlanmak İçin Gereken Zaman",
             InputValue = "Giriş Değeri",
             OpenInBrowser = "Tarayıcıda Aç",
-            SaveDataPath = "Save data path", --Need to translate
+            SaveDataPath = "Kaydetme Yolu", 
         },
         PAGINGCONTROLS = {
             ["LR"] = "L1 R1 Tuşları",
@@ -579,12 +579,12 @@ Language = {
             UNFOLLOW = "Takibi Bırak",
         },
         IMPORT = {
-            EXTERNAL_MEMORY = "External Memory", --Translate please
-            DRIVE = "Drive", --Translate please
-            FOLDER = "Folder", --Translate please
-            GOBACK = "Go back", --Translate please
-            FILE = "File", --Translate please
-            UNSUPFILE = "Unsupported file" --Translate please
+            EXTERNAL_MEMORY = "Taşınabilir Bellek", 
+            DRIVE = "Cihaz Hafızası", 
+            FOLDER = "Klasör", 
+            GOBACK = "Geri Dön",
+            FILE = "Dosya",
+            UNSUPFILE = "Desteklenmeyen Dosya"
         }
     },
     Vietnamese = {
