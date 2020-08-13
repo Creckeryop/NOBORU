@@ -1242,7 +1242,7 @@ Language = {
             ConnectionTime = "Temps de connection au serveur",
             InputValue = "Insérer une valeur", 
             OpenInBrowser = "Ouvrir dans le navigateur",
-            SaveDataPath = "Save data path", --Need to translate
+            SaveDataPath = "Emplacement de la sauvegarde", --Need to translate
         },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
@@ -1355,12 +1355,12 @@ Language = {
             UNFOLLOW = "Ne plus suivre",
         },
         IMPORT = {
-            EXTERNAL_MEMORY = "External Memory", --Translate please
-            DRIVE = "Drive", --Translate please
-            FOLDER = "Folder", --Translate please
-            GOBACK = "Go back", --Translate please
-            FILE = "File", --Translate please
-            UNSUPFILE = "Unsupported file" --Translate please
+            EXTERNAL_MEMORY = "Mémoire Externe", --Translate please
+            DRIVE = "Disque", --Translate please
+            FOLDER = "Dossier", --Translate please
+            GOBACK = "Retour", --Translate please
+            FILE = "Fichier", --Translate please
+            UNSUPFILE = "Fichier non supporté" --Translate please
         }
     },
     PortugueseBR = {
