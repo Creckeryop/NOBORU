@@ -157,6 +157,10 @@ local pad, oldpad = Controls.read()
 local oldtouch, touch = {}, {}
 local oldtouch2, touch2 = {}, {}
 
+if Controls.check(pad, SCE_CTRL_SELECT) then
+    Debug.upDebug()
+end
+
 local fade = 1
 
 local function input()

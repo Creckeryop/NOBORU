@@ -21,8 +21,91 @@ local function F(Parser)
     local name = Parser.Name
     Console.write("Start checking /" .. name .. "/", Color.new(0, 0, 255), 2)
     coroutine.yield()
-    local foos = {"getPopularManga", "getLatestManga", "getAZManga", "getLetterManga", "getTagManga"}
+    local foos = {"getPopularManga", "getLatestManga", "getAZManga", "getLetterManga", "getTagManga", "searchManga", "searchManga", "searchManga"}
     local image_test_chapter = {}
+    local Filters = Parser.Filters or {}
+    local Checked = {}
+    for k, v in ipairs(Filters) do
+        v.visible = false
+        local default = v.Default
+        if v.Type == "check" or v.Type == "checkcross" then
+            Checked[k] = {}
+            for i, _ in ipairs(v.Tags) do
+                Checked[k][i] = false
+            end
+            if default then
+                if v.Type == "checkcross" then
+                    for i = 1, #default.include do
+                        for e, t in ipairs(v.Tags) do
+                            if t == default.include[i] then
+                                Checked[k][e] = true
+                            end
+                        end
+                    end
+                    for i = 1, #default.exclude do
+                        for e, t in ipairs(v.Tags) do
+                            if t == default.exclude[i] then
+                                Checked[k][e] = "cross"
+                            end
+                        end
+                    end
+                elseif v.Type == "check" then
+                    for i = 1, #default do
+                        for e, t in ipairs(v.Tags) do
+                            if t == default[i] then
+                                Checked[k][e] = true
+                            end
+                        end
+                    end
+                end
+            end
+        elseif v.Type == "radio" then
+            Checked[k] = 1
+            if default then
+                for e, t in ipairs(v.Tags) do
+                    if t == default then
+                        Checked[k] = e
+                    end
+                end
+            end
+        end
+    end
+    local filter = {}
+    for i, fil in ipairs(Filters) do
+        if fil.Type == "check" then
+            local list = {}
+            for i, v in ipairs(Checked[i]) do
+                if v then
+                    list[#list + 1] = fil.Tags[i]
+                end
+            end
+            filter[#filter + 1] = list
+            filter[fil.Name] = list
+        elseif fil.Type == "checkcross" then
+            local include = {}
+            for j, c in ipairs(Checked[i]) do
+                if c == true then
+                    include[#include + 1] = fil.Tags[j]
+                end
+            end
+            local exclude = {}
+            for j, c in ipairs(Checked[i]) do
+                if c == "cross" then
+                    exclude[#exclude + 1] = fil.Tags[j]
+                end
+            end
+            filter[#filter + 1] = {
+                include = include,
+                exclude = exclude
+            }
+            filter[fil.Name] = filter[#filter]
+        elseif fil.Type == "radio" then
+            filter[#filter + 1] = fil.Tags[Checked[i]] or ""
+            filter[fil.Name] = fil.Tags[Checked[i]] or ""
+        end
+    end
+    local search_i = 1
+    local search_words = {"a", "Naruto", "one piece"}
     for k, v in ipairs(foos) do
         local f = Parser[v]
         if f then
@@ -40,6 +123,11 @@ local function F(Parser)
                     add_text = tag
                     f(Parser, 1, Manga, tag)
                 end
+            elseif v == "searchManga" then
+                local search_word = search_words[search_i] or ""
+                search_i = search_i + 1
+                add_text = search_word
+                f(Parser, search_word, 1, Manga, filter)
             else
                 f(Parser, 1, Manga)
             end
