@@ -207,6 +207,12 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
                 Settings.toggleFavouriteParser(item)
             end
         end
+        if (Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT)) and Debug.getMode() == 2 then
+            local item = Parsers[ParserSelector:getSelected()]
+            if item then
+                ParserChecker.addCheck(item)
+            end
+        end
     elseif mode == "HISTORY" then
         if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
             local item = Results[MangaSelector:getSelected()]

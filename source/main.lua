@@ -40,6 +40,7 @@ loadlib("chsaver")
 loadlib("cache")
 loadlib("reader")
 loadlib("import")
+loadlib("parserchecker")
 
 os = nil
 debug = nil
@@ -237,6 +238,7 @@ local function update()
     end
     Extra.update()
     Notifications.update()
+    ParserChecker.update()
 end
 
 local function draw()

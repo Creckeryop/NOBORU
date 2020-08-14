@@ -13,7 +13,7 @@ local dir_list
 ---Table elements: {`name`: string, `directory`: boolean, `active`: boolean, `size`: number}
 function Import.listDir()
     if dir_list == nil then
-        local list = listDirectory(path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/","uma0:data/noboru/import/")) or {}
+        local list = listDirectory(path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/")) or {}
         local new_list = {}
         for _, v in ipairs(list) do
             v.active = v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$")
@@ -52,7 +52,7 @@ function Import.go(item)
             FastLoad = true,
             Name = item.name:match("(.*)%..-$"),
             Link = "AABBCCDDEEFFGG",
-            Path = path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/","uma0:data/noboru/import/") .. item.name,
+            Path = path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name,
             Pages = {},
             Manga = {
                 Name = item.name:match("(.*)%..-$"),
@@ -76,13 +76,13 @@ end
 ---@return string
 ---Returns fullpath of given item
 function Import.getPath(item)
-    return item and path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/","uma0:data/noboru/import/") .. item.name
+    return item and path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name
 end
 
 ---Go parent directory of current directory if it is possible
 function Import.back()
     if path ~= fullpath then
-        if path=="ux0:data/noboru/import/uma0:data/noboru/import/" then
+        if path == "ux0:data/noboru/import/uma0:data/noboru/import/" then
             path = "ux0:data/noboru/import/"
         else
             path = path:match("(.*/).-/$")

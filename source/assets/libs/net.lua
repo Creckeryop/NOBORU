@@ -46,7 +46,7 @@ function Threads.update()
         for _, v in ipairs(Order) do
             if v.Type == "Skip" then
                 Console.write("NET: Skip", Color.new(255, 255, 0))
-                else
+            else
                 new_order[#new_order + 1] = v
             end
         end
@@ -121,7 +121,7 @@ function Threads.update()
         end
         if Task then
             Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
-            end
+        end
     else
         Console.write("(" .. Task.Type .. ")" .. (Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
         local f_save = function()
@@ -134,7 +134,7 @@ function Threads.update()
                     bytes = bytes + len
                     if len < 100 then
                         Console.write("NET:" .. Task.Table[Task.Index])
-                        end
+                    end
                 end
             elseif Task.Type == "Image" then
                 if doesFileExist(Task.Path) then
@@ -246,7 +246,7 @@ function Threads.update()
                         error("error with part function")
                     else
                         Console.write(string.format("Got %s image", Task.Image.i))
-                        end
+                    end
                 else
                     uniques[Task.UniqueKey] = nil
                     Task = nil
@@ -283,7 +283,7 @@ function Threads.update()
             if Task == nil then
                 if TempTask.OnComplete then
                     TempTask.OnComplete()
-                Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
+                    Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
                 end
             end
         else
