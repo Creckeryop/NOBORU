@@ -39,7 +39,7 @@ local autozoom
 local hideCounterTimer = Timer.new()
 
 local doubleClickTimer = Timer.new()
-local last_click = {x = -100, y = -100}
+local last_click = { x = -100, y = -100 }
 local gesture_zoom = false
 
 local ContextMenu = false
@@ -51,7 +51,7 @@ local CursorIndex = -1
 local CursorFade = 0
 local CursorPoint = Point_t(0, 0)
 local CursorDestination = Point_t(0, 0)
-local CursorPlaces = {Point_t(32 + 12, 40), Point_t(960 - 88 - 88 + 32 + 12, 40), Point_t(960 - 32 - 12, 40), Point_t(32 + 12, 544 - 40), Point_t(0, 0), Point_t(960 - 32 - 12, 544 - 40)}
+local CursorPlaces = { Point_t(32 + 12, 40), Point_t(960 - 88 - 88 + 32 + 12, 40), Point_t(960 - 32 - 12, 40), Point_t(32 + 12, 544 - 40), Point_t(0, 0), Point_t(960 - 32 - 12, 544 - 40) }
 
 
 local name_timer = Timer.new()
@@ -94,12 +94,12 @@ local function gesture_touch_input(touch, oldtouch, page)
                     Console.write(gesture_zoom.Zoom)
                     Console.write(Pages[Pages.Page].Zoom)
                     update_last = false
-                    last_click = {x = -100, y = -100}
+                    last_click = { x = -100, y = -100 }
                 end
             end
             Timer.reset(doubleClickTimer)
             if update_last then
-                last_click = {x = oldtouch.x, y = oldtouch.y}
+                last_click = { x = oldtouch.x, y = oldtouch.y }
             end
         end
     end
@@ -126,7 +126,7 @@ local function gesture_touch_update()
             end
         end
         if Timer.getTime(doubleClickTimer) > 300 then
-            last_click = {x = -100, y = -100}
+            last_click = { x = -100, y = -100 }
         end
     end
 end
@@ -213,7 +213,8 @@ local function loadPageImage(page)
         end
     end
 end
----@param page integer
+
+--- @param page integer
 local function changePage(page)
     if page < 0 and current_chapter > 1 or page > #Pages then
         return false
@@ -223,7 +224,7 @@ local function changePage(page)
     if Pages[Pages.Page].Link == "LoadNext" or Pages[Pages.Page].Link == "LoadPrev" then
         return true
     end
-    local o = {0}
+    local o = { 0 }
     for k = 1, #o do
         local p = page + o[k]
         if Pages[p] then
@@ -252,15 +253,15 @@ local function changePage(page)
 end
 
 local function changeOrientation()
-    orientation = table.next(orientation, {"Horizontal", "Vertical"})
+    orientation = table.next(orientation, { "Horizontal", "Vertical" })
     updateMeasurements()
 end
 
 local buttonTimer = Timer.new()
 local buttonTimeSpace = 800
 
----@param direction string | '"LEFT"' | '"RIGHT"'
----Turns the page according to the `direction`
+--- @param direction string | '"LEFT"' | '"RIGHT"'
+--- Turns the page according to the `direction`
 local function swipe(direction)
     if orientation == "Horizontal" then
         if direction == "LEFT" then
@@ -489,6 +490,15 @@ function Reader.input(oldpad, pad, oldtouch, touch, OldTouch2, Touch2)
                 if math.abs(x) > SCE_RIGHT_STICK_DEADZONE then
                     x = (x - SCE_RIGHT_STICK_DEADZONE * math.sign(x)) / (128 - SCE_RIGHT_STICK_DEADZONE)
                     scale(1 + SCE_LEFT_STICK_SENSITIVITY * x * 0.05, page)
+                end
+            end
+            local x, y = Controls.readLeftAnalog()
+            if orientation == "Vertical" then
+                y = y - 127
+                if y > SCE_LEFT_STICK_DEADZONE then
+                    swipe("LEFT")
+                elseif y < 0 and y < (SCE_LEFT_STICK_DEADZONE * -1) then
+                    swipe("RIGHT")
                 end
             end
         end
@@ -948,7 +958,7 @@ function Reader.update()
                 end
             end
         end
-        local o = readDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
+        local o = readDirection == "LEFT" and { 1, -1, 0 } or { -1, 1, 0 }
         for _, i in ipairs(o) do
             local page = Pages[Pages.Page + i]
             if page and not page.Zoom and page.Image then
@@ -1315,7 +1325,7 @@ function Reader.draw()
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_FONT)
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_FONT)
     elseif STATE == STATE_READING then
-        local o = readDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
+        local o = readDirection == "LEFT" and { 1, -1, 0 } or { -1, 1, 0 }
         for _, i in ipairs(o) do
             local page = Pages[Pages.Page + i]
             if page and page.Image then
