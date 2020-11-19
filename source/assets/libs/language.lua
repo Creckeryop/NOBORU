@@ -5,7 +5,6 @@
 --Turkish translation created by @kemalsanli
 --PortugueseBR translation created by @rutantan
 --SimplifiedChinese translation created by @Qingyu_510
-
 Language = {
     Russian = {
         APP = {
