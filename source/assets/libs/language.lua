@@ -1699,7 +1699,7 @@ Language = {
         DETAILS = {
             ADD_TO_LIBRARY = "添加到书架", 
             REMOVE_FROM_LIBRARY = "从书架中删除", 
-            PAGE = "页:",
+            PAGE = "当前页:",
 
             CONTINUE = "继续", 
             START = "开始阅读", 
