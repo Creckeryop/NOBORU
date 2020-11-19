@@ -4,7 +4,7 @@
 --French translation created by Samilop "Cimmerian" Iter
 --Turkish translation created by @kemalsanli
 --PortugueseBR translation created by @rutantan
---SimplifiedChinese translation created by @Qingyu_510
+--SimplifiedChinese translation created by @Qingyu510
 Language = {
     Russian = {
         APP = {
@@ -1614,7 +1614,7 @@ Language = {
             LibrarySorting = "书架排序",
             ChapterSorting = "章节排序", 
             RefreshLibAtStart = "在启动时刷新库", 
-            Translators = "Qingu_510", 
+            Translators = "Qingu510", 
             ChangingPageButtons = "改变页面按钮", 
             LeftStickDeadZone = "左摇杆死区", 
             LeftStickSensitivity = "左摇杆灵敏度", 
