@@ -1487,7 +1487,7 @@ Language = {
             POL = "Polonês",
             IDN = "Indonésien",
             CHN = "China"
-        }
+        },
         WARNINGS = {
             NO_CHAPTERS = "Sem capítulos"
         },
