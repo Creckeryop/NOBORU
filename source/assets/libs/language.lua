@@ -164,6 +164,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Доступно новое обновление",
             NO_SPACE_LEFT = "Недостаточно места",
             REFRESH_COMPLETED = "Обновление выполнено!",
+            IMPORT_COMPLETED = "Импорт завершен!",
             SETTINGS_RESET = "Настройки были сброшены"
         },
         MODES = {
@@ -359,6 +360,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "New update available",
             NO_SPACE_LEFT = "No space left",
             REFRESH_COMPLETED = "Refresh completed!",
+            IMPORT_COMPLETED = "Import completed!",
             SETTINGS_RESET = "Settings have been reset"
         },
         MODES = {
@@ -554,6 +556,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Yeni Güncelleme Mevcut",
             NO_SPACE_LEFT = "Hafıza Yetersiz",
             REFRESH_COMPLETED = "Yenileme Tamamlandı",
+            IMPORT_COMPLETED = "İçe Aktarma Tamamlandı",
             SETTINGS_RESET = "Seçenekler Sıfırlandı"
         },
         MODES = {
@@ -749,6 +752,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
             REFRESH_COMPLETED = "Làm mới hoàn tất!",
+            IMPORT_COMPLETED = "Nhập khẩu hoàn tất!",
             SETTINGS_RESET = "Đã đặt lại các cài đặt!"
         },
         MODES = {
@@ -944,6 +948,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nueva actualización disponible",
             NO_SPACE_LEFT = "No hay espacio",
             REFRESH_COMPLETED = "Refresco completado!",
+            IMPORT_COMPLETED = "Importación completado!",
             SETTINGS_RESET = "Los ajustes han sido resteados"
         },
         MODES = {
@@ -1139,6 +1144,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
             NO_SPACE_LEFT = "Non è rimasto spazio",
             REFRESH_COMPLETED = "Aggiornamento completato!",
+            IMPORT_COMPLETED = "Importazione completato!",
             SETTINGS_RESET = "Le impostazioni sono state ripristinate"
         },
         MODES = {
@@ -1334,6 +1340,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nouvelle mise à jour disponible",
             NO_SPACE_LEFT = "Plus d'espace disponible",
             REFRESH_COMPLETED = "Mise à jour complète!",
+            IMPORT_COMPLETED = "Importation complète!",
             SETTINGS_RESET = "Les paramètres vont être restauré"
         },
         MODES = {
@@ -1529,6 +1536,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nova atualização disponível",
             NO_SPACE_LEFT = "Sem espaço",
             REFRESH_COMPLETED = "Atualização completada!",
+            IMPORT_COMPLETED = "Importação completa!",
             SETTINGS_RESET = "Configurações foram resetadas"
         },
         MODES = {
@@ -1726,6 +1734,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "发现新版本",
             NO_SPACE_LEFT = "没有剩余空间",
             REFRESH_COMPLETED = "刷新完成!",
+            IMPORT_COMPLETED = "导入完成!",
             SETTINGS_RESET = "设置已重置"
         },
         MODES = {
@@ -1921,6 +1930,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "發現新版本",
             NO_SPACE_LEFT = "沒有剩余空間",
             REFRESH_COMPLETED = "刷新完成!",
+            IMPORT_COMPLETED = "導入完成!",
             SETTINGS_RESET = "設置已重置"
         },
         MODES = {
