@@ -120,7 +120,8 @@ Language = {
             DEU = "Немецкий",
             BRA = "Бразильский",
             POL = "Польский",
-            IDN = "Индонезийский"
+            IDN = "Индонезийский",
+            CHN = "Китай"
         },
         WARNINGS = {
             NO_CHAPTERS = "Главы не найдены"
@@ -314,7 +315,8 @@ Language = {
             DEU = "German",
             BRA = "Brazil",
             POL = "Polish",
-            IDN = "Indonesian"
+            IDN = "Indonesian",
+            CHN = "China"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
@@ -508,7 +510,8 @@ Language = {
             DEU = "Almanca",
             BRA = "Brezilya Dili",
             POL = "Lehçe",
-            IDN = "Endonezya"
+            IDN = "Endonezya",
+            CHN = "Çin"
         },
         WARNINGS = {
             NO_CHAPTERS = "Hiç Bölüm Yok"
@@ -702,7 +705,8 @@ Language = {
             DEU = "Tiếng Đức",
             BRA = "Brazil",
             POL = "Ba Lan",
-            IDN = "Tiếng Indonesia"
+            IDN = "Tiếng Indonesia",
+            CHN = "Trung Quốc"
         },
         WARNINGS = {
             NO_CHAPTERS = "Không có tập nào!"
@@ -896,7 +900,8 @@ Language = {
             DEU = "Aleman",
             BRA = "Brasileño",
             POL = "Polaco",
-            IDN = "Indonesia"
+            IDN = "Indonesia",
+            CHN = "China"
         },
         WARNINGS = {
             NO_CHAPTERS = "No hay capítulos"
@@ -1090,7 +1095,8 @@ Language = {
             DEU = "Tedesco",
             BRA = "Brasiliano",
             POL = "Polacco",
-            IDN = "Indonesiano"
+            IDN = "Indonesiano",
+            CHN = "Cina"
         },
         WARNINGS = {
             NO_CHAPTERS = "Nessun capitolo"
@@ -1284,7 +1290,8 @@ Language = {
             DEU = "Allemand",
             BRA = "Brésilien",
             POL = "Polonais",
-            IDN = "Indonésien"
+            IDN = "Indonésien",
+            CHN = "Chine"
         },
         WARNINGS = {
             NO_CHAPTERS = "Pas de chapitres"
@@ -1478,8 +1485,9 @@ Language = {
             DEU = "Alemão",
             BRA = "Português-Brasil",
             POL = "Polonês",
-            IDN = "Indonésien"
-        },
+            IDN = "Indonésien",
+            CHN = "China"
+        }
         WARNINGS = {
             NO_CHAPTERS = "Sem capítulos"
         },
@@ -1674,7 +1682,8 @@ Language = {
             DEU = "德国",
             BRA = "巴西",
             POL = "波兰",
-            IDN = "印度尼西亚"
+            IDN = "印度尼西亚",
+            CHN = "中国"
         },
         WARNINGS = {
             NO_CHAPTERS = "没有章节" 
