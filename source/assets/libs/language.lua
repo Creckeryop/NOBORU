@@ -1706,11 +1706,9 @@ Language = {
             ADD_TO_LIBRARY = "添加到书架", 
             REMOVE_FROM_LIBRARY = "从书架中删除", 
             PAGE = "当前页:",
-
             CONTINUE = "继续阅读", 
             START = "开始阅读", 
             DONE = "已看完", 
-
        },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "已添加到书架", 
@@ -1764,6 +1762,201 @@ Language = {
             FILE = "文件",
             UNSUPFILE = "不支持文件" 
         }
+    },
+    TraditionalChinese = {
+        APP = {
+            LIBRARY = "書架", 
+            CATALOGS = "目錄", 
+            SETTINGS = "設置", 
+            DOWNLOAD = "下載", 
+            IMPORT = "導入", 
+            HISTORY = "歷史", 
+            SEARCH = "搜索" 
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "連接丟失\n\n等待連接...\n\n(Minimize applica設置WIFI設置,然後按連接鍵)\n\n按x取消所有下載和close message\n\n如果網絡恢復正常,所有下載將繼續", 
+            PRESS_TO_UPDATE = "按×更新\n按○取消" 
+        },
+        SETTINGS = {
+            Language = "語言", 
+            ClearChapters = "清除已保存的章節", 
+            ShowNSFW = "顯示成人內容", 
+            ClearLibrary = "清除書架", 
+            ClearCache = "清除未導入的緩存", 
+            ClearAllCache = "清除所有緩存", 
+            ReaderOrientation = "屏幕方向",
+            DoubleTapReader = "啟用雙擊縮放", 
+            ZoomReader = "頁面縮放",
+            SwapXO = "變更按鍵類型", 
+            ShowAuthor = "開發者", 
+            ShowVersion = "應用程序版本", 
+            CheckUpdate = "檢查更新", 
+            SkipFontLoading = "跳過字體加載", 
+            LatestVersion = "最新版本:",
+            PleaseWait = "請稍候", 
+            FailedToUpdate = "app更新失敗", 
+            NoConnection = "沒有連接", 
+            HideInOffline = "僅在離線模式下顯示下載的章節", 
+            UnzipingVPK = "解壓vpk安裝", 
+            CurrentVersionIs = "當前版本:",
+            Space = "已用內存", 
+            ReaderDirection = "閱讀方向",
+            VersionIsUpToDate = "已是最新版本", 
+            EU = "歐洲", 
+            JP = "日本", 
+            PressAgainToAccept = "再次確認操作", 
+            PressAgainToUpdate = "再次確認更新:",
+            Reader = "閱讀",
+            Controls = "控制器", 
+            Data = "數據", 
+            About = "關於", 
+            Catalogs = "目錄", 
+            Library = "書架", 
+            ChangeUI = "主題", 
+            PreferredCatalogLanguage = "首選語言", 
+            LibrarySorting = "書架排序",
+            ChapterSorting = "漫畫章節排序", 
+            RefreshLibAtStart = "在啟動時刷新庫", 
+            Translators = "感謝以下翻譯人員", 
+            ChangingPageButtons = "變更頁面按鈕", 
+            LeftStickDeadZone = "左搖桿死區", 
+            LeftStickSensitivity = "左搖桿靈敏度", 
+            RightStickDeadZone = "右搖桿死區", 
+            RightStickSensitivity = "右搖桿靈敏度", 
+            ResetAllSettings = "重置所有設置", 
+            Other = "其他",
+            SilentDownloads = "不顯示下載通知",
+            Network = "網絡",
+            UseProxy = "使用代理", 
+            ProxyIP = "IP 地址", 
+            ProxyPort = "端口", 
+            UseProxyAuth = "使用代理認證", 
+            ProxyAuth = "驗證密碼", 
+            SkipCacheChapterChecking = "跳過驗證緩存和保存文件", 
+            ConnectionTime = "服務器連接時間", 
+            InputValue = "輸入值", 
+            OpenInBrowser = "在瀏覽器打開", 
+            SaveDataPath = "儲存路徑", 
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L和R按鍵", 
+            ["DPAD"] = "使用DPad" 
+        },
+        EXTRA = {
+            ["DownloadAll"] = "下載所有章節", 
+            ["RemoveAll"] = "刪除所有章節", 
+            ["CancelAll"] = "取消下載章節", 
+            ["ClearBookmarks"] = "刪除書簽", 
+            ["OpenMangaInBrowser"] = "用瀏覽器打開漫畫"
+        },
+        THEME = {
+            Dark = "星空黑", 
+            Light = "簡潔白", 
+            Blue = "尼羅藍", 
+            Crimson = "朱砂紅" 
+        },
+        NSFW = {
+            [true] = "顯示", 
+            [false] = "不顯示" 
+        },
+        YORN = {
+            [true] = "是", 
+            [false] = "否" 
+        },
+        PARSERS = {
+            RUS = "俄國",
+            ENG = "英國", 
+            ESP = "西班牙",
+            PRT = "葡萄牙",
+            FRA = "法國",
+            JAP = "日本",
+            DIF = "全語言",
+            TUR = "土耳其",
+            ITA = "意大利",
+            VIE = "越南",
+            DEU = "德國",
+            BRA = "巴西",
+            POL = "波蘭",
+            IDN = "印度尼西亞",
+            CHN = "中國"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "沒有章節" 
+        },
+        READER = {
+            PREPARING_PAGES = "準備頁面", 
+            LOADING_PAGE = "加載頁面", 
+            LOADING_SEGMENT = "加載階段", 
+            Horizontal = "豎屏",
+            Vertical = "橫屏",
+            Smart = "適應屏幕",
+            Height = "匹配高度",
+            Width = "匹配寬度",
+            LEFT = "從右到左", 
+            RIGHT = "從左到右", 
+            DOWN = "從上到下", 
+            Default = "默認", 
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "添加到書架", 
+            REMOVE_FROM_LIBRARY = "從書架中刪除", 
+            PAGE = "當前頁:",
+            CONTINUE = "繼續閱讀", 
+            START = "開始閱讀", 
+            DONE = "已看完", 
+       },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "已添加到書架", 
+            REMOVED_FROM_LIBRARY = "從書架中已刪除", 
+            SEARCHING = '正在搜索 "%s"', 
+            START_DOWNLOAD = "%s: %s\n開始下載!",
+            END_DOWNLOAD = "%s: %s\n下載成功!",  
+            CANCEL_DOWNLOAD = "%s: %s\n下載已取消", 
+            CHAPTER_REMOVE = "%s 刪除", 
+            NET_PROBLEM = "連接出現錯誤", 
+            CHAPTERS_CLEARED = "已清除已保存的章節!", 
+            LIBRARY_CLEARED = "書架已清除!", 
+            CACHE_CLEARED = "緩存已被清除!",
+            DEVELOPER_THING = "Star app on Github!",
+            NEW_UPDATE_AVAILABLE = "發現新版本",
+            NO_SPACE_LEFT = "沒有剩余空間",
+            REFRESH_COMPLETED = "刷新完成!",
+            SETTINGS_RESET = "設置已重置"
+        },
+        MODES = {
+            Popular = "熱門",
+            Latest = "最新",
+            Search = "搜索",
+            Alphabet = "字母",
+            ByLetter = "按信息",
+            ByTag = "按標簽",
+        },
+        PANEL = {
+            BACK = "返回",
+            MODE = "模式",
+            --MODE_POPULAR = "模式：熱門",
+            --MODE_LATEST = "模式：最新",
+            --MODE_SEARCHING = '模式：搜索 "%s"',
+            JUMPTOPAGE = "跳轉到頁面",
+            SEARCH = "搜索",
+            SELECT = "確認",
+            CHOOSE = "選擇",
+            IMPORT = "導入",
+            CHANGE_SECTION = "變更頁面",
+            UPDATE = "刷新",
+            CANCEL = "取消",
+            DELETE = "刪除",
+            FOLLOW = "關註",
+            UNFOLLOW = "取消關註"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "外部內存", 
+            DRIVE = "驅動",
+            FOLDER = "文件夾", 
+            GOBACK = "返回", 
+            FILE = "文件",
+            UNSUPFILE = "不支持文件" 
+        }
     }
 }
 
@@ -1778,6 +1971,7 @@ LanguageNames = {
         Italian = "Итальянский",
         PortugueseBR = "Бразильский португальский",
         SimplifiedChinese = "Упрощенный китайский",
+        TraditionalChinese = "традиционный китайский",
         Default = "Системный"
     },
     English = {
@@ -1790,6 +1984,7 @@ LanguageNames = {
         Italian = "Italian",
         PortugueseBR = "Brazilian portuguese",
         SimplifiedChinese = "Simplified Chinese",
+        TraditionalChinese = "Traditional Chinese",
         Default = "System"
     },
     Turkish = {
@@ -1802,6 +1997,7 @@ LanguageNames = {
         Italian = "İtalyanca",
         PortugueseBR = "Brezilya Portekizcesi",
         SimplifiedChinese = "Basitleştirilmiş Çince",
+        TraditionalChinese = "Geleneksel Çince",
         Default = "Sistem Dili"
     },
     Spanish = {
@@ -1813,7 +2009,8 @@ LanguageNames = {
         French = "Francés",
         Italian = "Italiano",
         PortugueseBR = "Portugués Brasileño",
-        SimplifiedChinese = "Chino simplificado",
+        SimplifiedChinese = "Chino Simplificado",
+        TraditionalChinese = "Chino Tradicional",
         Default = "Sistema"
     },
     Vietnamese = {
@@ -1825,7 +2022,8 @@ LanguageNames = {
         French = "PhápF",
         Vietnamese = "Tiếng Việt",
         PortugueseBR = "Tiếng Bồ Đào Nha của người brazi",
-        SimplifiedChinese = "Tiếng Trung giản thể",
+        SimplifiedChinese = "Tiếng Trung Giản Thể",
+        TraditionalChinese = "Truyền Thống Trung Quốc",
         Default = "Hệ thống"
     },
     Italian = {
@@ -1837,7 +2035,8 @@ LanguageNames = {
         French = "Francese",
         Vietnamese = "Vietnamese",
         PortugueseBR = "Portoghese Brasiliano",
-        SimplifiedChinese = "Cinese semplificato",
+        SimplifiedChinese = "Cinese Semplificato",
+        TraditionalChinese = "Cinese Tradizionale",
         Default = "Sistema"
     },
     French = {
@@ -1850,6 +2049,7 @@ LanguageNames = {
         Vietnamese = "Vietnamien",
         PortugueseBR = "Portugais brésilien",
         SimplifiedChinese = "Chinois simplifié",
+        TraditionalChinese = "Chinois traditionnel",
         Default = "Système"
     },
     PortugueseBR = {
@@ -1861,7 +2061,8 @@ LanguageNames = {
         French = "Francês",
         Vietnamese = "Vietnamita",
         PortugueseBR = "Português Brasileiro",
-        SimplifiedChinese = "Chinês simplificado",
+        SimplifiedChinese = "Chinês Simplificado",
+        TraditionalChinese = "Chinês Tradicional",
         Default = "Sistema"
     },
     SimplifiedChinese = {
@@ -1874,7 +2075,21 @@ LanguageNames = {
         Italian = "意大利语",
         PortugueseBR = "巴西葡萄牙语",
         SimplifiedChinese = "简体中文",
+        TraditionalChinese = "繁体中文",
         Default = "默认"
+    },
+    TraditionalChinese = {
+        Russian = "俄語",
+        English = "英語",
+        Turkish = "土耳其語",
+        Spanish = "西班牙語",
+        Vietnamese = "越南語",
+        French = "法語",
+        Italian = "意大利語",
+        PortugueseBR = "巴西葡萄牙語",
+        SimplifiedChinese = "簡體中文",
+        TraditionalChinese = "繁體中文",
+        Default = "默認"
     }
 }
 
@@ -1900,6 +2115,9 @@ elseif language_now == 17 then
 elseif language_now == 11 then
     Language.Default = Language.SimplifiedChinese
     LanguageNames.Default = LanguageNames.SimplifiedChinese
+elseif language_now == 10 then
+    Language.Default = Language.TraditionalChinese
+    LanguageNames.Default = LanguageNames.TraditionalChinese
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
