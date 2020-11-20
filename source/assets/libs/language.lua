@@ -4,7 +4,7 @@
 --French translation created by Samilop "Cimmerian" Iter
 --Turkish translation created by @kemalsanli
 --PortugueseBR translation created by @rutantan
---SimplifiedChinese translation created by @Qingyu510
+--SimplifiedChinese translation Traditional Chinese created by @Qingyu510
 Language = {
     Russian = {
         APP = {
