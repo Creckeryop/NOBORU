@@ -78,7 +78,7 @@ function ChapterSaver.update()
                 if Task.Type == "Download" and not Settings.SilentDownloads then
                     Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
                 elseif Task.Type == "Import" then
-                    Notifications.push("Import completed!")
+                    Notifications.push(Language[Settings.Language].NOTIFICATIONS.IMPORT_COMPLETED)
                 end
             end
             Downloading[Task.Key] = nil

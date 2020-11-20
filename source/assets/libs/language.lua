@@ -4,6 +4,7 @@
 --French translation created by Samilop "Cimmerian" Iter
 --Turkish translation created by @kemalsanli
 --PortugueseBR translation created by @rutantan
+--SimplifiedChinese translation & Traditional Chinese created by @Qingyu510
 Language = {
     Russian = {
         APP = {
@@ -119,7 +120,8 @@ Language = {
             DEU = "Немецкий",
             BRA = "Бразильский",
             POL = "Польский",
-            IDN = "Индонезийский"
+            IDN = "Индонезийский",
+            CHN = "Китай"
         },
         WARNINGS = {
             NO_CHAPTERS = "Главы не найдены"
@@ -162,6 +164,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Доступно новое обновление",
             NO_SPACE_LEFT = "Недостаточно места",
             REFRESH_COMPLETED = "Обновление выполнено!",
+            IMPORT_COMPLETED = "Импорт завершен!",
             SETTINGS_RESET = "Настройки были сброшены"
         },
         MODES = {
@@ -313,7 +316,8 @@ Language = {
             DEU = "German",
             BRA = "Brazil",
             POL = "Polish",
-            IDN = "Indonesian"
+            IDN = "Indonesian",
+            CHN = "China"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
@@ -356,6 +360,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "New update available",
             NO_SPACE_LEFT = "No space left",
             REFRESH_COMPLETED = "Refresh completed!",
+            IMPORT_COMPLETED = "Import completed!",
             SETTINGS_RESET = "Settings have been reset"
         },
         MODES = {
@@ -507,7 +512,8 @@ Language = {
             DEU = "Almanca",
             BRA = "Brezilya Dili",
             POL = "Lehçe",
-            IDN = "Endonezya"
+            IDN = "Endonezya",
+            CHN = "Çin"
         },
         WARNINGS = {
             NO_CHAPTERS = "Hiç Bölüm Yok"
@@ -550,6 +556,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Yeni Güncelleme Mevcut",
             NO_SPACE_LEFT = "Hafıza Yetersiz",
             REFRESH_COMPLETED = "Yenileme Tamamlandı",
+            IMPORT_COMPLETED = "İçe Aktarma Tamamlandı",
             SETTINGS_RESET = "Seçenekler Sıfırlandı"
         },
         MODES = {
@@ -701,7 +708,8 @@ Language = {
             DEU = "Tiếng Đức",
             BRA = "Brazil",
             POL = "Ba Lan",
-            IDN = "Tiếng Indonesia"
+            IDN = "Tiếng Indonesia",
+            CHN = "Trung Quốc"
         },
         WARNINGS = {
             NO_CHAPTERS = "Không có tập nào!"
@@ -744,6 +752,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Có bản cập nhật mới!",
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
             REFRESH_COMPLETED = "Làm mới hoàn tất!",
+            IMPORT_COMPLETED = "Nhập khẩu hoàn tất!",
             SETTINGS_RESET = "Đã đặt lại các cài đặt!"
         },
         MODES = {
@@ -895,7 +904,8 @@ Language = {
             DEU = "Aleman",
             BRA = "Brasileño",
             POL = "Polaco",
-            IDN = "Indonesia"
+            IDN = "Indonesia",
+            CHN = "China"
         },
         WARNINGS = {
             NO_CHAPTERS = "No hay capítulos"
@@ -938,6 +948,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nueva actualización disponible",
             NO_SPACE_LEFT = "No hay espacio",
             REFRESH_COMPLETED = "Refresco completado!",
+            IMPORT_COMPLETED = "Importación completado!",
             SETTINGS_RESET = "Los ajustes han sido resteados"
         },
         MODES = {
@@ -1089,7 +1100,8 @@ Language = {
             DEU = "Tedesco",
             BRA = "Brasiliano",
             POL = "Polacco",
-            IDN = "Indonesiano"
+            IDN = "Indonesiano",
+            CHN = "Cina"
         },
         WARNINGS = {
             NO_CHAPTERS = "Nessun capitolo"
@@ -1132,6 +1144,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nuovo aggiornamento disponibile",
             NO_SPACE_LEFT = "Non è rimasto spazio",
             REFRESH_COMPLETED = "Aggiornamento completato!",
+            IMPORT_COMPLETED = "Importazione completato!",
             SETTINGS_RESET = "Le impostazioni sono state ripristinate"
         },
         MODES = {
@@ -1283,7 +1296,8 @@ Language = {
             DEU = "Allemand",
             BRA = "Brésilien",
             POL = "Polonais",
-            IDN = "Indonésien"
+            IDN = "Indonésien",
+            CHN = "Chine"
         },
         WARNINGS = {
             NO_CHAPTERS = "Pas de chapitres"
@@ -1326,6 +1340,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nouvelle mise à jour disponible",
             NO_SPACE_LEFT = "Plus d'espace disponible",
             REFRESH_COMPLETED = "Mise à jour complète!",
+            IMPORT_COMPLETED = "Importation complète!",
             SETTINGS_RESET = "Les paramètres vont être restauré"
         },
         MODES = {
@@ -1477,7 +1492,8 @@ Language = {
             DEU = "Alemão",
             BRA = "Português-Brasil",
             POL = "Polonês",
-            IDN = "Indonésien"
+            IDN = "Indonésien",
+            CHN = "China"
         },
         WARNINGS = {
             NO_CHAPTERS = "Sem capítulos"
@@ -1520,6 +1536,7 @@ Language = {
             NEW_UPDATE_AVAILABLE = "Nova atualização disponível",
             NO_SPACE_LEFT = "Sem espaço",
             REFRESH_COMPLETED = "Atualização completada!",
+            IMPORT_COMPLETED = "Importação completa!",
             SETTINGS_RESET = "Configurações foram resetadas"
         },
         MODES = {
@@ -1558,6 +1575,398 @@ Language = {
             FILE = "Arquivo",
             UNSUPFILE = "Arquivo não suportado"
         }
+    },
+    SimplifiedChinese = {
+        APP = {
+            LIBRARY = "书架", 
+            CATALOGS = "目录", 
+            SETTINGS = "设置", 
+            DOWNLOAD = "下载", 
+            IMPORT = "导入", 
+            HISTORY = "历史", 
+            SEARCH = "搜索" 
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "连接丢失\n\n等待连接...\n\n(Minimize applica设置WIFI设置,然后按连接键)\n\n按x取消所有下载和close message\n\n如果网络恢复正常,所有下载将继续", 
+            PRESS_TO_UPDATE = "按×更新\n按○取消" 
+        },
+        SETTINGS = {
+            Language = "语言", 
+            ClearChapters = "清除已保存的章节", 
+            ShowNSFW = "显示成人内容", 
+            ClearLibrary = "清除书架", 
+            ClearCache = "清除未导入的缓存", 
+            ClearAllCache = "清除所有缓存", 
+            ReaderOrientation = "屏幕方向",
+            DoubleTapReader = "启用双击缩放", 
+            ZoomReader = "页面缩放",
+            SwapXO = "变更按键类型", 
+            ShowAuthor = "开发者", 
+            ShowVersion = "应用程序版本", 
+            CheckUpdate = "检查更新", 
+            SkipFontLoading = "跳过字体加载", 
+            LatestVersion = "最新版本:",
+            PleaseWait = "请稍候", 
+            FailedToUpdate = "app更新失败", 
+            NoConnection = "没有网络连接", 
+            HideInOffline = "仅在离线模式下显示下载的章节", 
+            UnzipingVPK = "解压vpk安装", 
+            CurrentVersionIs = "当前版本:",
+            Space = "已用内存", 
+            ReaderDirection = "阅读方向",
+            VersionIsUpToDate = "已是最新版本", 
+            EU = "欧洲", 
+            JP = "日本", 
+            PressAgainToAccept = "再次确认操作", 
+            PressAgainToUpdate = "再次确认更新:",
+            Reader = "阅读",
+            Controls = "控制器", 
+            Data = "数据", 
+            About = "关于", 
+            Catalogs = "目录", 
+            Library = "书架", 
+            ChangeUI = "主题", 
+            PreferredCatalogLanguage = "首选语言", 
+            LibrarySorting = "书架排序",
+            ChapterSorting = "漫画章节排序", 
+            RefreshLibAtStart = "在启动时刷新库", 
+            Translators = "感谢以下翻译人员", 
+            ChangingPageButtons = "变更页面按钮", 
+            LeftStickDeadZone = "左摇杆死区", 
+            LeftStickSensitivity = "左摇杆灵敏度", 
+            RightStickDeadZone = "右摇杆死区", 
+            RightStickSensitivity = "右摇杆灵敏度", 
+            ResetAllSettings = "重置所有设置", 
+            Other = "其他",
+            SilentDownloads = "不显示下载通知",
+            Network = "网络",
+            UseProxy = "使用代理", 
+            ProxyIP = "IP 地址", 
+            ProxyPort = "端口", 
+            UseProxyAuth = "使用代理认证", 
+            ProxyAuth = "验证密码", 
+            SkipCacheChapterChecking = "跳过验证缓存和保存文件", 
+            ConnectionTime = "服务器连接时间", 
+            InputValue = "输入值", 
+            OpenInBrowser = "在浏览器打开", 
+            SaveDataPath = "储存路径", 
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L和R按键", 
+            ["DPAD"] = "使用DPad" 
+        },
+        EXTRA = {
+            ["DownloadAll"] = "下载所有章节", 
+            ["RemoveAll"] = "删除所有章节", 
+            ["CancelAll"] = "取消下载章节", 
+            ["ClearBookmarks"] = "删除书签", 
+            ["OpenMangaInBrowser"] = "用浏览器打开漫画"
+        },
+        THEME = {
+            Dark = "星空黑", 
+            Light = "简洁白", 
+            Blue = "尼罗蓝", 
+            Crimson = "朱砂红" 
+        },
+        NSFW = {
+            [true] = "显示", 
+            [false] = "不显示" 
+        },
+        YORN = {
+            [true] = "是", 
+            [false] = "否" 
+        },
+        PARSERS = {
+            RUS = "俄国",
+            ENG = "英国", 
+            ESP = "西班牙",
+            PRT = "葡萄牙",
+            FRA = "法国",
+            JAP = "日本",
+            DIF = "全语言",
+            TUR = "土耳其",
+            ITA = "意大利",
+            VIE = "越南",
+            DEU = "德国",
+            BRA = "巴西",
+            POL = "波兰",
+            IDN = "印度尼西亚",
+            CHN = "中国"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "没有章节" 
+        },
+        READER = {
+            PREPARING_PAGES = "准备页面", 
+            LOADING_PAGE = "加载页面", 
+            LOADING_SEGMENT = "加载阶段", 
+            Horizontal = "竖屏",
+            Vertical = "横屏",
+            Smart = "适应屏幕",
+            Height = "匹配高度",
+            Width = "匹配宽度",
+            LEFT = "从右到左", 
+            RIGHT = "从左到右", 
+            DOWN = "从上到下", 
+            Default = "默认", 
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "添加到书架", 
+            REMOVE_FROM_LIBRARY = "从书架中删除", 
+            PAGE = "当前页:",
+            CONTINUE = "继续阅读", 
+            START = "开始阅读", 
+            DONE = "已看完", 
+       },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "已添加到书架", 
+            REMOVED_FROM_LIBRARY = "从书架中已删除", 
+            SEARCHING = '正在搜索 "%s"', 
+            START_DOWNLOAD = "%s: %s\n开始下载!",
+            END_DOWNLOAD = "%s: %s\n下载成功!",  
+            CANCEL_DOWNLOAD = "%s: %s\n下载已取消", 
+            CHAPTER_REMOVE = "%s 删除", 
+            NET_PROBLEM = "连接出现错误", 
+            CHAPTERS_CLEARED = "已清除已保存的章节!", 
+            LIBRARY_CLEARED = "书架已清除!", 
+            CACHE_CLEARED = "缓存已被清除!",
+            DEVELOPER_THING = "在Github上为应用标注星号!",
+            NEW_UPDATE_AVAILABLE = "发现新版本",
+            NO_SPACE_LEFT = "没有剩余空间",
+            REFRESH_COMPLETED = "刷新完成!",
+            IMPORT_COMPLETED = "导入完成!",
+            SETTINGS_RESET = "设置已重置"
+        },
+        MODES = {
+            Popular = "热门",
+            Latest = "最新",
+            Search = "搜索",
+            Alphabet = "字母",
+            ByLetter = "按信息",
+            ByTag = "按标签",
+        },
+        PANEL = {
+            BACK = "返回",
+            MODE = "模式",
+            --MODE_POPULAR = "模式：热门",
+            --MODE_LATEST = "模式：最新",
+            --MODE_SEARCHING = '模式：搜索 "%s"',
+            JUMPTOPAGE = "跳转到页面",
+            SEARCH = "搜索",
+            SELECT = "确认",
+            CHOOSE = "选择",
+            IMPORT = "导入",
+            CHANGE_SECTION = "变更页面",
+            UPDATE = "刷新",
+            CANCEL = "取消",
+            DELETE = "删除",
+            FOLLOW = "关注",
+            UNFOLLOW = "取消关注"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "外部内存", 
+            DRIVE = "驱动",
+            FOLDER = "文件夹", 
+            GOBACK = "返回", 
+            FILE = "文件",
+            UNSUPFILE = "不支持文件" 
+        }
+    },
+    TraditionalChinese = {
+        APP = {
+            LIBRARY = "書架", 
+            CATALOGS = "目錄", 
+            SETTINGS = "設置", 
+            DOWNLOAD = "下載", 
+            IMPORT = "導入", 
+            HISTORY = "歷史", 
+            SEARCH = "搜索" 
+        },
+        MESSAGE = {
+            LOST_CONNECTION = "連接丟失\n\n等待連接...\n\n(Minimize applica設置WIFI設置,然後按連接鍵)\n\n按x取消所有下載和close message\n\n如果網絡恢復正常,所有下載將繼續", 
+            PRESS_TO_UPDATE = "按×更新\n按○取消" 
+        },
+        SETTINGS = {
+            Language = "語言", 
+            ClearChapters = "清除已保存的章節", 
+            ShowNSFW = "顯示成人內容", 
+            ClearLibrary = "清除書架", 
+            ClearCache = "清除未導入的緩存", 
+            ClearAllCache = "清除所有緩存", 
+            ReaderOrientation = "屏幕方向",
+            DoubleTapReader = "啟用雙擊縮放", 
+            ZoomReader = "頁面縮放",
+            SwapXO = "變更按鍵類型", 
+            ShowAuthor = "開發者", 
+            ShowVersion = "應用程序版本", 
+            CheckUpdate = "檢查更新", 
+            SkipFontLoading = "跳過字體加載", 
+            LatestVersion = "最新版本:",
+            PleaseWait = "請稍候", 
+            FailedToUpdate = "app更新失敗", 
+            NoConnection = "沒有網絡連接", 
+            HideInOffline = "僅在離線模式下顯示下載的章節", 
+            UnzipingVPK = "解壓vpk安裝", 
+            CurrentVersionIs = "當前版本:",
+            Space = "已用內存", 
+            ReaderDirection = "閱讀方向",
+            VersionIsUpToDate = "已是最新版本", 
+            EU = "歐洲", 
+            JP = "日本", 
+            PressAgainToAccept = "再次確認操作", 
+            PressAgainToUpdate = "再次確認更新:",
+            Reader = "閱讀",
+            Controls = "控制器", 
+            Data = "數據", 
+            About = "關於", 
+            Catalogs = "目錄", 
+            Library = "書架", 
+            ChangeUI = "主題", 
+            PreferredCatalogLanguage = "首選語言", 
+            LibrarySorting = "書架排序",
+            ChapterSorting = "漫畫章節排序", 
+            RefreshLibAtStart = "在啟動時刷新庫", 
+            Translators = "感謝以下翻譯人員", 
+            ChangingPageButtons = "變更頁面按鈕", 
+            LeftStickDeadZone = "左搖桿死區", 
+            LeftStickSensitivity = "左搖桿靈敏度", 
+            RightStickDeadZone = "右搖桿死區", 
+            RightStickSensitivity = "右搖桿靈敏度", 
+            ResetAllSettings = "重置所有設置", 
+            Other = "其他",
+            SilentDownloads = "不顯示下載通知",
+            Network = "網絡",
+            UseProxy = "使用代理", 
+            ProxyIP = "IP 地址", 
+            ProxyPort = "端口", 
+            UseProxyAuth = "使用代理認證", 
+            ProxyAuth = "驗證密碼", 
+            SkipCacheChapterChecking = "跳過驗證緩存和保存文件", 
+            ConnectionTime = "服務器連接時間", 
+            InputValue = "輸入值", 
+            OpenInBrowser = "在瀏覽器打開", 
+            SaveDataPath = "儲存路徑", 
+        },
+        PAGINGCONTROLS = {
+            ["LR"] = "L和R按鍵", 
+            ["DPAD"] = "使用DPad" 
+        },
+        EXTRA = {
+            ["DownloadAll"] = "下載所有章節", 
+            ["RemoveAll"] = "刪除所有章節", 
+            ["CancelAll"] = "取消下載章節", 
+            ["ClearBookmarks"] = "刪除書簽", 
+            ["OpenMangaInBrowser"] = "用瀏覽器打開漫畫"
+        },
+        THEME = {
+            Dark = "星空黑", 
+            Light = "簡潔白", 
+            Blue = "尼羅藍", 
+            Crimson = "朱砂紅" 
+        },
+        NSFW = {
+            [true] = "顯示", 
+            [false] = "不顯示" 
+        },
+        YORN = {
+            [true] = "是", 
+            [false] = "否" 
+        },
+        PARSERS = {
+            RUS = "俄國",
+            ENG = "英國", 
+            ESP = "西班牙",
+            PRT = "葡萄牙",
+            FRA = "法國",
+            JAP = "日本",
+            DIF = "全語言",
+            TUR = "土耳其",
+            ITA = "意大利",
+            VIE = "越南",
+            DEU = "德國",
+            BRA = "巴西",
+            POL = "波蘭",
+            IDN = "印度尼西亞",
+            CHN = "中國"
+        },
+        WARNINGS = {
+            NO_CHAPTERS = "沒有章節" 
+        },
+        READER = {
+            PREPARING_PAGES = "準備頁面", 
+            LOADING_PAGE = "加載頁面", 
+            LOADING_SEGMENT = "加載階段", 
+            Horizontal = "豎屏",
+            Vertical = "橫屏",
+            Smart = "適應屏幕",
+            Height = "匹配高度",
+            Width = "匹配寬度",
+            LEFT = "從右到左", 
+            RIGHT = "從左到右", 
+            DOWN = "從上到下", 
+            Default = "默認", 
+        },
+        DETAILS = {
+            ADD_TO_LIBRARY = "添加到書架", 
+            REMOVE_FROM_LIBRARY = "從書架中刪除", 
+            PAGE = "當前頁:",
+            CONTINUE = "繼續閱讀", 
+            START = "開始閱讀", 
+            DONE = "已看完", 
+       },
+        NOTIFICATIONS = {
+            ADDED_TO_LIBRARY = "已添加到書架", 
+            REMOVED_FROM_LIBRARY = "從書架中已刪除", 
+            SEARCHING = '正在搜索 "%s"', 
+            START_DOWNLOAD = "%s: %s\n開始下載!",
+            END_DOWNLOAD = "%s: %s\n下載成功!",  
+            CANCEL_DOWNLOAD = "%s: %s\n下載已取消", 
+            CHAPTER_REMOVE = "%s 刪除", 
+            NET_PROBLEM = "連接出現錯誤", 
+            CHAPTERS_CLEARED = "已清除已保存的章節!", 
+            LIBRARY_CLEARED = "書架已清除!", 
+            CACHE_CLEARED = "緩存已被清除!",
+            DEVELOPER_THING = "在Github上為應用標註星號!",
+            NEW_UPDATE_AVAILABLE = "發現新版本",
+            NO_SPACE_LEFT = "沒有剩余空間",
+            REFRESH_COMPLETED = "刷新完成!",
+            IMPORT_COMPLETED = "導入完成!",
+            SETTINGS_RESET = "設置已重置"
+        },
+        MODES = {
+            Popular = "熱門",
+            Latest = "最新",
+            Search = "搜索",
+            Alphabet = "字母",
+            ByLetter = "按信息",
+            ByTag = "按標簽",
+        },
+        PANEL = {
+            BACK = "返回",
+            MODE = "模式",
+            --MODE_POPULAR = "模式：熱門",
+            --MODE_LATEST = "模式：最新",
+            --MODE_SEARCHING = '模式：搜索 "%s"',
+            JUMPTOPAGE = "跳轉到頁面",
+            SEARCH = "搜索",
+            SELECT = "確認",
+            CHOOSE = "選擇",
+            IMPORT = "導入",
+            CHANGE_SECTION = "變更頁面",
+            UPDATE = "刷新",
+            CANCEL = "取消",
+            DELETE = "刪除",
+            FOLLOW = "關註",
+            UNFOLLOW = "取消關註"
+        },
+        IMPORT = {
+            EXTERNAL_MEMORY = "外部內存", 
+            DRIVE = "驅動",
+            FOLDER = "文件夾", 
+            GOBACK = "返回", 
+            FILE = "文件",
+            UNSUPFILE = "不支持文件" 
+        }
     }
 }
 
@@ -1571,6 +1980,8 @@ LanguageNames = {
         French = "Французский",
         Italian = "Итальянский",
         PortugueseBR = "Бразильский португальский",
+        SimplifiedChinese = "Упрощенный китайский",
+        TraditionalChinese = "традиционный китайский",
         Default = "Системный"
     },
     English = {
@@ -1582,6 +1993,8 @@ LanguageNames = {
         French = "French",
         Italian = "Italian",
         PortugueseBR = "Brazilian portuguese",
+        SimplifiedChinese = "Simplified Chinese",
+        TraditionalChinese = "Traditional Chinese",
         Default = "System"
     },
     Turkish = {
@@ -1593,6 +2006,8 @@ LanguageNames = {
         French = "Fransızca",
         Italian = "İtalyanca",
         PortugueseBR = "Brezilya Portekizcesi",
+        SimplifiedChinese = "Basitleştirilmiş Çince",
+        TraditionalChinese = "Geleneksel Çince",
         Default = "Sistem Dili"
     },
     Spanish = {
@@ -1604,6 +2019,8 @@ LanguageNames = {
         French = "Francés",
         Italian = "Italiano",
         PortugueseBR = "Portugués Brasileño",
+        SimplifiedChinese = "Chino Simplificado",
+        TraditionalChinese = "Chino Tradicional",
         Default = "Sistema"
     },
     Vietnamese = {
@@ -1615,6 +2032,8 @@ LanguageNames = {
         French = "PhápF",
         Vietnamese = "Tiếng Việt",
         PortugueseBR = "Tiếng Bồ Đào Nha của người brazi",
+        SimplifiedChinese = "Tiếng Trung Giản Thể",
+        TraditionalChinese = "Truyền Thống Trung Quốc",
         Default = "Hệ thống"
     },
     Italian = {
@@ -1626,6 +2045,8 @@ LanguageNames = {
         French = "Francese",
         Vietnamese = "Vietnamese",
         PortugueseBR = "Portoghese Brasiliano",
+        SimplifiedChinese = "Cinese Semplificato",
+        TraditionalChinese = "Cinese Tradizionale",
         Default = "Sistema"
     },
     French = {
@@ -1637,6 +2058,8 @@ LanguageNames = {
         French = "Français",
         Vietnamese = "Vietnamien",
         PortugueseBR = "Portugais brésilien",
+        SimplifiedChinese = "Chinois simplifié",
+        TraditionalChinese = "Chinois traditionnel",
         Default = "Système"
     },
     PortugueseBR = {
@@ -1648,7 +2071,35 @@ LanguageNames = {
         French = "Francês",
         Vietnamese = "Vietnamita",
         PortugueseBR = "Português Brasileiro",
+        SimplifiedChinese = "Chinês Simplificado",
+        TraditionalChinese = "Chinês Tradicional",
         Default = "Sistema"
+    },
+    SimplifiedChinese = {
+        Russian = "俄语",
+        English = "英语",
+        Turkish = "土耳其语",
+        Spanish = "西班牙语",
+        Vietnamese = "越南语",
+        French = "法语",
+        Italian = "意大利语",
+        PortugueseBR = "巴西葡萄牙语",
+        SimplifiedChinese = "简体中文",
+        TraditionalChinese = "繁体中文",
+        Default = "默认"
+    },
+    TraditionalChinese = {
+        Russian = "俄語",
+        English = "英語",
+        Turkish = "土耳其語",
+        Spanish = "西班牙語",
+        Vietnamese = "越南語",
+        French = "法語",
+        Italian = "意大利語",
+        PortugueseBR = "巴西葡萄牙語",
+        SimplifiedChinese = "簡體中文",
+        TraditionalChinese = "繁體中文",
+        Default = "默認"
     }
 }
 
@@ -1671,6 +2122,12 @@ elseif language_now == 2 then
 elseif language_now == 17 then
     Language.Default = Language.PortugueseBR
     LanguageNames.Default = LanguageNames.PortugueseBR
+elseif language_now == 11 then
+    Language.Default = Language.SimplifiedChinese
+    LanguageNames.Default = LanguageNames.SimplifiedChinese
+elseif language_now == 10 then
+    Language.Default = Language.TraditionalChinese
+    LanguageNames.Default = LanguageNames.TraditionalChinese
 else
     Language.Default = Language.English
     LanguageNames.Default = LanguageNames.English
