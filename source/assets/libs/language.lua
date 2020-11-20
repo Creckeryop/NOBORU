@@ -1652,7 +1652,7 @@ Language = {
             ["RemoveAll"] = "删除所有章节", 
             ["CancelAll"] = "取消下载章节", 
             ["ClearBookmarks"] = "删除书签", 
-            ["OpenMangaInBrowser"] = "用浏览器打开漫画", 
+            ["OpenMangaInBrowser"] = "用浏览器打开漫画"
         },
         THEME = {
             Dark = "星空黑", 
