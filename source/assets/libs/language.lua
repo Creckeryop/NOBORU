@@ -165,7 +165,8 @@ Language = {
             NO_SPACE_LEFT = "Недостаточно места",
             REFRESH_COMPLETED = "Обновление выполнено!",
             IMPORT_COMPLETED = "Импорт завершен!",
-            SETTINGS_RESET = "Настройки были сброшены"
+            SETTINGS_RESET = "Настройки были сброшены",
+            BAD_IMAGE_FOUND = "Обнаружено недопустимое изображение!"
         },
         MODES = {
             Popular = "Популярная",
@@ -361,7 +362,8 @@ Language = {
             NO_SPACE_LEFT = "No space left",
             REFRESH_COMPLETED = "Refresh completed!",
             IMPORT_COMPLETED = "Import completed!",
-            SETTINGS_RESET = "Settings have been reset"
+            SETTINGS_RESET = "Settings have been reset",
+            BAD_IMAGE_FOUND = "Bad Image found!"
         },
         MODES = {
             Popular = "Popular",
@@ -557,7 +559,8 @@ Language = {
             NO_SPACE_LEFT = "Hafıza Yetersiz",
             REFRESH_COMPLETED = "Yenileme Tamamlandı",
             IMPORT_COMPLETED = "İçe Aktarma Tamamlandı",
-            SETTINGS_RESET = "Seçenekler Sıfırlandı"
+            SETTINGS_RESET = "Seçenekler Sıfırlandı",
+            BAD_IMAGE_FOUND = "Kötü Görüntü bulundu!"
         },
         MODES = {
             Popular = "Popüler",
@@ -753,7 +756,8 @@ Language = {
             NO_SPACE_LEFT = "Không đủ dung lượng lưu trữ!",
             REFRESH_COMPLETED = "Làm mới hoàn tất!",
             IMPORT_COMPLETED = "Nhập khẩu hoàn tất!",
-            SETTINGS_RESET = "Đã đặt lại các cài đặt!"
+            SETTINGS_RESET = "Đã đặt lại các cài đặt!",
+            BAD_IMAGE_FOUND = "Đã tìm thấy hình ảnh xấu!"
         },
         MODES = {
             Popular = "Phổ biến",
@@ -949,7 +953,8 @@ Language = {
             NO_SPACE_LEFT = "No hay espacio",
             REFRESH_COMPLETED = "Refresco completado!",
             IMPORT_COMPLETED = "Importación completado!",
-            SETTINGS_RESET = "Los ajustes han sido resteados"
+            SETTINGS_RESET = "Los ajustes han sido resteados",
+            BAD_IMAGE_FOUND = "Se encontró una imagen incorrecta!"
         },
         MODES = {
             Popular = "Populares",
@@ -1145,7 +1150,8 @@ Language = {
             NO_SPACE_LEFT = "Non è rimasto spazio",
             REFRESH_COMPLETED = "Aggiornamento completato!",
             IMPORT_COMPLETED = "Importazione completato!",
-            SETTINGS_RESET = "Le impostazioni sono state ripristinate"
+            SETTINGS_RESET = "Le impostazioni sono state ripristinate",
+            BAD_IMAGE_FOUND = "È stata trovata una cattiva immagine!"
         },
         MODES = {
             Popular = "Popolare",
@@ -1341,7 +1347,8 @@ Language = {
             NO_SPACE_LEFT = "Plus d'espace disponible",
             REFRESH_COMPLETED = "Mise à jour complète!",
             IMPORT_COMPLETED = "Importation complète!",
-            SETTINGS_RESET = "Les paramètres vont être restauré"
+            SETTINGS_RESET = "Les paramètres vont être restauré",
+            BAD_IMAGE_FOUND = "Mauvaise image trouvée!"
         },
         MODES = {
             Popular = "Populaire",
@@ -1537,7 +1544,8 @@ Language = {
             NO_SPACE_LEFT = "Sem espaço",
             REFRESH_COMPLETED = "Atualização completada!",
             IMPORT_COMPLETED = "Importação completa!",
-            SETTINGS_RESET = "Configurações foram resetadas"
+            SETTINGS_RESET = "Configurações foram resetadas",
+            BAD_IMAGE_FOUND = "Cmagem ruim encontrada!"
         },
         MODES = {
             Popular = "Popular",
@@ -1735,7 +1743,8 @@ Language = {
             NO_SPACE_LEFT = "没有剩余空间",
             REFRESH_COMPLETED = "刷新完成!",
             IMPORT_COMPLETED = "导入完成!",
-            SETTINGS_RESET = "设置已重置"
+            SETTINGS_RESET = "设置已重置",
+            BAD_IMAGE_FOUND = "导入图像错误!"
         },
         MODES = {
             Popular = "热门",
@@ -1931,7 +1940,8 @@ Language = {
             NO_SPACE_LEFT = "沒有剩余空間",
             REFRESH_COMPLETED = "刷新完成!",
             IMPORT_COMPLETED = "導入完成!",
-            SETTINGS_RESET = "設置已重置"
+            SETTINGS_RESET = "設置已重置",
+            BAD_IMAGE_FOUND = "導入圖像錯誤!"
         },
         MODES = {
             Popular = "熱門",
