@@ -283,7 +283,7 @@ function ChapterSaver.importManga(path)
                     local dir_ = listDirectory(path .. "/" .. folder.name) or {}
                     for _, file in ipairs(dir_) do
                         if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. file.name) or -1) <= 0 and not file.name:find("%.txt$") and not file.name:find("%.xml$") then
-                            Notifications.push("Bad Image found")
+                            Notifications.push(Language[Settings.Language].NOTIFICATIONS.BAD_IMAGE_FOUND)
                             Downloading[path].Fail = true
                             Downloading[path] = nil
                             return
