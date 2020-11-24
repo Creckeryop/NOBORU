@@ -1993,7 +1993,7 @@ LanguageNames = {
         Italian = "Итальянский",
         PortugueseBR = "Бразильский португальский",
         SimplifiedChinese = "Упрощенный китайский",
-        TraditionalChinese = "традиционный китайский",
+        TraditionalChinese = "Традиционный китайский",
         Default = "Системный"
     },
     English = {

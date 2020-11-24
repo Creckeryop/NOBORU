@@ -710,6 +710,7 @@ function Catalogs.draw()
                 end
             elseif task == "ShowAuthor" then
                 Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_GRAY)
+                Font.print(FONT16, 225 + Font.getTextWidth(FONT16,"@creckeryop") + 20, y - 44, "email: didager@ya.ru", COLOR_ROYAL_BLUE)
             elseif task == "ShowVersion" then
                 Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_GRAY)
             elseif task == "ReaderDirection" then
