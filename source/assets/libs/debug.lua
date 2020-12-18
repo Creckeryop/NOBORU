@@ -3,7 +3,8 @@ Debug = {}
 local DEBUG_MODE = 0
 local MAX_DEBUG = 2
 
-local pad, oldpad = 0
+local pad, oldpad = 0, 0
+
 function Debug.input()
     oldpad, pad = pad, Controls.read()
     if bit32.bxor(pad, SCE_CTRL_START + SCE_CTRL_LEFT) == 0 and bit32.bxor(oldpad, SCE_CTRL_START + SCE_CTRL_LEFT) ~= 0 then

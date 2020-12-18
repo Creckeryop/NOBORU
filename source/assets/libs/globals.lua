@@ -13,7 +13,7 @@ ffi.cdef [[
 
 Point_t = ffi.typeof("Point_t")
 
-TOUCH = function()
+function TOUCH()
     return {
         NONE = 0,
         READ = 1,

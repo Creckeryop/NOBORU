@@ -333,6 +333,7 @@ local set_list = {
 
 ---Table of current options
 local set_list_tab = set_list
+local set_list_stack = {}
 
 ---@return table
 ---Return list of available options
@@ -344,26 +345,30 @@ end
 ---@return boolean
 ---Checks if setting is submenu
 function settings.isTab(mode)
-    return set_list[mode] ~= nil
+    return set_list_tab[mode] ~= nil
 end
 
 ---@param mode string
 ---Sets settings menu as submenu `mode`
 function settings.setTab(mode)
-    if set_list[mode] then
-        set_list_tab = set_list[mode]
+    if set_list_tab[mode] then
+        set_list_stack[#set_list_stack + 1] = set_list_tab
+        set_list_tab = set_list_tab[mode]
     end
 end
 
 ---@return boolean
 ---Checks if settings not in main settings menu (subsettings screen)
 function settings.inTab()
-    return set_list_tab ~= set_list
+    return #set_list_stack > 0
 end
 
 ---Throws in main settings menu
 function settings.back()
-    set_list_tab = set_list
+    if #set_list_stack > 0 then
+        set_list_tab = set_list_stack[#set_list_stack]
+        set_list_stack[#set_list_stack] = nil
+    end
 end
 
 local last_vpk_link

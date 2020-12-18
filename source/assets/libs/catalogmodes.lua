@@ -1,6 +1,6 @@
 local mode = "END"
 
-local fade, old_fade = 0
+local fade, old_fade = 0, 0
 
 CatalogModes = {}
 
