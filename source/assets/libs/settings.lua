@@ -306,8 +306,10 @@ local set_list = {
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
+        "AdvancedChaptersDeletion",
         "ClearChapters",
-        "ResetAllSettings"
+        "ResetAllSettings",
+        AdvancedChaptersDeletion = {}
     },
     Other = {
         "SkipFontLoading",
@@ -334,6 +336,8 @@ local set_list = {
 ---Table of current options
 local set_list_tab = set_list
 local set_list_stack = {}
+local tab_name = "MainSettingsMenu"
+local tab_name_stack = {}
 
 ---@return table
 ---Return list of available options
@@ -345,15 +349,112 @@ end
 ---@return boolean
 ---Checks if setting is submenu
 function settings.isTab(mode)
-    return set_list_tab[mode] ~= nil
+    return set_list_tab[mode] ~= nil or tab_name == "AdvancedChaptersDeletion"
 end
+
+local listDirectory = System.listDirectory
 
 ---@param mode string
 ---Sets settings menu as submenu `mode`
 function settings.setTab(mode)
-    if set_list_tab[mode] then
-        set_list_stack[#set_list_stack + 1] = set_list_tab
-        set_list_tab = set_list_tab[mode]
+    if tab_name == "AdvancedChaptersDeletion" then
+        Reader.load({{
+            FastLoad = true,
+            Name = mode.name,
+            Link = "AABBCCDDEEFFGG",
+            Path = mode.chapter_path,
+            Pages = {},
+            Manga = {
+                Name = mode.name,
+                Link = "AABBCCDDEEFFGG",
+                ImageLink = "",
+                ParserID = "IMPORTED"
+            }
+        }}, 1)
+        AppMode = READER
+    else
+        if set_list_tab[mode] then
+            if mode == "AdvancedChaptersDeletion" then
+                local possibilities = {}
+                
+                local cached = Cache.getManga()
+                for _, manga in pairs(cached) do
+                    local chapters = Cache.loadChapters(manga)
+                    for _, chapter in pairs(chapters) do
+                        possibilities[ChapterSaver.getKey(chapter)] = chapter
+                    end
+                end
+
+                local t = {}
+                for _, v in pairs(listDirectory("ux0:data/noboru/chapters")) do
+                    if v.directory and not v.name:find("^IMPORTED") then
+                        if possibilities[v.name] then
+                            local manga = possibilities[v.name].Manga
+                            local chapter = possibilities[v.name]
+                            t[#t + 1] = {
+                                name = manga.Name,
+                                info = chapter.Name,
+                                type = "savedChapter",
+                                chapter_path = "ux0:data/noboru/chapters/"..v.name,
+                                key = v.name
+                            }
+                        else
+                            t[#t + 1] = {
+                                name = "Unknown Manga ID: "..(v.name:match("^([^_]+)_") or "UNKNOWN"),
+                                info = v.name:match("^[^_]+_(.+)$") or v.name,
+                                type = "savedChapter",
+                                chapter_path = "ux0:data/noboru/chapters/"..v.name,
+                                key = v.name
+                            }
+                        end
+                    end
+                end
+                if doesDirExist("uma0:") then
+                    for _, v in pairs(listDirectory("uma0:data/noboru/chapters")) do
+                        if v.directory and not v.name:find("^IMPORTED") then
+                            if possibilities[v.name] then
+                                local manga = possibilities[v.name].Manga
+                                local chapter = possibilities[v.name]
+                                t[#t + 1] = {
+                                    name = manga.Name,
+                                    info = chapter.Name,
+                                    type = "savedChapter",
+                                    chapter_path = "uma0:data/noboru/chapters/"..v.name,
+                                    key = v.name
+                                }
+                            else
+                                t[#t + 1] = {
+                                    name = "Unknown Manga ID: "..(v.name:match("^([^_]+)_") or "UNKNOWN"),
+                                    info = v.name:match("^[^_]+_(.+)$") or v.name,
+                                    type = "savedChapter",
+                                    chapter_path = "uma0:data/noboru/chapters/"..v.name,
+                                    key = v.name
+                                }
+                            end
+                        end
+                    end
+                end
+                set_list_tab[mode] = t
+            end
+            set_list_stack[#set_list_stack + 1] = set_list_tab
+            set_list_tab = set_list_tab[mode]
+            tab_name_stack[#tab_name_stack + 1] = tab_name
+            tab_name = mode
+        end
+    end
+end
+
+---@param mode string
+---Deletes `mode` submenu from settings
+function settings.delTab(mode)
+    if tab_name == "AdvancedChaptersDeletion" then
+        for k, v in pairs(set_list_tab) do
+            if v.chapter_path == mode.chapter_path then
+                table.remove(set_list_tab, k)
+            end
+        end
+        rem_dir(mode.chapter_path)
+        ChapterSaver.removeByKeyUnsafe(mode.key)
     end
 end
 
@@ -363,11 +464,19 @@ function settings.inTab()
     return #set_list_stack > 0
 end
 
+---@return string
+---Returns tab name of settings that user is in
+function settings.getTab()
+    return tab_name
+end
+
 ---Throws in main settings menu
 function settings.back()
     if #set_list_stack > 0 then
         set_list_tab = set_list_stack[#set_list_stack]
         set_list_stack[#set_list_stack] = nil
+        tab_name = tab_name_stack[#tab_name_stack]
+        tab_name_stack[#tab_name_stack] = nil
     end
 end
 

@@ -22,6 +22,16 @@ end
 
 Cache.getKey = get_key
 
+---@return table
+---Returns all manga in cache
+function Cache.getManga()
+    local t = {}
+    for k, v in pairs(data) do
+        t[k] = v
+    end
+    return t
+end
+
 ---@param Manga table
 ---@param Chapters table | nil
 ---Adds `Manga` to cache if it is not in cache

@@ -561,6 +561,14 @@ function ChapterSaver.delete(chapter, silent)
     end
 end
 
+---@param key any
+---Deletes saved chapter by key (unsafe only for settings)
+function ChapterSaver.removeByKeyUnsafe(key)
+    Keys[key] = nil
+    ChapterSaver.save()
+end
+
+
 local cached = {}
 
 ---@return table
@@ -621,6 +629,8 @@ local function to_lines(str)
     return lines
 end
 
+local statFile = System.statFile
+
 ---@param chapter table
 ---@return table
 ---Gives table with all pathes to chapters images (pages)
@@ -629,16 +639,31 @@ function ChapterSaver.getChapter(chapter)
         local _table_ = {
             Done = true
         }
-        local zip = listZip(chapter.Path) or {}
-        table.sort(zip, function(a, b)
-            return a.name < b.name
-        end)
-        for i, file in ipairs(zip) do
-            if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
-                _table_[#_table_ + 1] = {
-                    Extract = file.name,
-                    Path = chapter.Path
-                }
+        local info = statFile(chapter.Path)
+        if info and info.directory then
+            local dir = listDirectory(chapter.Path) or {}
+            table.sort(dir, function(a, b)
+                return a.name < b.name
+            end)
+            for i, file in ipairs(dir) do
+                if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$") or file.name:find("%.image$")) then
+                    _table_[#_table_ + 1] = {
+                        Path = chapter.Path .."/" ..file.name
+                    }
+                end
+            end
+        else
+            local zip = listZip(chapter.Path) or {}
+            table.sort(zip, function(a, b)
+                return a.name < b.name
+            end)
+            for i, file in ipairs(zip) do
+                if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
+                    _table_[#_table_ + 1] = {
+                        Extract = file.name,
+                        Path = chapter.Path
+                    }
+                end
             end
         end
         return _table_

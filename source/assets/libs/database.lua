@@ -16,6 +16,7 @@ local doesDirExist = System.doesDirExist
 local function get_key(Manga)
     return (Manga.ParserID .. Manga.Link):gsub("%p", "")
 end
+
 ---Gets Manga list from database
 function Database.getMangaList()
     local b = {}
