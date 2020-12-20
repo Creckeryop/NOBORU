@@ -28,6 +28,8 @@ function Debug.draw()
         Font.print(FONT16, 480 - Font.getTextWidth(FONT16, mem_var) / 2, 0, mem_var, Color.new(255, 128, 0))
         local mem_gpu = "GPU: " .. MemToStr(GetTextureMemoryUsed())
         Font.print(FONT16, 240 - Font.getTextWidth(FONT16, mem_gpu) / 2, 0, mem_gpu, Color.new(0, 0, 255))
+        local mem_gpu_free = "FREE_GPU: " .. MemToStr(Graphics.getFreeMemory())
+        Font.print(FONT16, 240 - Font.getTextWidth(FONT16, mem_gpu_free) / 2, 20, mem_gpu_free, Color.new(0, 0, 255))
         Console.draw(1)
     elseif DEBUG_MODE == 2 then
         Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))

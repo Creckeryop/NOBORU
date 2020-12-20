@@ -151,14 +151,14 @@ function Threads.update()
                         end
                     end
                     Console.write(Width .. "x" .. Height .. " Image got")
-                    if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY and Height <= 4096 and Height / Width <= 2 then
+                    if img2bytes(Width, Height, 1) > Graphics.getFreeMemory() and Height <= 4096 and Height / Width <= 2 then
                         Console.error("No enough memory to load image")
                         uniques[Task.UniqueKey] = nil
                         Task = nil
                     else
                         if Height > 4096 and Height / Width > 2 then
-                            if GetTextureMemoryUsed() + img2bytes(Width, Height, 1) > MAX_VRAM_MEMORY then
-                                if GetTextureMemoryUsed() + img2bytes(Width, Height, 2) > MAX_VRAM_MEMORY then
+                            if img2bytes(Width, Height, 1) > Graphics.getFreeMemory()  then
+                                if img2bytes(Width, Height, 2) > Graphics.getFreeMemory()  then
                                     Console.error("No enough memory to load image")
                                     uniques[Task.UniqueKey] = nil
                                     Task = nil
