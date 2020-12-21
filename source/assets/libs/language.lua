@@ -82,6 +82,17 @@ Language = {
             OpenInBrowser = "Открыть в браузере",
             SaveDataPath = "Место сохранения данных",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Настройки связанные с отслеживанием манги",
+            Catalogs = "Язык, NSFW контент",
+            Reader = "Направление чтения, ориентация, масштаб",
+            Network = "Время отклика сервера, прокси",
+            Data = "Сохранения, кэш, настройки",
+            AdvancedChaptersDeletion = "Чтение, удаление",
+            Other = "Загрузка шрифтов, сортировки глав, уведомления",
+            Controls = "Настройки раскладки, кнопки смены страниц, настройка стиков",
+            About = "Версия, обновление"
+        },
         PAGINGCONTROLS = {
             ["LR"] = "L и R триггеры",
             ["DPAD"] = "Используя крестовину"
@@ -122,7 +133,8 @@ Language = {
             BRA = "Бразильский",
             POL = "Польский",
             IDN = "Индонезийский",
-            CHN = "Китай"
+            CHN = "Китай",
+            RAW = "Оригинал"
         },
         WARNINGS = {
             NO_CHAPTERS = "Главы не найдены"
@@ -281,6 +293,17 @@ Language = {
             OpenInBrowser = "Open in browser",
             SaveDataPath = "Save data path",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking",
+            Catalogs = "Language, NSFW content",
+            Reader = "Read direction, orientation, zoom",
+            Network = "Connection timeout, proxy",
+            Data = "Saves, cache, settings",
+            AdvancedChaptersDeletion = "Read, remove",
+            Other = "Font loading, chapters sorting, notifications",
+            Controls = "KeyType, change page buttons, sticks settings",
+            About = "Version, update"
+        },
         PAGINGCONTROLS = {
             ["LR"] = "L and R triggers",
             ["DPAD"] = "Using DPad"
@@ -321,7 +344,8 @@ Language = {
             BRA = "Brazil",
             POL = "Polish",
             IDN = "Indonesian",
-            CHN = "China"
+            CHN = "Chinese",
+            RAW = "Raw"
         },
         WARNINGS = {
             NO_CHAPTERS = "No chapters"
@@ -480,6 +504,17 @@ Language = {
             OpenInBrowser = "Tarayıcıda Aç",
             SaveDataPath = "Kaydetme Yolu",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "L1 R1 Tuşları",
             ["DPAD"] = "DPAD Tuşları"
@@ -520,7 +555,8 @@ Language = {
             BRA = "Brezilya Dili",
             POL = "Lehçe",
             IDN = "Endonezya",
-            CHN = "Çin"
+            CHN = "Çin",
+            RAW = "Raw" --translate please
         },
         WARNINGS = {
             NO_CHAPTERS = "Hiç Bölüm Yok"
@@ -679,6 +715,17 @@ Language = {
             OpenInBrowser = "Mở trong trình duyệt",
             SaveDataPath = "Save data path", --Need to translate
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "Sử dụng L và R",
             ["DPAD"] = "Sử dụng DPad"
@@ -719,7 +766,8 @@ Language = {
             BRA = "Brazil",
             POL = "Ba Lan",
             IDN = "Tiếng Indonesia",
-            CHN = "Trung Quốc"
+            CHN = "Trung Quốc",
+            RAW = "Raw" --translate please
         },
         WARNINGS = {
             NO_CHAPTERS = "Không có tập nào!"
@@ -878,6 +926,17 @@ Language = {
             OpenInBrowser = "Abrir en navegador",
             SaveDataPath = "Guarda ruta de datos",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "Botones L y R",
             ["DPAD"] = "Usar DPad"
@@ -918,7 +977,8 @@ Language = {
             BRA = "Brasileño",
             POL = "Polaco",
             IDN = "Indonesia",
-            CHN = "China"
+            CHN = "China",
+            RAW = "Raw" --translate please
         },
         WARNINGS = {
             NO_CHAPTERS = "No hay capítulos"
@@ -1077,6 +1137,17 @@ Language = {
             OpenInBrowser = "Apri nel browser",
             SaveDataPath = "Salva percorso dati",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "L e R triggers",
             ["DPAD"] = "Utilizza DPad"
@@ -1117,7 +1188,8 @@ Language = {
             BRA = "Brasiliano",
             POL = "Polacco",
             IDN = "Indonesiano",
-            CHN = "Cina"
+            CHN = "Cina",
+            RAW = "Raw" --translate please
         },
         WARNINGS = {
             NO_CHAPTERS = "Nessun capitolo"
@@ -1276,6 +1348,17 @@ Language = {
             OpenInBrowser = "Ouvrir dans le navigateur",
             SaveDataPath = "Emplacement de la sauvegarde",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "Boutons L et R",
             ["DPAD"] = "Utiliser le Dpad"
@@ -1316,7 +1399,8 @@ Language = {
             BRA = "Brésilien",
             POL = "Polonais",
             IDN = "Indonésien",
-            CHN = "Chine"
+            CHN = "Chine",
+            RAW = "Raw" --translate please
         },
         WARNINGS = {
             NO_CHAPTERS = "Pas de chapitres"
@@ -1475,6 +1559,17 @@ Language = {
             OpenInBrowser = "Abrir no navegador",
             SaveDataPath = "Salvar caminho dos dados",
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "Botões L e R",
             ["DPAD"] = "Usando DPad"
@@ -1515,7 +1610,8 @@ Language = {
             BRA = "Português-Brasil",
             POL = "Polonês",
             IDN = "Indonésien",
-            CHN = "China"
+            CHN = "China",
+            RAW = "Raw" --translate please
         },
         WARNINGS = {
             NO_CHAPTERS = "Sem capítulos"
@@ -1676,6 +1772,17 @@ Language = {
             OpenInBrowser = "在浏览器中打开", 
             SaveDataPath = "储存路径", 
         },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
+        },
         PAGINGCONTROLS = {
             ["LR"] = "L和R按键", 
             ["DPAD"] = "使用DPad" 
@@ -1743,7 +1850,7 @@ Language = {
             CONTINUE = "继续阅读", 
             START = "开始阅读", 
             DONE = "已看完", 
-       },
+        },
         NOTIFICATIONS = {
             ADDED_TO_LIBRARY = "已添加到书架", 
             REMOVED_FROM_LIBRARY = "从书架中已删除", 
@@ -1875,6 +1982,17 @@ Language = {
             InputValue = "輸入值", 
             OpenInBrowser = "在瀏覽器中打開", 
             SaveDataPath = "儲存路徑", 
+        },
+        SETTINGS_DESCRIPTION = {
+            Library = "Settings related to manga tracking", --translate please
+            Catalogs = "Language, NSFW content", --translate please
+            Reader = "Read direction, orientation, zoom", --translate please
+            Network = "Connection timeout, proxy", --translate please
+            Data = "Saves, cache, settings", --translate please
+            AdvancedChaptersDeletion = "Read, remove", --translate please
+            Other = "Font loading, chapters sorting, notifications", --translate please
+            Controls = "KeyType, change page buttons, sticks settings", --translate please
+            About = "Version, update" --translate please
         },
         PAGINGCONTROLS = {
             ["LR"] = "L和R按鍵", 

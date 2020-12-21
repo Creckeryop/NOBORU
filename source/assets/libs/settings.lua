@@ -277,7 +277,7 @@ end
 
 ---Table of all available options
 local set_list = {
-    "Language", "ChangeUI", "Library", "Catalogs", "Reader", "Network", "Data", "Other", "Controls", "About",
+    "Language", "ChangeUI", "Library", "Catalogs", "Reader", "Network", "Data", "AdvancedChaptersDeletion", "Other", "Controls", "About",
     Library = {
         "LibrarySorting",
         "RefreshLibAtStart"
@@ -306,10 +306,11 @@ local set_list = {
         "ClearLibrary",
         "ClearCache",
         "ClearAllCache",
-        "AdvancedChaptersDeletion",
         "ClearChapters",
         "ResetAllSettings",
-        AdvancedChaptersDeletion = {}
+    },
+    AdvancedChaptersDeletion = {
+
     },
     Other = {
         "SkipFontLoading",

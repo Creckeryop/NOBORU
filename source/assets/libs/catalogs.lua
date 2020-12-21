@@ -610,6 +610,9 @@ function Catalogs.draw()
                 end
             else
                 Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
+                if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_GRAY)
+                end
                 if task == "Language" then
                     Font.print(FONT16, 225, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
                 elseif task == "ClearChapters" then
