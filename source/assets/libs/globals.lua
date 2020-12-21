@@ -36,7 +36,9 @@ COLOR_LIGHT_GRAY = Color.new(192, 192, 192)
 COLOR_ROYAL_BLUE = Color.new(65, 105, 226)
 COLOR_CRIMSON = Color.new(137, 30, 43)
 
+COLOR_COVER = Color.new(101, 115, 146)
 COLOR_FONT = COLOR_WHITE
+COLOR_SUBFONT = COLOR_GRAY
 COLOR_BACK = COLOR_WHITE
 COLOR_SELECTED = COLOR_WHITE
 COLOR_ICON_EXTRACT = COLOR_WHITE
@@ -286,7 +288,7 @@ function DrawManga(x, y, Manga)
             Graphics.drawImageExtended(x, y, Manga.Image.e, s_x, 0, w, height, 0, scale, scale)
         end
     else
-        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(101, 115, 146))
+        Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, COLOR_COVER)
     end
     Graphics.drawScaleImage(x - MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2 - 120, LUA_GRADIENT.e, MANGA_WIDTH, 1)
     if Manga.Name then
@@ -327,6 +329,6 @@ function DrawDetailsManga(x, y, Manga, M)
             Graphics.drawImageExtended(x, y, Manga.Image.e, s_x, 0, w, height, 0, scale * M, scale * M)
         end
     else
-        Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(101, 115, 146))
+        Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, COLOR_COVER)
     end
 end

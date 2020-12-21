@@ -502,7 +502,7 @@ function Catalogs.draw()
             end
             Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
             local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
-            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, Color.new(101, 101, 101))
+            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
             local width = Font.getTextWidth(FONT26, parser.Name)
             if Settings.FavouriteParsers[parser.ID] then
                 Graphics.drawImage(230 + width, y - 70 + 8, Mini_star_icon.e, COLOR_ROYAL_BLUE)
@@ -517,9 +517,9 @@ function Catalogs.draw()
             elseif parser.isUpdated then
                 Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Updated"), "Updated", COLOR_CRIMSON)
             end
-            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, Color.new(101, 101, 101))
+            Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUBFONT)
             local link_text = parser.Link .. "/"
-            Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_GRAY)
+            Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
             y = y + 75
         end
         local elements_count = #Parsers
@@ -541,7 +541,7 @@ function Catalogs.draw()
             elseif object.directory then
                 Font.print(FONT26, 225, y - 70, "*" .. Language[Settings.Language].IMPORT.EXTERNAL_MEMORY .. "*", COLOR_ROYAL_BLUE)
             else
-                Font.print(FONT26, 225, y - 70, object.name, COLOR_GRAY)
+                Font.print(FONT26, 225, y - 70, object.name, COLOR_SUBFONT)
             end
             Graphics.fillRect(945, 955, y - 75, y - 1, COLOR_BACK)
             if object.active and object.name ~= "..." then
@@ -552,7 +552,7 @@ function Catalogs.draw()
                 end
             end
             local text_dis = object.name == "..." and Language[Settings.Language].IMPORT.GOBACK or object.directory and (object.active and Language[Settings.Language].IMPORT.FOLDER or Language[Settings.Language].IMPORT.DRIVE .. " \"" .. object.name .. "\"") or object.active and Language[Settings.Language].IMPORT.FILE or Language[Settings.Language].IMPORT.UNSUPFILE
-            Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, Color.new(128, 128, 128))
+            Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, COLOR_SUBFONT)
             if object.active and object.name ~= "..." then
                 Graphics.drawImage(925 - 16 - 12, y - 38 - 14, Import_icon.e, COLOR_ICON_EXTRACT)
             end
@@ -606,12 +606,12 @@ function Catalogs.draw()
             if type(task) == "table" then
                 Font.print(FONT20, 225, y - 70, task.name, COLOR_FONT)
                 if task.type == "savedChapter" then
-                    Font.print(FONT16, 225, y - 44, task.info, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, task.info, COLOR_SUBFONT)
                 end
             else
                 Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
                 if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUBFONT)
                 end
                 if task == "Language" then
                     Font.print(FONT16, 225, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
@@ -630,14 +630,14 @@ function Catalogs.draw()
                         end
                         get_space_dir("ux0:data/noboru/chapters")
                     end
-                    Font.print(FONT16, 225, y - 44, MemToStr(chapters_space), COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, MemToStr(chapters_space), COLOR_SUBFONT)
                     if sure_clear_chapters > 0 then
                         Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                     end
                 elseif task == "ReaderOrientation" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_SUBFONT)
                 elseif task == "PreferredCatalogLanguage" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].PARSERS[Settings.ParserLanguage] or Settings.ParserLanguage or "error_type", COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].PARSERS[Settings.ParserLanguage] or Settings.ParserLanguage or "error_type", COLOR_SUBFONT)
                 elseif task == "ShowNSFW" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
                 elseif task == "HideInOffline" then
@@ -645,7 +645,7 @@ function Catalogs.draw()
                 elseif task == "SkipFontLoading" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SkipFontLoad], COLOR_ROYAL_BLUE)
                 elseif task == "ZoomReader" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_SUBFONT)
                 elseif task == "DoubleTapReader" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.DoubleTapReader], COLOR_ROYAL_BLUE)
                 elseif task == "RefreshLibAtStart" then
@@ -653,53 +653,53 @@ function Catalogs.draw()
                 elseif task == "SilentDownloads" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SilentDownloads], COLOR_ROYAL_BLUE)
                 elseif task == "ChangeUI" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].THEME[Settings.Theme] or Settings.Theme, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].THEME[Settings.Theme] or Settings.Theme, COLOR_SUBFONT)
                 elseif task == "LibrarySorting" then
-                    Font.print(FONT16, 225, y - 44, Settings.LibrarySorting, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.LibrarySorting, COLOR_SUBFONT)
                 elseif task == "ChapterSorting" then
-                    Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_SUBFONT)
                 elseif task == "ConnectionTime" then
                     Font.print(FONT16, 225, y - 44, Settings.ConnectionTime, COLOR_ROYAL_BLUE)
                 elseif task == "UseProxy" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxy], COLOR_ROYAL_BLUE)
                 elseif task == "ProxyIP" then
-                    Font.print(FONT16, 225, y - 44, Settings.ProxyIP, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.ProxyIP, COLOR_SUBFONT)
                 elseif task == "ProxyPort" then
-                    Font.print(FONT16, 225, y - 44, Settings.ProxyPort, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.ProxyPort, COLOR_SUBFONT)
                 elseif task == "UseProxyAuth" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
                 elseif task == "SkipCacheChapterChecking" then
                     Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SkipCacheChapterChecking], COLOR_ROYAL_BLUE)
                 elseif task == "ProxyAuth" then
-                    Font.print(FONT16, 225, y - 44, Settings.ProxyAuth, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.ProxyAuth, COLOR_SUBFONT)
                 elseif task == "ChapterSorting" then
-                    Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_SUBFONT)
                 elseif task == "LeftStickDeadZone" then
                     local x = 0
                     for n = 1, #DeadZoneValues do
-                        Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.LeftStickDeadZone and COLOR_CRIMSON or COLOR_GRAY)
+                        Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.LeftStickDeadZone and COLOR_CRIMSON or COLOR_SUBFONT)
                         x = x + Font.getTextWidth(FONT16, DeadZoneValues[n]) + 5
                     end
                 elseif task == "LeftStickSensitivity" then
                     local x = 0
                     for n = 1, #SensitivityValues do
-                        Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.LeftStickSensitivity and COLOR_CRIMSON or COLOR_GRAY)
+                        Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.LeftStickSensitivity and COLOR_CRIMSON or COLOR_SUBFONT)
                         x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
                     end
                 elseif task == "RightStickDeadZone" then
                     local x = 0
                     for n = 1, #DeadZoneValues do
-                        Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.RightStickDeadZone and COLOR_CRIMSON or COLOR_GRAY)
+                        Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.RightStickDeadZone and COLOR_CRIMSON or COLOR_SUBFONT)
                         x = x + Font.getTextWidth(FONT16, DeadZoneValues[n]) + 5
                     end
                 elseif task == "RightStickSensitivity" then
                     local x = 0
                     for n = 1, #SensitivityValues do
-                        Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.RightStickSensitivity and COLOR_CRIMSON or COLOR_GRAY)
+                        Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.RightStickSensitivity and COLOR_CRIMSON or COLOR_SUBFONT)
                         x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
                     end
                 elseif task == "ChangingPageButtons" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_SUBFONT)
                 elseif task == "Translators" then
                     Font.print(FONT16, 225, y - 44, ("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese "):gsub("%- (.-) ", function(a) return " " .. (LanguageNames[Settings.Language][a] or a) .. " " end), COLOR_ROYAL_BLUE)
                 elseif task == "ClearLibrary" then
@@ -725,23 +725,23 @@ function Catalogs.draw()
                         end
                         get_space_dir("ux0:data/noboru/cache")
                     end
-                    Font.print(FONT16, 225, y - 44, MemToStr(cache_space), COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, MemToStr(cache_space), COLOR_SUBFONT)
                     if sure_clear_all_cache > 0 then
                         Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
                     end
                 elseif task == "ShowAuthor" then
-                    Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_SUBFONT)
                     Font.print(FONT16, 225 + Font.getTextWidth(FONT16,"@creckeryop") + 20, y - 44, "email: didager@ya.ru", COLOR_ROYAL_BLUE)
                 elseif task == "ShowVersion" then
-                    Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_SUBFONT)
                 elseif task == "ReaderDirection" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ReaderDirection], COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ReaderDirection], COLOR_SUBFONT)
                 elseif task == "SwapXO" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_SUBFONT)
                 elseif task == "CheckUpdate" then
-                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_SUBFONT)
                 elseif task == "SaveDataPath" then
-                    Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_GRAY)
+                    Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_SUBFONT)
                 end
             end
             y = y + 75
