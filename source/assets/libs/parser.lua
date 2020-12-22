@@ -81,7 +81,7 @@ function GetParserList()
 				if a.isChanged ~= b.isChanged then
 					return a.isChanged > b.isChanged
 				else
-					return a.Name < b.Name
+					return string.upper(a.ID) < string.upper(b.ID)
 				end
 			else
 				return Settings.FavouriteParsers[a.ID] == true
