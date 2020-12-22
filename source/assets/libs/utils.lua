@@ -282,15 +282,6 @@ function u8c(code)
     end
 end
 
-function Setmt__gc(t, mt)
-    local prox = newproxy(true)
-    getmetatable(prox).__gc = function()
-        mt.__gc(t)
-    end
-    t[prox] = true
-    return setmetatable(t, mt)
-end
-
 ---@param time number @ in range of [0..1]
 ---Function to get easing value in range [0..1]
 function EaseInOutCubic(time)

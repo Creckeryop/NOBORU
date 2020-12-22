@@ -393,7 +393,7 @@ function settings.setTab(mode)
                             local manga = possibilities[v.name].Manga
                             local chapter = possibilities[v.name]
                             t[#t + 1] = {
-                                name = manga.Name,
+                                name = (GetParserByID(manga.ParserID) and GetParserByID(manga.ParserID).Name or "Unknown Catalog").." - "..manga.Name,
                                 info = chapter.Name,
                                 type = "savedChapter",
                                 chapter_path = "ux0:data/noboru/chapters/"..v.name,
@@ -417,7 +417,7 @@ function settings.setTab(mode)
                                 local manga = possibilities[v.name].Manga
                                 local chapter = possibilities[v.name]
                                 t[#t + 1] = {
-                                    name = manga.Name,
+                                    name = (GetParserByID(manga.ParserID) and GetParserByID(manga.ParserID).Name or "Unknown Catalog").." - "..manga.Name,
                                     info = chapter.Name,
                                     type = "savedChapter",
                                     chapter_path = "uma0:data/noboru/chapters/"..v.name,

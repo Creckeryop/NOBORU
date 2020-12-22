@@ -1,10 +1,4 @@
-local doesDirExist = System.doesDirExist
-local listDirectory = System.listDirectory
-local createDirectory = System.createDirectory
-loadlib("utils")
 loadlib("image")
-loadlib("globals")
-
 local logo = Image:new(Graphics.loadImage("app0:assets/images/logo.png"))
 
 Graphics.initBlend()
@@ -14,6 +8,11 @@ if logo then
 end
 Graphics.termBlend()
 
+local doesDirExist = System.doesDirExist
+local listDirectory = System.listDirectory
+local createDirectory = System.createDirectory
+loadlib("utils")
+loadlib("globals")
 loadlib("browser")
 loadlib("customsettings")
 loadlib("catalogmodes")
