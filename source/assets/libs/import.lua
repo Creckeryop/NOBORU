@@ -15,7 +15,8 @@ function Import.listDir()
 	if dir_list == nil then
 		local list = listDirectory(path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/")) or {}
 		local new_list = {}
-		for _, v in ipairs(list) do
+		for i = 1, #list do
+			local v = list[i]
 			v.active = v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$")
 			new_list[#new_list + 1] = v
 		end

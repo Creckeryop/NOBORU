@@ -86,8 +86,6 @@ MANGA_HEIGHT = math.floor(MANGA_WIDTH * 1.5)
 
 GlobalTimer = Timer.new()
 
-PI = 3.14159265359
-
 if not doesDirExist("ux0:data/noboru") then
 	createDirectory("ux0:data/noboru")
 end

@@ -853,8 +853,9 @@ end
 ---Clears all saved chapters
 function ChapterSaver.clear()
 	notify = false
-	for _, v in ipairs(ChapterSaver.getDownloadingList()) do
-		ChapterSaver.stopByListItem(v)
+	local list = ChapterSaver.getDownloadingList()
+	for i = 1, #list do
+		ChapterSaver.stopByListItem(list[i])
 	end
 	notify = true
 	rem_dir("ux0:data/noboru/chapters")

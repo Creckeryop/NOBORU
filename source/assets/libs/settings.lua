@@ -180,30 +180,6 @@ local function setSetting(source, setting_name, values)
 	end
 end
 
----@param old_value any
----@param values table
----@return any
----Gives next to `old_value` table value from `values` or first
----
----Example:
----
----`nextTableValue("cat", {"dog", "cat", "parrot"}) -> "parrot"`
----
----`nextTableValue("parrot", {"dog", "cat", "parrot"}) -> "dog"`
----
----`nextTableValue("whale", {"dog", "cat", "parrot"}) -> "dog"`
-local function nextTableValue(old_value, values)
-	local found = false
-	for _, v in ipairs(values) do
-		if found then
-			return v
-		elseif old_value == v then
-			found = true
-		end
-	end
-	return values[1]
-end
-
 local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
 
 ---Loads settings from `ux0:data/noboru/settings.ini`

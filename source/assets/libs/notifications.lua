@@ -80,7 +80,8 @@ function Notifications.draw()
 	local NEW_WHITE = Color.new(255, 255, 255, 255 * fade)
 	local NEW_GRAY = Color.new(20, 20, 20, 255 * fade)
 	local y = 0
-	for i, v in ipairs(notification[1]) do
+	for i = 1, #notification[1] do
+		local v = notification[1][i]
 		local width = (Font.getTextWidth(FONT20, v) + 20) / 2
 		Graphics.fillRect(480 - width, 480 + width, 544 - 100 * fade + y, 544 - 100 * fade + y + 30, NEW_GRAY)
 		Font.print(FONT20, 480 - width + 10, 544 - 100 * fade + y + 2, v, NEW_WHITE)

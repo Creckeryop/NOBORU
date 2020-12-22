@@ -167,8 +167,8 @@ local updated = false
 ---Creates/Updates History record
 function Cache.makeHistory(Manga)
 	local key = get_key(Manga)
-	for i, v in ipairs(history) do
-		if v == key then
+	for i = 1, #history do
+		if history[i] == key then
 			if i == 1 then
 				return
 			end
@@ -186,8 +186,8 @@ end
 function Cache.removeHistory(Manga)
 	local key = get_key(Manga)
 	local deleted = false
-	for i, v in ipairs(history) do
-		if v == key then
+	for i = 1, #history do
+		if history[i] == key then
 			table.remove(history, i)
 			deleted = true
 			break
@@ -207,7 +207,8 @@ function Cache.getHistory()
 	if updated then
 		local new_history = {}
 		local uma0_flag = doesDirExist("uma0:data/noboru")
-		for _, v in ipairs(history) do
+		for i = 1, #history do
+			local v = history[i]
 			if data[v] then
 				if data[v].Location ~= "uma0" or uma0_flag then
 					new_history[#new_history + 1] = data[v]
@@ -295,7 +296,8 @@ function Cache.loadChapters(Manga, skiphiding)
 				end
 				if Settings.HideInOffline then
 					local t = {}
-					for _, chapter in ipairs(new_chlist) do
+					for i = 1, #new_chlist do
+						local chapter = new_chlist[i]
 						t[#t + 1] = ChapterSaver.check(chapter) and chapter or nil
 					end
 					return t
@@ -375,10 +377,11 @@ function Cache.clear(mode)
 	mode = mode or "notlibrary"
 	if mode == "notlibrary" then
 		local d = listDirectory("ux0:data/noboru/cache") or {}
-		for _, v in ipairs(d) do
-			if not Database.checkByKey(v.name) and v.directory then
-				rem_dir("ux0:data/noboru/cache/" .. v.name)
-				data[v.name] = nil
+		for i = 1, #d do
+			local f = d[i]
+			if not Database.checkByKey(f.name) and f.directory then
+				rem_dir("ux0:data/noboru/cache/" .. f.name)
+				data[f.name] = nil
 			end
 		end
 		local new_history = {}
@@ -390,10 +393,11 @@ function Cache.clear(mode)
 		history = new_history
 	elseif mode == "all" then
 		local d = listDirectory("ux0:data/noboru/cache") or {}
-		for _, v in ipairs(d) do
-			if not v.name:find("^IMPORTED") then
-				rem_dir("ux0:data/noboru/cache/" .. v.name)
-				data[v.name] = nil
+		for i = 1, #d do
+			local f = d[i]
+			if not f.name:find("^IMPORTED") then
+				rem_dir("ux0:data/noboru/cache/" .. f.name)
+				data[f.name] = nil
 			end
 		end
 		local new_history = {}

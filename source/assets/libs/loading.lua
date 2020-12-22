@@ -39,6 +39,8 @@ function Loading.setMode(new_mode, x, y)
 	Timer.reset(animation_timer)
 end
 
+local PI = math.pi
+
 ---Draws Loading circles
 function Loading.draw()
 	local time = Timer.getTime(animation_timer) / 200

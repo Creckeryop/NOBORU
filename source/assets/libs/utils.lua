@@ -130,11 +130,11 @@ end
 
 function table.next(old_value, values)
 	local found = false
-	for _, v in ipairs(values) do
+	for i = 1, #values do
 		if found then
-			return v
+			return values[i]
 		else
-			found = old_value == v
+			found = old_value == values[i]
 		end
 	end
 	return values[1]
@@ -294,26 +294,6 @@ end
 function math.sign(x)
 	return x > 0 and 1 or x < 0 and -1 or 0
 end
-
----@param path string
----DFS directory removing
-local r_dir
-function RemoveDirectory(path)
-	if doesDirExist(path) then
-		local dir = listDirectory(path) or {}
-		for _, v in ipairs(dir) do
-			if v.directory then
-				r_dir(path .. "/" .. v.name)
-			else
-				deleteFile(path .. "/" .. v.name)
-				Console.write("Delete " .. path .. "/" .. v.name)
-			end
-		end
-		deleteDirectory(path)
-		Console.write("Delete " .. path)
-	end
-end
-r_dir = RemoveDirectory
 
 function ChangeAlpha(color, new_alpha)
 	return Color.new(Color.getR(color), Color.getG(color), Color.getB(color), new_alpha)

@@ -41,9 +41,10 @@ function Console.draw(mode)
 	mode = mode or 1
 	if Console.Lines[mode] then
 		local y = 40
-		for _, v in ipairs(Console.Lines[mode]) do
+		for i = 1, #Console.Lines[mode] do
+			local line = Console.Lines[mode][i]
 			Graphics.fillRect(0, 960, y, y + 20, CONSOLE_COLOR)
-			Font.print(FONT16, 0, y, v[1], v[2])
+			Font.print(FONT16, 0, y, line[1], line[2])
 			y = y + 20
 		end
 	end

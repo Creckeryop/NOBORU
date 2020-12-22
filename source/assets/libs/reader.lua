@@ -973,7 +973,8 @@ function Reader.update()
 			end
 		end
 		local o = readDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
-		for _, i in ipairs(o) do
+		for k = 1, #o do
+			local i = o[k]
 			local page = Pages[Pages.Page + i]
 			if page and not page.Zoom and page.Image then
 				local Image = page.Image
@@ -1325,6 +1326,8 @@ function Reader.update()
 	end
 end
 
+local PI = math.pi
+
 function Reader.draw()
 	Screen.clear(COLOR_BACK)
 	if STATE == STATE_LOADING then
@@ -1340,7 +1343,8 @@ function Reader.draw()
 		Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_FONT)
 	elseif STATE == STATE_READING then
 		local o = readDirection == "LEFT" and {1, -1, 0} or {-1, 1, 0}
-		for _, i in ipairs(o) do
+		for j = 1, #o do
+			local i = o[j]
 			local page = Pages[Pages.Page + i]
 			if page and page.Image then
 				if type(page.Image.e or page.Image) == "table" then
@@ -1354,7 +1358,7 @@ function Reader.draw()
 							elseif orientation == "Vertical" then
 								local x, y = math.ceil((offset.x + page.x) * 4) / 4 - (k - 1) * page.Image.SliceHeight * page.Zoom + page.Height / 2 * page.Zoom - page.Image.SliceHeight / 2 * page.Zoom, offset.y + page.y
 								Graphics.fillRect(x - Height / 2 * page.Zoom, x + Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
-								Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, math.pi / 2, page.Zoom, page.Zoom)
+								Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, PI / 2, page.Zoom, page.Zoom)
 							end
 						else
 							if orientation == "Horizontal" then
@@ -1375,7 +1379,7 @@ function Reader.draw()
 						Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
 					elseif orientation == "Vertical" then
 						Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
-						Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, math.pi / 2, page.Zoom, page.Zoom)
+						Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, PI / 2, page.Zoom, page.Zoom)
 					end
 				end
 			elseif page then

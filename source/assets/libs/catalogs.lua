@@ -698,11 +698,11 @@ function Catalogs.draw()
 						chapters_space = 0
 						local function get_space_dir(dir)
 							local d = listDirectory(dir) or {}
-							for _, v in ipairs(d) do
-								if v.directory then
-									get_space_dir(dir .. "/" .. v.name)
+							for k = 1, #d do
+								if d[k].directory then
+									get_space_dir(dir .. "/" .. d[k].name)
 								else
-									chapters_space = chapters_space + v.size
+									chapters_space = chapters_space + d[k].size
 								end
 							end
 						end
@@ -804,11 +804,12 @@ function Catalogs.draw()
 						cache_space = 0
 						local function get_space_dir(dir)
 							local d = listDirectory(dir) or {}
-							for _, v in ipairs(d) do
-								if v.directory then
-									get_space_dir(dir .. "/" .. v.name)
+							for j = 1, #d do
+								local f = d[j]
+								if f.directory then
+									get_space_dir(dir .. "/" .. f.name)
 								else
-									cache_space = cache_space + v.size
+									cache_space = cache_space + f.size
 								end
 							end
 						end

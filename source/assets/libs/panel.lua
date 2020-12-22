@@ -60,7 +60,8 @@ function Panel.draw()
 	Graphics.fillRect(0, 960, 522 + y, 524 + y, Color.new(0, 0, 0, 32))
 	Graphics.fillRect(0, 960, 524 + y, 544, COLOR_PANEL)
 	local x = 20
-	for _, v in ipairs(hints) do
+	for i = 1, #hints do
+		local v = hints[i]
 		if hints[v] then
 			if textures_16x16[v] then
 				if v == "Cross" and Settings.KeyType == "JP" then

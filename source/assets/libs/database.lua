@@ -21,9 +21,10 @@ end
 function Database.getMangaList()
 	local b = {}
 	local uma0_flag = doesDirExist("uma0:data/noboru")
-	for k, v in ipairs(base) do
-		if v.Location ~= "uma0" or uma0_flag then
-			b[#b + 1] = v
+	for i = 1, #base do
+		local m = base[i]
+		if m.Location ~= "uma0" or uma0_flag then
+			b[#b + 1] = m
 		end
 	end
 	if Settings.LibrarySorting == "A-Z" then
@@ -84,12 +85,13 @@ end
 ---Saves database to `ux0:data/noboru/save.dat`
 function Database.save()
 	local manga_table = {}
-	for k, v in ipairs(base) do
-		local key = get_key(v)
-		manga_table[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink, v.BrowserLink)
-		manga_table[k].Data = v.Data
+	for k = 1, #base do
+		local m = base[k]
+		local key = get_key(m)
+		manga_table[k] = CreateManga(m.Name, m.Link, m.ImageLink, m.ParserID, m.RawLink, m.BrowserLink)
+		manga_table[k].Data = m.Data
 		manga_table[k].Path = "cache/" .. key .. "/cover.image"
-		manga_table[k].Location = v.Location or "ux0"
+		manga_table[k].Location = m.Location or "ux0"
 		manga_table[key] = k
 	end
 	local save = "return " .. table.serialize(manga_table, true)

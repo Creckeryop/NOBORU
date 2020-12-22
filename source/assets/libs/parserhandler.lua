@@ -181,7 +181,8 @@ function ParserManager.loadPageImage(parserID, Link, Table, Insert)
 		F = function()
 			parser:loadChapterPage(Link, Table)
 			coroutine.yield(true)
-			;(Insert and Threads.insertTask or Threads.addTask)(
+			local foo = Insert and Threads.insertTask or Threads.addTask
+			foo(
 				Table,
 				{
 					Type = "ImageDownload",
@@ -211,7 +212,8 @@ function ParserManager.updateCounters()
 			local list = Database.getMangaList()
 			local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
 			if connection then
-				for k, v in ipairs(list) do
+				for j = 1, #list do
+					local v = list[j]
 					local old_name = v.Name
 					Cache.addManga(v)
 					local parser = GetParserByID(v.ParserID)
@@ -264,7 +266,8 @@ function ParserManager.updateCounters()
 				end
 				Database.save()
 			else
-				for k, v in ipairs(list) do
+				for j = 1, #list do
+					local v = list[j]
 					local chps = Cache.loadChapters(v, true)
 					if #chps > 0 then
 						Cache.loadBookmarks(v)

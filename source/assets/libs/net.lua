@@ -43,11 +43,11 @@ function Threads.update()
 	end
 	if not Task then
 		local new_order = {}
-		for _, v in ipairs(Order) do
-			if v.Type == "Skip" then
+		for i = 1, #Order do
+			if Order[i].Type == "Skip" then
 				Console.write("NET: Skip", Color.new(255, 255, 0))
 			else
-				new_order[#new_order + 1] = v
+				new_order[#new_order + 1] = Order[i]
 			end
 		end
 		Order = new_order

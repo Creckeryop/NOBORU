@@ -32,11 +32,12 @@ local searchData = ""
 
 local function setFinalTags()
 	local filter = {}
-	for k, f in ipairs(Filters) do
+	for j = 1, #Filters do
+		local f = Filters[j]
 		if f.Type == "check" then
 			local list = {}
-			for i, v in ipairs(Checked[k]) do
-				if v then
+			for i = 1, #Checked[j] do
+				if Checked[j][i] then
 					list[#list + 1] = f.Tags[i]
 				end
 			end
@@ -44,14 +45,14 @@ local function setFinalTags()
 			filter[f.Name] = list
 		elseif f.Type == "checkcross" then
 			local include = {}
-			for i, v in ipairs(Checked[k]) do
-				if v == true then
+			for i = 1, #Checked[j] do
+				if Checked[j][i] == true then
 					include[#include + 1] = f.Tags[i]
 				end
 			end
 			local exclude = {}
-			for i, v in ipairs(Checked[k]) do
-				if v == "cross" then
+			for i = 1, #Checked[j] do
+				if Checked[j][i] == "cross" then
 					exclude[#exclude + 1] = f.Tags[i]
 				end
 			end
@@ -61,8 +62,8 @@ local function setFinalTags()
 			}
 			filter[f.Name] = filter[#filter]
 		elseif f.Type == "radio" then
-			filter[#filter + 1] = f.Tags[Checked[k]] or ""
-			filter[f.Name] = f.Tags[Checked[k]] or ""
+			filter[#filter + 1] = f.Tags[Checked[j]] or ""
+			filter[f.Name] = f.Tags[Checked[j]] or ""
 		end
 	end
 	FinalTagsData = filter
@@ -70,15 +71,16 @@ end
 
 local function updateItemsDraw()
 	ItemsDraw = {}
-	for k, f in ipairs(Filters) do
+	for k = 1, #Filters do
+		local f = Filters[k]
 		ItemsDraw[#ItemsDraw + 1] = {
 			data = f,
 			type = "filter"
 		}
 		if f.visible then
-			for i, v in ipairs(f.Tags) do
+			for i = 1, #f.Tags do
 				ItemsDraw[#ItemsDraw + 1] = {
-					data = v,
+					data = f.Tags[i],
 					type = "tag",
 					k = k,
 					i = i,
@@ -91,10 +93,11 @@ end
 
 local function getFiltersHeight()
 	local h = 0
-	for _, v in ipairs(Filters) do
+	for i = 1, #Filters do
+		local f = Filters[i]
 		h = h + 50
-		if v.visible then
-			h = h + 50 * #v.Tags
+		if f.visible then
+			h = h + 50 * #f.Tags
 		end
 	end
 	return h
@@ -102,10 +105,11 @@ end
 
 local function countFilterElements()
 	local c = 0
-	for _, v in ipairs(Filters) do
+	for i = 1, #Filters do
+		local f = Filters[i]
 		c = c + 1
-		if v.visible then
-			c = c + #v.Tags
+		if f.visible then
+			c = c + #f.Tags
 		end
 	end
 	return c
@@ -168,50 +172,51 @@ function CatalogModes.load(parser)
 			Modes[#Modes + 1] = "Search"
 		end
 		Modes_fade = {}
-		for _, v in ipairs(Modes) do
-			Modes_fade[v] = 0
+		for i = 1, #Modes do
+			Modes_fade[Modes[i]] = 0
 		end
 		Filters = parser.Filters or {}
 		Checked = {}
-		for k, v in ipairs(Filters) do
-			v.visible = false
-			local default = v.Default
-			if v.Type == "check" or v.Type == "checkcross" then
+		for k = 1, #Filters do
+			local f = Filters[k]
+			f.visible = false
+			local default = f.Default
+			if f.Type == "check" or f.Type == "checkcross" then
 				Checked[k] = {}
-				for i, _ in ipairs(v.Tags) do
+				for i = 1, #f.Tags do
 					Checked[k][i] = false
 				end
 				if default then
-					if v.Type == "checkcross" then
+					if f.Type == "checkcross" then
 						for i = 1, #default.include do
-							for e, t in ipairs(v.Tags) do
-								if t == default.include[i] then
+							for e = 1, #f.Tags do
+								if f.Tags[e] == default.include[i] then
 									Checked[k][e] = true
 								end
 							end
 						end
 						for i = 1, #default.exclude do
-							for e, t in ipairs(v.Tags) do
-								if t == default.exclude[i] then
+							for e = 1, #f.Tags do
+								if f.Tags[e] == default.exclude[i] then
 									Checked[k][e] = "cross"
 								end
 							end
 						end
-					elseif v.Type == "check" then
+					elseif f.Type == "check" then
 						for i = 1, #default do
-							for e, t in ipairs(v.Tags) do
-								if t == default[i] then
+							for e = 1, #f.Tags do
+								if f.Tags[e] == default[i] then
 									Checked[k][e] = true
 								end
 							end
 						end
 					end
 				end
-			elseif v.Type == "radio" then
+			elseif f.Type == "radio" then
 				Checked[k] = 1
 				if default then
-					for e, t in ipairs(v.Tags) do
-						if t == default then
+					for e = 1, #f.Tags do
+						if f.Tags[e] == default then
 							Checked[k] = e
 						end
 					end
@@ -260,7 +265,8 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
 					if oldtouch.y > 40 + 8 + 50 * #Modes then
 						local id = math.floor((Slider.Y + oldtouch.y - (40 + 8 + 50 * #Modes)) / 50) + 1
 						if id > 0 then
-							for i, f in ipairs(Filters) do
+							for i = 1, #Filters do
+								local f = Filters[i]
 								id = id - 1
 								if id == 0 then
 									f.visible = not f.visible
@@ -316,7 +322,8 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
 				else
 					local id = SelectedId - #Modes
 					if id > 0 then
-						for i, f in ipairs(Filters) do
+						for i = 1, #Filters do
+							local f = Filters[i]
 							id = id - 1
 							if id == 0 then
 								f.visible = not f.visible
@@ -416,7 +423,8 @@ function CatalogModes.update()
 			Slider.Y = Slider.Y + ((SelectedId - #Modes) * 50 - 160 - Slider.Y) / 8
 		end
 		animationUpdate()
-		for i, v in ipairs(Modes) do
+		for i = 1, #Modes do
+			local v = Modes[i]
 			if now_mode == i then
 				Modes_fade[v] = math.min(Modes_fade[v] + 0.1, 1)
 			elseif SelectedId == i then
@@ -435,8 +443,8 @@ function CatalogModes.update()
 				local data = Keyboard.getInput()
 				Console.write('Searching for "' .. data .. '"')
 				Catalogs.terminate()
-				for i, v in ipairs(Modes) do
-					if v == "Search" then
+				for i = 1, #Modes do
+					if Modes[i] == "Search" then
 						now_mode = i
 						break
 					end
@@ -512,7 +520,8 @@ function CatalogModes.draw()
 			y = y + 50
 		end
 		Graphics.fillRect(960 - M * 350, 960, 0, 40 + 8 + 50 * #Modes, Color.new(0, 0, 0))
-		for i, v in ipairs(Modes) do
+		for i = 1, #Modes do
+			local v = Modes[i]
 			if v == "Popular" then
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, Hot_icon.e, COLOR_GRADIENT(COLOR_GRAY, Color.new(255, 106, 0), Modes_fade[v]))
 			elseif v == "Latest" then
