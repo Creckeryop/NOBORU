@@ -69,7 +69,7 @@ function GetParserList()
 	updated = false
 	local list = {}
 	for _, v in pairs(parserTable) do
-		if (Settings.NSFW and v.NSFW or not v.NSFW) and not v.Disabled and (Settings.ParserLanguage == "DIF" or v.Lang == Settings.ParserLanguage or v.Lang == "DIF") then
+		if (Settings.NSFW and v.NSFW or not v.NSFW) and not v.Disabled and (Settings.ParserLanguage == "DIF" or v.Lang == Settings.ParserLanguage or v.Lang == "DIF" or ((Settings.ParserLanguage == "CHN" or Settings.ParserLanguage == "JAP") and v.Lang == "RAW")) then
 			list[#list + 1] = v
 		end
 	end
@@ -99,6 +99,11 @@ function GetParserLanguages()
 		end
 	end
 	t["DIF"] = nil
+	if t["RAW"] then
+		t["CHN"] = true
+		t["JAP"] = true
+	end
+	t["RAW"] = nil
 	local new_t = {}
 	for k, _ in pairs(t) do
 		new_t[#new_t + 1] = k

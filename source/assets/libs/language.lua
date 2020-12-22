@@ -133,8 +133,8 @@ Language = {
 			BRA = "Бразильский",
 			POL = "Польский",
 			IDN = "Индонезийский",
-			CHN = "Китай",
-			RAW = "Оригинал"
+			CHN = "Китайский",
+			RAW = "Оригинал (Японский или Китайский)"
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "Главы не найдены"
@@ -335,7 +335,7 @@ Language = {
 			ESP = "Spanish",
 			PRT = "Portuguese",
 			FRA = "French",
-			JAP = "Japan",
+			JAP = "Japanese",
 			DIF = "Different",
 			TUR = "Turkish",
 			ITA = "Italian",
@@ -345,7 +345,7 @@ Language = {
 			POL = "Polish",
 			IDN = "Indonesian",
 			CHN = "Chinese",
-			RAW = "Raw"
+			RAW = "Raw (Japanese or Chinese)"
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "No chapters"
@@ -556,7 +556,7 @@ Language = {
 			POL = "Lehçe",
 			IDN = "Endonezya",
 			CHN = "Çin",
-			RAW = "Raw" --translate please
+			RAW = "Raw (Japanese or Chinese)" --translate please
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "Hiç Bölüm Yok"
@@ -767,7 +767,7 @@ Language = {
 			POL = "Ba Lan",
 			IDN = "Tiếng Indonesia",
 			CHN = "Trung Quốc",
-			RAW = "Raw" --translate please
+			RAW = "Raw (Japanese or Chinese)" --translate please
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "Không có tập nào!"
@@ -978,7 +978,7 @@ Language = {
 			POL = "Polaco",
 			IDN = "Indonesia",
 			CHN = "China",
-			RAW = "Raw" --translate please
+			RAW = "Raw (Japanese or Chinese)" --translate please
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "No hay capítulos"
@@ -1189,7 +1189,7 @@ Language = {
 			POL = "Polacco",
 			IDN = "Indonesiano",
 			CHN = "Cina",
-			RAW = "Raw" --translate please
+			RAW = "Raw (Japanese or Chinese)" --translate please
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "Nessun capitolo"
@@ -1400,7 +1400,7 @@ Language = {
 			POL = "Polonais",
 			IDN = "Indonésien",
 			CHN = "Chine",
-			RAW = "Raw" --translate please
+			RAW = "Raw (Japanese or Chinese)" --translate please
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "Pas de chapitres"
@@ -1611,7 +1611,7 @@ Language = {
 			POL = "Polonês",
 			IDN = "Indonésien",
 			CHN = "China",
-			RAW = "Raw" --translate please
+			RAW = "Raw (Japanese or Chinese)" --translate please
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "Sem capítulos"
@@ -1824,7 +1824,7 @@ Language = {
 			POL = "波兰",
 			IDN = "印度尼西亚",
 			CHN = "中国",
-			RAW = "生肉"
+			RAW = "生肉 (Japanese or Chinese)"
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "没有章节"
@@ -2035,7 +2035,7 @@ Language = {
 			POL = "波蘭",
 			IDN = "印度尼西亞",
 			CHN = "中國",
-			RAW = "生肉"
+			RAW = "生肉 (Japanese or Chinese)"
 		},
 		WARNINGS = {
 			NO_CHAPTERS = "沒有章節"
