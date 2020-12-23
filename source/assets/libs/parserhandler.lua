@@ -202,6 +202,26 @@ function ParserManager.loadPageImage(parserID, Link, Table, Insert)
 	uniques[Table] = T
 end
 
+---@param parserID string
+---@param Link string
+---@param Table table
+---Parses `Link` from prepareChapter function to image link of the page
+function ParserManager.getPageImage(parserID, Link, Table)
+	local parser = GetParserByID(parserID)
+	if not parser or uniques[Table] then
+		return
+	end
+	local T = {
+		Type = "getPageImage",
+		F = function()
+			parser:loadChapterPage(Link, Table)
+		end,
+		Table = Table
+	}
+	table.insert(Order, 1, T)
+	uniques[Table] = T
+end
+
 function ParserManager.updateCounters()
 	if uniques["UpdateCounters"] then
 		return

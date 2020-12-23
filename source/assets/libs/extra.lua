@@ -18,7 +18,8 @@ ExtraMenuNormal = {
 	"DownloadAll",
 	"RemoveAll",
 	"CancelAll",
-	"ClearBookmarks"
+	"ClearBookmarks",
+	"ResetCover"
 }
 
 ExtraMenuNormalWithBrowser = {
@@ -26,7 +27,8 @@ ExtraMenuNormalWithBrowser = {
 	"DownloadAll",
 	"RemoveAll",
 	"CancelAll",
-	"ClearBookmarks"
+	"ClearBookmarks",
+	"ResetCover"
 }
 
 ExtraMenuImported = {
@@ -34,6 +36,14 @@ ExtraMenuImported = {
 }
 
 ExtraMenuReader = {
+	"OpenInBrowser",
+	"ReaderOrientation",
+	"ReaderDirection",
+	"ZoomReader",
+	"SetPageAsCover"
+}
+
+ExtraMenuReaderImported = {
 	"OpenInBrowser",
 	"ReaderOrientation",
 	"ReaderDirection",
@@ -85,6 +95,7 @@ local ExtraSelector =
 		return math.floor((Slider.Y + y_srt) / 80)
 	end
 )
+
 local Page = nil
 local CustomSettings = {}
 function Extra.setChapters(manga, chapters, page)
@@ -94,7 +105,11 @@ function Extra.setChapters(manga, chapters, page)
 		Chapters = chapters
 		Slider.Y = -50
 		if page then
-			ExtraMenu = ExtraMenuReader
+			if manga.ParserID == "IMPORTED" then
+				ExtraMenu = ExtraMenuReaderImported
+			else
+				ExtraMenu = ExtraMenuReader
+			end
 			Page = page
 			CustomSettings = CuSettings.load(Manga)
 		elseif manga.ParserID == "IMPORTED" then
@@ -125,11 +140,11 @@ local writeFile = System.writeFile
 local closeFile = System.closeFile
 local deleteFile = System.deleteFile
 local openFile = System.openFile
-local readFile = System.readFile
-local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 local callUri = System.executeUri
 local extractZip = System.extractFromZip
+local cpy_file = Copy_File
+
 local function press_action(id)
 	if ExtraMenu[id] == "DownloadAll" then
 		Cache.addManga(Manga)
@@ -214,6 +229,74 @@ local function press_action(id)
 		CustomSettings = CuSettings.load(Manga)
 	elseif ExtraMenu[id] == "OpenMangaInBrowser" then
 		callUri("webmodal: " .. Manga.BrowserLink)
+	elseif ExtraMenu[id] == "ResetCover" then
+		if Manga and Manga.ParserID ~= "IMPORTED" then
+			local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image"
+			if doesFileExist(cover_path) then
+				deleteFile(cover_path)
+			end
+			Manga.Image = nil
+			Manga.ImageDownload = nil
+			collectgarbage("collect")
+			Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+		end
+	elseif ExtraMenu[id] == "SetPageAsCover" then
+		local page = Reader.getCurrentPageImageLink()
+		if page then
+			local cache_key = Cache.getKey(Manga)
+			if cache_key == nil then
+				Cache.addManga(Manga)
+				cache_key = Cache.getKey(Manga)
+				if cache_key == nil then
+					return
+				end
+				Cache.save()
+			end
+			local t = {}
+			if page.Extract then
+			elseif page.Path then
+				cpy_file(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cache_key .. "/cover.image")
+				Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+			elseif page.ParserID then
+				Threads.insertTask(
+					t,
+					{
+						Type = "function",
+						OnComplete = function()
+							ParserManager.getPageImage(page.ParserID, page.Link, t)
+							while (ParserManager.check(t)) do
+								coroutine.yield(false)
+							end
+							Threads.insertTask(
+								t,
+								{
+									Type = "FileDownload",
+									Link = t.Link,
+									Path = "ux0:data/noboru/cache/" .. cache_key .. "/cover.image",
+									OnComplete = function()
+										Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+									end
+								}
+							)
+						end
+					}
+				)
+			elseif page.Link then
+				Threads.insertTask(
+					t,
+					{
+						Type = "FileDownload",
+						Link = page.Link,
+						Path = "ux0:data/noboru/cache/" .. cache_key .. "/cover.image",
+						OnComplete = function()
+							Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+						end
+					}
+				)
+			else
+				return
+			end
+		end
 	end
 end
 
@@ -307,19 +390,15 @@ function Extra.draw()
 		Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
 		Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y_srt + shift, y_srt + 80 * ListCount + shift - 1, WHITE)
 		for i = start, math.min(ListCount, start + 8) do
-			if ExtraMenu == ExtraMenuReader then
-				local text = Language[Settings.Language].SETTINGS[ExtraMenu[i]] or ExtraMenu[i]
-				if ExtraMenu[i] == "ReaderOrientation" then
-					text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.Orientation]
-				elseif ExtraMenu[i] == "ReaderDirection" then
-					text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.ReaderDirection]
-				elseif ExtraMenu[i] == "ZoomReader" then
-					text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.ZoomReader]
-				end
-				Font.print(BONT16, 480 - Font.getTextWidth(BONT16, text) / 2, y + 28 - 79, text, BLACK)
-			else
-				Font.print(BONT16, 480 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) / 2, y + 28 - 79, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i], BLACK)
+			local text = Language[Settings.Language].SETTINGS[ExtraMenu[i]] or Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]
+			if ExtraMenu[i] == "ReaderOrientation" then
+				text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.Orientation]
+			elseif ExtraMenu[i] == "ReaderDirection" then
+				text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.ReaderDirection]
+			elseif ExtraMenu[i] == "ZoomReader" then
+				text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.ZoomReader]
 			end
+			Font.print(BONT16, 480 - Font.getTextWidth(BONT16, text) / 2, y + 28 - 79, text, BLACK)
 			if i == Slider.ItemID then
 				Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
 			end

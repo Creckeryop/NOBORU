@@ -1,17 +1,4 @@
 Notifications = {}
----@param str string
----@return table
----Breaks text into lines
-local function to_lines(str)
-	if str:sub(-1) ~= "\n" then
-		str = str .. "\n"
-	end
-	local lines = {}
-	for line in str:gmatch("(.-)\n") do
-		lines[#lines + 1] = line
-	end
-	return lines
-end
 
 ---Order of notification messages
 local order = {}
@@ -27,7 +14,7 @@ local easing = EaseInOutCubic
 ---Adds notification with given message that will be shown on screen
 function Notifications.push(message, ms)
 	order[#order + 1] = {
-		to_lines(message),
+		To_lines(message),
 		ms or 800,
 		message
 	}
@@ -46,7 +33,7 @@ function Notifications.pushUnique(message, ms)
 		end
 	end
 	order[#order + 1] = {
-		to_lines(message),
+		To_lines(message),
 		ms or 800,
 		message
 	}

@@ -217,14 +217,7 @@ end
 
 local getTime = System.getTime
 local getDate = System.getDate
-local function cpy_file(source_path, dest_path)
-	local fh1 = openFile(source_path, FREAD)
-	local fh2 = openFile(dest_path, FCREATE)
-	local contentFh1 = readFile(fh1, sizeFile(fh1))
-	writeFile(fh2, contentFh1, #contentFh1)
-	closeFile(fh1)
-	closeFile(fh2)
-end
+local cpy_file = Copy_File
 
 local listZip = System.listZip
 local extractFromZip = System.extractFromZip
@@ -252,6 +245,13 @@ function ChapterSaver.importManga(path)
 			local dir = listDirectory(path) or {}
 			local new_dir = {}
 			local type
+			local tmp_dir = {}
+			for _, f in ipairs(dir) do
+				if f.directory or f.name:find("%.cbz") or f.name:find("%.zip") or (System.getPictureResolution(path .. "/" .. f.name) or -1) > 0 then
+					tmp_dir[#tmp_dir + 1] = f
+				end
+			end
+			dir = tmp_dir
 			for _, f in ipairs(dir) do
 				local new_type
 				if f.directory then
@@ -289,6 +289,13 @@ function ChapterSaver.importManga(path)
 				local cover_loaded = false
 				for _, folder in ipairs(dir) do
 					local dir_ = listDirectory(path .. "/" .. folder.name) or {}
+					tmp_dir = {}
+					for _, f in ipairs(dir_) do
+						if f.directory or f.name:find("%.cbz") or f.name:find("%.zip") or (System.getPictureResolution(path .. "/" .. f.name) or -1) > 0 then
+							tmp_dir[#tmp_dir + 1] = f
+						end
+					end
+					dir_ = tmp_dir
 					for _, file in ipairs(dir_) do
 						if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. file.name) or -1) <= 0 and not file.name:find("%.txt$") and not file.name:find("%.xml$") then
 							Notifications.push(Language[Settings.Language].NOTIFICATIONS.BAD_IMAGE_FOUND)
@@ -641,20 +648,6 @@ function ChapterSaver.is_downloading(chapter)
 	return Downloading[get_key(chapter)]
 end
 
----@param str string
----@return table
----Breaks text into lines
-local function to_lines(str)
-	if str:sub(-1) ~= "\n" then
-		str = str .. "\n"
-	end
-	local lines = {}
-	for line in str:gmatch("(.-)\n") do
-		lines[#lines + 1] = line
-	end
-	return lines
-end
-
 local statFile = System.statFile
 
 ---@param chapter table
@@ -710,7 +703,7 @@ function ChapterSaver.getChapter(chapter)
 			local fh_2 = openFile(FolderPath .. k .. "/custom.txt", FREAD)
 			local pathes = readFile(fh_2, sizeFile(fh_2))
 			closeFile(fh_2)
-			local lines = to_lines(pathes)
+			local lines = To_lines(pathes)
 			if #lines == 1 and (lines[1]:find("%.cbz$") or lines[1]:find("%.zip$")) then
 				local zip = listZip(lines[1]) or {}
 				table.sort(
@@ -780,7 +773,7 @@ function ChapterSaver.load()
 						local fh_2 = openFile(FolderPath .. k .. "/custom.txt", FREAD)
 						local pathes = readFile(fh_2, sizeFile(fh_2))
 						closeFile(fh_2)
-						for _, path in ipairs(to_lines(pathes)) do
+						for _, path in ipairs(To_lines(pathes)) do
 							if not doesFileExist(path) then
 								rem_dir(FolderPath .. k)
 								Notifications.push("here chapters_error\n" .. k)

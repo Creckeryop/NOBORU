@@ -138,6 +138,13 @@ end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
 
+---@param source_path string
+---@param dest_path string
+---Copies file source_path to dest_path (creates file)
+---
+---Example:
+---
+---`cpy_file("ux0:data/noboru/cache.image","ux0:cover.jpeg") -> cover.jpeg appeared in ux0:`
 local function cpy_file(source_path, dest_path)
 	local fh1 = openFile(source_path, FREAD)
 	local fh2 = openFile(dest_path, FCREATE)
@@ -146,6 +153,8 @@ local function cpy_file(source_path, dest_path)
 	closeFile(fh1)
 	closeFile(fh2)
 end
+
+Copy_File = cpy_file
 
 cpy_file("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
 cpy_file("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")

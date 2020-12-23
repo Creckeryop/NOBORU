@@ -200,7 +200,7 @@ local function F(Parser)
 		end
 		if Table.Image == nil then
 			Console.error("Error getting image", 2)
-		else
+		elseif Table.Image.free then
 			Table.Image:free()
 			Console.write("All OK!", nil, 2)
 		end

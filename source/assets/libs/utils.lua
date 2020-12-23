@@ -298,3 +298,17 @@ end
 function ChangeAlpha(color, new_alpha)
 	return Color.new(Color.getR(color), Color.getG(color), Color.getB(color), new_alpha)
 end
+
+---@param str string
+---@return table
+---Breaks text into lines
+function To_lines(str)
+	if str:sub(-1) ~= "\n" then
+		str = str .. "\n"
+	end
+	local lines = {}
+	for line in str:gmatch("(.-)\n") do
+		lines[#lines + 1] = line
+	end
+	return lines
+end

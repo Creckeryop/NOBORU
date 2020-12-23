@@ -61,21 +61,7 @@ function settings.isAppUpdating()
 	return AppIsUpdating
 end
 
----@param source_path string
----@param dest_path string
----Copies file source_path to dest_path (creates file)
----
----Example:
----
----`cpy_file("ux0:data/noboru/cache.image","ux0:cover.jpeg") -> cover.jpeg appeared in ux0:`
-local function cpy_file(source_path, dest_path)
-	local fh1 = openFile(source_path, FREAD)
-	local fh2 = openFile(dest_path, FCREATE)
-	local contentFh1 = readFile(fh1, sizeFile(fh1))
-	writeFile(fh2, contentFh1, #contentFh1)
-	closeFile(fh1)
-	closeFile(fh2)
-end
+local cpy_file = Copy_File
 
 ---Sets colors from Themes[Settings.Theme] to their values
 local function setTheme(name)

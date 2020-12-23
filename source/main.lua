@@ -46,6 +46,7 @@ debug = nil
 package = nil
 require = nil
 RemoveDirectory = nil
+Copy_File = nil
 
 System = {
 	getLanguage = System.getLanguage,
@@ -274,7 +275,7 @@ local function draw()
 		if logo then
 			Graphics.drawImage(480 - 666 / 2, 272 - 172 / 2, logo.e, Color.new(255, 255, 255, 255 * fade))
 		end
-	elseif logo then
+	elseif logo and logo.free then
 		logo:free()
 		logo = nil
 	else

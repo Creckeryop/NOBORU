@@ -20,7 +20,7 @@ local abs, ceil, floor, max, min = math.abs, math.ceil, math.floor, math.max, ma
 local function freeMangaImage(manga)
 	if manga and manga.ImageDownload then
 		Threads.remove(manga)
-		if manga.Image then
+		if manga.Image and manga.Image.free then
 			manga.Image:free()
 		end
 		manga.ImageDownload = nil
@@ -28,12 +28,13 @@ local function freeMangaImage(manga)
 end
 
 local function loadMangaImage(manga)
-	if manga.Path and doesFileExist("ux0:data/noboru/" .. manga.Path) and System.getPictureResolution("ux0:data/noboru/" .. manga.Path) or -1 > 0 then
+	local path = manga.Path or ("cache/" .. Cache.getKey(manga) .. "/cover.image")
+	if path and doesFileExist("ux0:data/noboru/" .. path) and System.getPictureResolution("ux0:data/noboru/" .. path) or -1 > 0 then
 		Threads.addTask(
 			manga,
 			{
 				Type = "Image",
-				Path = manga.Path,
+				Path = path,
 				Table = manga,
 				MaxHeight = MANGA_HEIGHT * 2,
 				Index = "Image"
@@ -51,7 +52,7 @@ local function loadMangaImage(manga)
 				Table = manga,
 				Index = "Image",
 				MaxHeight = MANGA_HEIGHT * 2,
-				Path = Cache.isCached(manga) and manga.Path or nil
+				Path = Cache.isCached(manga) and path or nil
 			}
 		)
 	end
@@ -893,6 +894,7 @@ function Catalogs.shrink()
 	for _, i in ipairs(DownloadedImage) do
 		freeMangaImage(Results[i])
 	end
+	collectgarbage("collect")
 	ParserManager.remove(Results)
 	Loading.setMode("NONE")
 end

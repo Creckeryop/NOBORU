@@ -156,7 +156,7 @@ function Threads.update()
 						uniques[Task.UniqueKey] = nil
 						Task = nil
 					else
-						if Height > 4096 and Height / Width > 2 then
+						if Height > 4096 and Height / Width > 2 and not Task.MaxHeight then
 							if img2bytes(Width, Height, 1) > Graphics.getFreeMemory() then
 								if img2bytes(Width, Height, 2) > Graphics.getFreeMemory() then
 									Console.error("No enough memory to load image")
@@ -201,8 +201,14 @@ function Threads.update()
 								scale = 2
 							elseif scale <= 4 then
 								scale = 4
-							else
+							elseif scale <= 8 then
 								scale = 8
+							elseif scale <= 16 then
+								scale = 16
+							elseif scale <= 32 then
+								scale = 32
+							else
+								scale = 64
 							end
 							Graphics.loadImageAsync(Task.Path, scale)
 							Task.Type = "ImageLoad"
@@ -234,6 +240,13 @@ function Threads.update()
 					Task.Table[Task.Index].SliceHeight = math.floor(Task.Image.Height / Task.Image.Parts)
 					Task.Table[Task.Index].Height = Task.Image.Height
 					Task.Table[Task.Index].Width = Task.Image.Width
+					Task.Image.free = function(self)
+						for i = 1, #self do
+							if self[i] and self[i].free then
+								self[i]:free()
+							end
+						end
+					end
 				elseif Task.Image.i < Task.Image.Parts then
 					Task.Image.i = Task.Image.i + 1
 					if Task.Table[Task.Index] == Trash.Garbadge then
@@ -286,7 +299,7 @@ function Threads.update()
 					Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
 				end
 			end
-		else
+		elseif Task ~= nil then
 			Console.error("NET: " .. err)
 			Task.Retry = Task.Retry - 1
 			if Task.Retry > 0 and Task.Table ~= Trash then
@@ -300,10 +313,14 @@ function Threads.update()
 	if Trash.Garbadge then
 		if Trash.Type == "ImageLoad" then
 			Console.write("NET:(Freeing Image)", Color.new(255, 0, 255))
-			Trash.Garbadge:free()
+			if Trash.Garbadge and Trash.Garbadge.free then
+				Trash.Garbadge:free()
+			end
 		elseif Trash.Type == "ImageLoadTable2" then
 			Console.write("NET:(Freeing Table Image)", Color.new(255, 0, 255))
-			Trash.Garbadge:free()
+			if Trash.Garbadge and Trash.Garbadge.free then
+				Trash.Garbadge:free()
+			end
 		end
 		Trash.Garbadge = nil
 	end

@@ -160,12 +160,12 @@ local function deletePageImage(page)
 			Threads.remove(Pages[page])
 			ParserManager.remove(Pages[page])
 			for i = 1, Pages[page].Image.Parts do
-				if Pages[page].Image[i] and Pages[page].Image[i].e then
+				if Pages[page].Image[i] and Pages[page].Image[i].free then
 					Pages[page].Image[i]:free()
 				end
 			end
 		else
-			if Pages[page].Image.e then
+			if Pages[page].Image and Pages[page].Image.free then
 				Pages[page].Image:free()
 			end
 		end
@@ -1584,4 +1584,29 @@ function Reader.load(chapters, num)
 		StartPage = 1
 	end
 	Reader.loadChapter(num)
+end
+
+function Reader.getCurrentPageImageLink()
+	local page = Pages[Pages.Page]
+	if page then
+		if page.Extract then
+			return {
+				Path = page.Path,
+				Extract = page.Extract
+			}
+		elseif page.Path then
+			return {
+				Path = page.Path
+			}
+		elseif page.Link then
+			return {
+				Link = page.Link
+			}
+		else
+			return {
+				ParserID = Chapters[current_chapter].Manga.ParserID,
+				Link = page[1]
+			}
+		end
+	end
 end
