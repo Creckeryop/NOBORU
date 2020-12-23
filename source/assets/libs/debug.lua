@@ -17,6 +17,8 @@ function Debug.update()
 	wait(100)
 end
 
+local getRam = System.getFreeRamMemory
+
 function Debug.draw()
 	if DEBUG_MODE == 1 then
 		Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
@@ -26,6 +28,8 @@ function Debug.draw()
 		Font.print(FONT16, 720 - Font.getTextWidth(FONT16, mem_net) / 2, 0, mem_net, Color.new(0, 255, 0))
 		local mem_var = "VAR: " .. MemToStr(collectgarbage("count") * 1024)
 		Font.print(FONT16, 480 - Font.getTextWidth(FONT16, mem_var) / 2, 0, mem_var, Color.new(255, 128, 0))
+		local mem_ram = "FREE_RAM: " .. MemToStr(getRam())
+		Font.print(FONT16, 480 - Font.getTextWidth(FONT16, mem_ram) / 2, 20, mem_ram, Color.new(255, 128, 0))
 		local mem_gpu = "GPU: " .. MemToStr(GetTextureMemoryUsed())
 		Font.print(FONT16, 240 - Font.getTextWidth(FONT16, mem_gpu) / 2, 0, mem_gpu, Color.new(0, 0, 255))
 		local mem_gpu_free = "FREE_GPU: " .. MemToStr(Graphics.getFreeMemory())
