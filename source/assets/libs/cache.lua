@@ -246,6 +246,13 @@ function Cache.loadHistory()
 	updated = true
 end
 
+---@param manga table
+---@return boolean
+---Gives is manga in history
+function Cache.inHistory(manga)
+	return history[get_key(manga)] ~= nil
+end
+
 ---@param Manga table
 ---Checks if `Manga` is cached
 function Cache.isCached(Manga)
@@ -395,7 +402,7 @@ function Cache.clear(mode)
 		local d = listDirectory("ux0:data/noboru/cache") or {}
 		for i = 1, #d do
 			local f = d[i]
-			if not f.name:find("^IMPORTED") then
+			if not f.name:find("^IMPORTED") or not Database.checkByKey(f.name) then
 				rem_dir("ux0:data/noboru/cache/" .. f.name)
 				data[f.name] = nil
 			end

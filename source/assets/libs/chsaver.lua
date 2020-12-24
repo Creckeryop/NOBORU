@@ -859,7 +859,5 @@ function ChapterSaver.clear()
 	end
 	Keys = {}
 	ChapterSaver.save()
-	if not Settings.SilentDownloads then
-		Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
-	end
+	Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
 end

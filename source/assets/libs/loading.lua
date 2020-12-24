@@ -13,7 +13,6 @@ local center = {
 }
 
 Circle_icon = Image:new(Graphics.loadImage("app0:assets/icons/circle.png"))
---Circle_large_icon = Image:new(Graphics.loadImage("app0:assets/icons/circle-large.png"))
 
 ---Animation timer
 local animation_timer = Timer.new()

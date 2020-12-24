@@ -566,6 +566,7 @@ function Catalogs.update()
 	end
 end
 
+local doesDirExist = System.doesDirExist
 local download_bar = 0
 function Catalogs.draw()
 	local scroll_height, item
@@ -708,6 +709,9 @@ function Catalogs.draw()
 							end
 						end
 						get_space_dir("ux0:data/noboru/chapters")
+						if doesDirExist("uma0:data/noboru/chapters") then
+							get_space_dir("uma0:data/noboru/chapters")
+						end
 					end
 					Font.print(FONT16, 225, y - 44, MemToStr(chapters_space), COLOR_SUBFONT)
 					if sure_clear_chapters > 0 then
