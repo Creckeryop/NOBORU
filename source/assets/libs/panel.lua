@@ -8,7 +8,8 @@ textures_16x16 = {
 	Circle = Image:new(Graphics.loadImage("app0:assets/images/circle_button.png")),
 	DPad = Image:new(Graphics.loadImage("app0:assets/images/dpad.png")),
 	Select = Image:new(Graphics.loadImage("app0:assets/images/select_button.png")),
-	Start = Image:new(Graphics.loadImage("app0:assets/images/start_button.png"))
+	Start = Image:new(Graphics.loadImage("app0:assets/images/start_button.png")),
+	R = Image:new(Graphics.loadImage("app0:assets/images/r_button.png"))
 }
 
 ---Table of actions

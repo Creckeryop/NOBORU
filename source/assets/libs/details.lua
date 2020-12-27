@@ -385,7 +385,7 @@ function Details.draw()
 		if ContinueChapter and #Chapters > 0 then
 			Graphics.drawImage(0, shift + 472, textures_16x16.Select.e)
 		end
-		Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 2, 2)
+		Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 1, 1)
 		DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 326 / MANGA_HEIGHT)
 		Graphics.fillRect(260, 890 - 18, 90, 544, BACKGROUND_COLOR)
 		local ListCount = #Chapters
@@ -457,7 +457,8 @@ function Details.draw()
 		Graphics.drawImage(32, 90 * M - 50 - 12, Back_icon.e, COLOR_WHITE)
 		Graphics.fillRect(960 - 88 - 88, 960, 0, 90, BACKGROUND_COLOR)
 		if sort_icons[Settings.ChapterSorting] then
-			Graphics.drawImage(960 - 32 - 24 - 32 - 24, 33, sort_icons[Settings.ChapterSorting].e, Color.new(255, 255, 255, Alpha))
+			Graphics.drawImage(960 - 88 - 32 - 24, 33, sort_icons[Settings.ChapterSorting].e, Color.new(255, 255, 255, Alpha))
+			Graphics.drawImage(960 - 88 - 32 - 24, 5 - (1 - M) * 32, textures_16x16.R.e)
 		end
 		if chapters_loaded then
 			Graphics.drawImage(960 - 32 - 24, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
