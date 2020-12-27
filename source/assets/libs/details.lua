@@ -16,6 +16,11 @@ local point = Point_t(140, 326 / 2 + 85)
 
 local cross = Image:new(Graphics.loadImage("app0:assets/icons/cross.png"))
 local menu_icon = Image:new(Graphics.loadImage("app0:assets/icons/menu.png"))
+local sort_icons = {
+	["N->1"] = Image:new(Graphics.loadImage("app0:assets/icons/sort-9-1.png")),
+	["1->N"] = Image:new(Graphics.loadImage("app0:assets/icons/sort-1-9.png"))
+}
+
 
 local ms = 0
 local dif = 0
@@ -122,7 +127,7 @@ function Details.setManga(manga)
 	if manga then
 		Manga = manga
 		ms = 50 * string.len(manga.Name)
-		dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960 + 88 + 88, 0)
+		dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960 + 88 + 88 + 88, 0)
 		Chapters = {}
 		Slider.Y = -50
 		DetailsSelector:resetSelected()
@@ -222,8 +227,11 @@ function Details.input(oldpad, pad, oldtouch, touch)
 				if ContinueChapter then
 					press_manga(ContinueChapter > 0 and ContinueChapter or 1)
 				end
-			elseif oldtouch.x > 960 - 90 and oldtouch.y < 90 and chapters_loaded and oldtouch_mode == TOUCH.READ then
+			elseif oldtouch.x > 960 - 88 and oldtouch.y < 90 and chapters_loaded and oldtouch_mode == TOUCH.READ then
 				Extra.setChapters(Manga, Chapters)
+			elseif oldtouch.x > 960 - 88 - 88 and oldtouch.y < 90 and oldtouch_mode == TOUCH.READ then
+				SettingsFunctions.ChapterSorting()
+				Settings.save()
 			end
 		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
 			press_add_to_library()
@@ -251,6 +259,9 @@ function Details.input(oldpad, pad, oldtouch, touch)
 			end
 		elseif Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) and chapters_loaded then
 			Extra.setChapters(Manga, Chapters)
+		elseif Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldpad, SCE_CTRL_RTRIGGER) and chapters_loaded then
+			SettingsFunctions.ChapterSorting()
+			Settings.save()
 		end
 		local new_itemID = 0
 		if TOUCH.MODE == TOUCH.READ then
@@ -438,13 +449,16 @@ function Details.draw()
 				Graphics.drawImage(929 - ks, y + 5 + ks, textures_16x16.Square.e)
 			end
 		end
-		Graphics.fillRect(88, 960 - 88, 0, 90, BACKGROUND_COLOR)
+		Graphics.fillRect(88, 960 - 88 - 88, 0, 90, BACKGROUND_COLOR)
 		local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
 		Font.print(BONT30, 88 - dif * t / ms, 70 * M - 63, Manga.Name, TEXT_COLOR)
 		Font.print(FONT16, 88, 70 * M - 22, Manga.RawLink, SECOND_TEXT_COLOR)
 		Graphics.fillRect(0, 88, 0, 90, BACKGROUND_COLOR)
 		Graphics.drawImage(32, 90 * M - 50 - 12, Back_icon.e, COLOR_WHITE)
-		Graphics.fillRect(960 - 88, 960, 0, 90, BACKGROUND_COLOR)
+		Graphics.fillRect(960 - 88 - 88, 960, 0, 90, BACKGROUND_COLOR)
+		if sort_icons[Settings.ChapterSorting] then
+			Graphics.drawImage(960 - 32 - 24 - 32 - 24, 33, sort_icons[Settings.ChapterSorting].e, Color.new(255, 255, 255, Alpha))
+		end
 		if chapters_loaded then
 			Graphics.drawImage(960 - 32 - 24, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
 			Graphics.drawImage(960 - 32 - 24 - 20, 5 - (1 - M) * 32, textures_16x16.Start.e)
