@@ -82,7 +82,8 @@ Language = {
 			OpenInBrowser = "Открыть в браузере",
 			SaveDataPath = "Место сохранения данных",
 			SetPageAsCover = "Установить в качестве обложки манги",
-			ResetCover = "Сбросить обложку"
+			ResetCover = "Сбросить обложку",
+			SupportDev = "Поддержать разработчика"
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Настройки связанные с отслеживанием манги",
@@ -296,7 +297,8 @@ Language = {
 			OpenInBrowser = "Open in browser",
 			SaveDataPath = "Save data path",
 			SetPageAsCover = "Set page as cover",
-			ResetCover = "Reset cover"
+			ResetCover = "Reset cover",
+			SupportDev = "Support the developer"
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking",
@@ -511,6 +513,7 @@ Language = {
 			SaveDataPath = "Kaydetme Yolu",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -725,6 +728,7 @@ Language = {
 			SaveDataPath = "Save data path", --Need to translate
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -939,6 +943,7 @@ Language = {
 			SaveDataPath = "Guarda ruta de datos",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1153,6 +1158,7 @@ Language = {
 			SaveDataPath = "Salva percorso dati",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1367,6 +1373,7 @@ Language = {
 			SaveDataPath = "Emplacement de la sauvegarde",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1581,6 +1588,7 @@ Language = {
 			SaveDataPath = "Salvar caminho dos dados",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1797,6 +1805,7 @@ Language = {
 			SaveDataPath = "储存路径",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -2011,6 +2020,7 @@ Language = {
 			SaveDataPath = "儲存路徑",
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
+			SupportDev = "Support the developer", --translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please

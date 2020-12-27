@@ -295,6 +295,7 @@ local set_list = {
 		"ShowVersion",
 		"CheckUpdate",
 		"ShowAuthor",
+		"SupportDev",
 		"Translators"
 	},
 	Controls = {

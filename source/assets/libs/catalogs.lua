@@ -826,7 +826,9 @@ function Catalogs.draw()
 					end
 				elseif task == "ShowAuthor" then
 					Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_SUBFONT)
-					Font.print(FONT16, 225 + Font.getTextWidth(FONT16, "@creckeryop") + 20, y - 44, "email: didager@ya.ru", COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 24, "Email: didager@ya.ru", COLOR_ROYAL_BLUE)
+				elseif task == "SupportDev" then
+					Font.print(FONT16, 225, y - 44, "https://paypal.me/creckeryop", COLOR_SUBFONT)
 				elseif task == "ShowVersion" then
 					Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_SUBFONT)
 				elseif task == "ReaderDirection" then
@@ -846,7 +848,7 @@ function Catalogs.draw()
 			scroll_height = elements_count * 75 / 524
 		end
 		item = SettingSelector:getSelected()
-		item_h = list[item] == "Translators" and 70 or 0
+		item_h = list[item] == "Translators" and 90 or 0
 	elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
 		local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
 		for i = start, min(#Results, start + 15) do
