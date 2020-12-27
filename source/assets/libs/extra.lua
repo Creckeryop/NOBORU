@@ -231,9 +231,13 @@ local function press_action(id)
 		callUri("webmodal: " .. Manga.BrowserLink)
 	elseif ExtraMenu[id] == "ResetCover" then
 		if Manga and Manga.ParserID ~= "IMPORTED" then
-			local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/custom_cover.image"
+			local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image"
 			if doesFileExist(cover_path) then
 				deleteFile(cover_path)
+			end
+			local custom_cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/custom_cover.image"
+			if doesFileExist(custom_cover_path) then
+				deleteFile(custom_cover_path)
 			end
 			CustomCovers.setMangaCover(Manga, nil)
 			Manga.Image = nil
