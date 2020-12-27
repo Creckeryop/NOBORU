@@ -27,34 +27,128 @@ local function freeMangaImage(manga)
 	end
 end
 
+local cpy_file = Copy_File
+
 local function loadMangaImage(manga)
-	local path = manga.Path or ("cache/" .. Cache.getKey(manga) .. "/cover.image")
-	if path and doesFileExist("ux0:data/noboru/" .. path) and System.getPictureResolution("ux0:data/noboru/" .. path) or -1 > 0 then
-		Threads.addTask(
-			manga,
-			{
-				Type = "Image",
-				Path = path,
-				Table = manga,
-				MaxHeight = MANGA_HEIGHT * 2,
-				Index = "Image"
-			}
-		)
-	else
-		if Database.check(manga) and not Cache.isCached(manga) then
-			Cache.addManga(manga)
+	if CustomCovers.hasCustomCover(manga) then
+		local custom_cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(manga) .. "/custom_cover.image"
+		if doesFileExist(custom_cover_path) and System.getPictureResolution(custom_cover_path) or -1 > 0 then
+			Threads.addTask(
+				manga,
+				{
+					Type = "Image",
+					Path = custom_cover_path,
+					Table = manga,
+					MaxHeight = MANGA_HEIGHT * 2,
+					Index = "Image"
+				}
+			)
+		else
+			if not Cache.isCached(manga) then
+				Cache.addManga(manga)
+			end
+			local cover = CustomCovers.getCustomCover(manga)
+			local cache_key = Cache.getKey(manga)
+			local t = {}
+			if cover.Path then
+				cpy_file(cover.Path:find("^...?0:") and cover.Path or ("ux0:data/noboru/" .. cover.Path), "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image")
+				Threads.addTask(
+					manga,
+					{
+						Type = "Image",
+						Path = custom_cover_path,
+						Table = manga,
+						MaxHeight = MANGA_HEIGHT * 2,
+						Index = "Image"
+					}
+				)
+			elseif cover.ParserID then
+				Threads.insertTask(
+					manga,
+					{
+						Type = "function",
+						OnComplete = function()
+							ParserManager.getPageImage(cover.ParserID, cover.Link, t)
+							while ParserManager.check(t) do
+								coroutine.yield(false)
+							end
+							Threads.insertTask(
+								manga,
+								{
+									Type = "FileDownload",
+									Link = t.Link,
+									Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
+									OnComplete = function()
+										Threads.addTask(
+											manga,
+											{
+												Type = "Image",
+												Path = custom_cover_path,
+												Table = manga,
+												MaxHeight = MANGA_HEIGHT * 2,
+												Index = "Image"
+											}
+										)
+									end
+								}
+							)
+						end
+					}
+				)
+			elseif cover.Link then
+				Threads.insertTask(
+					manga,
+					{
+						Type = "FileDownload",
+						Link = cover.Link,
+						Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
+						OnComplete = function()
+							Threads.addTask(
+								manga,
+								{
+									Type = "Image",
+									Path = custom_cover_path,
+									Table = manga,
+									MaxHeight = MANGA_HEIGHT * 2,
+									Index = "Image"
+								}
+							)
+						end
+					}
+				)
+			else
+				CustomCovers.setMangaCover(manga, nil)
+			end
 		end
-		Threads.addTask(
-			manga,
-			{
-				Type = "ImageDownload",
-				Link = manga.ImageLink,
-				Table = manga,
-				Index = "Image",
-				MaxHeight = MANGA_HEIGHT * 2,
-				Path = Cache.isCached(manga) and path or nil
-			}
-		)
+	else
+		local path = manga.Path or ("cache/" .. Cache.getKey(manga) .. "/cover.image")
+		if path and doesFileExist("ux0:data/noboru/" .. path) and System.getPictureResolution("ux0:data/noboru/" .. path) or -1 > 0 then
+			Threads.addTask(
+				manga,
+				{
+					Type = "Image",
+					Path = path,
+					Table = manga,
+					MaxHeight = MANGA_HEIGHT * 2,
+					Index = "Image"
+				}
+			)
+		else
+			if Database.check(manga) and not Cache.isCached(manga) then
+				Cache.addManga(manga)
+			end
+			Threads.addTask(
+				manga,
+				{
+					Type = "ImageDownload",
+					Link = manga.ImageLink,
+					Table = manga,
+					Index = "Image",
+					MaxHeight = MANGA_HEIGHT * 2,
+					Path = Cache.isCached(manga) and path or nil
+				}
+			)
+		end
 	end
 end
 

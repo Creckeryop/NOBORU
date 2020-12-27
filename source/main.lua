@@ -15,6 +15,7 @@ loadlib("utils")
 loadlib("globals")
 loadlib("browser")
 loadlib("customsettings")
+loadlib("customcovers")
 loadlib("catalogmodes")
 loadlib("changes")
 loadlib("conmessage")
@@ -115,6 +116,11 @@ local function preload_data()
 	end
 	coroutine.yield("Checking saved chapters")
 	suc, err = pcall(ChapterSaver.load)
+	if not suc then
+		Console.error(err)
+	end
+	coroutine.yield("Loading custom covers")
+	suc, err = pcall(CustomCovers.load)
 	if not suc then
 		Console.error(err)
 	end

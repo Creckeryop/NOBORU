@@ -231,10 +231,11 @@ local function press_action(id)
 		callUri("webmodal: " .. Manga.BrowserLink)
 	elseif ExtraMenu[id] == "ResetCover" then
 		if Manga and Manga.ParserID ~= "IMPORTED" then
-			local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image"
+			local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/custom_cover.image"
 			if doesFileExist(cover_path) then
 				deleteFile(cover_path)
 			end
+			CustomCovers.setMangaCover(Manga, nil)
 			Manga.Image = nil
 			Manga.ImageDownload = nil
 			collectgarbage("collect")
@@ -255,9 +256,11 @@ local function press_action(id)
 			local t = {}
 			if page.Extract then
 			elseif page.Path then
-				cpy_file(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cache_key .. "/cover.image")
+				CustomCovers.setMangaCover(Manga, page)
+				cpy_file(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image")
 				Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 			elseif page.ParserID then
+				CustomCovers.setMangaCover(Manga, page)
 				Threads.insertTask(
 					t,
 					{
@@ -272,7 +275,7 @@ local function press_action(id)
 								{
 									Type = "FileDownload",
 									Link = t.Link,
-									Path = "ux0:data/noboru/cache/" .. cache_key .. "/cover.image",
+									Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
 									OnComplete = function()
 										Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 									end
@@ -282,12 +285,13 @@ local function press_action(id)
 					}
 				)
 			elseif page.Link then
+				CustomCovers.setMangaCover(Manga, page)
 				Threads.insertTask(
 					t,
 					{
 						Type = "FileDownload",
 						Link = page.Link,
-						Path = "ux0:data/noboru/cache/" .. cache_key .. "/cover.image",
+						Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
 						OnComplete = function()
 							Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 						end

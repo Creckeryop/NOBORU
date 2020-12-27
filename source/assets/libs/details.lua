@@ -81,13 +81,13 @@ local is_chapter_loaded_offline = false
 
 local ContinueChapter
 
----@param Manga table
+---@param manga table
 ---Sets Continue button to latest read chapter in given `Manga`
-local function updateContinueManga(Manga)
+local function updateContinueManga(manga)
 	ContinueChapter = 0
 	if #Chapters > 0 then
 		Chapters[1].Manga.Counter = #Chapters
-		local Latest = Cache.getLatestBookmark(Manga)
+		local Latest = Cache.getLatestBookmark(manga)
 		for i = 1, #Chapters do
 			local key = Chapters[i].Link:gsub("%p", "")
 			if Latest == key then
@@ -280,6 +280,8 @@ function Details.input(oldpad, pad, oldtouch, touch)
 	end
 end
 
+local deleteFile = System.deleteFile
+local doesFileExist = System.doesFileExist
 function Details.update()
 	if mode ~= "END" then
 		animationUpdate()
@@ -298,6 +300,17 @@ function Details.update()
 				if Cache.isCached(Chapters[1].Manga) then
 					is_chapter_loaded_offline = true
 					Cache.saveChapters(Chapters[1].Manga, Chapters)
+				end
+				local manga = Chapters[1].Manga
+				if manga.NewImageLink and not CustomCovers.hasCustomCover(manga) and manga.NewImageLink ~= Manga.ImageLink then
+					local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image"
+					if doesFileExist(cover_path) then
+						deleteFile(cover_path)
+					end
+					Manga.ImageLink = manga.NewImageLink
+					Manga.Image = nil
+					Manga.ImageDownload = nil
+					collectgarbage("collect")
 				end
 			end
 		end
