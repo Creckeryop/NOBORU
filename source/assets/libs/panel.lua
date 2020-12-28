@@ -9,7 +9,8 @@ textures_16x16 = {
 	DPad = Image:new(Graphics.loadImage("app0:assets/images/dpad.png")),
 	Select = Image:new(Graphics.loadImage("app0:assets/images/select_button.png")),
 	Start = Image:new(Graphics.loadImage("app0:assets/images/start_button.png")),
-	R = Image:new(Graphics.loadImage("app0:assets/images/r_button.png"))
+	R = Image:new(Graphics.loadImage("app0:assets/images/r_button.png")),
+	L = Image:new(Graphics.loadImage("app0:assets/images/l_button.png"))
 }
 
 ---Table of actions
@@ -74,8 +75,15 @@ function Panel.draw()
 				end
 				x = x + 20
 			else
-				Font.print(FONT16, x, 524 + y, v, COLOR_FONT)
-				x = x + Font.getTextWidth(FONT16, v) + 5
+				if v == "L\\R" then
+					Graphics.drawImage(x, 526 + y, textures_16x16.L.e)
+					x = x + 26
+					Graphics.drawImage(x, 526 + y, textures_16x16.R.e)
+					x = x + 28
+				else
+					Font.print(FONT16, x, 524 + y, v, COLOR_FONT)
+					x = x + Font.getTextWidth(FONT16, v) + 5
+				end
 			end
 			Font.print(FONT16, x, 524 + y, hints[v], COLOR_FONT)
 			x = x + Font.getTextWidth(FONT16, hints[v]) + 10
