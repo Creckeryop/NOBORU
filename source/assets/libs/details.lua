@@ -548,9 +548,13 @@ function Details.draw()
 			local h = #Chapters * 80 / 454
 			Graphics.fillRect(955, 960, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
 		end
-		if #DescriptionTable > 0 then
+		if #DescriptionTable > 0 and Chapters_offset > 0 then
 			local lines_count = ToggleDescription and #DescriptionTable or math.min(2, #DescriptionTable)
-			Graphics.fillRect(260, 955, 95, 95 + Chapters_offset-24-10, BACKGROUND_COLOR)
+			if lines_count ~= #DescriptionTable or lines_count > 2 then
+				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset - 24 - 10, BACKGROUND_COLOR)
+			else
+				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset, BACKGROUND_COLOR)
+			end
 			local desc_y = 95
 			Font.print(BONT16, (270 + 955) / 2 - Font.getTextWidth(BONT16, "Content") / 2, desc_y, "Content", TEXT_COLOR)
 			desc_y = desc_y + 24
