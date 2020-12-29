@@ -40,7 +40,13 @@ local function loadMangaImage(manga)
 					Path = custom_cover_path,
 					Table = manga,
 					MaxHeight = MANGA_HEIGHT * 2,
-					Index = "Image"
+					Index = "newImage",
+					OnFinalComplete = function ()
+						if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
+							manga.Image:free()
+						end
+						manga.Image = manga.newImage
+					end
 				}
 			)
 		else
@@ -59,7 +65,13 @@ local function loadMangaImage(manga)
 						Path = custom_cover_path,
 						Table = manga,
 						MaxHeight = MANGA_HEIGHT * 2,
-						Index = "Image"
+						Index = "newImage",
+						OnFinalComplete = function ()
+							if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
+								manga.Image:free()
+							end
+							manga.Image = manga.newImage
+						end
 					}
 				)
 			elseif cover.ParserID then
@@ -86,7 +98,13 @@ local function loadMangaImage(manga)
 												Path = custom_cover_path,
 												Table = manga,
 												MaxHeight = MANGA_HEIGHT * 2,
-												Index = "Image"
+												Index = "newImage",
+												OnFinalComplete = function ()
+													if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
+														manga.Image:free()
+													end
+													manga.Image = manga.newImage
+												end
 											}
 										)
 									end
@@ -110,7 +128,13 @@ local function loadMangaImage(manga)
 									Path = custom_cover_path,
 									Table = manga,
 									MaxHeight = MANGA_HEIGHT * 2,
-									Index = "Image"
+									Index = "newImage",
+									OnFinalComplete = function ()
+										if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
+											manga.Image:free()
+										end
+										manga.Image = manga.newImage
+									end
 								}
 							)
 						end
@@ -130,7 +154,13 @@ local function loadMangaImage(manga)
 					Path = path,
 					Table = manga,
 					MaxHeight = MANGA_HEIGHT * 2,
-					Index = "Image"
+					Index = "newImage",
+					OnFinalComplete = function ()
+						if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
+							manga.Image:free()
+						end
+						manga.Image = manga.newImage
+					end
 				}
 			)
 		else
@@ -143,7 +173,13 @@ local function loadMangaImage(manga)
 					Type = "ImageDownload",
 					Link = manga.ImageLink,
 					Table = manga,
-					Index = "Image",
+					Index = "newImage",
+					OnFinalComplete = function ()
+						if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
+							manga.Image:free()
+						end
+						manga.Image = manga.newImage
+					end,
 					MaxHeight = MANGA_HEIGHT * 2,
 					Path = Cache.isCached(manga) and path or nil
 				}

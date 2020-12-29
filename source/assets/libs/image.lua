@@ -27,7 +27,8 @@ function Image:new(image, filter)
 	local p = {
 		e = image,
 		Width = Graphics.getImageWidth(image),
-		Height = Graphics.getImageHeight(image)
+		Height = Graphics.getImageHeight(image),
+		Type = "image"
 	}
 	if filter then
 		Graphics.setImageFilters(image, filter, filter)
@@ -47,6 +48,7 @@ function Image:free()
 	Graphics.freeImage(self.e)
 	Console.write("Freed!")
 	self.e = nil
+	self.Type = "table"
 	textureMemUsed = textureMemUsed - self.Memory
 end
 

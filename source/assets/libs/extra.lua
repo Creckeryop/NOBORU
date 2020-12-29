@@ -240,7 +240,6 @@ local function press_action(id)
 				deleteFile(custom_cover_path)
 			end
 			CustomCovers.setMangaCover(Manga, nil)
-			Manga.Image = nil
 			Manga.ImageDownload = nil
 			collectgarbage("collect")
 			Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)

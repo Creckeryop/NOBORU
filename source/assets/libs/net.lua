@@ -55,6 +55,7 @@ function Threads.update()
 			return
 		end
 		Task = table.remove(Order, 1)
+		Task.Final = true
 		if Task.Type == "StringRequest" then
 			if Task.Link then
 				Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4, Task.Proxy, Task.ProxyAuth)
@@ -72,6 +73,7 @@ function Threads.update()
 					Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4, Task.Proxy, Task.ProxyAuth)
 					if Task.Type == "ImageDownload" then
 						Task.Type = "Image"
+						Task.Final = false
 					end
 				else
 					Console.error("No Path given")
@@ -229,6 +231,7 @@ function Threads.update()
 			elseif Task.Type == "ImageLoad" then
 				if doesFileExist(Task.Path) then
 					Task.Table[Task.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
+					Task.Final = true
 				else
 					Console.error("(ImageLoad)File not found")
 				end
@@ -261,6 +264,7 @@ function Threads.update()
 						Console.write(string.format("Got %s image", Task.Image.i))
 					end
 				else
+					Task.Final = true
 					uniques[Task.UniqueKey] = nil
 					Task = nil
 					return
@@ -297,6 +301,11 @@ function Threads.update()
 				if TempTask.OnComplete then
 					TempTask.OnComplete()
 					Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
+				end
+				if TempTask.Final then
+					if TempTask.OnFinalComplete then
+						TempTask.OnFinalComplete()
+					end
 				end
 			end
 		elseif Task ~= nil then
@@ -395,6 +404,7 @@ local function taskete(UniqueKey, T, foo)
 		MaxHeight = T.MaxHeight,
 		MaxWidth = T.MaxWidth,
 		OnComplete = T.OnComplete,
+		OnFinalComplete = T.OnFinalComplete,
 		Extract = T.Extract,
 		Path = T.Path and (T.Path:find("^...?0:") and T.Path or ("ux0:data/noboru/" .. T.Path)) or IMAGE_CACHE_PATH,
 		Retry = 3,
