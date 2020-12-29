@@ -275,6 +275,7 @@ function Cache.saveChapters(Manga, Chapters)
 			chlist[i][k] = k == "Manga" and "10101010101010" or v
 		end
 	end
+	chlist.Description = Chapters.Description or ""
 	local fh = openFile(path, FCREATE)
 	local serialized_chlist = "return " .. table.serialize(chlist, true)
 	writeFile(fh, serialized_chlist, #serialized_chlist)
@@ -299,6 +300,7 @@ function Cache.loadChapters(Manga, skiphiding)
 			closeFile(fh)
 			if suc then
 				if skiphiding then
+					new_chlist.Description = new_chlist.Description or ""
 					return new_chlist
 				end
 				if Settings.HideInOffline then
@@ -307,8 +309,10 @@ function Cache.loadChapters(Manga, skiphiding)
 						local chapter = new_chlist[i]
 						t[#t + 1] = ChapterSaver.check(chapter) and chapter or nil
 					end
+					t.Description = new_chlist.Description or ""
 					return t
 				else
+					new_chlist.Description = new_chlist.Description or ""
 					return new_chlist
 				end
 			else

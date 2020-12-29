@@ -214,7 +214,7 @@ local CJK = {
 	{"𫠠", "𬺯"}
 }
 
-local function isCJK(letter)
+function IsCJK(letter)
 	for i = 1, #CJK do
 		if letter >= CJK[i][1] and letter <= CJK[i][2] then
 			return true
@@ -222,6 +222,8 @@ local function isCJK(letter)
 	end
 	return false
 end
+
+local isCJK = IsCJK
 
 local function drawMangaName(Manga)
 	Manga.PrintName = {}

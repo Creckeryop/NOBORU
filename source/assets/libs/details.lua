@@ -8,6 +8,11 @@ local TOUCH = TOUCH()
 local Slider = Slider()
 
 local Manga = nil
+local Description = nil
+local DescriptionTable = {}
+local ToggleDescription = false
+local DESCRIPTION_WIDTH = 685
+local Chapters_offset = 0
 
 local fade = 0
 local old_fade = 1
@@ -20,7 +25,6 @@ local sort_icons = {
 	["N->1"] = Image:new(Graphics.loadImage("app0:assets/icons/sort-9-1.png")),
 	["1->N"] = Image:new(Graphics.loadImage("app0:assets/icons/sort-1-9.png"))
 }
-
 
 local ms = 0
 local dif = 0
@@ -45,8 +49,8 @@ local function scrollUpdate()
 	if Slider.Y < -15 then
 		Slider.Y = -15
 		Slider.V = 0
-	elseif Slider.Y > (#Chapters * 80 - 464) then
-		Slider.Y = math.max(-15, #Chapters * 80 - 464)
+	elseif Slider.Y > (#Chapters * 80 - 464 + Chapters_offset) then
+		Slider.Y = math.max(-15, #Chapters * 80 - 464 + Chapters_offset)
 		Slider.V = 0
 	end
 end
@@ -126,6 +130,8 @@ local chapters_loaded = false
 function Details.setManga(manga)
 	if manga then
 		Manga = manga
+		DescriptionTable = {}
+		ToggleDescription = false
 		ms = 50 * string.len(manga.Name)
 		dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960 + 88 + 88 + 88, 0)
 		Chapters = {}
@@ -205,8 +211,8 @@ function Details.input(oldpad, pad, oldtouch, touch)
 			Slider.TouchY = touch.y
 		elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
 			if TOUCH.MODE == TOUCH.READ and oldtouch.x then
-				if oldtouch.x > 320 and oldtouch.x < 955 and oldtouch.y > 90 then
-					local id = math.floor((Slider.Y + oldtouch.y - 20) / 80)
+				if oldtouch.x > 320 and oldtouch.x < 955 and oldtouch.y > 90 + Chapters_offset then
+					local id = math.floor((Slider.Y + oldtouch.y - 20 - Chapters_offset) / 80)
 					if Settings.ChapterSorting == "N->1" then
 						id = #Chapters - id + 1
 					end
@@ -215,6 +221,8 @@ function Details.input(oldpad, pad, oldtouch, touch)
 					else
 						press_download(id)
 					end
+				elseif oldtouch.x > 270 and oldtouch.x < 960 and oldtouch.y > 90 and oldtouch.y <= 90 + Chapters_offset then
+					ToggleDescription = not ToggleDescription
 				end
 			end
 			TOUCH.MODE = TOUCH.NONE
@@ -262,14 +270,16 @@ function Details.input(oldpad, pad, oldtouch, touch)
 		elseif Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldpad, SCE_CTRL_RTRIGGER) and chapters_loaded then
 			SettingsFunctions.ChapterSorting()
 			Settings.save()
+		elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldpad, SCE_CTRL_LTRIGGER) and chapters_loaded then
+			ToggleDescription = not ToggleDescription
 		end
 		local new_itemID = 0
 		if TOUCH.MODE == TOUCH.READ then
 			if math.abs(Slider.V) > 0.1 or math.abs(touch.y - Slider.TouchY) > 10 then
 				TOUCH.MODE = TOUCH.SLIDE
 			else
-				if oldtouch.x > 320 and oldtouch.x < 900 then
-					local id = math.floor((Slider.Y - 20 + oldtouch.y) / 80)
+				if oldtouch.x > 320 and oldtouch.x < 900 and oldtouch.y > 90 + Chapters_offset then
+					local id = math.floor((Slider.Y - 20 + oldtouch.y - Chapters_offset) / 80)
 					if Settings.ChapterSorting == "N->1" then
 						id = #Chapters - id + 1
 					end
@@ -293,6 +303,60 @@ end
 
 local deleteFile = System.deleteFile
 local doesFileExist = System.doesFileExist
+local isCJK = IsCJK
+local function updateDescription(new_description)
+	Description = new_description
+	local words = {}
+	for word in Description:gmatch("%S+") do
+		local new_word = ""
+		for i = 1, #word do
+			local s = string.sub(word, i, 1)
+			if s ~= "" and isCJK(s) then
+				if new_word ~= "" then
+					words[#words + 1] = new_word
+					new_word = ""
+				end
+				words[#words + 1] = s
+			else
+				if s:match("[%.,]") then
+					new_word = new_word .. s
+					words[#words + 1] = new_word
+					new_word = ""
+				else
+					new_word = new_word .. s
+				end
+			end
+		end
+		if new_word ~= "" then
+			words[#words + 1] = new_word
+		end
+	end
+	local lines = {}
+	if #words > 0 then
+		local w = 0
+		lines[1] = {}
+		for n = 1, #words do
+			local word = words[n]
+			local word_width = Font.getTextWidth(FONT16, word)
+			if w + word_width + 4 > DESCRIPTION_WIDTH then
+				w = word_width
+				local space_width = 0
+				for i = 1, #lines[#lines] do
+					space_width = space_width + lines[#lines][i].Width
+				end
+				space_width = (DESCRIPTION_WIDTH - space_width) / #lines[#lines]
+				lines[#lines].SpaceWidth = space_width
+				lines[#lines + 1] = {}
+			else
+				w = w + word_width + 4
+			end
+			lines[#lines][#lines[#lines] + 1] = {Word = word, Width = word_width}
+		end
+		lines[#lines].SpaceWidth = 4
+	end
+	DescriptionTable = lines
+end
+
 function Details.update()
 	if mode ~= "END" then
 		animationUpdate()
@@ -302,8 +366,20 @@ function Details.update()
 			Loading.setMode("NONE")
 		end
 		local item_selected = DetailsSelector.getSelected()
+		if #DescriptionTable > 0 then
+			local lines_count = ToggleDescription and #DescriptionTable or math.min(2, #DescriptionTable)
+			local final_offset = lines_count * 24 + 24 + 10
+			if lines_count ~= #DescriptionTable or lines_count > 2 then
+				final_offset = final_offset + 24
+				Chapters_offset = math.max(24 * 4 + 10, math.min(Chapters_offset + (final_offset - Chapters_offset) / 8, 24 * (#DescriptionTable + 2) + 10))
+			else
+				Chapters_offset = final_offset
+			end
+		else
+			Chapters_offset = 0
+		end
 		if item_selected ~= 0 then
-			Slider.Y = Slider.Y + (item_selected * 80 - 272 - Slider.Y) / 8
+			Slider.Y = Slider.Y + (item_selected * 80 - (544 - Chapters_offset) / 2 - Slider.Y) / 8
 		end
 		scrollUpdate()
 		if not is_chapter_loaded_offline and not ParserManager.check(Chapters) then
@@ -319,7 +395,6 @@ function Details.update()
 						deleteFile(cover_path)
 					end
 					Manga.ImageLink = manga.NewImageLink
-					Manga.Image = nil
 					Manga.ImageDownload = nil
 					collectgarbage("collect")
 				end
@@ -327,6 +402,7 @@ function Details.update()
 		end
 		if not chapters_loaded and not ParserManager.check(Chapters) then
 			chapters_loaded = true
+			updateDescription(Chapters.Description or "")
 		end
 		if AppMode == MENU and not ContinueChapter and not ParserManager.check(Chapters) then
 			updateContinueManga(Manga)
@@ -350,14 +426,15 @@ function Details.draw()
 		Graphics.fillRect(20, 260, 90, 544, BACKGROUND_COLOR)
 		local start = math.max(1, math.floor(Slider.Y / 80) + 1)
 		local shift = (1 - M) * 544
-		local y = shift - Slider.Y + start * 80
-		local text, color = Language[Settings.Language].DETAILS.ADD_TO_LIBRARY, ADDMANGA_COLOR
+		local y = shift - Slider.Y + start * 80 + Chapters_offset
+		local color, text = ADDMANGA_COLOR, Language[Settings.Language].DETAILS.ADD_TO_LIBRARY
+
 		if Database.check(Manga) then
 			color = DELMANGA_COLOR
 			text = Language[Settings.Language].DETAILS.REMOVE_FROM_LIBRARY
 		end
 		Graphics.fillRect(20, 260, shift + 416, shift + 475, color)
-		Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, 444 + shift - Font.getTextHeight(FONT20, text) / 2, text, TEXT_COLOR)
+		Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, shift + 444 - Font.getTextHeight(FONT20, text) / 2, text, TEXT_COLOR)
 		if ContinueChapter then
 			if #Chapters > 0 then
 				Graphics.fillRect(30, 250, shift + 480, shift + 539, CONTINUE_COLOR)
@@ -387,7 +464,8 @@ function Details.draw()
 		end
 		Graphics.drawImageExtended(20, shift + 420, textures_16x16.Triangle.e, 0, 0, 16, 16, 0, 1, 1)
 		DrawDetailsManga(point.x, point.y + 544 * (1 - M), Manga, 326 / MANGA_HEIGHT)
-		Graphics.fillRect(260, 890 - 18, 90, 544, BACKGROUND_COLOR)
+		Graphics.fillRect(260, 890 - 18, 90, 95, BACKGROUND_COLOR)
+		Graphics.fillRect(260, 890 - 18, 95 + Chapters_offset, 544, BACKGROUND_COLOR)
 		local ListCount = #Chapters
 		for n = start, math.min(ListCount, start + 8) do
 			local i = Settings.ChapterSorting ~= "N->1" and n or ListCount - n + 1
@@ -406,8 +484,9 @@ function Details.draw()
 				break
 			end
 		end
-		Graphics.fillRect(890 - 18, 955, 90, 544, BACKGROUND_COLOR)
-		y = shift - Slider.Y + start * 80
+		Graphics.fillRect(890 - 18, 955, 90, 95, BACKGROUND_COLOR)
+		Graphics.fillRect(890 - 18, 955, 95 + Chapters_offset, 544, BACKGROUND_COLOR)
+		y = shift - Slider.Y + start * 80 + Chapters_offset
 		for n = start, math.min(ListCount, start + 8) do
 			local i = Settings.ChapterSorting ~= "N->1" and n or ListCount - n + 1
 			if Manga.ParserID ~= "IMPORTED" then
@@ -438,7 +517,7 @@ function Details.draw()
 		end
 		local item = DetailsSelector.getSelected()
 		if item ~= 0 then
-			y = shift - Slider.Y + item * 80
+			y = shift - Slider.Y + item * 80 + Chapters_offset
 			local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
 			local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
 			for i = ks, ks + 1 do
@@ -457,17 +536,46 @@ function Details.draw()
 		Graphics.drawImage(32, 90 * M - 50 - 12, Back_icon.e, COLOR_WHITE)
 		Graphics.fillRect(960 - 88 - 88, 960, 0, 90, BACKGROUND_COLOR)
 		if sort_icons[Settings.ChapterSorting] then
-			Graphics.drawImage(960 - 88 - 32 - 24, 33, sort_icons[Settings.ChapterSorting].e, Color.new(255, 255, 255, Alpha))
+			Graphics.drawImage(960 - 88 - 32 - 24, 33, sort_icons[Settings.ChapterSorting].e, TEXT_COLOR)
 			Graphics.drawImage(960 - 88 - 32 - 24, 5 - (1 - M) * 32, textures_16x16.R.e)
 		end
 		if chapters_loaded then
-			Graphics.drawImage(960 - 32 - 24, 33, menu_icon.e, Color.new(255, 255, 255, Alpha))
+			Graphics.drawImage(960 - 32 - 24, 33, menu_icon.e, TEXT_COLOR)
 			Graphics.drawImage(960 - 32 - 24 - 20, 5 - (1 - M) * 32, textures_16x16.Start.e)
 		end
 		Graphics.fillRect(955, 960, 90, 544, BACKGROUND_COLOR)
 		if mode == "START" and #Chapters > 5 then
 			local h = #Chapters * 80 / 454
 			Graphics.fillRect(955, 960, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
+		end
+		if #DescriptionTable > 0 then
+			local lines_count = ToggleDescription and #DescriptionTable or math.min(2, #DescriptionTable)
+			Graphics.fillRect(260, 955, 95, 95 + Chapters_offset-24-10, BACKGROUND_COLOR)
+			local desc_y = 95
+			Font.print(BONT16, (270 + 955) / 2 - Font.getTextWidth(BONT16, "Content") / 2, desc_y, "Content", TEXT_COLOR)
+			desc_y = desc_y + 24
+			for i = 1, #DescriptionTable do
+				local line = DescriptionTable[i]
+				local x = 270
+				for j = 1, #line do
+					Font.print(FONT16, x, desc_y, line[j].Word, TEXT_COLOR)
+					x = x + line.SpaceWidth + line[j].Width
+				end
+				desc_y = desc_y + 24
+				if desc_y > 95 + Chapters_offset - 24 - 10 then
+					break
+				end
+			end
+			if lines_count ~= #DescriptionTable or lines_count > 2 then
+				Graphics.fillRect(260, 955, 95 + Chapters_offset - 24 - 10, 95 + Chapters_offset, BACKGROUND_COLOR)
+				if lines_count ~= #DescriptionTable then
+					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Expand") + 32) / 2, 95 + Chapters_offset - 24 - 10, "Expand", TEXT_COLOR)
+					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Expand") / 2 + 4, 95 + Chapters_offset - 24 - 10, textures_16x16.L.e, TEXT_COLOR)
+				elseif lines_count > 2 then
+					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Shrink") + 32) / 2, 95 + Chapters_offset - 24 - 10, "Shrink", TEXT_COLOR)
+					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Shrink") / 2 + 4, 95 + Chapters_offset - 24 - 10, textures_16x16.L.e, TEXT_COLOR)
+				end
+			end
 		end
 	end
 end
