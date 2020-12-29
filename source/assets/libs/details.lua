@@ -307,11 +307,11 @@ local isCJK = IsCJK
 local function updateDescription(new_description)
 	Description = new_description
 	local words = {}
-	for word in Description:gmatch("%S+") do
+	for word in Description:gmatch("[^ ]+") do
 		local new_word = ""
 		for i = 1, #word do
 			local s = string.sub(word, i, 1)
-			if s ~= "" and isCJK(s) then
+			if s ~= "" and isCJK(s) or s == "\n" then
 				if new_word ~= "" then
 					words[#words + 1] = new_word
 					new_word = ""
@@ -338,7 +338,11 @@ local function updateDescription(new_description)
 		for n = 1, #words do
 			local word = words[n]
 			local word_width = Font.getTextWidth(FONT16, word)
-			if w + word_width + 4 > DESCRIPTION_WIDTH then
+			if word == "\n" then
+				w = 0
+				lines[#lines].SpaceWidth = 4
+				lines[#lines + 1] = {}
+			elseif w + word_width + 4 > DESCRIPTION_WIDTH then
 				w = word_width
 				local space_width = 0
 				for i = 1, #lines[#lines] do
@@ -350,7 +354,9 @@ local function updateDescription(new_description)
 			else
 				w = w + word_width + 4
 			end
-			lines[#lines][#lines[#lines] + 1] = {Word = word, Width = word_width}
+			if word ~= "\n" then
+				lines[#lines][#lines[#lines] + 1] = {Word = word, Width = word_width}
+			end
 		end
 		lines[#lines].SpaceWidth = 4
 	end
