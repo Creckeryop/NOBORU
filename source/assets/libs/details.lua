@@ -13,6 +13,8 @@ local DescriptionTable = {}
 local ToggleDescription = false
 local DESCRIPTION_WIDTH = 685
 local Chapters_offset = 0
+local Description_offset = 0
+local LineHeight = 22
 
 local fade = 0
 local old_fade = 1
@@ -132,6 +134,7 @@ function Details.setManga(manga)
 		Manga = manga
 		DescriptionTable = {}
 		ToggleDescription = false
+		Description_offset = 0
 		ms = 50 * string.len(manga.Name)
 		dif = math.max(Font.getTextWidth(BONT30, manga.Name) - 960 + 88 + 88 + 88, 0)
 		Chapters = {}
@@ -227,7 +230,16 @@ function Details.input(oldpad, pad, oldtouch, touch)
 			end
 			TOUCH.MODE = TOUCH.NONE
 		end
-		DetailsSelector:input(#Chapters, oldpad, pad, touch.x)
+		local Description_lock = not (ToggleDescription and #DescriptionTable >= 13)
+		if Description_lock then
+			DetailsSelector:input(#Chapters, oldpad, pad, touch.x)
+		else
+			if Controls.check(pad, SCE_CTRL_UP) then
+				Description_offset = math.max(Description_offset - 3, 0)
+			elseif Controls.check(pad, SCE_CTRL_DOWN) then
+				Description_offset = math.min(Description_offset + 3, math.max(0, #DescriptionTable * LineHeight - (544 - 95 - 24 - 24 - 10)))
+			end
+		end
 		if oldtouch.x and not touch.x then
 			if oldtouch.x > 20 and oldtouch.x < 260 and oldtouch.y > 416 and oldtouch.y < 475 then
 				press_add_to_library()
@@ -243,7 +255,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
 			end
 		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
 			press_add_to_library()
-		elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
+		elseif Description_lock and Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
 			local id = DetailsSelector.getSelected()
 			if Settings.ChapterSorting == "N->1" then
 				id = #Chapters - id + 1
@@ -255,7 +267,7 @@ function Details.input(oldpad, pad, oldtouch, touch)
 			ParserManager.remove(Chapters)
 			Timer.reset(animation_timer)
 			old_fade = fade
-		elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) and Manga.ParserID ~= "IMPORTED" then
+		elseif Description_lock and Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) and Manga.ParserID ~= "IMPORTED" then
 			local id = DetailsSelector.getSelected()
 			if Settings.ChapterSorting == "N->1" then
 				id = #Chapters - id + 1
@@ -374,10 +386,13 @@ function Details.update()
 		local item_selected = DetailsSelector.getSelected()
 		if #DescriptionTable > 0 then
 			local lines_count = ToggleDescription and #DescriptionTable or math.min(2, #DescriptionTable)
-			local final_offset = lines_count * 24 + 24 + 10
+			local final_offset = lines_count * LineHeight + LineHeight + 10
 			if lines_count ~= #DescriptionTable or lines_count > 2 then
-				final_offset = final_offset + 24
-				Chapters_offset = math.max(24 * 4 + 10, math.min(Chapters_offset + (final_offset - Chapters_offset) / 8, 24 * (#DescriptionTable + 2) + 10))
+				final_offset = final_offset + LineHeight
+				Chapters_offset = math.max(LineHeight * 4 + 10, math.min(Chapters_offset + (math.min(LineHeight * (lines_count + 2) + 10, 544 - 95) - Chapters_offset) / 8, math.min(LineHeight * (#DescriptionTable + 2) + 10, 544 - 95)))
+				if not ToggleDescription then
+					Description_offset = Description_offset - Description_offset / 8
+				end
 			else
 				Chapters_offset = final_offset
 			end
@@ -534,6 +549,41 @@ function Details.draw()
 				Graphics.drawImage(929 - ks, y + 5 + ks, textures_16x16.Square.e)
 			end
 		end
+		if #DescriptionTable > 0 and Chapters_offset > 0 then
+			local lines_count = ToggleDescription and #DescriptionTable or math.min(2, #DescriptionTable)
+			if lines_count ~= #DescriptionTable or lines_count > 2 then
+				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset - LineHeight - 10, BACKGROUND_COLOR)
+			else
+				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset, BACKGROUND_COLOR)
+			end
+			local desc_y = 95 - Description_offset
+			Font.print(BONT16, (270 + 955) / 2 - Font.getTextWidth(BONT16, "Content") / 2, desc_y, "Content", TEXT_COLOR)
+			desc_y = desc_y + LineHeight
+			for i = 1, #DescriptionTable do
+				if desc_y + LineHeight >= 95 then
+					local line = DescriptionTable[i]
+					local x = 270
+					for j = 1, #line do
+						Font.print(FONT16, x, desc_y, line[j].Word, TEXT_COLOR)
+						x = x + line.SpaceWidth + line[j].Width
+					end
+				end
+				desc_y = desc_y + LineHeight
+				if desc_y >= 95 + Chapters_offset - LineHeight - 10 then
+					break
+				end
+			end
+			if lines_count ~= #DescriptionTable or lines_count > 2 then
+				Graphics.fillRect(260, 955, 95 + Chapters_offset - LineHeight - 10, 95 + Chapters_offset, BACKGROUND_COLOR)
+				if lines_count ~= #DescriptionTable then
+					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Expand") + 32) / 2, 95 + Chapters_offset - LineHeight - 10, "Expand", TEXT_COLOR)
+					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Expand") / 2 + 4, 95 + Chapters_offset - LineHeight - 10, textures_16x16.L.e, TEXT_COLOR)
+				elseif lines_count > 2 then
+					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Shrink") + 32) / 2, 95 + Chapters_offset - LineHeight - 10, "Shrink", TEXT_COLOR)
+					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Shrink") / 2 + 4, 95 + Chapters_offset - LineHeight - 10, textures_16x16.L.e, TEXT_COLOR)
+				end
+			end
+		end
 		Graphics.fillRect(88, 960 - 88 - 88, 0, 90, BACKGROUND_COLOR)
 		local t = math.min(math.max(0, Timer.getTime(name_timer) - 1500), ms)
 		Font.print(BONT30, 88 - dif * t / ms, 70 * M - 63, Manga.Name, TEXT_COLOR)
@@ -553,39 +603,6 @@ function Details.draw()
 		if mode == "START" and #Chapters > 5 then
 			local h = #Chapters * 80 / 454
 			Graphics.fillRect(955, 960, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
-		end
-		if #DescriptionTable > 0 and Chapters_offset > 0 then
-			local lines_count = ToggleDescription and #DescriptionTable or math.min(2, #DescriptionTable)
-			if lines_count ~= #DescriptionTable or lines_count > 2 then
-				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset - 24 - 10, BACKGROUND_COLOR)
-			else
-				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset, BACKGROUND_COLOR)
-			end
-			local desc_y = 95
-			Font.print(BONT16, (270 + 955) / 2 - Font.getTextWidth(BONT16, "Content") / 2, desc_y, "Content", TEXT_COLOR)
-			desc_y = desc_y + 24
-			for i = 1, #DescriptionTable do
-				local line = DescriptionTable[i]
-				local x = 270
-				for j = 1, #line do
-					Font.print(FONT16, x, desc_y, line[j].Word, TEXT_COLOR)
-					x = x + line.SpaceWidth + line[j].Width
-				end
-				desc_y = desc_y + 24
-				if desc_y > 95 + Chapters_offset - 24 - 10 then
-					break
-				end
-			end
-			if lines_count ~= #DescriptionTable or lines_count > 2 then
-				Graphics.fillRect(260, 955, 95 + Chapters_offset - 24 - 10, 95 + Chapters_offset, BACKGROUND_COLOR)
-				if lines_count ~= #DescriptionTable then
-					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Expand") + 32) / 2, 95 + Chapters_offset - 24 - 10, "Expand", TEXT_COLOR)
-					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Expand") / 2 + 4, 95 + Chapters_offset - 24 - 10, textures_16x16.L.e, TEXT_COLOR)
-				elseif lines_count > 2 then
-					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Shrink") + 32) / 2, 95 + Chapters_offset - 24 - 10, "Shrink", TEXT_COLOR)
-					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Shrink") / 2 + 4, 95 + Chapters_offset - 24 - 10, textures_16x16.L.e, TEXT_COLOR)
-				end
-			end
 		end
 	end
 end
