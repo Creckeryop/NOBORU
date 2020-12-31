@@ -569,8 +569,10 @@ function Details.draw()
 					end
 				end
 				desc_y = desc_y + LineHeight
-				if desc_y >= 95 + Chapters_offset - LineHeight - 10 then
-					break
+				if lines_count ~= #DescriptionTable or lines_count > 2 then
+					if desc_y >= 95 + Chapters_offset - LineHeight - 10 then
+						break
+					end
 				end
 			end
 			if lines_count ~= #DescriptionTable or lines_count > 2 then
