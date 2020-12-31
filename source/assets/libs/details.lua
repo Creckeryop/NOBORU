@@ -11,7 +11,7 @@ local Manga = nil
 local Description = nil
 local DescriptionTable = {}
 local ToggleDescription = false
-local DESCRIPTION_WIDTH = 685
+local DESCRIPTION_WIDTH = 670
 local Chapters_offset = 0
 local Description_offset = 0
 local LineHeight = 22
@@ -317,7 +317,7 @@ local deleteFile = System.deleteFile
 local doesFileExist = System.doesFileExist
 local isCJK = IsCJK
 local function updateDescription(new_description)
-	Description = new_description
+	Description = (new_description or ""):gsub("^%s+",""):gsub("%s+$","")
 	local words = {}
 	for word in Description:gmatch("[^ ]+") do
 		local new_word = ""
@@ -557,7 +557,7 @@ function Details.draw()
 				Graphics.fillRect(260, 955, 95, 95 + Chapters_offset, BACKGROUND_COLOR)
 			end
 			local desc_y = 95 - Description_offset
-			Font.print(BONT16, (270 + 955) / 2 - Font.getTextWidth(BONT16, "Content") / 2, desc_y, "Content", TEXT_COLOR)
+			Font.print(BONT16, (270 + 940) / 2 - Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.SUMMARY) / 2, desc_y, Language[Settings.Language].DETAILS.SUMMARY, TEXT_COLOR)
 			desc_y = desc_y + LineHeight
 			for i = 1, #DescriptionTable do
 				if desc_y + LineHeight >= 95 then
@@ -578,11 +578,11 @@ function Details.draw()
 			if lines_count ~= #DescriptionTable or lines_count > 2 then
 				Graphics.fillRect(260, 955, 95 + Chapters_offset - LineHeight - 10, 95 + Chapters_offset, BACKGROUND_COLOR)
 				if lines_count ~= #DescriptionTable then
-					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Expand") + 32) / 2, 95 + Chapters_offset - LineHeight - 10, "Expand", TEXT_COLOR)
-					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Expand") / 2 + 4, 95 + Chapters_offset - LineHeight - 10, textures_16x16.L.e, TEXT_COLOR)
+					Font.print(BONT16, (270 + 940) / 2 - (Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.EXPAND) + 32) / 2, 95 + Chapters_offset - LineHeight - 10, Language[Settings.Language].DETAILS.EXPAND, TEXT_COLOR)
+					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.EXPAND) / 2 + 4), 95 + Chapters_offset - LineHeight - 10, textures_16x16.L.e, TEXT_COLOR)
 				elseif lines_count > 2 then
-					Font.print(BONT16, (270 + 955) / 2 - (Font.getTextWidth(BONT16, "Shrink") + 32) / 2, 95 + Chapters_offset - LineHeight - 10, "Shrink", TEXT_COLOR)
-					Graphics.drawImage((270 + 955) / 2 + Font.getTextWidth(BONT16, "Shrink") / 2 + 4, 95 + Chapters_offset - LineHeight - 10, textures_16x16.L.e, TEXT_COLOR)
+					Font.print(BONT16, (270 + 940) / 2 - (Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.SHRINK) + 32) / 2, 95 + Chapters_offset - LineHeight - 10, Language[Settings.Language].DETAILS.SHRINK, TEXT_COLOR)
+					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.SHRINK) / 2 + 4), 95 + Chapters_offset - LineHeight - 10, textures_16x16.L.e, TEXT_COLOR)
 				end
 			end
 		end
