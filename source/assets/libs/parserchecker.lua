@@ -1,50 +1,49 @@
 ParserChecker = {}
 
-local ParserCoroutine = nil
+local parserCoroutine = nil
 
 function ParserChecker.update()
-	if ParserCoroutine then
-		if coroutine.status(ParserCoroutine) ~= "dead" then
-			local a, b = coroutine.resume(ParserCoroutine)
-			if a then
-			else
+	if parserCoroutine then
+		if coroutine.status(parserCoroutine) ~= "dead" then
+			local a, b = coroutine.resume(parserCoroutine)
+			if not a then
 				Console.error(b, 2)
 			end
 		else
-			ParserCoroutine = nil
+			parserCoroutine = nil
 		end
 	end
 end
 
-local function F(Parser)
-	local name = Parser.Name
+local function F(parser)
+	local name = parser.Name
+	local foos = {"getPopularManga", "getLatestManga", "getAZManga", "getLetterManga", "getTagManga", "searchManga", "searchManga", "searchManga"}
+	local imageTestChapter = {}
+	local filters = parser.Filters or {}
+	local checked = {}
 	Console.write("Start checking /" .. name .. "/", Color.new(0, 0, 255), 2)
 	coroutine.yield()
-	local foos = {"getPopularManga", "getLatestManga", "getAZManga", "getLetterManga", "getTagManga", "searchManga", "searchManga", "searchManga"}
-	local image_test_chapter = {}
-	local Filters = Parser.Filters or {}
-	local Checked = {}
-	for k, v in ipairs(Filters) do
+	for k, v in ipairs(filters) do
 		v.visible = false
 		local default = v.Default
 		if v.Type == "check" or v.Type == "checkcross" then
-			Checked[k] = {}
+			checked[k] = {}
 			for i, _ in ipairs(v.Tags) do
-				Checked[k][i] = false
+				checked[k][i] = false
 			end
 			if default then
 				if v.Type == "checkcross" then
 					for i = 1, #default.include do
 						for e, t in ipairs(v.Tags) do
 							if t == default.include[i] then
-								Checked[k][e] = true
+								checked[k][e] = true
 							end
 						end
 					end
 					for i = 1, #default.exclude do
 						for e, t in ipairs(v.Tags) do
 							if t == default.exclude[i] then
-								Checked[k][e] = "cross"
+								checked[k][e] = "cross"
 							end
 						end
 					end
@@ -52,43 +51,43 @@ local function F(Parser)
 					for i = 1, #default do
 						for e, t in ipairs(v.Tags) do
 							if t == default[i] then
-								Checked[k][e] = true
+								checked[k][e] = true
 							end
 						end
 					end
 				end
 			end
 		elseif v.Type == "radio" then
-			Checked[k] = 1
+			checked[k] = 1
 			if default then
 				for e, t in ipairs(v.Tags) do
 					if t == default then
-						Checked[k] = e
+						checked[k] = e
 					end
 				end
 			end
 		end
 	end
 	local filter = {}
-	for i, fil in ipairs(Filters) do
+	for i, fil in ipairs(filters) do
 		if fil.Type == "check" then
 			local list = {}
-			for i, v in ipairs(Checked[i]) do
+			for j, v in ipairs(checked[i]) do
 				if v then
-					list[#list + 1] = fil.Tags[i]
+					list[#list + 1] = fil.Tags[j]
 				end
 			end
 			filter[#filter + 1] = list
 			filter[fil.Name] = list
 		elseif fil.Type == "checkcross" then
 			local include = {}
-			for j, c in ipairs(Checked[i]) do
+			for j, c in ipairs(checked[i]) do
 				if c == true then
 					include[#include + 1] = fil.Tags[j]
 				end
 			end
 			local exclude = {}
-			for j, c in ipairs(Checked[i]) do
+			for j, c in ipairs(checked[i]) do
 				if c == "cross" then
 					exclude[#exclude + 1] = fil.Tags[j]
 				end
@@ -99,78 +98,78 @@ local function F(Parser)
 			}
 			filter[fil.Name] = filter[#filter]
 		elseif fil.Type == "radio" then
-			filter[#filter + 1] = fil.Tags[Checked[i]] or ""
-			filter[fil.Name] = fil.Tags[Checked[i]] or ""
+			filter[#filter + 1] = fil.Tags[checked[i]] or ""
+			filter[fil.Name] = fil.Tags[checked[i]] or ""
 		end
 	end
 	local search_i = 1
-	local search_words = {"a", "Naruto", "one piece"}
-	for k, v in ipairs(foos) do
-		local f = Parser[v]
+	local searchWordsList = {"a", "Naruto", "one piece"}
+	for _, v in ipairs(foos) do
+		local f = parser[v]
 		if f then
 			local Manga = {}
-			local add_text = ""
+			local additionalText = ""
 			if v == "getLetterManga" then
-				local letter = (Parser.Letters or {})[1]
+				local letter = (parser.Letters or {})[1]
 				if letter then
-					add_text = letter
-					f(Parser, 1, Manga, letter)
+					additionalText = letter
+					f(parser, 1, Manga, letter)
 				end
 			elseif v == "getTagManga" then
-				local tag = (Parser.Tags or {})[1]
+				local tag = (parser.Tags or {})[1]
 				if tag then
-					add_text = tag
-					f(Parser, 1, Manga, tag)
+					additionalText = tag
+					f(parser, 1, Manga, tag)
 				end
 			elseif v == "searchManga" then
-				local search_word = search_words[search_i] or ""
+				local searchWord = searchWordsList[search_i] or ""
 				search_i = search_i + 1
-				add_text = search_word
-				f(Parser, search_word, 1, Manga, filter)
+				additionalText = searchWord
+				f(parser, searchWord, 1, Manga, filter)
 			else
-				f(Parser, 1, Manga)
+				f(parser, 1, Manga)
 			end
-			Console.write("Checking /" .. name .. ":" .. v .. '("' .. add_text .. '")/', Color.new(0, 255, 0), 2)
+			Console.write("Checking /" .. name .. ":" .. v .. '("' .. additionalText .. '")/', Color.new(0, 255, 0), 2)
 			while ParserManager.check(Manga) do
 				coroutine.yield()
 			end
-			local count = #(Manga or {})
-			Console.write("Got '" .. count .. "' manga", nil, 2)
-			if count == 0 then
-				Console.error("function: " .. name .. ":" .. v .. '("' .. add_text .. '") probably have an error', 2)
+			local foundMangaCount = #(Manga or {})
+			Console.write("Got '" .. foundMangaCount .. "' manga", nil, 2)
+			if foundMangaCount == 0 then
+				Console.error("function: " .. name .. ":" .. v .. '("' .. additionalText .. '") probably have an error', 2)
 			else
-				local mangas_to_check = math.min(3, count)
-				local ch_s = {}
+				local mangaListToCheck = math.min(3, foundMangaCount)
+				local chaptersListToCheck = {}
 				local manga = nil
-				Console.write("Checking " .. mangas_to_check .. " first mangas for having chapters", Color.new(0, 255, 0), 2)
+				Console.write("Checking " .. mangaListToCheck .. " first mangas for having chapters", Color.new(0, 255, 0), 2)
 				local log = {}
-				for i = 1, mangas_to_check do
-					local Chapters = {}
-					Parser:getChapters(Manga[i], Chapters)
-					while ParserManager.check(Chapters) do
+				for i = 1, mangaListToCheck do
+					local chapters = {}
+					parser:getChapters(Manga[i], chapters)
+					while ParserManager.check(chapters) do
 						coroutine.yield()
 					end
-					if #ch_s < #Chapters then
-						ch_s = Chapters
+					if #chaptersListToCheck < #chapters then
+						chaptersListToCheck = chapters
 						manga = Manga[i]
 					end
-					log[#log + 1] = #(Chapters or {})
+					log[#log + 1] = #(chapters or {})
 				end
 				Console.write("Done got '" .. table.concat(log, ", ") .. "'!", nil, 2)
 				if manga then
-					local chapters_to_check = math.min(3, #ch_s)
+					local chapters_to_check = math.min(3, #chaptersListToCheck)
 					Console.write("Checking " .. chapters_to_check .. " first chapters of " .. manga.Name .. " for having pages", Color.new(0, 255, 0), 2)
 					log = {}
 					for i = 1, chapters_to_check do
-						local Images = {}
-						Parser:prepareChapter(ch_s[i], Images)
-						while ParserManager.check(Images) do
+						local images = {}
+						parser:prepareChapter(chaptersListToCheck[i], images)
+						while ParserManager.check(images) do
 							coroutine.yield()
 						end
-						if #Images > #image_test_chapter then
-							image_test_chapter = Images
+						if #images > #imageTestChapter then
+							imageTestChapter = images
 						end
-						log[#log + 1] = #(Images or {})
+						log[#log + 1] = #(images or {})
 					end
 					Console.write("Done got '" .. table.concat(log, ", ") .. "' images!", nil, 2)
 				else
@@ -179,10 +178,10 @@ local function F(Parser)
 			end
 		end
 	end
-	if #image_test_chapter > 0 then
-		Console.write("Checking 1 image to download " .. tostring(image_test_chapter[1]), nil, 2)
+	if #imageTestChapter > 0 then
+		Console.write("Checking 1 image to download " .. tostring(imageTestChapter[1]), nil, 2)
 		local Table = {}
-		Parser:loadChapterPage(image_test_chapter[1], Table)
+		parser:loadChapterPage(imageTestChapter[1], Table)
 		while ParserManager.check(Table) do
 			coroutine.yield()
 		end
@@ -209,10 +208,10 @@ local function F(Parser)
 end
 
 function ParserChecker.addCheck(Parser)
-	if ParserCoroutine then
+	if parserCoroutine then
 		Console.error("Can't start other check, while one is active, try again later", 2)
 	else
-		ParserCoroutine =
+		parserCoroutine =
 			coroutine.create(
 			function()
 				F(Parser)

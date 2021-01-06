@@ -11,18 +11,15 @@ ffi.cdef [[
     } Slider;
 ]]
 
-Point_t = ffi.typeof("Point_t")
+TOUCH_MODES = {
+	NONE = 0,
+	READ = 1,
+	SLIDE = 2,
+	MODE = 0
+}
 
-function TOUCH()
-	return {
-		NONE = 0,
-		READ = 1,
-		SLIDE = 2,
-		MODE = 0
-	}
-end
-
-Slider = ffi.typeof("Slider")
+CreateSlider = ffi.typeof("Slider")
+CreatePoint = ffi.typeof("Point_t")
 
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
 
@@ -138,28 +135,26 @@ end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
 
----@param source_path string
----@param dest_path string
----Copies file source_path to dest_path (creates file)
----
+---@param sourcePath string
+---@param destPath string
+---Copies file source_path to destPath (creates file)
 ---Example:
----
----`cpy_file("ux0:data/noboru/cache.image","ux0:cover.jpeg") -> cover.jpeg appeared in ux0:`
-local function cpy_file(source_path, dest_path)
-	local fh1 = openFile(source_path, FREAD)
-	local fh2 = openFile(dest_path, FCREATE)
+---`copyFile("ux0:data/noboru/cache.image","ux0:cover.jpeg") -> cover.jpeg appeared in ux0:`
+local function copyFile(sourcePath, destPath)
+	local fh1 = openFile(sourcePath, FREAD)
+	local fh2 = openFile(destPath, FCREATE)
 	local contentFh1 = readFile(fh1, sizeFile(fh1))
 	writeFile(fh2, contentFh1, #contentFh1)
 	closeFile(fh1)
 	closeFile(fh2)
 end
 
-Copy_File = cpy_file
+CopyFile = copyFile
 
-cpy_file("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
-cpy_file("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")
+copyFile("app0:assets/auth.html", "ux0:data/noboru/temp/auth.html")
+copyFile("app0:assets/images/logo.png", "ux0:data/noboru/temp/logo.png")
 
-function MemToStr(bytes)
+function BytesToStr(bytes)
 	local str = "Bytes"
 	if bytes > 1024 then
 		bytes = bytes / 1024
@@ -280,17 +275,17 @@ function DrawManga(x, y, Manga)
 	if Manga.Image and Manga.Image.e then
 		Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(0, 0, 0))
 		local width, height = Manga.Image.Width, Manga.Image.Height
-		local draw = false
+		local was_drawn = false
 		if width < height then
 			local scale = MANGA_WIDTH / width
 			local h = MANGA_HEIGHT / scale
 			local s_y = (height - h) / 2
 			if s_y >= 0 then
 				Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale, scale)
-				draw = true
+				was_drawn = true
 			end
 		end
-		if not draw then
+		if not was_drawn then
 			local scale = MANGA_HEIGHT / height
 			local w = MANGA_WIDTH / scale
 			local s_x = (width - w) / 2
@@ -321,17 +316,17 @@ function DrawDetailsManga(x, y, Manga, M)
 	if Manga.Image and Manga.Image.e then
 		Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(0, 0, 0))
 		local width, height = Manga.Image.Width, Manga.Image.Height
-		local draw = false
+		local was_drawn = false
 		if width < height then
 			local scale = MANGA_WIDTH / width
 			local h = MANGA_HEIGHT / scale
 			local s_y = (height - h) / 2
 			if s_y >= 0 then
 				Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale * M, scale * M)
-				draw = true
+				was_drawn = true
 			end
 		end
-		if not draw then
+		if not was_drawn then
 			local scale = MANGA_HEIGHT / height
 			local w = MANGA_WIDTH / scale
 			local s_x = (width - w) / 2

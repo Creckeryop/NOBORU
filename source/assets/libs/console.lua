@@ -14,13 +14,13 @@ function Console.write(message, color, mode)
 	if Console.Lines[mode] == nil then
 		Console.Lines[mode] = {}
 	end
-	local Lines = Console.Lines[mode]
-	if #Lines > 25 then
-		table.remove(Lines, 1)
+	local lines = Console.Lines[mode]
+	if #lines > 25 then
+		table.remove(lines, 1)
 	end
-	Lines[#Lines + 1] = {
-		message,
-		color or COLOR_WHITE
+	lines[#lines + 1] = {
+		Text = message,
+		Color = color or COLOR_WHITE
 	}
 end
 
@@ -44,7 +44,7 @@ function Console.draw(mode)
 		for i = 1, #Console.Lines[mode] do
 			local line = Console.Lines[mode][i]
 			Graphics.fillRect(0, 960, y, y + 20, CONSOLE_COLOR)
-			Font.print(FONT16, 0, y, line[1], line[2])
+			Font.print(FONT16, 0, y, line.Text, line.Color)
 			y = y + 20
 		end
 	end

@@ -5,28 +5,28 @@ local deleteDirectory = System.deleteDirectory
 
 DRAW_PHASE = false
 
-local old_init = Graphics.initBlend
-local old_term = Graphics.termBlend
+local oldInit = Graphics.initBlend
+local oldTerm = Graphics.termBlend
 
 function Graphics.initBlend()
 	DRAW_PHASE = true
-	old_init()
+	oldInit()
 end
 
 function Graphics.termBlend()
 	DRAW_PHASE = false
-	old_term()
+	oldTerm()
 end
 
 ---@param path string
 ---DFS directory removing
-local function r_dir(path)
+local function removeDirectory(path)
 	if doesDirExist(path) then
 		local dir = listDirectory(path) or {}
 		for i = 1, #dir do
 			local f = dir[i]
 			if f.directory then
-				r_dir(path .. "/" .. f.name)
+				removeDirectory(path .. "/" .. f.name)
 			else
 				deleteFile(path .. "/" .. f.name)
 				Console.write("Delete " .. path .. "/" .. f.name)
@@ -37,11 +37,11 @@ local function r_dir(path)
 	end
 end
 
-RemoveDirectory = r_dir
+RemoveDirectory = removeDirectory
 
 if System.checkApp("NOBORUPDT") then
 	System.removeApp("NOBORUPDT")
-	r_dir("ux0:data/noboru/NOBORU")
+	removeDirectory("ux0:data/noboru/NOBORU")
 end
 
 System.removeApp = nil
@@ -55,7 +55,7 @@ end
 local suc, err = xpcall(dofile, debug.traceback, "app0:main.lua")
 if not suc then
 	if DRAW_PHASE then
-		old_term()
+		oldTerm()
 	end
 	error(err)
 end

@@ -47,7 +47,7 @@ debug = nil
 package = nil
 require = nil
 RemoveDirectory = nil
-Copy_File = nil
+CopyFile = nil
 
 System = {
 	getLanguage = System.getLanguage,
@@ -86,7 +86,7 @@ local fonts = {
 	BONT16
 }
 
-local function preload_data()
+local function preloadData()
 	coroutine.yield("Loading settings")
 	local suc, err = pcall(Settings.load, Settings)
 	if not suc then
@@ -140,11 +140,11 @@ MENU = 0
 READER = 1
 AppMode = MENU
 
-local TouchLock = false
+local is_touch_locked = false
 
 local LoadingTimer = Timer.new()
 
-local f = coroutine.create(preload_data)
+local f = coroutine.create(preloadData)
 while coroutine.status(f) ~= "dead" do
 	Graphics.initBlend()
 	Screen.clear()
@@ -175,61 +175,61 @@ if Settings.RefreshLibAtStart then
 	ParserManager.updateCounters()
 end
 
-local pad, oldpad = Controls.read()
-local oldtouch, touch = {}, {}
-local oldtouch2, touch2 = {}, {}
+local pad, oldPad = Controls.read()
+local oldTouch, touch = {}, {}
+local oldTouch2, touch2 = {}, {}
 
 if Controls.check(pad, SCE_CTRL_SELECT) then
-	Debug.upDebug()
+	Debug.upgradeDebugMenu()
 end
 
 local fade = 1
 
 local function input()
-	oldpad, pad = pad, Controls.read()
-	oldtouch.x, oldtouch.y, oldtouch2.x, oldtouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
+	oldPad, pad = pad, Controls.read()
+	oldTouch.x, oldTouch.y, oldTouch2.x, oldTouch2.y, touch.x, touch.y, touch2.x, touch2.y = touch.x, touch.y, touch2.x, touch2.y, Controls.readTouch()
 
 	Debug.input()
 
 	if Changes.isActive() then
 		if touch.x or pad ~= 0 then
-			oldpad = Changes.close(pad) or 0
+			oldPad = Changes.close(pad) or 0
 		end
-		pad = oldpad
-		TouchLock = true
+		pad = oldPad
+		is_touch_locked = true
 	elseif ConnectMessage.isActive() then
 		if touch.x or pad ~= 0 then
-			oldpad = ConnectMessage.input(pad) or 0
+			oldPad = ConnectMessage.input(pad) or 0
 		end
-		pad = oldpad
-		TouchLock = true
+		pad = oldPad
+		is_touch_locked = true
 	end
 
 	if touch2.x and AppMode ~= READER then
-		TouchLock = true
+		is_touch_locked = true
 	elseif not touch.x then
-		TouchLock = false
+		is_touch_locked = false
 	end
 
-	if TouchLock then
+	if is_touch_locked then
 		touch.x = nil
 		touch.y = nil
-		oldtouch.x = nil
-		oldtouch.y = nil
+		oldTouch.x = nil
+		oldTouch.y = nil
 		touch2.x = nil
 		touch2.y = nil
-		oldtouch2.x = nil
-		oldtouch2.y = nil
+		oldTouch2.x = nil
+		oldTouch2.y = nil
 	end
 
 	if Keyboard.getState() ~= RUNNING then
 		if AppMode == MENU then
-			Menu.input(oldpad, pad, oldtouch, touch)
+			Menu.input(oldPad, pad, oldTouch, touch)
 		elseif AppMode == READER then
-			if Extra.getMode() == "END" then
-				Reader.input(oldpad, pad, oldtouch, touch, oldtouch2, touch2)
+			if Extra.getStatus() == "END" then
+				Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 			else
-				Extra.input(oldpad, pad, oldtouch, touch)
+				Extra.input(oldPad, pad, oldTouch, touch)
 			end
 		end
 	end
@@ -253,7 +253,7 @@ local function update()
 	end
 	if AppMode == MENU then
 		Menu.update()
-		if Details.getMode() == "END" and CatalogModes.getMode() == "END" then
+		if Details.getStatus() == "END" and CatalogModes.getStatus() == "END" then
 			Panel.show()
 		else
 			Panel.hide()

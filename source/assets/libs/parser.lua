@@ -1,6 +1,3 @@
----Hash table with all parsers
-local parserTable = {}
-
 ---@class Parser
 Parser = {
 	getLatestManga = nil,
@@ -11,8 +8,13 @@ Parser = {
 	getMangaUrl = nil
 }
 
+---Hash table with all parsers
+local parserTable = {}
+---Cached Parser List
+local cachedList = {}
+
 ---Local variable used in Parser functions
-local updated = false
+local is_parsers_list_updated = false
 
 local listDirectory = System.listDirectory
 local doesDirExist = System.doesDirExist
@@ -46,7 +48,7 @@ function Parser:new(Name, Link, Lang, ID, Version)
 	local message = 'Parser "' .. Name .. '" ' .. (parserTable[ID] and "Updated!" or "Loaded!") .. "!"
 	Console.write(message)
 	parserTable[ID] = p
-	updated = true
+	is_parsers_list_updated = true
 	return p
 end
 
@@ -57,16 +59,13 @@ function GetParserByID(ID)
 	return parserTable[ID]
 end
 
----Cached Parser List
-local cachedList = {}
-
 ---@return table
 ---Gives Parser List
 function GetParserList()
-	if not updated then
+	if not is_parsers_list_updated then
 		return cachedList
 	end
-	updated = false
+	is_parsers_list_updated = false
 	local list = {}
 	for _, v in pairs(parserTable) do
 		if (Settings.NSFW and v.NSFW or not v.NSFW) and not v.Disabled and (Settings.ParserLanguage == "DIF" or v.Lang == Settings.ParserLanguage or v.Lang == "DIF" or ((Settings.ParserLanguage == "CHN" or Settings.ParserLanguage == "JAP") and v.Lang == "RAW")) then
@@ -104,23 +103,23 @@ function GetParserLanguages()
 		t["JAP"] = true
 	end
 	t["RAW"] = nil
-	local new_t = {}
+	local newLanguageList = {}
 	for k, _ in pairs(t) do
-		new_t[#new_t + 1] = k
+		newLanguageList[#newLanguageList + 1] = k
 	end
 	table.sort(
-		new_t,
+		newLanguageList,
 		function(a, b)
 			return a < b
 		end
 	)
-	table.insert(new_t, 1, "DIF")
-	return new_t
+	table.insert(newLanguageList, 1, "DIF")
+	return newLanguageList
 end
 
 ---Sets update flag to `true`, for regenerating parsers list
 function ChangeNSFW()
-	updated = true
+	is_parsers_list_updated = true
 end
 
 ---Deletes all parsers and their files
@@ -140,5 +139,5 @@ function ClearParsers()
 	for _, v in pairs(parserTable) do
 		v.Disabled = true
 	end
-	updated = true
+	is_parsers_list_updated = true
 end

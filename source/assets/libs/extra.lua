@@ -1,140 +1,11 @@
-local mode = "END"
-
 Extra = {}
 
-local TOUCH = TOUCH()
-local Slider = Slider()
-
-local fade = 0
-local old_fade = 1
-
-local animation_timer = Timer.new()
-
-local Chapters = {}
-local Manga
-ExtraMenu = {}
-
-ExtraMenuNormal = {
-	"DownloadAll",
-	"RemoveAll",
-	"CancelAll",
-	"ClearBookmarks",
-	"ResetCover"
-}
-
-ExtraMenuNormalWithBrowser = {
-	"OpenMangaInBrowser",
-	"DownloadAll",
-	"RemoveAll",
-	"CancelAll",
-	"ClearBookmarks",
-	"ResetCover"
-}
-
-ExtraMenuImported = {
-	"ClearBookmarks"
-}
-
-ExtraMenuReader = {
-	"OpenInBrowser",
-	"ReaderOrientation",
-	"ReaderDirection",
-	"ZoomReader",
-	"SetPageAsCover"
-}
-
-ExtraMenuReaderImported = {
-	"OpenInBrowser",
-	"ReaderOrientation",
-	"ReaderDirection",
-	"ZoomReader"
-}
-
-local w_max = 0
-local y_srt = 0
-
-local bookmarks_update = false
-
----Updates scrolling movement
-local function scrollUpdate()
-	Slider.Y = Slider.Y + Slider.V
-	Slider.V = Slider.V / 1.12
-	if math.abs(Slider.V) < 0.1 then
-		Slider.V = 0
-	end
-	if Slider.Y < 0 then
-		Slider.Y = 0
-		Slider.V = 0
-	elseif Slider.Y > #ExtraMenu * 80 - 544 then
-		Slider.Y = math.max(0, #ExtraMenu * 80 - 544)
-		Slider.V = 0
-	end
-end
-
-local easing = EaseInOutCubic
-
----Updates animation of fade in or out
-local function animationUpdate()
-	if mode == "START" then
-		fade = easing(math.min((Timer.getTime(animation_timer) / 500), 1))
-	elseif mode == "WAIT" then
-		if fade == 0 then
-			mode = "END"
-		end
-		fade = 1 - easing(math.min((Timer.getTime(animation_timer) / 500), 1))
-	end
-end
-
-local ExtraSelector =
-	Selector:new(
-	-1,
-	1,
-	0,
-	0,
-	function()
-		return math.floor((Slider.Y + y_srt) / 80)
-	end
-)
-
-local Page = nil
-local CustomSettings = {}
-function Extra.setChapters(manga, chapters, page)
-	if manga then
-		bookmarks_update = false
-		Manga = manga
-		Chapters = chapters
-		Slider.Y = -50
-		if page then
-			if manga.ParserID == "IMPORTED" then
-				ExtraMenu = ExtraMenuReaderImported
-			else
-				ExtraMenu = ExtraMenuReader
-			end
-			Page = page
-			CustomSettings = CuSettings.load(Manga)
-		elseif manga.ParserID == "IMPORTED" then
-			ExtraMenu = ExtraMenuImported
-		else
-			if Manga.BrowserLink then
-				ExtraMenu = ExtraMenuNormalWithBrowser
-			else
-				ExtraMenu = ExtraMenuNormal
-			end
-		end
-		ExtraSelector:resetSelected()
-		mode = "START"
-		old_fade = 1
-		Timer.reset(animation_timer)
-		w_max = 512
-		y_srt = 272 - #ExtraMenu * 80 / 2
-		for i = 1, #ExtraMenu do
-			local w = Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]) + 40
-			if w > w_max then
-				w_max = w
-			end
-		end
-	end
-end
+local status = "END"
+local selectedManga
+local chaptersList = {}
+local selectedExtraMenu = {}
+local selectedPage = nil
+local customSettings = {}
 
 local writeFile = System.writeFile
 local closeFile = System.closeFile
@@ -143,142 +14,234 @@ local openFile = System.openFile
 local doesFileExist = System.doesFileExist
 local callUri = System.executeUri
 local extractZip = System.extractFromZip
-local cpy_file = Copy_File
+local copyFile = CopyFile
 
-local function press_action(id)
-	if ExtraMenu[id] == "DownloadAll" then
-		Cache.addManga(Manga)
-		Cache.makeHistory(Manga)
-		for i = 1, #Chapters do
-			local chapter = Chapters[i]
+local slider = CreateSlider()
+
+local TOUCH_MODES = TOUCH_MODES
+local DEFAULT_MAX_EXTRA_MENU_WIDTH = 512
+local EXTRA_MENU_NORMAL = {"DownloadAll", "RemoveAll", "CancelAll", "ClearBookmarks", "ResetCover"}
+local EXTRA_MENU_NORMAL_WITH_BROWSER = {"OpenMangaInBrowser", "DownloadAll", "RemoveAll", "CancelAll", "ClearBookmarks", "ResetCover"}
+local EXTRA_MENU_IMPORTED = {"ClearBookmarks"}
+local EXTRA_MENU_READER = {"OpenInBrowser", "ReaderOrientation", "ReaderDirection", "ZoomReader", "SetPageAsCover"}
+local EXTRA_MENU_READER_IMPORTED = {"OpenInBrowser", "ReaderOrientation", "ReaderDirection", "ZoomReader"}
+
+local fade = 0
+local oldFade = 1
+local maxExtraMenuWidth = 0
+local extraMenuYDrawStart = 0
+
+local fadeAnimationTimer = Timer.new()
+
+local was_bookmarks_updated = false
+
+local extraSelector =
+	Selector:new(
+	-1,
+	1,
+	0,
+	0,
+	function()
+		return math.floor((slider.Y + extraMenuYDrawStart) / 80)
+	end
+)
+
+---Updates scrolling movement
+local function updateScrolling()
+	local selectedItem = extraSelector.getSelected()
+	if selectedItem ~= 0 then
+		slider.Y = slider.Y + (selectedItem * 80 - 272 - slider.Y) / 8
+	end
+	slider.Y = slider.Y + slider.V
+	slider.V = slider.V / 1.12
+	if math.abs(slider.V) < 0.1 then
+		slider.V = 0
+	end
+	if slider.Y < 0 then
+		slider.Y = 0
+		slider.V = 0
+	elseif slider.Y > #selectedExtraMenu * 80 - 544 then
+		slider.Y = math.max(0, #selectedExtraMenu * 80 - 544)
+		slider.V = 0
+	end
+end
+
+local easingFunction = EaseInOutCubic
+
+---Updates animation of fade in or out
+local function animationUpdate()
+	if status == "START" then
+		fade = easingFunction(math.min((Timer.getTime(fadeAnimationTimer) / 500), 1))
+	elseif status == "WAIT" then
+		if fade == 0 then
+			status = "END"
+		end
+		fade = 1 - easingFunction(math.min((Timer.getTime(fadeAnimationTimer) / 500), 1))
+	end
+end
+
+function Extra.setChapters(manga, chapters, page)
+	if manga then
+		selectedManga = manga
+		chaptersList = chapters
+		status = "START"
+		oldFade = 1
+		was_bookmarks_updated = false
+
+		slider.Y = -50
+		if page then
+			if manga.ParserID == "IMPORTED" then
+				selectedExtraMenu = EXTRA_MENU_READER_IMPORTED
+			else
+				selectedExtraMenu = EXTRA_MENU_READER
+			end
+			selectedPage = page
+			customSettings = CuSettings.load(selectedManga)
+		elseif manga.ParserID == "IMPORTED" then
+			selectedExtraMenu = EXTRA_MENU_IMPORTED
+		else
+			if selectedManga.BrowserLink then
+				selectedExtraMenu = EXTRA_MENU_NORMAL_WITH_BROWSER
+			else
+				selectedExtraMenu = EXTRA_MENU_NORMAL
+			end
+		end
+		extraSelector:resetSelected()
+		Timer.reset(fadeAnimationTimer)
+		extraMenuYDrawStart = 272 - #selectedExtraMenu * 80 / 2
+		maxExtraMenuWidth = DEFAULT_MAX_EXTRA_MENU_WIDTH
+		for i = 1, #selectedExtraMenu do
+			local extraOptionTextWidth = Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[selectedExtraMenu[i]] or selectedExtraMenu[i]) + 40
+			if extraOptionTextWidth > maxExtraMenuWidth then
+				maxExtraMenuWidth = extraOptionTextWidth
+			end
+		end
+	end
+end
+
+local function pressOption(id)
+	if selectedExtraMenu[id] == "DownloadAll" then
+		Cache.addManga(selectedManga)
+		Cache.makeHistory(selectedManga)
+		for i = 1, #chaptersList do
+			local chapter = chaptersList[i]
 			if not ChapterSaver.is_downloading(chapter) and not ChapterSaver.check(chapter) then
 				ChapterSaver.downloadChapter(chapter, true)
 			end
 		end
-	elseif ExtraMenu[id] == "RemoveAll" then
-		ChapterSaver.stopList(Chapters, true)
-		for i = 1, #Chapters do
-			ChapterSaver.delete(Chapters[i], true)
+	elseif selectedExtraMenu[id] == "RemoveAll" then
+		ChapterSaver.stopList(chaptersList, true)
+		for i = 1, #chaptersList do
+			ChapterSaver.delete(chaptersList[i], true)
 		end
-	elseif ExtraMenu[id] == "CancelAll" then
-		ChapterSaver.stopList(Chapters, true)
-	elseif ExtraMenu[id] == "ClearBookmarks" then
-		Cache.clearBookmarks(Manga)
-		bookmarks_update = true
-	elseif ExtraMenu[id] == "OpenInBrowser" then
+	elseif selectedExtraMenu[id] == "CancelAll" then
+		ChapterSaver.stopList(chaptersList, true)
+	elseif selectedExtraMenu[id] == "ClearBookmarks" then
+		Cache.clearBookmarks(selectedManga)
+		was_bookmarks_updated = true
+	elseif selectedExtraMenu[id] == "OpenInBrowser" then
 		if doesFileExist("ux0:data/noboru/temp/image.html") then
 			deleteFile("ux0:data/noboru/temp/image.html")
 		end
 		local file = openFile("ux0:data/noboru/temp/image.html", FCREATE)
-		if type(Page) == "table" then
-			if Manga.ParserID == "IMPORTED" then
-				extractZip("ux0:data/noboru/" .. Page.Path, Page.Extract, "ux0:data/noboru/temp/page.image")
-				Page = "file:///ux0:data/noboru/temp/page.image"
-			elseif Page.Path then
-				Page = "file:///ux0:data/noboru/" .. Page.Path
-			elseif type(Page.Link) == "string" then
-				if Page.Link:find("^http") then
-					Page = Page.Link
+		if type(selectedPage) == "table" then
+			if selectedManga.ParserID == "IMPORTED" then
+				extractZip("ux0:data/noboru/" .. selectedPage.Path, selectedPage.Extract, "ux0:data/noboru/temp/page.image")
+				selectedPage = "file:///ux0:data/noboru/temp/page.image"
+			elseif selectedPage.Path then
+				selectedPage = "file:///ux0:data/noboru/" .. selectedPage.Path
+			elseif type(selectedPage.Link) == "string" then
+				if selectedPage.Link:find("^http") then
+					selectedPage = selectedPage.Link
 				else
-					Page = "http://" .. Page.Link
+					selectedPage = "http://" .. selectedPage.Link
 				end
-			elseif type(Page.Link) == "table" then
-				local img = {}
+			elseif type(selectedPage.Link) == "table" then
+				local image = {}
 				Threads.insertTask(
-					img,
+					image,
 					{
 						Type = "FileDownload",
-						Link = Page.Link,
-						Table = img
+						Link = selectedPage.Link,
+						Table = image
 					}
 				)
-				while Threads.check(img) do
+				while Threads.check(image) do
 					Threads.update()
 				end
-				Page = "file:///ux0:data/noboru/temp/cache.image"
+				selectedPage = "file:///ux0:data/noboru/temp/cache.image"
 			else
 				return
 			end
 		end
-		local content = ([[
-<html>
-    <head>
-    <title>%s</title>
-    </head>
-    <body style="background-color: black;">
-        <div style="text-align: center;">
-            <img src="%s" width="100%%">
-        </div>
-    </body>
-</html>
-        ]]):format("NOBORU: " .. Manga.Name .. " | " .. Chapters.Name, Page)
+		local content = ([[<html><head><title>%s</title></head><body style="background-color: black;"><div style="text-align: center;"><img src="%s" width="100%%"></div></body></html>]]):format("NOBORU: " .. selectedManga.Name .. " | " .. chaptersList.Name, selectedPage)
 		writeFile(file, content, #content)
 		closeFile(file)
 		callUri("webmodal: file:///ux0:data/noboru/temp/image.html")
-	elseif ExtraMenu[id] == "ReaderOrientation" then
-		CuSettings.changeOrientation(Manga)
+	elseif selectedExtraMenu[id] == "ReaderOrientation" then
+		CuSettings.changeOrientation(selectedManga)
 		Reader.updateSettings()
-		CustomSettings = CuSettings.load(Manga)
-	elseif ExtraMenu[id] == "ReaderDirection" then
-		CuSettings.changeDirection(Manga)
+		customSettings = CuSettings.load(selectedManga)
+	elseif selectedExtraMenu[id] == "ReaderDirection" then
+		CuSettings.changeDirection(selectedManga)
 		Reader.updateSettings()
-		CustomSettings = CuSettings.load(Manga)
-	elseif ExtraMenu[id] == "ZoomReader" then
-		CuSettings.changeZoom(Manga)
+		customSettings = CuSettings.load(selectedManga)
+	elseif selectedExtraMenu[id] == "ZoomReader" then
+		CuSettings.changeZoom(selectedManga)
 		Reader.updateSettings()
-		CustomSettings = CuSettings.load(Manga)
-	elseif ExtraMenu[id] == "OpenMangaInBrowser" then
-		callUri("webmodal: " .. Manga.BrowserLink)
-	elseif ExtraMenu[id] == "ResetCover" then
-		if Manga and Manga.ParserID ~= "IMPORTED" then
-			local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image"
-			if doesFileExist(cover_path) then
-				deleteFile(cover_path)
+		customSettings = CuSettings.load(selectedManga)
+	elseif selectedExtraMenu[id] == "OpenMangaInBrowser" then
+		callUri("webmodal: " .. selectedManga.BrowserLink)
+	elseif selectedExtraMenu[id] == "ResetCover" then
+		if selectedManga and selectedManga.ParserID ~= "IMPORTED" then
+			local coverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/cover.image"
+			if doesFileExist(coverPath) then
+				deleteFile(coverPath)
 			end
-			local custom_cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/custom_cover.image"
-			if doesFileExist(custom_cover_path) then
-				deleteFile(custom_cover_path)
+			local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/custom_cover.image"
+			if doesFileExist(customCoverPath) then
+				deleteFile(customCoverPath)
 			end
-			CustomCovers.setMangaCover(Manga, nil)
-			Manga.ImageDownload = nil
+			CustomCovers.setMangaCover(selectedManga, nil)
+			selectedManga.ImageDownload = nil
 			collectgarbage("collect")
 			Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 		end
-	elseif ExtraMenu[id] == "SetPageAsCover" then
+	elseif selectedExtraMenu[id] == "SetPageAsCover" then
 		local page = Reader.getCurrentPageImageLink()
 		if page then
-			local cache_key = Cache.getKey(Manga)
-			if cache_key == nil then
-				Cache.addManga(Manga)
-				cache_key = Cache.getKey(Manga)
-				if cache_key == nil then
+			local cacheKey = Cache.getKey(selectedManga)
+			if cacheKey == nil then
+				Cache.addManga(selectedManga)
+				cacheKey = Cache.getKey(selectedManga)
+				if cacheKey == nil then
 					return
 				end
 				Cache.save()
 			end
-			local t = {}
+			local tempTable = {}
 			if page.Extract then
 			elseif page.Path then
-				CustomCovers.setMangaCover(Manga, page)
-				cpy_file(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image")
+				CustomCovers.setMangaCover(selectedManga, page)
+				copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image")
 				Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 			elseif page.ParserID then
-				CustomCovers.setMangaCover(Manga, page)
+				CustomCovers.setMangaCover(selectedManga, page)
 				Threads.insertTask(
-					t,
+					tempTable,
 					{
 						Type = "function",
 						OnComplete = function()
-							ParserManager.getPageImage(page.ParserID, page.Link, t)
-							while (ParserManager.check(t)) do
+							ParserManager.getPageImage(page.ParserID, page.Link, tempTable)
+							while (ParserManager.check(tempTable)) do
 								coroutine.yield(false)
 							end
 							Threads.insertTask(
-								t,
+								tempTable,
 								{
 									Type = "FileDownload",
-									Link = t.Link,
-									Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
+									Link = tempTable.Link,
+									Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 									OnComplete = function()
 										Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 									end
@@ -288,13 +251,13 @@ local function press_action(id)
 					}
 				)
 			elseif page.Link then
-				CustomCovers.setMangaCover(Manga, page)
+				CustomCovers.setMangaCover(selectedManga, page)
 				Threads.insertTask(
-					t,
+					tempTable,
 					{
 						Type = "FileDownload",
 						Link = page.Link,
-						Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
+						Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 						OnComplete = function()
 							Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 						end
@@ -308,131 +271,126 @@ local function press_action(id)
 end
 
 function Extra.doesBookmarksUpdate()
-	local a = bookmarks_update
-	bookmarks_update = false
+	local a = was_bookmarks_updated
+	was_bookmarks_updated = false
 	return a
 end
 
-function Extra.input(oldpad, pad, oldtouch, touch)
-	if mode == "START" then
-		local oldtouch_mode = TOUCH.MODE
-		if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
-			TOUCH.MODE = TOUCH.READ
-			Slider.TouchY = touch.y
-		elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
-			if TOUCH.MODE == TOUCH.READ and oldtouch.x then
-				if oldtouch.x > 480 - w_max / 2 and oldtouch.x < 480 + w_max / 2 and oldtouch.y > y_srt and oldtouch.y < y_srt + #ExtraMenu * 80 then
-					local id = math.floor((Slider.Y + oldtouch.y - y_srt) / 80) + 1
-					press_action(id)
+function Extra.input(oldPad, pad, oldTouch, touch)
+	if status == "START" then
+		if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldTouch.x and touch.x and touch.x > 240 then
+			TOUCH_MODES.MODE = TOUCH_MODES.READ
+			slider.TouchY = touch.y
+		elseif TOUCH_MODES.MODE ~= TOUCH_MODES.NONE and not touch.x then
+			if TOUCH_MODES.MODE == TOUCH_MODES.READ and oldTouch.x then
+				if oldTouch.x > 480 - maxExtraMenuWidth / 2 and oldTouch.x < 480 + maxExtraMenuWidth / 2 and oldTouch.y > extraMenuYDrawStart and oldTouch.y < extraMenuYDrawStart + #selectedExtraMenu * 80 then
+					local id = math.floor((slider.Y + oldTouch.y - extraMenuYDrawStart) / 80) + 1
+					pressOption(id)
 				end
 			end
-			TOUCH.MODE = TOUCH.NONE
+			TOUCH_MODES.MODE = TOUCH_MODES.NONE
 		end
-		ExtraSelector:input(#ExtraMenu, oldpad, pad, touch.x)
-		if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
-			local id = ExtraSelector.getSelected()
-			press_action(id)
-		elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
-			mode = "WAIT"
-			Timer.reset(animation_timer)
-			old_fade = fade
-		elseif Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldpad, SCE_CTRL_START) then
-			mode = "WAIT"
-			Timer.reset(animation_timer)
-			old_fade = fade
-		elseif touch.x ~= nil and oldtouch.x == nil then
-			if touch.x > 480 - w_max / 2 and touch.x < 480 + w_max / 2 and touch.y > y_srt and touch.y < y_srt + 80 * #ExtraMenu then
+		extraSelector:input(#selectedExtraMenu, oldPad, pad, touch.x)
+		if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldPad, SCE_CTRL_CROSS) then
+			local id = extraSelector.getSelected()
+			pressOption(id)
+		elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) then
+			status = "WAIT"
+			Timer.reset(fadeAnimationTimer)
+			oldFade = fade
+		elseif Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldPad, SCE_CTRL_START) then
+			status = "WAIT"
+			Timer.reset(fadeAnimationTimer)
+			oldFade = fade
+		elseif touch.x ~= nil and oldTouch.x == nil then
+			if touch.x > 480 - maxExtraMenuWidth / 2 and touch.x < 480 + maxExtraMenuWidth / 2 and touch.y > extraMenuYDrawStart and touch.y < extraMenuYDrawStart + 80 * #selectedExtraMenu then
 			else
-				mode = "WAIT"
-				Timer.reset(animation_timer)
-				old_fade = fade
+				status = "WAIT"
+				Timer.reset(fadeAnimationTimer)
+				oldFade = fade
 			end
 		end
-		local new_itemID = 0
-		if TOUCH.MODE == TOUCH.READ then
-			if math.abs(Slider.V) > 0.1 or math.abs(touch.y - Slider.TouchY) > 10 then
-				TOUCH.MODE = TOUCH.SLIDE
+		local newItemID = 0
+		if TOUCH_MODES.MODE == TOUCH_MODES.READ then
+			if math.abs(slider.V) > 0.1 or math.abs(touch.y - slider.TouchY) > 10 then
+				TOUCH_MODES.MODE = TOUCH_MODES.SLIDE
 			else
-				if oldtouch.x > 480 - w_max / 2 and oldtouch.x < 480 + w_max / 2 then
-					local id = math.floor((Slider.Y + oldtouch.y - y_srt) / 80) + 1
-					if ExtraMenu[id] then
-						new_itemID = id
+				if oldTouch.x > 480 - maxExtraMenuWidth / 2 and oldTouch.x < 480 + maxExtraMenuWidth / 2 then
+					local id = math.floor((slider.Y + oldTouch.y - extraMenuYDrawStart) / 80) + 1
+					if selectedExtraMenu[id] then
+						newItemID = id
 					end
 				end
 			end
-		elseif TOUCH.MODE == TOUCH.SLIDE then
-			if touch.x and oldtouch.x then
-				Slider.V = oldtouch.y - touch.y
+		elseif TOUCH_MODES.MODE == TOUCH_MODES.SLIDE then
+			if touch.x and oldTouch.x then
+				slider.V = oldTouch.y - touch.y
 			end
 		end
-		if Slider.ItemID > 0 and new_itemID > 0 and Slider.ItemID ~= new_itemID then
-			TOUCH.MODE = TOUCH.SLIDE
+		if slider.ItemID > 0 and newItemID > 0 and slider.ItemID ~= newItemID then
+			TOUCH_MODES.MODE = TOUCH_MODES.SLIDE
 		else
-			Slider.ItemID = new_itemID
+			slider.ItemID = newItemID
 		end
 	end
 end
 
 function Extra.update()
-	if mode ~= "END" then
+	if status ~= "END" then
 		animationUpdate()
-		local item_selected = ExtraSelector.getSelected()
-		if item_selected ~= 0 then
-			Slider.Y = Slider.Y + (item_selected * 80 - 272 - Slider.Y) / 8
-		end
-		scrollUpdate()
+		updateScrolling()
 	end
 end
 
 function Extra.draw()
-	if mode ~= "END" then
-		local M = old_fade * fade
+	if status ~= "END" then
+		local M = oldFade * fade
 		local Alpha = 255 * M
-		local start = math.max(1, math.floor(Slider.Y / 80) + 1)
+		local start = math.max(1, math.floor(slider.Y / 80) + 1)
 		local shift = (1 - M) * 544
-		local WHITE = Color.new(255, 255, 255, Alpha)
-		local BLACK = Color.new(0, 0, 0, Alpha)
-		local y = shift - Slider.Y + start * 80 + y_srt
-		local ListCount = #ExtraMenu
+		local whiteColor = Color.new(255, 255, 255, Alpha)
+		local blackColor = Color.new(0, 0, 0, Alpha)
+		local y = shift - slider.Y + start * 80 + extraMenuYDrawStart
+		local optionsListCount = #selectedExtraMenu
 		Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
-		Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y_srt + shift, y_srt + 80 * ListCount + shift - 1, WHITE)
-		for i = start, math.min(ListCount, start + 8) do
-			local text = Language[Settings.Language].SETTINGS[ExtraMenu[i]] or Language[Settings.Language].EXTRA[ExtraMenu[i]] or ExtraMenu[i]
-			if ExtraMenu[i] == "ReaderOrientation" then
-				text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.Orientation]
-			elseif ExtraMenu[i] == "ReaderDirection" then
-				text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.ReaderDirection]
-			elseif ExtraMenu[i] == "ZoomReader" then
-				text = text .. ": " .. Language[Settings.Language].READER[CustomSettings.ZoomReader]
+		Graphics.fillRect(480 - maxExtraMenuWidth / 2, 480 + maxExtraMenuWidth / 2, extraMenuYDrawStart + shift, extraMenuYDrawStart + 80 * optionsListCount + shift - 1, whiteColor)
+		for i = start, math.min(optionsListCount, start + 8) do
+			local optionText = Language[Settings.Language].SETTINGS[selectedExtraMenu[i]] or Language[Settings.Language].EXTRA[selectedExtraMenu[i]] or selectedExtraMenu[i]
+			if selectedExtraMenu[i] == "ReaderOrientation" then
+				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.Orientation]
+			elseif selectedExtraMenu[i] == "ReaderDirection" then
+				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.ReaderDirection]
+			elseif selectedExtraMenu[i] == "ZoomReader" then
+				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.ZoomReader]
 			end
-			Font.print(BONT16, 480 - Font.getTextWidth(BONT16, text) / 2, y + 28 - 79, text, BLACK)
-			if i == Slider.ItemID then
-				Graphics.fillRect(480 - w_max / 2, 480 + w_max / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
+			Font.print(BONT16, 480 - Font.getTextWidth(BONT16, optionText) / 2, y + 28 - 79, optionText, blackColor)
+			if i == slider.ItemID then
+				Graphics.fillRect(480 - maxExtraMenuWidth / 2, 480 + maxExtraMenuWidth / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
 			end
 			y = y + 80
 		end
-		local item = ExtraSelector.getSelected()
+		local item = extraSelector.getSelected()
 		if item ~= 0 then
-			y = shift - Slider.Y + (item - 1) * 80 + y_srt
-			local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+			y = shift - slider.Y + (item - 1) * 80 + extraMenuYDrawStart
+			local selectedRedColor = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
 			local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
 			for i = ks, ks + 1 do
-				Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, Themes[Settings.Theme].COLOR_SELECTOR)
-				Graphics.fillEmptyRect(480 - w_max / 2 + i + 3, 480 + w_max / 2 - i - 2, y + i + 3, y + 75 - i + 2, SELECTED_RED)
+				Graphics.fillEmptyRect(480 - maxExtraMenuWidth / 2 + i + 3, 480 + maxExtraMenuWidth / 2 - i - 2, y + i + 3, y + 75 - i + 2, Themes[Settings.Theme].COLOR_SELECTOR)
+				Graphics.fillEmptyRect(480 - maxExtraMenuWidth / 2 + i + 3, 480 + maxExtraMenuWidth / 2 - i - 2, y + i + 3, y + 75 - i + 2, selectedRedColor)
 			end
 		end
-		if mode == "START" and #ExtraMenu > 5 then
-			local h = #ExtraMenu * 80 / 454
+		if status == "START" and #selectedExtraMenu > 5 then
+			local h = #selectedExtraMenu * 80 / 454
 			Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
-			Graphics.fillRect(926, 936, 90 + (Slider.Y + 20) / h, 90 + (Slider.Y + 464) / h, COLOR_GRAY)
+			Graphics.fillRect(926, 936, 90 + (slider.Y + 20) / h, 90 + (slider.Y + 464) / h, COLOR_GRAY)
 		end
 	end
 end
 
-function Extra.getMode()
-	return mode
+function Extra.getStatus()
+	return status
 end
 
 function Extra.getFade()
-	return fade * old_fade
+	return fade * oldFade
 end

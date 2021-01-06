@@ -2,15 +2,15 @@ Threads = {}
 
 local IMAGE_CACHE_PATH = "ux0:data/noboru/temp/cache.image"
 
-local Order = {}
-local Task = nil
+local orderList = {}
+local currentTask = nil
 
-local Trash = {
+MAX_VRAM_MEMORY = 88 * 1024 * 1024
+local TRASH = {
 	Type = nil,
 	Garbadge = nil
 }
 
-local net_inited = false
 local bytes = 0
 local uniques = {}
 
@@ -20,152 +20,152 @@ local deleteFile = System.deleteFile
 local openFile = System.openFile
 local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
-local rem_dir = RemoveDirectory
+local removeDirectory = RemoveDirectory
 
-local function img2bytes(Width, Height, DScale)
-	return bit32.band(Width + 7, bit32.bnot(7)) * Height * 4 / (DScale * DScale) + 1024
+local function img2bytes(width, height, dScale)
+	return bit32.band(width + 7, bit32.bnot(7)) * height * 4 / (dScale * dScale) + 1024
 end
 
-MAX_VRAM_MEMORY = 88 * 1024 * 1024
+local is_net_inited = false
 
 ---Updates threads tasks
 function Threads.update()
-	if net_inited and not Task and #Order == 0 then
+	if is_net_inited and not currentTask and #orderList == 0 then
 		Network.term()
-		net_inited = false
+		is_net_inited = false
 	end
-	if not net_inited and (#Order ~= 0 or Task) then
+	if not is_net_inited and (#orderList ~= 0 or currentTask) then
 		Network.init()
-		net_inited = true
+		is_net_inited = true
 	end
-	if (#Order == 0 and not Task) or System.getAsyncState() == 0 then
+	if (#orderList == 0 and not currentTask) or System.getAsyncState() == 0 then
 		return
 	end
-	if not Task then
+	if not currentTask then
 		local new_order = {}
-		for i = 1, #Order do
-			if Order[i].Type == "Skip" then
+		for i = 1, #orderList do
+			if orderList[i].Type == "Skip" then
 				Console.write("NET: Skip", Color.new(255, 255, 0))
 			else
-				new_order[#new_order + 1] = Order[i]
+				new_order[#new_order + 1] = orderList[i]
 			end
 		end
-		Order = new_order
-		if #Order == 0 then
+		orderList = new_order
+		if #orderList == 0 then
 			return
 		end
-		Task = table.remove(Order, 1)
-		Task.Final = true
-		if Task.Type == "StringRequest" then
-			if Task.Link then
-				Network.requestStringAsync(Task.Link, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4, Task.Proxy, Task.ProxyAuth)
+		currentTask = table.remove(orderList, 1)
+		currentTask.Final = true
+		if currentTask.Type == "StringRequest" then
+			if currentTask.Link then
+				Network.requestStringAsync(currentTask.Link, USERAGENT, currentTask.HttpMethod, currentTask.PostData, currentTask.ContentType, currentTask.Cookie, currentTask.Header1, currentTask.Header2, currentTask.Header3, currentTask.Header4, currentTask.Proxy, currentTask.ProxyAuth)
 			else
 				Console.error("No Link given or internet connection problem")
-				uniques[Task.UniqueKey] = nil
-				Task = nil
+				uniques[currentTask.UniqueKey] = nil
+				currentTask = nil
 			end
-		elseif Task.Type == "FileDownload" or Task.Type == "ImageDownload" then
-			if doesFileExist(Task.Path) then
-				deleteFile(Task.Path)
+		elseif currentTask.Type == "FileDownload" or currentTask.Type == "ImageDownload" then
+			if doesFileExist(currentTask.Path) then
+				deleteFile(currentTask.Path)
 			end
-			if Task.Link then
-				if Task.Path then
-					Network.downloadFileAsync(Task.Link, Task.Path, USERAGENT, Task.HttpMethod, Task.PostData, Task.ContentType, Task.Cookie, Task.Header1, Task.Header2, Task.Header3, Task.Header4, Task.Proxy, Task.ProxyAuth)
-					if Task.Type == "ImageDownload" then
-						Task.Type = "Image"
-						Task.Final = false
+			if currentTask.Link then
+				if currentTask.Path then
+					Network.downloadFileAsync(currentTask.Link, currentTask.Path, USERAGENT, currentTask.HttpMethod, currentTask.PostData, currentTask.ContentType, currentTask.Cookie, currentTask.Header1, currentTask.Header2, currentTask.Header3, currentTask.Header4, currentTask.Proxy, currentTask.ProxyAuth)
+					if currentTask.Type == "ImageDownload" then
+						currentTask.Type = "Image"
+						currentTask.Final = false
 					end
 				else
 					Console.error("No Path given")
-					uniques[Task.UniqueKey] = nil
-					Task = nil
+					uniques[currentTask.UniqueKey] = nil
+					currentTask = nil
 				end
 			else
 				Console.error("No Link given or internet connection problem")
-				uniques[Task.UniqueKey] = nil
-				Task = nil
+				uniques[currentTask.UniqueKey] = nil
+				currentTask = nil
 			end
-		elseif Task.Type == "UnZip" then
-			if Task.DestPath then
-				rem_dir(Task.DestPath)
-				if Task.Path then
-					System.extractZipAsync(Task.Path, Task.DestPath)
+		elseif currentTask.Type == "UnZip" then
+			if currentTask.DestPath then
+				removeDirectory(currentTask.DestPath)
+				if currentTask.Path then
+					System.extractZipAsync(currentTask.Path, currentTask.DestPath)
 				else
 					Console.error("No Path given")
-					uniques[Task.UniqueKey] = nil
-					Task = nil
+					uniques[currentTask.UniqueKey] = nil
+					currentTask = nil
 				end
 			else
 				Console.error("No DestPath given")
-				uniques[Task.UniqueKey] = nil
-				Task = nil
+				uniques[currentTask.UniqueKey] = nil
+				currentTask = nil
 			end
-		elseif Task.Type == "UnZipFile" then
-			if Task.Extract then
-				if Task.DestPath then
-					if Task.Path then
-						System.extractFromZipAsync(Task.Path, Task.Extract, Task.DestPath)
+		elseif currentTask.Type == "UnZipFile" then
+			if currentTask.Extract then
+				if currentTask.DestPath then
+					if currentTask.Path then
+						System.extractFromZipAsync(currentTask.Path, currentTask.Extract, currentTask.DestPath)
 					else
 						Console.error("No Path given")
-						uniques[Task.UniqueKey] = nil
-						Task = nil
+						uniques[currentTask.UniqueKey] = nil
+						currentTask = nil
 					end
 				else
 					Console.error("No DestPath given")
-					uniques[Task.UniqueKey] = nil
-					Task = nil
+					uniques[currentTask.UniqueKey] = nil
+					currentTask = nil
 				end
 			else
 				Console.error("No Extract file path given")
-				uniques[Task.UniqueKey] = nil
-				Task = nil
+				uniques[currentTask.UniqueKey] = nil
+				currentTask = nil
 			end
 		end
-		if Task then
-			Console.write(string.format("NET: #%s %s", 4 - Task.Retry, Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
+		if currentTask then
+			Console.write(string.format("NET: #%s %s", 4 - currentTask.Retry, currentTask.Link or currentTask.Path or currentTask.UniqueKey), Color.new(0, 255, 0))
 		end
 	else
-		Console.write("(" .. Task.Type .. ")" .. (Task.Link or Task.Path or Task.UniqueKey), Color.new(0, 255, 0))
-		local f_save = function()
-			Trash.Type = Task.Type
-			Trash.Link = Task.Link
-			if Task.Type == "StringRequest" then
-				Task.Table[Task.Index] = getAsyncResult() or ""
-				local len = #Task.Table[Task.Index]
+		Console.write("(" .. currentTask.Type .. ")" .. (currentTask.Link or currentTask.Path or currentTask.UniqueKey), Color.new(0, 255, 0))
+		local saveFunction = function()
+			TRASH.Type = currentTask.Type
+			TRASH.Link = currentTask.Link
+			if currentTask.Type == "StringRequest" then
+				currentTask.Table[currentTask.Index] = getAsyncResult() or ""
+				local len = #currentTask.Table[currentTask.Index]
 				if len > 0 then
 					bytes = bytes + len
 					if len < 100 then
-						Console.write("NET:" .. Task.Table[Task.Index])
+						Console.write("NET:" .. currentTask.Table[currentTask.Index])
 					end
 				end
-			elseif Task.Type == "Image" then
-				if doesFileExist(Task.Path) then
-					local Width, Height = System.getPictureResolution(Task.Path)
+			elseif currentTask.Type == "Image" then
+				if doesFileExist(currentTask.Path) then
+					local Width, Height = System.getPictureResolution(currentTask.Path)
 					if not Width or Width < 0 then
-						Task.Type = Task.Link and "ImageDownload" or Task.Type
-						if Task.Type == "ImageDownload" then
+						currentTask.Type = currentTask.Link and "ImageDownload" or currentTask.Type
+						if currentTask.Type == "ImageDownload" then
 							error("Redownloading file")
-						elseif Task.Type == "Image" then
+						elseif currentTask.Type == "Image" then
 							Console.error("File you loading isn't picture")
-							uniques[Task.UniqueKey] = nil
-							Task = nil
+							uniques[currentTask.UniqueKey] = nil
+							currentTask = nil
 							return
 						end
 					end
 					Console.write(Width .. "x" .. Height .. " Image got")
 					if img2bytes(Width, Height, 1) > Graphics.getFreeMemory() and Height <= 4096 and Height / Width <= 2 then
 						Console.error("No enough memory to load image")
-						uniques[Task.UniqueKey] = nil
-						Task = nil
+						uniques[currentTask.UniqueKey] = nil
+						currentTask = nil
 					else
-						if Height > 4096 and Height / Width > 2 and not Task.MaxHeight then
+						if Height > 4096 and Height / Width > 2 and not currentTask.MaxHeight then
 							if img2bytes(Width, Height, 1) > Graphics.getFreeMemory() then
 								if img2bytes(Width, Height, 2) > Graphics.getFreeMemory() then
 									Console.error("No enough memory to load image")
-									uniques[Task.UniqueKey] = nil
-									Task = nil
+									uniques[currentTask.UniqueKey] = nil
+									currentTask = nil
 								else
-									Task.Image = {
+									currentTask.Image = {
 										Width = Width / 2,
 										Height = Height / 2,
 										RealWidth = Width,
@@ -174,7 +174,7 @@ function Threads.update()
 									}
 								end
 							else
-								Task.Image = {
+								currentTask.Image = {
 									Width = Width,
 									Height = Height,
 									RealWidth = Width,
@@ -182,20 +182,20 @@ function Threads.update()
 									Parts = math.ceil(Height / 4096)
 								}
 							end
-							Console.write(Task.Image.Parts)
-							Task.Type = "ImageLoadTable"
+							Console.write(currentTask.Image.Parts)
+							currentTask.Type = "ImageLoadTable"
 						else
 							local scale = 1
-							if Task.MaxWidth and Task.MaxHeight then
+							if currentTask.MaxWidth and currentTask.MaxHeight then
 								if Width > Height then
-									scale = Width / Task.MaxWidth
+									scale = Width / currentTask.MaxWidth
 								else
-									scale = Height / Task.MaxHeight
+									scale = Height / currentTask.MaxHeight
 								end
-							elseif Task.MaxWidth then
-								scale = Width / Task.MaxWidth
-							elseif Task.MaxHeight then
-								scale = Height / Task.MaxHeight
+							elseif currentTask.MaxWidth then
+								scale = Width / currentTask.MaxWidth
+							elseif currentTask.MaxHeight then
+								scale = Height / currentTask.MaxHeight
 							end
 							if scale <= 1 then
 								scale = 1
@@ -212,148 +212,148 @@ function Threads.update()
 							else
 								scale = 64
 							end
-							Graphics.loadImageAsync(Task.Path, scale)
-							Task.Type = "ImageLoad"
+							Graphics.loadImageAsync(currentTask.Path, scale)
+							currentTask.Type = "ImageLoad"
 						end
 					end
 				else
-					Task.Type = Task.Link and "ImageDownload" or Task.Type
-					if Task.Type == "ImageDownload" then
+					currentTask.Type = currentTask.Link and "ImageDownload" or currentTask.Type
+					if currentTask.Type == "ImageDownload" then
 						error("(Image)File not found")
-					elseif Task.Type == "Image" then
+					elseif currentTask.Type == "Image" then
 						Console.error("(Image)File not found")
-						uniques[Task.UniqueKey] = nil
-						Task = nil
+						uniques[currentTask.UniqueKey] = nil
+						currentTask = nil
 						return
 					end
 				end
 				return
-			elseif Task.Type == "ImageLoad" then
-				if doesFileExist(Task.Path) then
-					Task.Table[Task.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
-					Task.Final = true
+			elseif currentTask.Type == "ImageLoad" then
+				if doesFileExist(currentTask.Path) then
+					currentTask.Table[currentTask.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
+					currentTask.Final = true
 				else
 					Console.error("(ImageLoad)File not found")
 				end
-			elseif Task.Type == "ImageLoadTable" then
-				if not Task.Image.i then
-					Task.Image.i = 0
-					Task.Table[Task.Index] = {}
-					Task.Table[Task.Index].Parts = Task.Image.Parts
-					Task.Table[Task.Index].SliceHeight = math.floor(Task.Image.Height / Task.Image.Parts)
-					Task.Table[Task.Index].Height = Task.Image.Height
-					Task.Table[Task.Index].Width = Task.Image.Width
-					Task.Image.free = function(self)
+			elseif currentTask.Type == "ImageLoadTable" then
+				if not currentTask.Image.i then
+					currentTask.Image.i = 0
+					currentTask.Table[currentTask.Index] = {}
+					currentTask.Table[currentTask.Index].Parts = currentTask.Image.Parts
+					currentTask.Table[currentTask.Index].SliceHeight = math.floor(currentTask.Image.Height / currentTask.Image.Parts)
+					currentTask.Table[currentTask.Index].Height = currentTask.Image.Height
+					currentTask.Table[currentTask.Index].Width = currentTask.Image.Width
+					currentTask.Image.free = function(self)
 						for i = 1, #self do
 							if self[i] and self[i].free then
 								self[i]:free()
 							end
 						end
 					end
-				elseif Task.Image.i < Task.Image.Parts then
-					Task.Image.i = Task.Image.i + 1
-					if Task.Table[Task.Index] == Trash.Garbadge then
-						Trash.Garbadge = Image:new(getAsyncResult())
-						Trash.Type = "ImageLoadTable2"
+				elseif currentTask.Image.i < currentTask.Image.Parts then
+					currentTask.Image.i = currentTask.Image.i + 1
+					if currentTask.Table[currentTask.Index] == TRASH.Garbadge then
+						TRASH.Garbadge = Image:new(getAsyncResult())
+						TRASH.Type = "ImageLoadTable2"
 						return
 					end
-					Task.Table[Task.Index][Task.Image.i] = Image:new(getAsyncResult(), FILTER_LINEAR)
-					if not Task.Table[Task.Index][Task.Image.i] then
+					currentTask.Table[currentTask.Index][currentTask.Image.i] = Image:new(getAsyncResult(), FILTER_LINEAR)
+					if not currentTask.Table[currentTask.Index][currentTask.Image.i] then
 						error("error with part function")
 					else
-						Console.write(string.format("Got %s image", Task.Image.i))
+						Console.write(string.format("Got %s image", currentTask.Image.i))
 					end
 				else
-					Task.Final = true
-					uniques[Task.UniqueKey] = nil
-					Task = nil
+					currentTask.Final = true
+					uniques[currentTask.UniqueKey] = nil
+					currentTask = nil
 					return
 				end
-				local sliceHeight = math.floor(Task.Image.RealHeight / Task.Image.Parts)
+				local sliceHeight = math.floor(currentTask.Image.RealHeight / currentTask.Image.Parts)
 				local Height = sliceHeight
-				if Task.Image.i == Task.Image.Parts - 1 then
-					Height = Task.Image.RealHeight - (Task.Image.i) * Height
+				if currentTask.Image.i == currentTask.Image.Parts - 1 then
+					Height = currentTask.Image.RealHeight - (currentTask.Image.i) * Height
 				end
-				if Task.Image.i < Task.Image.Parts then
-					Console.write(string.format("Getting %s %sx%s Image", sliceHeight * Task.Image.i, Task.Image.RealWidth, Height))
-					Graphics.loadPartImageAsync(Task.Path, 0, sliceHeight * Task.Image.i, Task.Image.RealWidth, Height)
+				if currentTask.Image.i < currentTask.Image.Parts then
+					Console.write(string.format("Getting %s %sx%s Image", sliceHeight * currentTask.Image.i, currentTask.Image.RealWidth, Height))
+					Graphics.loadPartImageAsync(currentTask.Path, 0, sliceHeight * currentTask.Image.i, currentTask.Image.RealWidth, Height)
 				else
-					uniques[Task.UniqueKey] = nil
-					Task = nil
+					uniques[currentTask.UniqueKey] = nil
+					currentTask = nil
 				end
 				return
-			elseif Task.Type == "FileDownload" then
-				if doesFileExist(Task.Path) then
-					local handle = openFile(Task.Path, FREAD)
+			elseif currentTask.Type == "FileDownload" then
+				if doesFileExist(currentTask.Path) then
+					local handle = openFile(currentTask.Path, FREAD)
 					bytes = bytes + sizeFile(handle)
 					closeFile(handle)
 				end
-			elseif Task.Type == "Skip" then
+			elseif currentTask.Type == "Skip" then
 				Console.error("WOW HOW THAT HAPPENED?")
 			end
-			uniques[Task.UniqueKey] = nil
-			Task = nil
+			uniques[currentTask.UniqueKey] = nil
+			currentTask = nil
 		end
-		local TempTask = Task
-		local success, err = pcall(f_save)
+		local tempTask = currentTask
+		local success, err = pcall(saveFunction)
 		if success then
-			if Task == nil then
-				if TempTask.OnComplete then
-					TempTask.OnComplete()
-					Console.write("OnComplete executing for " .. TempTask.Type .. " " .. (TempTask.Link or TempTask.Path or TempTask.UniqueKey))
+			if currentTask == nil then
+				if tempTask.OnComplete then
+					tempTask.OnComplete()
+					Console.write("OnComplete executing for " .. tempTask.Type .. " " .. (tempTask.Link or tempTask.Path or tempTask.UniqueKey))
 				end
-				if TempTask.Final then
-					if TempTask.OnFinalComplete then
-						TempTask.OnFinalComplete()
+				if tempTask.Final then
+					if tempTask.OnFinalComplete then
+						tempTask.OnFinalComplete()
 					end
 				end
 			end
-		elseif Task ~= nil then
+		elseif currentTask ~= nil then
 			Console.error("NET: " .. err)
-			Task.Retry = Task.Retry - 1
-			if Task.Retry > 0 and Task.Table ~= Trash then
-				table.insert(Order, Task)
+			currentTask.Retry = currentTask.Retry - 1
+			if currentTask.Retry > 0 and currentTask.Table ~= TRASH then
+				table.insert(orderList, currentTask)
 			else
-				uniques[Task.UniqueKey] = nil
+				uniques[currentTask.UniqueKey] = nil
 			end
-			Task = nil
+			currentTask = nil
 		end
 	end
-	if Trash.Garbadge then
-		if Trash.Type == "ImageLoad" then
+	if TRASH.Garbadge then
+		if TRASH.Type == "ImageLoad" then
 			Console.write("NET:(Freeing Image)", Color.new(255, 0, 255))
-			if Trash.Garbadge and Trash.Garbadge.free then
-				Trash.Garbadge:free()
+			if TRASH.Garbadge and TRASH.Garbadge.free then
+				TRASH.Garbadge:free()
 			end
-		elseif Trash.Type == "ImageLoadTable2" then
+		elseif TRASH.Type == "ImageLoadTable2" then
 			Console.write("NET:(Freeing Table Image)", Color.new(255, 0, 255))
-			if Trash.Garbadge and Trash.Garbadge.free then
-				Trash.Garbadge:free()
+			if TRASH.Garbadge and TRASH.Garbadge.free then
+				TRASH.Garbadge:free()
 			end
 		end
-		Trash.Garbadge = nil
+		TRASH.Garbadge = nil
 	end
 end
 
 ---Delete all traces
 function Threads.clear()
-	Order = {}
+	orderList = {}
 	uniques = {}
-	if Task ~= nil then
-		Task.Table = Trash
-		Task.Index = "Garbadge"
+	if currentTask ~= nil then
+		currentTask.Table = TRASH
+		currentTask.Index = "Garbadge"
 		Network.stopCurrentDownload()
 	end
 end
 
 ---Gives boolean that is any task is running
 function Threads.isDownloadRunning()
-	return System.getAsyncState() == 0 or #Order ~= 0 or Task ~= nil
+	return System.getAsyncState() == 0 or #orderList ~= 0 or currentTask ~= nil
 end
 
 ---You can use Network function in here if you sure that your function is safe
 function Threads.netActionUnSafe(foo)
-	if not net_inited then
+	if not is_net_inited then
 		Network.init()
 		local result = foo()
 		Network.term()
@@ -371,8 +371,8 @@ function Threads.netActionSafe(foo)
 end
 
 ---Checks if given parameters is enough to execute task
-local function taskcheck(T)
-	local task = T
+local function taskcheck(t)
+	local task = t
 	if task.Type == "FileDownload" then
 		if task.Link and task.Path then
 			return true
@@ -383,36 +383,36 @@ local function taskcheck(T)
 	return false
 end
 
----@param UniqueKey any
----@param T table of parameters
+---@param uniqueKey any
+---@param t table of parameters
 ---@param foo function
----Adds task to order with given `T` parameters
-local function taskete(UniqueKey, T, foo)
-	if UniqueKey and uniques[UniqueKey] and taskcheck(T) or not UniqueKey then
+---Adds task to order with given `t` parameters
+local function taskete(uniqueKey, t, foo)
+	if uniqueKey and uniques[uniqueKey] and taskcheck(t) or not uniqueKey then
 		return false
 	end
 	local newTask = {
-		Type = T.Type,
-		Link = T.Link,
-		Table = T.Table,
-		Index = T.Index,
-		DestPath = T.DestPath,
-		Header1 = T.Header1 or "",
-		Header2 = T.Header2 or "",
-		Header3 = T.Header3 or "",
-		Header4 = T.Header4 or "",
-		MaxHeight = T.MaxHeight,
-		MaxWidth = T.MaxWidth,
-		OnComplete = T.OnComplete,
-		OnFinalComplete = T.OnFinalComplete,
-		Extract = T.Extract,
-		Path = T.Path and (T.Path:find("^...?0:") and T.Path or ("ux0:data/noboru/" .. T.Path)) or IMAGE_CACHE_PATH,
+		Type = t.Type,
+		Link = t.Link,
+		Table = t.Table,
+		Index = t.Index,
+		DestPath = t.DestPath,
+		Header1 = t.Header1 or "",
+		Header2 = t.Header2 or "",
+		Header3 = t.Header3 or "",
+		Header4 = t.Header4 or "",
+		MaxHeight = t.MaxHeight,
+		MaxWidth = t.MaxWidth,
+		OnComplete = t.OnComplete,
+		OnFinalComplete = t.OnFinalComplete,
+		Extract = t.Extract,
+		Path = t.Path and (t.Path:find("^...?0:") and t.Path or ("ux0:data/noboru/" .. t.Path)) or IMAGE_CACHE_PATH,
 		Retry = 3,
-		HttpMethod = T.HttpMethod or GET_METHOD,
-		PostData = T.PostData or "",
-		ContentType = T.ContentType or XWWW,
-		Cookie = T.Cookie or "",
-		UniqueKey = UniqueKey
+		HttpMethod = t.HttpMethod or GET_METHOD,
+		PostData = t.PostData or "",
+		ContentType = t.ContentType or XWWW,
+		Cookie = t.Cookie or "",
+		UniqueKey = uniqueKey
 	}
 	if type(newTask.Link) == "table" then
 		local t = newTask.Link
@@ -433,50 +433,50 @@ local function taskete(UniqueKey, T, foo)
 	newTask.Proxy = Settings.UseProxy and (Settings.ProxyIP .. ":" .. Settings.ProxyPort) or ""
 	newTask.ProxyAuth = Settings.UseProxyAuth and Settings.ProxyAuth or ""
 	foo(newTask)
-	uniques[UniqueKey] = newTask
+	uniques[uniqueKey] = newTask
 	return true
 end
 
 local function taskinsert(task)
-	table.insert(Order, 1, task)
+	table.insert(orderList, 1, task)
 end
 
----@param UniqueKey string
----@param T table
+---@param uniqueKey string
+---@param t table
 ---@return boolean
 ---Inserts task to threads
-function Threads.insertTask(UniqueKey, T)
-	return taskete(UniqueKey, T, taskinsert)
+function Threads.insertTask(uniqueKey, t)
+	return taskete(uniqueKey, t, taskinsert)
 end
 
 local function task_add(task)
-	Order[#Order + 1] = task
+	orderList[#orderList + 1] = task
 end
 
----@param UniqueKey string
----@param T table
+---@param uniqueKey string
+---@param t table
 ---@return boolean
 ---Adds task to threads
-function Threads.addTask(UniqueKey, T)
-	return taskete(UniqueKey, T, task_add)
+function Threads.addTask(uniqueKey, t)
+	return taskete(uniqueKey, t, task_add)
 end
 
 ---Terminates Threads functions and net features
 function Threads.terminate()
-	if net_inited then
+	if is_net_inited then
 		Threads.clear()
-		while Task do
+		while currentTask do
 			Threads.update()
 		end
 		Network.term()
-		net_inited = false
+		is_net_inited = false
 	end
 end
 
-function Threads.getProgress(UniqueKey)
-	local task = uniques[UniqueKey]
+function Threads.getProgress(uniqueKey)
+	local task = uniques[uniqueKey]
 	if task then
-		if Task == task then
+		if currentTask == task then
 			if task.Type == "ImageDownload" or task.Type == "StringRequest" or task.Type == "FileDownload" or (task.Type == "Image" and task.Link) then
 				return math.max(math.min(1, Network.getDownloadedBytes() / Network.getTotalBytes()), 0)
 			else
@@ -489,24 +489,24 @@ function Threads.getProgress(UniqueKey)
 	return 0
 end
 
----@param UniqueKey string
+---@param uniqueKey string
 ---Removes task by `UniqueKey`
-function Threads.remove(UniqueKey)
-	if uniques[UniqueKey] then
-		if Task == uniques[UniqueKey] then
-			Task.Table, Task.Index = Trash, "Garbadge"
+function Threads.remove(uniqueKey)
+	if uniques[uniqueKey] then
+		if currentTask == uniques[uniqueKey] then
+			currentTask.Table, currentTask.Index = TRASH, "Garbadge"
 			Network.stopCurrentDownload()
 		else
-			uniques[UniqueKey].Type = "Skip"
+			uniques[uniqueKey].Type = "Skip"
 		end
-		uniques[UniqueKey] = nil
+		uniques[uniqueKey] = nil
 	end
 end
 
----@param UniqueKey string
+---@param uniqueKey string
 ---Checks if task is in order by `UniqueKey`
-function Threads.check(UniqueKey)
-	return uniques[UniqueKey] ~= nil
+function Threads.check(uniqueKey)
+	return uniques[uniqueKey] ~= nil
 end
 
 ---@return number
@@ -518,15 +518,15 @@ end
 ---@return integer number of tasks
 ---Returns quantity of tasks in order
 function Threads.getTasksNum()
-	return #Order + (Task and 1 or 0)
+	return #orderList + (currentTask and 1 or 0)
 end
 
 function Threads.getNonSkipTasksNum()
 	local c = 0
-	for i = 1, #Order do
-		if Order[i].Type ~= "Skip" then
+	for i = 1, #orderList do
+		if orderList[i].Type ~= "Skip" then
 			c = c + 1
 		end
 	end
-	return c + (Task and Task.Type ~= "Skip" and 1 or 0)
+	return c + (currentTask and currentTask.Type ~= "Skip" and 1 or 0)
 end

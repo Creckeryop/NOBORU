@@ -1,21 +1,92 @@
 Catalogs = {}
-local Slider = Slider()
-local TOUCH = TOUCH()
+Panels = {}
+
+local slider = CreateSlider()
+local TOUCH_MODES = TOUCH_MODES
 
 local doesFileExist = System.doesFileExist
+local doesDirExist = System.doesDirExist
 local listDirectory = System.listDirectory
+local abs = math.abs
+local ceil = math.ceil
+local floor = math.floor
+local max = math.max
+local min = math.min
+local copyFile = CopyFile
 
-local Parser = nil
-local TouchTimer = Timer.new()
+local currentParser = nil
+local touchTimer = Timer.new()
 
 local mode = "CATALOGS"
+local keyboardMode = "NONE"
+local downloadBarValue = 0
 
-local DownloadedImage = {}
+local downloadedImages = {}
 local page = 1
-local Results = {}
-local Parsers = {}
+local currentMangaList = {}
+local parsersList = {}
 
-local abs, ceil, floor, max, min = math.abs, math.ceil, math.floor, math.max, math.min
+local chaptersFolderSize
+local cacheFolderSize
+local sure_clear_library
+local sure_clear_chapters
+local sure_clear_all_cache
+local sure_clear_cache
+
+local mangaSelector =
+	Selector:new(
+	-4,
+	4,
+	-1,
+	1,
+	function()
+		return max(1, floor((slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
+	end
+)
+
+local parserSelector =
+	Selector:new(
+	-1,
+	1,
+	-3,
+	3,
+	function()
+		return max(1, floor((slider.Y - 10) / 75))
+	end
+)
+
+local downloadSelector =
+	Selector:new(
+	-1,
+	1,
+	-3,
+	3,
+	function()
+		return max(1, floor((slider.Y - 10) / 75))
+	end
+)
+
+local settingSelector =
+	Selector:new(
+	-1,
+	1,
+	-3,
+	3,
+	function()
+		return max(1, floor((slider.Y - 10) / 75))
+	end
+)
+
+local importSelector =
+	Selector:new(
+	-1,
+	1,
+	-3,
+	3,
+	function()
+		return max(1, floor((slider.Y - 10) / 75))
+	end
+)
 
 local function freeMangaImage(manga)
 	if manga and manga.ImageDownload then
@@ -27,21 +98,19 @@ local function freeMangaImage(manga)
 	end
 end
 
-local cpy_file = Copy_File
-
 local function loadMangaImage(manga)
 	if CustomCovers.hasCustomCover(manga) then
-		local custom_cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(manga) .. "/custom_cover.image"
-		if doesFileExist(custom_cover_path) and System.getPictureResolution(custom_cover_path) or -1 > 0 then
+		local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getKey(manga) .. "/custom_cover.image"
+		if doesFileExist(customCoverPath) and System.getPictureResolution(customCoverPath) or -1 > 0 then
 			Threads.addTask(
 				manga,
 				{
 					Type = "Image",
-					Path = custom_cover_path,
+					Path = customCoverPath,
 					Table = manga,
 					MaxHeight = MANGA_HEIGHT * 2,
 					Index = "newImage",
-					OnFinalComplete = function ()
+					OnFinalComplete = function()
 						if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
 							manga.Image:free()
 						end
@@ -54,19 +123,19 @@ local function loadMangaImage(manga)
 				Cache.addManga(manga)
 			end
 			local cover = CustomCovers.getCustomCover(manga)
-			local cache_key = Cache.getKey(manga)
+			local cacheKey = Cache.getKey(manga)
 			local t = {}
 			if cover.Path then
-				cpy_file(cover.Path:find("^...?0:") and cover.Path or ("ux0:data/noboru/" .. cover.Path), "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image")
+				copyFile(cover.Path:find("^...?0:") and cover.Path or ("ux0:data/noboru/" .. cover.Path), "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image")
 				Threads.addTask(
 					manga,
 					{
 						Type = "Image",
-						Path = custom_cover_path,
+						Path = customCoverPath,
 						Table = manga,
 						MaxHeight = MANGA_HEIGHT * 2,
 						Index = "newImage",
-						OnFinalComplete = function ()
+						OnFinalComplete = function()
 							if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
 								manga.Image:free()
 							end
@@ -89,17 +158,17 @@ local function loadMangaImage(manga)
 								{
 									Type = "FileDownload",
 									Link = t.Link,
-									Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
+									Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 									OnComplete = function()
 										Threads.addTask(
 											manga,
 											{
 												Type = "Image",
-												Path = custom_cover_path,
+												Path = customCoverPath,
 												Table = manga,
 												MaxHeight = MANGA_HEIGHT * 2,
 												Index = "newImage",
-												OnFinalComplete = function ()
+												OnFinalComplete = function()
 													if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
 														manga.Image:free()
 													end
@@ -119,17 +188,17 @@ local function loadMangaImage(manga)
 					{
 						Type = "FileDownload",
 						Link = cover.Link,
-						Path = "ux0:data/noboru/cache/" .. cache_key .. "/custom_cover.image",
+						Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 						OnComplete = function()
 							Threads.addTask(
 								manga,
 								{
 									Type = "Image",
-									Path = custom_cover_path,
+									Path = customCoverPath,
 									Table = manga,
 									MaxHeight = MANGA_HEIGHT * 2,
 									Index = "newImage",
-									OnFinalComplete = function ()
+									OnFinalComplete = function()
 										if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
 											manga.Image:free()
 										end
@@ -155,7 +224,7 @@ local function loadMangaImage(manga)
 					Table = manga,
 					MaxHeight = MANGA_HEIGHT * 2,
 					Index = "newImage",
-					OnFinalComplete = function ()
+					OnFinalComplete = function()
 						if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
 							manga.Image:free()
 						end
@@ -174,7 +243,7 @@ local function loadMangaImage(manga)
 					Link = manga.ImageLink,
 					Table = manga,
 					Index = "newImage",
-					OnFinalComplete = function ()
+					OnFinalComplete = function()
 						if manga.Image ~= nil and type(manga.Image) == "table" and manga.Image.Type == "image" then
 							manga.Image:free()
 						end
@@ -189,121 +258,63 @@ local function loadMangaImage(manga)
 end
 
 local function UpdateMangas()
-	if Slider.V == 0 and Timer.getTime(TouchTimer) > 200 then
-		local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
-		if #DownloadedImage > 12 then
-			local new_table = {}
-			for _, i in ipairs(DownloadedImage) do
-				if i < start or i > min(#Results, start + 11) then
-					freeMangaImage(Results[i])
+	if slider.V == 0 and Timer.getTime(touchTimer) > 200 then
+		local start = max(1, floor(slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
+		if #downloadedImages > 12 then
+			local newTable = {}
+			for _, i in ipairs(downloadedImages) do
+				if i < start or i > min(#currentMangaList, start + 11) then
+					freeMangaImage(currentMangaList[i])
 				else
-					new_table[#new_table + 1] = i
+					newTable[#newTable + 1] = i
 				end
 			end
-			DownloadedImage = new_table
+			downloadedImages = newTable
 		end
-		for i = start, min(#Results, start + 11) do
-			local manga = Results[i]
+		for i = start, min(#currentMangaList, start + 11) do
+			local manga = currentMangaList[i]
 			if not manga.ImageDownload then
 				loadMangaImage(manga)
 				manga.ImageDownload = true
-				DownloadedImage[#DownloadedImage + 1] = i
+				downloadedImages[#downloadedImages + 1] = i
 			end
 		end
 	else
-		local new_table = {}
-		for _, i in ipairs(DownloadedImage) do
-			local manga = Results[i]
+		local newTable = {}
+		for _, i in ipairs(downloadedImages) do
+			local manga = currentMangaList[i]
 			if Threads.check(manga) and (Details.getFade() == 0 or manga ~= Details.getManga()) then
 				Threads.remove(manga)
 				manga.ImageDownload = nil
 			else
-				new_table[#new_table + 1] = i
+				newTable[#newTable + 1] = i
 			end
 		end
-		DownloadedImage = new_table
+		downloadedImages = newTable
 	end
 end
 
 local function selectManga(index)
-	local manga = Results[index]
+	local manga = currentMangaList[index]
 	if manga then
 		Details.setManga(manga)
 	end
 end
 
 local function selectParser(index)
-	local parser = GetParserList()[index]
-	if parser then
-		Parser = parser
+	local newParser = GetParserList()[index]
+	if newParser then
+		currentParser = newParser
 		Catalogs.setMode("MANGA")
-		CatalogModes.load(parser)
+		CatalogModes.load(newParser)
 	end
 end
-
-local chapters_space
-local cache_space
-local sure_clear_library
-local sure_clear_chapters
-local sure_clear_all_cache
-local sure_clear_cache
-
-local MangaSelector =
-	Selector:new(
-	-4,
-	4,
-	-1,
-	1,
-	function()
-		return max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 12)) * 4 + 1)
-	end
-)
-local ParserSelector =
-	Selector:new(
-	-1,
-	1,
-	-3,
-	3,
-	function()
-		return max(1, floor((Slider.Y - 10) / 75))
-	end
-)
-local DownloadSelector =
-	Selector:new(
-	-1,
-	1,
-	-3,
-	3,
-	function()
-		return max(1, floor((Slider.Y - 10) / 75))
-	end
-)
-local SettingSelector =
-	Selector:new(
-	-1,
-	1,
-	-3,
-	3,
-	function()
-		return max(1, floor((Slider.Y - 10) / 75))
-	end
-)
-local ImportSelector =
-	Selector:new(
-	-1,
-	1,
-	-3,
-	3,
-	function()
-		return max(1, floor((Slider.Y - 10) / 75))
-	end
-)
 
 local function selectSetting(index)
 	local item = Settings.list()[index]
 	if Settings.isTab(item) then
 		if Settings.getTab() ~= "AdvancedChaptersDeletion" then
-			SettingSelector:resetSelected()
+			settingSelector:resetSelected()
 		end
 		Settings.setTab(item)
 	elseif item then
@@ -312,7 +323,7 @@ local function selectSetting(index)
 				sure_clear_chapters = sure_clear_chapters + 1
 				if sure_clear_chapters == 2 then
 					SettingsFunctions[item]()
-					chapters_space = nil
+					chaptersFolderSize = nil
 					sure_clear_chapters = 0
 				end
 			elseif item == "ClearLibrary" then
@@ -324,14 +335,14 @@ local function selectSetting(index)
 			elseif item == "ClearAllCache" then
 				sure_clear_all_cache = sure_clear_all_cache + 1
 				if sure_clear_all_cache == 2 then
-					cache_space = nil
+					cacheFolderSize = nil
 					SettingsFunctions[item]()
 					sure_clear_all_cache = 0
 				end
 			elseif item == "ClearCache" then
 				sure_clear_cache = sure_clear_cache + 1
 				if sure_clear_cache == 2 then
-					cache_space = nil
+					cacheFolderSize = nil
 					SettingsFunctions[item]()
 					sure_clear_cache = 0
 				end
@@ -362,16 +373,15 @@ local function selectImport(index)
 	end
 end
 
-MangaSelector:xaction(selectManga)
-ParserSelector:xaction(selectParser)
-DownloadSelector:xaction(
+mangaSelector:xaction(selectManga)
+parserSelector:xaction(selectParser)
+downloadSelector:xaction(
 	function(item)
 		ChapterSaver.stopByListItem(ChapterSaver.getDownloadingList()[item])
 	end
 )
-SettingSelector:xaction(selectSetting)
-ImportSelector:xaction(selectImport)
-local keyboard_mode = "NONE"
+settingSelector:xaction(selectSetting)
+importSelector:xaction(selectImport)
 function Catalogs.input(oldpad, pad, oldtouch, touch)
 	if mode == "MANGA" then
 		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
@@ -381,27 +391,27 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 			CatalogModes.show()
 		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
 			Keyboard.show(Language[Settings.Language].SETTINGS.InputValue, 1, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
-			keyboard_mode = "JUMP_PAGE"
+			keyboardMode = "JUMP_PAGE"
 		end
 	elseif mode == "CATALOGS" then
 		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
-			ParserManager.updateParserList(Parsers)
+			ParserManager.updateParserList(parsersList)
 		end
 		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
-			local item = Parsers[ParserSelector:getSelected()]
+			local item = parsersList[parserSelector:getSelected()]
 			if item then
 				Settings.toggleFavouriteParser(item)
 			end
 		end
-		if (Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT)) and Debug.getMode() == 2 then
-			local item = Parsers[ParserSelector:getSelected()]
+		if Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) and Debug.getStatus() == 2 then
+			local item = parsersList[parserSelector:getSelected()]
 			if item then
 				ParserChecker.addCheck(item)
 			end
 		end
 	elseif mode == "HISTORY" then
 		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
-			local item = Results[MangaSelector:getSelected()]
+			local item = currentMangaList[mangaSelector:getSelected()]
 			if item then
 				Cache.removeHistory(item)
 			end
@@ -409,11 +419,10 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	elseif mode == "SETTINGS" then
 		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
 			Settings.back()
-			SettingSelector:resetSelected()
+			settingSelector:resetSelected()
 		end
-
 		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) and Settings.getTab() == "AdvancedChaptersDeletion" then
-			local id = SettingSelector:getSelected()
+			local id = settingSelector:getSelected()
 			local item = Settings.list()[id]
 			if item then
 				Settings.delTab(item)
@@ -422,13 +431,13 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	elseif mode == "IMPORT" then
 		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
 			Import.back()
-			ImportSelector:resetSelected()
+			importSelector:resetSelected()
 		end
 		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
-			local item = Import.listDir()[ImportSelector:getSelected()]
+			local item = Import.listDir()[importSelector:getSelected()]
 			if item and item.active and item.name ~= "..." then
 				ChapterSaver.importManga(Import.getPath(item))
-				ImportSelector:resetSelected()
+				importSelector:resetSelected()
 			end
 		end
 	elseif mode == "LIBRARY" then
@@ -436,38 +445,38 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 			ParserManager.updateCounters()
 		end
 	end
-	if Slider.V ~= 0 or Controls.check(pad, SCE_CTRL_RTRIGGER) or Controls.check(pad, SCE_CTRL_LTRIGGER) or touch.x then
-		Timer.reset(TouchTimer)
+	if slider.V ~= 0 or Controls.check(pad, SCE_CTRL_RTRIGGER) or Controls.check(pad, SCE_CTRL_LTRIGGER) or touch.x then
+		Timer.reset(touchTimer)
 	end
 	if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
-		MangaSelector:input(#Results, oldpad, pad, touch.x)
+		mangaSelector:input(#currentMangaList, oldpad, pad, touch.x)
 	elseif mode == "CATALOGS" then
-		ParserSelector:input(#Parsers, oldpad, pad, touch.x)
+		parserSelector:input(#parsersList, oldpad, pad, touch.x)
 	elseif mode == "DOWNLOAD" then
-		DownloadSelector:input(#ChapterSaver.getDownloadingList(), oldpad, pad, touch.x)
+		downloadSelector:input(#ChapterSaver.getDownloadingList(), oldpad, pad, touch.x)
 	elseif mode == "SETTINGS" then
-		SettingSelector:input(#Settings.list(), oldpad, pad, touch.x)
+		settingSelector:input(#Settings.list(), oldpad, pad, touch.x)
 	elseif mode == "IMPORT" then
-		ImportSelector:input(#Import.listDir(), oldpad, pad, touch.x)
+		importSelector:input(#Import.listDir(), oldpad, pad, touch.x)
 	end
-	if TOUCH.MODE == TOUCH.NONE and oldtouch.x and touch.x and touch.x > 240 then
-		TOUCH.MODE = TOUCH.READ
-		Slider.TouchY = touch.y
-	elseif TOUCH.MODE ~= TOUCH.NONE and not touch.x then
+	if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldtouch.x and touch.x and touch.x > 240 then
+		TOUCH_MODES.MODE = TOUCH_MODES.READ
+		slider.TouchY = touch.y
+	elseif TOUCH_MODES.MODE ~= TOUCH_MODES.NONE and not touch.x then
 		if oldtouch.x then
-			if TOUCH.MODE == TOUCH.READ then
+			if TOUCH_MODES.MODE == TOUCH_MODES.READ then
 				if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
-					local start = max(1, floor((Slider.Y - 20) / (MANGA_HEIGHT + 6)) * 4 + 1)
-					for i = start, min(#Results, start + 11) do
+					local start = max(1, floor((slider.Y - 20) / (MANGA_HEIGHT + 6)) * 4 + 1)
+					for i = start, min(#currentMangaList, start + 11) do
 						local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 6) + 610
-						local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 6) - Slider.Y + 6
+						local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 6) - slider.Y + 6
 						if oldtouch.x > lx and oldtouch.x < lx + MANGA_WIDTH and oldtouch.y > uy and oldtouch.y < uy + MANGA_HEIGHT then
 							selectManga(i)
 							break
 						end
 					end
 				elseif oldtouch.x > 205 and oldtouch.x < 955 then
-					local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+					local id = floor((slider.Y - 10 + oldtouch.y) / 75) + 1
 					if mode == "CATALOGS" then
 						selectParser(id)
 					elseif mode == "DOWNLOAD" then
@@ -490,43 +499,41 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 							local item = Import.listDir()[id]
 							if item and item.active and item.name ~= "..." then
 								ChapterSaver.importManga(Import.getPath(item))
-								ImportSelector:resetSelected()
+								importSelector:resetSelected()
 							end
 						end
 					end
 				end
 			end
 		end
-		TOUCH.MODE = TOUCH.NONE
+		TOUCH_MODES.MODE = TOUCH_MODES.NONE
 	end
-	local new_itemID = 0
-	if TOUCH.MODE == TOUCH.READ then
-		if abs(Slider.V) > 0.1 or abs(Slider.TouchY - touch.y) > 10 then
-			TOUCH.MODE = TOUCH.SLIDE
+	local newItemID = 0
+	if TOUCH_MODES.MODE == TOUCH_MODES.READ then
+		if abs(slider.V) > 0.1 or abs(slider.TouchY - touch.y) > 10 then
+			TOUCH_MODES.MODE = TOUCH_MODES.SLIDE
 		elseif oldtouch.x > 205 and oldtouch.x < 945 then
-			local id = floor((Slider.Y - 10 + oldtouch.y) / 75) + 1
+			local id = floor((slider.Y - 10 + oldtouch.y) / 75) + 1
 			if mode == "CATALOGS" and GetParserList()[id] then
-				new_itemID = id
+				newItemID = id
 			elseif mode == "DOWNLOAD" and ChapterSaver.getDownloadingList()[id] then
-				new_itemID = id
+				newItemID = id
 			elseif mode == "SETTINGS" and Settings.list()[id] then
-				new_itemID = id
+				newItemID = id
 			elseif mode == "IMPORT" and Import.listDir()[id] then
-				new_itemID = id
+				newItemID = id
 			end
 		end
 	end
-	if Slider.ItemID > 0 and new_itemID > 0 and Slider.ItemID ~= new_itemID then
-		TOUCH.MODE = TOUCH.SLIDE
+	if slider.ItemID > 0 and newItemID > 0 and slider.ItemID ~= newItemID then
+		TOUCH_MODES.MODE = TOUCH_MODES.SLIDE
 	else
-		Slider.ItemID = new_itemID
+		slider.ItemID = newItemID
 	end
-	if TOUCH.MODE == TOUCH.SLIDE and oldtouch.x and touch.x and touch.x > 205 then
-		Slider.V = oldtouch.y - touch.y
+	if TOUCH_MODES.MODE == TOUCH_MODES.SLIDE and oldtouch.x and touch.x and touch.x > 205 then
+		slider.V = oldtouch.y - touch.y
 	end
 end
-
-Panels = {}
 
 function GenPanels()
 	Panels["MANGA"] = {
@@ -605,109 +612,107 @@ function GenPanels()
 end
 
 function Catalogs.update()
-	if abs(Slider.V) < 1 then
-		Slider.V = 0
+	if abs(slider.V) < 1 then
+		slider.V = 0
 	else
-		Slider.Y = Slider.Y + Slider.V
-		Slider.V = Slider.V / 1.12
+		slider.Y = slider.Y + slider.V
+		slider.V = slider.V / 1.12
 	end
 	if mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
 		UpdateMangas()
-		if ParserManager.check(Results) then
-			Loading.setMode(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 580, 272)
-		elseif Details.getMode() == "END" then
-			Loading.setMode("NONE")
+		if ParserManager.check(currentMangaList) then
+			Loading.setStatus(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 580, 272)
+		elseif Details.getStatus() == "END" then
+			Loading.setStatus("NONE")
 		end
-		local item = MangaSelector:getSelected()
+		local item = mangaSelector:getSelected()
 		if item ~= 0 then
-			Slider.Y = Slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 6) + MANGA_HEIGHT / 2 - 232 - Slider.Y) / 8
-			if mode == "MANGA" and not Results.NoPages and Parser and item > #Results - 4 then
-				if not ParserManager.check(Results) then
-					ParserManager.getMangaListAsync(CatalogModes.getMangaMode(), Parser, page, Results, CatalogModes.getSearchData(), CatalogModes.getTagsData())
+			slider.Y = slider.Y + (math.floor((item - 1) / 4) * (MANGA_HEIGHT + 6) + MANGA_HEIGHT / 2 - 232 - slider.Y) / 8
+			if mode == "MANGA" and not currentMangaList.NoPages and currentParser and item > #currentMangaList - 4 then
+				if not ParserManager.check(currentMangaList) then
+					ParserManager.getMangaListAsync(CatalogModes.getMangaMode(), currentParser, page, currentMangaList, CatalogModes.getSearchData(), CatalogModes.getTagsData())
 					page = page + 1
 				end
 			end
 		end
-		if Slider.Y < 0 then
-			Slider.Y = 0
-			Slider.V = 0
-		elseif Slider.Y > ceil(#Results / 4) * (MANGA_HEIGHT + 6) - 512 - 6 then
-			Slider.Y = max(0, ceil(#Results / 4) * (MANGA_HEIGHT + 6) - 512 - 6)
-			Slider.V = 0
+		if slider.Y < 0 then
+			slider.Y = 0
+			slider.V = 0
+		elseif slider.Y > ceil(#currentMangaList / 4) * (MANGA_HEIGHT + 6) - 512 - 6 then
+			slider.Y = max(0, ceil(#currentMangaList / 4) * (MANGA_HEIGHT + 6) - 512 - 6)
+			slider.V = 0
 			if mode == "MANGA" then
-				if not Results.NoPages and Parser then
-					if not ParserManager.check(Results) then
-						ParserManager.getMangaListAsync(CatalogModes.getMangaMode(), Parser, page, Results, CatalogModes.getSearchData(), CatalogModes.getTagsData())
+				if not currentMangaList.NoPages and currentParser then
+					if not ParserManager.check(currentMangaList) then
+						ParserManager.getMangaListAsync(CatalogModes.getMangaMode(), currentParser, page, currentMangaList, CatalogModes.getSearchData(), CatalogModes.getTagsData())
 						page = page + 1
 					end
 				end
 			end
 		end
-		if mode == "LIBRARY" and #Results ~= #Database.getMangaList() then
-			Results = Database.getMangaList()
+		if mode == "LIBRARY" and #currentMangaList ~= #Database.getMangaList() then
+			currentMangaList = Database.getMangaList()
 		elseif mode == "HISTORY" then
-			Results = Cache.getHistory()
+			currentMangaList = Cache.getHistory()
 		end
 	else
 		local list = {}
 		local item = 0
 		if mode == "CATALOGS" then
-			Parsers = GetParserList()
-			list = Parsers
-			item = ParserSelector:getSelected()
-			Panels["CATALOGS"].Square = Parsers[item] and (Settings.FavouriteParsers[Parsers[item].ID] and Language[Settings.Language].PANEL.UNFOLLOW or Language[Settings.Language].PANEL.FOLLOW)
+			parsersList = GetParserList()
+			list = parsersList
+			item = parserSelector:getSelected()
+			Panels["CATALOGS"].Square = parsersList[item] and (Settings.FavouriteParsers[parsersList[item].ID] and Language[Settings.Language].PANEL.UNFOLLOW or Language[Settings.Language].PANEL.FOLLOW)
 		elseif mode == "DOWNLOAD" then
 			list = ChapterSaver.getDownloadingList()
-			item = DownloadSelector:getSelected()
+			item = downloadSelector:getSelected()
 		elseif mode == "SETTINGS" then
 			list = Settings.list()
 			Panels["SETTINGS"].Cirlce = Settings.inTab() and Language[Settings.Language].PANEL.BACK
 			Panels["SETTINGS"].Cross = Settings.getTab() == "AdvancedChaptersDeletion" and Language[Settings.Language].PANEL.READ or Language[Settings.Language].PANEL.SELECT
 			Panels["SETTINGS"].Square = Settings.getTab() == "AdvancedChaptersDeletion" and Language[Settings.Language].PANEL.DELETE
-			item = SettingSelector:getSelected()
+			item = settingSelector:getSelected()
 		elseif mode == "IMPORT" then
 			list = Import.listDir()
-			item = ImportSelector:getSelected()
+			item = importSelector:getSelected()
 			Panels["IMPORT"].Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT
 			Panels["IMPORT"].Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
 		end
 		if item ~= 0 then
-			Slider.Y = Slider.Y + (item * 75 - 272 - Slider.Y) / 8
+			slider.Y = slider.Y + (item * 75 - 272 - slider.Y) / 8
 		end
-		if Slider.Y < -10 then
-			Slider.Y = -10
-			Slider.V = 0
-		elseif Slider.Y > ceil(#list) * 75 - 514 then
-			Slider.Y = max(-10, ceil(#list) * 75 - 514)
-			Slider.V = 0
+		if slider.Y < -10 then
+			slider.Y = -10
+			slider.V = 0
+		elseif slider.Y > ceil(#list) * 75 - 514 then
+			slider.Y = max(-10, ceil(#list) * 75 - 514)
+			slider.V = 0
 		end
 	end
 	Panel.set(Panels[mode] or {})
-	if keyboard_mode ~= "NONE" and Keyboard.getState() ~= RUNNING then
-		if keyboard_mode == "JUMP_PAGE" and Keyboard.getState() == FINISHED then
-			local new_page = tonumber(Keyboard.getInput())
-			if new_page and new_page > 0 then
+	if keyboardMode ~= "NONE" and Keyboard.getState() ~= RUNNING then
+		if keyboardMode == "JUMP_PAGE" and Keyboard.getState() == FINISHED then
+			local newPage = tonumber(Keyboard.getInput())
+			if newPage and newPage > 0 then
 				Catalogs.terminate()
-				page = new_page
+				page = newPage
 			end
 		end
-		keyboard_mode = "NONE"
+		keyboardMode = "NONE"
 		Keyboard.clear()
 	end
 end
 
-local doesDirExist = System.doesDirExist
-local download_bar = 0
 function Catalogs.draw()
-	local scroll_height, item
-	local item_h = 0
+	local scrollHeight, item
+	local itemHeight = 0
 	if mode == "CATALOGS" then
-		local first = max(1, floor((Slider.Y - 10) / 75))
-		local y = first * 75 - Slider.Y
-		local last = min(#Parsers, first + 9)
+		local first = max(1, floor((slider.Y - 10) / 75))
+		local y = first * 75 - slider.Y
+		local last = min(#parsersList, first + 9)
 		for i = first, last do
-			local parser = Parsers[i]
-			if Slider.ItemID == i then
+			local parser = parsersList[i]
+			if slider.ItemID == i then
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
@@ -715,7 +720,7 @@ function Catalogs.draw()
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
 			local width = Font.getTextWidth(FONT26, parser.Name)
 			if Settings.FavouriteParsers[parser.ID] then
-				Graphics.drawImage(230 + width, y - 70 + 8, Mini_star_icon.e, COLOR_ROYAL_BLUE)
+				Graphics.drawImage(230 + width, y - 70 + 8, MiniStarIcon.e, COLOR_ROYAL_BLUE)
 				width = width + 16 + 5
 			end
 			if parser.NSFW then
@@ -732,18 +737,18 @@ function Catalogs.draw()
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
 			y = y + 75
 		end
-		local elements_count = #Parsers
-		if elements_count > 7 then
-			scroll_height = elements_count * 75 / 524
+		local elementsCount = #parsersList
+		if elementsCount > 7 then
+			scrollHeight = elementsCount * 75 / 524
 		end
-		item = ParserSelector:getSelected()
+		item = parserSelector:getSelected()
 	elseif mode == "IMPORT" then
 		local list = Import.listDir()
-		local start = max(1, floor((Slider.Y - 10) / 75))
-		local y = start * 75 - Slider.Y
+		local start = max(1, floor((slider.Y - 10) / 75))
+		local y = start * 75 - slider.Y
 		for i = start, min(#list, start + 9) do
 			local object = list[i]
-			if Slider.ItemID == i then
+			if slider.ItemID == i then
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			if object.active then
@@ -755,63 +760,63 @@ function Catalogs.draw()
 			end
 			Graphics.fillRect(945, 955, y - 75, y - 1, COLOR_BACK)
 			if object.active and object.name ~= "..." then
-				if Slider.ItemID == i then
+				if slider.ItemID == i then
 					Graphics.fillRect(925 - 16 - 12 - 34 + 10, 945, y - 75, y - 1, COLOR_SELECTED)
 				else
 					Graphics.fillRect(925 - 16 - 12 - 34 + 10, 945, y - 75, y - 1, COLOR_BACK)
 				end
 			end
-			local text_dis = object.name == "..." and Language[Settings.Language].IMPORT.GOBACK or object.directory and (object.active and Language[Settings.Language].IMPORT.FOLDER or Language[Settings.Language].IMPORT.DRIVE .. ' "' .. object.name .. '"') or object.active and Language[Settings.Language].IMPORT.FILE or Language[Settings.Language].IMPORT.UNSUPFILE
-			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, text_dis), text_dis, COLOR_SUBFONT)
+			local textDis = object.name == "..." and Language[Settings.Language].IMPORT.GOBACK or object.directory and (object.active and Language[Settings.Language].IMPORT.FOLDER or Language[Settings.Language].IMPORT.DRIVE .. ' "' .. object.name .. '"') or object.active and Language[Settings.Language].IMPORT.FILE or Language[Settings.Language].IMPORT.UNSUPFILE
+			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, textDis), textDis, COLOR_SUBFONT)
 			if object.active and object.name ~= "..." then
-				Graphics.drawImage(925 - 16 - 12, y - 38 - 14, Import_icon.e, COLOR_ICON_EXTRACT)
+				Graphics.drawImage(925 - 16 - 12, y - 38 - 14, ImportIcon.e, COLOR_ICON_EXTRACT)
 			end
 			y = y + 75
 		end
-		local elements_count = #list
-		if elements_count > 7 then
-			scroll_height = elements_count * 75 / 524
+		local elementsCount = #list
+		if elementsCount > 7 then
+			scrollHeight = elementsCount * 75 / 524
 		end
-		item = ImportSelector:getSelected()
+		item = importSelector:getSelected()
 	elseif mode == "DOWNLOAD" then
 		local list = ChapterSaver.getDownloadingList()
-		local start = max(1, floor((Slider.Y - 10) / 75))
-		local y = start * 75 - Slider.Y
+		local start = max(1, floor((slider.Y - 10) / 75))
+		local y = start * 75 - slider.Y
 		for i = start, min(#list, start + 9) do
 			local task = list[i]
-			local page_count = task.page_count or 0
+			local pageCount = task.page_count or 0
 			local page = task.page or 0
-			if Slider.ItemID == i then
+			if slider.ItemID == i then
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT20, 225, y - 70, task.MangaName, COLOR_FONT)
 			Font.print(FONT16, 225, y - 44, task.ChapterName, COLOR_FONT)
-			if page_count > 0 then
-				local text_counter = math.ceil(page) .. "/" .. page_count
-				local w = Font.getTextWidth(FONT16, text_counter)
-				download_bar = page / page_count
-				Graphics.fillRect(220 + 10 + w, 220 + 10 + w + (940 - 220 - 10 - w) * download_bar, y - 20, y - 8, COLOR_ROYAL_BLUE)
+			if pageCount > 0 then
+				local textCounter = math.ceil(page) .. "/" .. pageCount
+				local w = Font.getTextWidth(FONT16, textCounter)
+				downloadBarValue = page / pageCount
+				Graphics.fillRect(220 + 10 + w, 220 + 10 + w + (940 - 220 - 10 - w) * downloadBarValue, y - 20, y - 8, COLOR_ROYAL_BLUE)
 				Graphics.fillEmptyRect(220 + 10 + w, 940, y - 20, y - 8, COLOR_FONT)
-				Font.print(FONT16, 225, y - 24, text_counter, COLOR_FONT)
+				Font.print(FONT16, 225, y - 24, textCounter, COLOR_FONT)
 			elseif i == 1 then
-				download_bar = 0
+				downloadBarValue = 0
 			end
 			y = y + 75
 		end
-		local elements_count = #list
-		if elements_count > 7 then
-			scroll_height = elements_count * 75 / 524
+		local elementsCount = #list
+		if elementsCount > 7 then
+			scrollHeight = elementsCount * 75 / 524
 		end
-		item = DownloadSelector:getSelected()
+		item = downloadSelector:getSelected()
 	elseif mode == "SETTINGS" then
 		local list = Settings.list()
-		local start = max(1, floor((Slider.Y - 10) / 75))
-		local y = start * 75 - Slider.Y
+		local start = max(1, floor((slider.Y - 10) / 75))
+		local y = start * 75 - slider.Y
 		for i = start, min(#list, start + 9) do
 			local task = list[i]
-			if Slider.ItemID == i then
-				local dy_for_translators = list[i] == "Translators" and 90 or 0
-				Graphics.fillRect(215, 945, y - 75, y - 1 + dy_for_translators, COLOR_SELECTED)
+			if slider.ItemID == i then
+				local dyForTranslators = list[i] == "Translators" and 90 or 0
+				Graphics.fillRect(215, 945, y - 75, y - 1 + dyForTranslators, COLOR_SELECTED)
 			end
 			if type(task) == "table" then
 				Font.print(FONT20, 225, y - 70, task.name, COLOR_FONT)
@@ -826,24 +831,24 @@ function Catalogs.draw()
 				if task == "Language" then
 					Font.print(FONT16, 225, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
 				elseif task == "ClearChapters" then
-					if chapters_space == nil then
-						chapters_space = 0
-						local function get_space_dir(dir)
+					if chaptersFolderSize == nil then
+						chaptersFolderSize = 0
+						local function getDirectorySize(dir)
 							local d = listDirectory(dir) or {}
 							for k = 1, #d do
 								if d[k].directory then
-									get_space_dir(dir .. "/" .. d[k].name)
+									getDirectorySize(dir .. "/" .. d[k].name)
 								else
-									chapters_space = chapters_space + d[k].size
+									chaptersFolderSize = chaptersFolderSize + d[k].size
 								end
 							end
 						end
-						get_space_dir("ux0:data/noboru/chapters")
+						getDirectorySize("ux0:data/noboru/chapters")
 						if doesDirExist("uma0:data/noboru/chapters") then
-							get_space_dir("uma0:data/noboru/chapters")
+							getDirectorySize("uma0:data/noboru/chapters")
 						end
 					end
-					Font.print(FONT16, 225, y - 44, MemToStr(chapters_space), COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, BytesToStr(chaptersFolderSize), COLOR_SUBFONT)
 					if sure_clear_chapters > 0 then
 						Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
 					end
@@ -935,22 +940,22 @@ function Catalogs.draw()
 						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ClearAllCache" then
-					if cache_space == nil then
-						cache_space = 0
-						local function get_space_dir(dir)
+					if cacheFolderSize == nil then
+						cacheFolderSize = 0
+						local function getDirectorySize(dir)
 							local d = listDirectory(dir) or {}
 							for j = 1, #d do
 								local f = d[j]
 								if f.directory then
-									get_space_dir(dir .. "/" .. f.name)
+									getDirectorySize(dir .. "/" .. f.name)
 								else
-									cache_space = cache_space + f.size
+									cacheFolderSize = cacheFolderSize + f.size
 								end
 							end
 						end
-						get_space_dir("ux0:data/noboru/cache")
+						getDirectorySize("ux0:data/noboru/cache")
 					end
-					Font.print(FONT16, 225, y - 44, MemToStr(cache_space), COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, BytesToStr(cacheFolderSize), COLOR_SUBFONT)
 					if sure_clear_all_cache > 0 then
 						Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
 					end
@@ -973,30 +978,30 @@ function Catalogs.draw()
 			end
 			y = y + 75
 		end
-		local elements_count = #list
-		if elements_count > 7 then
-			scroll_height = elements_count * 75 / 524
+		local elementsCount = #list
+		if elementsCount > 7 then
+			scrollHeight = elementsCount * 75 / 524
 		end
-		item = SettingSelector:getSelected()
-		item_h = list[item] == "Translators" and 90 or 0
+		item = settingSelector:getSelected()
+		itemHeight = list[item] == "Translators" and 90 or 0
 	elseif mode == "MANGA" or mode == "LIBRARY" or mode == "HISTORY" then
-		local start = max(1, floor(Slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
-		for i = start, min(#Results, start + 15) do
+		local start = max(1, floor(slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
+		for i = start, min(#currentMangaList, start + 15) do
 			local x = 580 + (((i - 1) % 4) - 2) * (MANGA_WIDTH + 6) + 3
-			local y = -Slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 6) + 6
-			DrawManga(x + MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2, Results[i])
-			if mode == "LIBRARY" and Results[i].Counter then
-				local c = Results[i].Counter
+			local y = -slider.Y + floor((i - 1) / 4) * (MANGA_HEIGHT + 6) + 6
+			DrawManga(x + MANGA_WIDTH / 2, y + MANGA_HEIGHT / 2, currentMangaList[i])
+			if mode == "LIBRARY" and currentMangaList[i].Counter then
+				local c = currentMangaList[i].Counter
 				if c > 0 then
 					Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 11, y, y + 24, Themes[Settings.Theme].COLOR_LABEL)
 					Font.print(BONT16, x + 5, y + 2, tostring(c), COLOR_WHITE)
 				end
 			end
 		end
-		local item = MangaSelector:getSelected()
+		local item = mangaSelector:getSelected()
 		if item ~= 0 then
 			local x = 580 + (((item - 1) % 4) - 2) * (MANGA_WIDTH + 6) + MANGA_WIDTH / 2 + 3
-			local y = MANGA_HEIGHT / 2 - Slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 6) + 6
+			local y = MANGA_HEIGHT / 2 - slider.Y + floor((item - 1) / 4) * (MANGA_HEIGHT + 6) + 6
 			local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
 			local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
 			for i = ks + 1, ks + 3 do
@@ -1004,22 +1009,22 @@ function Catalogs.draw()
 				Graphics.fillEmptyRect(x - MANGA_WIDTH / 2 + i, x + MANGA_WIDTH / 2 - i + 1, y - MANGA_HEIGHT / 2 + i, y + MANGA_HEIGHT / 2 - i + 1, wh)
 			end
 		end
-		if #Results > 4 then
-			scroll_height = ceil(#Results / 4) * (MANGA_HEIGHT + 14) / 524
+		if #currentMangaList > 4 then
+			scrollHeight = ceil(#currentMangaList / 4) * (MANGA_HEIGHT + 14) / 524
 		end
 	end
 	if item and item ~= 0 then
-		local y = item * 75 - Slider.Y
+		local y = item * 75 - slider.Y
 		local wh = Color.new(255, 255, 255, 100 * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
 		local ks = math.ceil(4 * math.sin(Timer.getTime(GlobalTimer) / 100))
 		for i = ks, ks + 1 do
-			Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + item_h, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR)
-			Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + item_h, y - 71 + i + 1, wh)
+			Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + itemHeight, y - 71 + i + 1, Themes[Settings.Theme].COLOR_SELECTOR)
+			Graphics.fillEmptyRect(218 + i, 942 - i + 1, y - i - 5 + itemHeight, y - 71 + i + 1, wh)
 		end
 	end
 	Graphics.fillRect(955, 960, 0, 544, COLOR_BACK)
-	if scroll_height then
-		Graphics.fillRect(955, 960, Slider.Y / scroll_height, (Slider.Y + 524) / scroll_height, COLOR_FONT)
+	if scrollHeight then
+		Graphics.fillRect(955, 960, slider.Y / scrollHeight, (slider.Y + 524) / scrollHeight, COLOR_FONT)
 	else
 		Graphics.fillRect(955, 960, 0, 524, COLOR_FONT)
 	end
@@ -1027,32 +1032,32 @@ end
 
 ---Frees all images loaded in catalog
 function Catalogs.shrink()
-	for _, i in ipairs(DownloadedImage) do
-		freeMangaImage(Results[i])
+	for _, i in ipairs(downloadedImages) do
+		freeMangaImage(currentMangaList[i])
 	end
 	collectgarbage("collect")
-	ParserManager.remove(Results)
-	Loading.setMode("NONE")
+	ParserManager.remove(currentMangaList)
+	Loading.setStatus("NONE")
 end
 
 function Catalogs.terminate()
 	Catalogs.shrink()
-	DownloadedImage = {}
-	Results = {}
+	downloadedImages = {}
+	currentMangaList = {}
 	page = 1
-	Slider.Y = -100
-	MangaSelector:resetSelected()
-	ParserSelector:resetSelected()
-	DownloadSelector:resetSelected()
-	SettingSelector:resetSelected()
-	ImportSelector:resetSelected()
+	slider.Y = -100
+	mangaSelector:resetSelected()
+	parserSelector:resetSelected()
+	downloadSelector:resetSelected()
+	settingSelector:resetSelected()
+	importSelector:resetSelected()
 end
 
----@param new_mode string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
-function Catalogs.setMode(new_mode)
-	mode = new_mode
-	chapters_space = nil
-	cache_space = nil
+---@param newMode string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
+function Catalogs.setMode(newMode)
+	mode = newMode
+	chaptersFolderSize = nil
+	cacheFolderSize = nil
 	sure_clear_library = 0
 	sure_clear_chapters = 0
 	sure_clear_cache = 0
