@@ -314,15 +314,15 @@ function ChapterSaver.importManga(path)
 						Pages = {},
 						Manga = Manga
 					}
-					local subdir = listDirectory(path .. "/" .. folder.name) or {}
+					local subDir = listDirectory(path .. "/" .. folder.name) or {}
 					table.sort(
-						subdir,
+						subDir,
 						function(a, b)
 							return a.name < b.name
 						end
 					)
 					local imageLinks = {}
-					for _, f in ipairs(subdir) do
+					for _, f in ipairs(subDir) do
 						if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. f.name) or -1) > 0 then
 							imageLinks[#imageLinks + 1] = path .. "/" .. folder.name .. "/" .. f.name
 						end
