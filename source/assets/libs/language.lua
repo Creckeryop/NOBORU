@@ -83,7 +83,8 @@ Language = {
 			SaveDataPath = "Место сохранения данных",
 			SetPageAsCover = "Установить в качестве обложки манги",
 			ResetCover = "Сбросить обложку",
-			SupportDev = "Поддержать разработчика"
+			SupportDev = "Поддержать разработчика",
+			PressEdgesToChangePage = "Смена страниц по нажатию на грани страницы"
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Настройки связанные с отслеживанием манги",
@@ -301,7 +302,8 @@ Language = {
 			SaveDataPath = "Save data path",
 			SetPageAsCover = "Set page as cover",
 			ResetCover = "Reset cover",
-			SupportDev = "Support the developer"
+			SupportDev = "Support the developer",
+			PressEdgesToChangePage = "Change pages by pressing edges of page"
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking",
@@ -520,6 +522,7 @@ Language = {
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
 			SupportDev = "Support the developer", --translate please
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -738,6 +741,7 @@ Language = {
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
 			SupportDev = "Support the developer", --translate please
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -956,6 +960,7 @@ Language = {
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
 			SupportDev = "Support the developer", --translate please
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1174,6 +1179,7 @@ Language = {
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
 			SupportDev = "Support the developer", --translate please
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1392,6 +1398,7 @@ Language = {
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
 			SupportDev = "Support the developer", --translate please
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1610,6 +1617,7 @@ Language = {
 			SetPageAsCover = "Set page as cover", --translate please
 			ResetCover = "Reset cover", --translate please
 			SupportDev = "Support the developer", --translate please
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking", --translate please
@@ -1830,6 +1838,7 @@ Language = {
 			SetPageAsCover = "将此页面设置为漫画封面",
 			ResetCover = "重置封面",
 			SupportDev = "支持开发者",
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "书架排序, 漫画追踪相关的设置",
@@ -2048,6 +2057,7 @@ Language = {
 			SetPageAsCover = "將此頁面設置為漫畫封面",
 			ResetCover = "重置封面",
 			SupportDev = "支持開發者",
+			PressEdgesToChangePage = "Change pages by pressing edges of page", --translate plaese
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "書架排序, 漫畫追蹤相關的設置",
