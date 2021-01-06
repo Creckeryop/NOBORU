@@ -1,7 +1,12 @@
-local mode = "HIDE"
+---Table of Panel functions
+Panel = {}
+
+---Table of actions
+local hints = {}
+local status = "HIDE"
 
 ---Textures for PS Buttons
-textures_16x16 = {
+ButtonsIcons = {
 	Cross = Image:new(Graphics.loadImage("app0:assets/images/cross_button.png")),
 	Triangle = Image:new(Graphics.loadImage("app0:assets/images/triangle_button.png")),
 	Square = Image:new(Graphics.loadImage("app0:assets/images/square_button.png")),
@@ -13,26 +18,20 @@ textures_16x16 = {
 	L = Image:new(Graphics.loadImage("app0:assets/images/l_button.png"))
 }
 
----Table of actions
-local hints = {}
-
----Table of Panel functions
-Panel = {}
-
 ---Hides Panel
 function Panel.hide()
-	if mode ~= "SHOW" then
+	if status ~= "SHOW" then
 		return
 	end
-	mode = "HIDE"
+	status = "HIDE"
 end
 
 ---Shows Panel
 function Panel.show()
-	if mode ~= "HIDE" then
+	if status ~= "HIDE" then
 		return
 	end
-	mode = "SHOW"
+	status = "SHOW"
 end
 
 ---@param buttons table
@@ -46,9 +45,9 @@ local y = 23
 
 ---Updates Panel Animation
 function Panel.update()
-	if mode == "HIDE" then
+	if status == "HIDE" then
 		y = math.min(23, y + (23 - y) / 4)
-	elseif mode == "SHOW" then
+	elseif status == "SHOW" then
 		y = math.max(0, y - y / 4)
 	end
 end
@@ -65,20 +64,20 @@ function Panel.draw()
 	for i = 1, #hints do
 		local v = hints[i]
 		if hints[v] then
-			if textures_16x16[v] then
+			if ButtonsIcons[v] then
 				if v == "Cross" and Settings.KeyType == "JP" then
-					Graphics.drawImage(x, 526 + y, textures_16x16.Circle.e)
+					Graphics.drawImage(x, 526 + y, ButtonsIcons.Circle.e)
 				elseif v == "Circle" and Settings.KeyType == "JP" then
-					Graphics.drawImage(x, 526 + y, textures_16x16.Cross.e)
+					Graphics.drawImage(x, 526 + y, ButtonsIcons.Cross.e)
 				else
-					Graphics.drawImage(x, 526 + y, textures_16x16[v].e)
+					Graphics.drawImage(x, 526 + y, ButtonsIcons[v].e)
 				end
 				x = x + 20
 			else
 				if v == "L\\R" then
-					Graphics.drawImage(x, 526 + y, textures_16x16.L.e)
+					Graphics.drawImage(x, 526 + y, ButtonsIcons.L.e)
 					x = x + 26
-					Graphics.drawImage(x, 526 + y, textures_16x16.R.e)
+					Graphics.drawImage(x, 526 + y, ButtonsIcons.R.e)
 					x = x + 28
 				else
 					Font.print(FONT16, x, 524 + y, v, COLOR_FONT)

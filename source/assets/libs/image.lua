@@ -15,7 +15,7 @@ local function setmt__gc(t, mt)
 end
 
 ---Variable to count used memory by textures
-local textureMemUsed = 0
+local textureMemoryUsed = 0
 
 ---@param image integer
 ---@return Image|nil
@@ -34,7 +34,7 @@ function Image:new(image, filter)
 		Graphics.setImageFilters(image, filter, filter)
 	end
 	p.Memory = bit32.band(p.Width + 7, bit32.bnot(7)) * p.Height * 4 + 1024
-	textureMemUsed = textureMemUsed + p.Memory
+	textureMemoryUsed = textureMemoryUsed + p.Memory
 	setmt__gc(p, self)
 	self.__index = self
 	return p
@@ -49,10 +49,10 @@ function Image:free()
 	Console.write("Freed!")
 	self.e = nil
 	self.Type = "table"
-	textureMemUsed = textureMemUsed - self.Memory
+	textureMemoryUsed = textureMemoryUsed - self.Memory
 end
 
 ---Get used memory by textures
-function GetTextureMemoryUsed()
-	return textureMemUsed
+function GetGPUMemoryUsed()
+	return textureMemoryUsed
 end

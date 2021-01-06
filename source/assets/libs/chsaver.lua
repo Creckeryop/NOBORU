@@ -1,11 +1,12 @@
 ChapterSaver = {}
-local Keys = {}
-local Order = {}
-local Task = nil
+local allKeys = {}
+local orderList = {}
+local currentTask = nil
 local Downloading = {}
 
 ---Path to saved chapters folder
 local FOLDER = "ux0:data/noboru/chapters/"
+local CHAPTERSAV_PATH = "ux0:data/noboru/c.c"
 
 local writeFile = System.writeFile
 local closeFile = System.closeFile
@@ -17,83 +18,82 @@ local doesFileExist = System.doesFileExist
 local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
 local listDirectory = System.listDirectory
-local rem_dir = RemoveDirectory
+local removeDirectory = RemoveDirectory
 
 ---@return string
 ---Creates key for a chapter from it's Manga's `parserID`, `Link` and chapter `Link`
-local function get_key(chapter)
+local function getKey(chapter)
 	return (chapter.Manga.ParserID .. chapter.Manga.Link):gsub("%p", "") .. "_" .. chapter.Link:gsub("%p", "")
 end
 
-local UpdatedTable = false
-
-ChapterSaver.getKey = get_key
+ChapterSaver.getKey = getKey
 local getFreeSpace = System.getFreeSpace
-local notifyied = false
+local is_notifyied = false
+local is_notify_needed = true
+local are_saved_chapters_updated = false
+
 ---Updates Cache things
 function ChapterSaver.update()
-	if #Order == 0 and Task == nil then
-		notifyied = false
+	if #orderList == 0 and currentTask == nil then
+		is_notifyied = false
 		return
 	end
-	if not Task then
-		Task = table.remove(Order, 1)
-		UpdatedTable = false
-		if Task.Type == "Download" and getFreeSpace("ux0:") < 40 * 1024 * 1024 then
-			if not notifyied then
+	if not currentTask then
+		currentTask = table.remove(orderList, 1)
+		are_saved_chapters_updated = false
+		if currentTask.Type == "Download" and getFreeSpace("ux0:") < 40 * 1024 * 1024 then
+			if not is_notifyied then
 				Notifications.push(Language[Settings.Language].NOTIFICATIONS.NO_SPACE_LEFT)
-				notifyied = true
+				is_notifyied = true
 			end
-			Downloading[Task.Key] = nil
-			Task = nil
+			Downloading[currentTask.Key] = nil
+			currentTask = nil
 			return
 		end
-		Task.F = coroutine.create(Task.F)
+		currentTask.F = coroutine.create(currentTask.F)
 	else
-		if coroutine.status(Task.F) ~= "dead" then
-			local _, msg, var1, var2 = coroutine.resume(Task.F)
+		if coroutine.status(currentTask.F) ~= "dead" then
+			local _, msg, var1, var2 = coroutine.resume(currentTask.F)
 			if _ then
-				if Task.Destroy and msg and msg ~= "update_count+false" then
-					if Task.Notify and not Settings.SilentDownloads then
-						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, Task.MangaName, Task.ChapterName))
+				if currentTask.Destroy and msg and msg ~= "update_count+false" then
+					if currentTask.Notify and not Settings.SilentDownloads then
+						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, currentTask.MangaName, currentTask.ChapterName))
 					end
-					Downloading[Task.Key] = nil
-					UpdatedTable = false
-					Task = nil
+					Downloading[currentTask.Key] = nil
+					are_saved_chapters_updated = false
+					currentTask = nil
 				elseif msg == "update_count" then
-					Task.page = var1
-					Task.page_count = var2
+					currentTask.page = var1
+					currentTask.page_count = var2
 				elseif msg == "update_count+false" then
-					Task.page = var1
-					Task.page_count = var2
+					currentTask.page = var1
+					currentTask.page_count = var2
 				end
 			else
 				Console.error("Unknown error with saved chapters: " .. msg)
-				Downloading[Task.Key] = nil
-				UpdatedTable = false
-				Task = nil
+				Downloading[currentTask.Key] = nil
+				are_saved_chapters_updated = false
+				currentTask = nil
 			end
 		else
-			if not Task.Fail then
-				if Task.Type == "Download" and not Settings.SilentDownloads then
-					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, Task.MangaName, Task.ChapterName))
-				elseif Task.Type == "Import" then
+			if not currentTask.Fail then
+				if currentTask.Type == "Download" and not Settings.SilentDownloads then
+					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, currentTask.MangaName, currentTask.ChapterName))
+				elseif currentTask.Type == "Import" then
 					Notifications.push(Language[Settings.Language].NOTIFICATIONS.IMPORT_COMPLETED)
 				end
 			end
-			Downloading[Task.Key] = nil
-			UpdatedTable = false
-			Task = nil
+			Downloading[currentTask.Key] = nil
+			are_saved_chapters_updated = false
+			currentTask = nil
 		end
 	end
 end
-
-local notify = true
 
 ---@param chapter table
 ---Creates task for downloading `chapter`
 function ChapterSaver.downloadChapter(chapter, silent)
-	local k = get_key(chapter)
+	local k = getKey(chapter)
 	Downloading[k] = {
 		Type = "Download",
 		Key = k,
@@ -133,7 +133,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
 			end
 			if retry_get_chptrs == 3 then
 				Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM .. "\nMaybe chapter has 0 pages")
-				rem_dir(FolderPath .. k)
+				removeDirectory(FolderPath .. k)
 				Downloading[k].Fail = true
 				Downloading[k] = nil
 				return
@@ -194,7 +194,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
 				end
 				if retry == 3 then
 					Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
-					rem_dir(FolderPath .. k)
+					removeDirectory(FolderPath .. k)
 					Downloading[k].Fail = true
 					Downloading[k] = nil
 					return
@@ -203,13 +203,13 @@ function ChapterSaver.downloadChapter(chapter, silent)
 			local fh = openFile(FolderPath .. k .. "/done.txt", FCREATE)
 			writeFile(fh, #t, string.len(#t))
 			closeFile(fh)
-			Keys[k] = Downloading[k].Drive
+			allKeys[k] = Downloading[k].Drive
 			ChapterSaver.save()
 			Downloading[k] = nil
 		end
 	}
-	UpdatedTable = false
-	Order[#Order + 1] = Downloading[k]
+	are_saved_chapters_updated = false
+	orderList[#orderList + 1] = Downloading[k]
 	if not silent and not Settings.SilentDownloads then
 		Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
 	end
@@ -217,7 +217,7 @@ end
 
 local getTime = System.getTime
 local getDate = System.getDate
-local cpy_file = Copy_File
+local copyFile = CopyFile
 
 local listZip = System.listZip
 local extractFromZip = System.extractFromZip
@@ -321,33 +321,33 @@ function ChapterSaver.importManga(path)
 							return a.name < b.name
 						end
 					)
-					local img_links = {}
+					local imageLinks = {}
 					for _, f in ipairs(subdir) do
 						if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. f.name) or -1) > 0 then
-							img_links[#img_links + 1] = path .. "/" .. folder.name .. "/" .. f.name
+							imageLinks[#imageLinks + 1] = path .. "/" .. folder.name .. "/" .. f.name
 						end
 					end
-					if #img_links > 0 then
+					if #imageLinks > 0 then
 						Chapters[#Chapters + 1] = Chapter
 						if not cover_loaded then
-							cpy_file(img_links[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
+							copyFile(imageLinks[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
 							cover_loaded = true
 						end
-						img_links = table.concat(img_links, "\n")
-						local k = get_key(Chapter)
-						rem_dir(FOLDER .. k)
+						imageLinks = table.concat(imageLinks, "\n")
+						local k = getKey(Chapter)
+						removeDirectory(FOLDER .. k)
 						createDirectory(FOLDER .. k)
 						local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
-						writeFile(fh, img_links, #img_links)
+						writeFile(fh, imageLinks, #imageLinks)
 						closeFile(fh)
-						Keys[k] = true
+						allKeys[k] = true
 					else
 						Notifications.push(Chapter.Name .. "\nerror: no supported images found")
 					end
 				end
 				if #Chapters > 0 then
 					Cache.saveChapters(Manga, Chapters)
-					Database.add(Manga)
+					Database.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Cache.removeManga(Manga)
@@ -356,9 +356,9 @@ function ChapterSaver.importManga(path)
 				end
 				Downloading[path] = nil
 			elseif type == "image" then
-				local img_links = {}
+				local imageLinks = {}
 				for _, f in ipairs(dir) do
-					img_links[_] = path .. "/" .. f.name
+					imageLinks[_] = path .. "/" .. f.name
 				end
 				local Chapter = {
 					Name = Manga.Name,
@@ -366,18 +366,18 @@ function ChapterSaver.importManga(path)
 					Pages = {},
 					Manga = Manga
 				}
-				if #img_links > 0 then
+				if #imageLinks > 0 then
 					Cache.addManga(Manga, {Chapter})
-					cpy_file(img_links[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
-					img_links = table.concat(img_links, "\n")
-					local k = get_key(Chapter)
-					rem_dir(FOLDER .. k)
+					copyFile(imageLinks[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
+					imageLinks = table.concat(imageLinks, "\n")
+					local k = getKey(Chapter)
+					removeDirectory(FOLDER .. k)
 					createDirectory(FOLDER .. k)
 					local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
-					writeFile(fh, img_links, #img_links)
+					writeFile(fh, imageLinks, #imageLinks)
 					closeFile(fh)
-					Keys[k] = true
-					Database.add(Manga)
+					allKeys[k] = true
+					Database.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Notifications.push(path .. "\nerror: no supported images found")
@@ -385,7 +385,7 @@ function ChapterSaver.importManga(path)
 				end
 				Downloading[path] = nil
 			elseif type == "package" then
-				local cover_loaded = false
+				local is_cover_loaded = false
 				Cache.addManga(Manga)
 				local mk = Cache.getKey(Manga)
 				local Chapters = {}
@@ -396,41 +396,41 @@ function ChapterSaver.importManga(path)
 						Pages = {},
 						Manga = Manga
 					}
-					local zip_dir = listZip(path .. "/" .. pack.name) or {}
+					local zipDir = listZip(path .. "/" .. pack.name) or {}
 					table.sort(
-						zip_dir,
+						zipDir,
 						function(a, b)
 							return a.name < b.name
 						end
 					)
-					local contains_images = false
-					for _, file in ipairs(zip_dir) do
+					local is_contain_images = false
+					for _, file in ipairs(zipDir) do
 						Console.write(file.name)
 						if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
-							if not cover_loaded then
+							if not is_cover_loaded then
 								extractFromZip(path .. "/" .. pack.name, file.name, "ux0:data/noboru/cache/" .. mk .. "/cover.image")
-								cover_loaded = true
+								is_cover_loaded = true
 							end
-							contains_images = true
+							is_contain_images = true
 							break
 						end
 					end
-					if contains_images then
+					if is_contain_images then
 						Chapters[#Chapters + 1] = Chapter
-						local k = get_key(Chapter)
-						rem_dir(FOLDER .. k)
+						local k = getKey(Chapter)
+						removeDirectory(FOLDER .. k)
 						createDirectory(FOLDER .. k)
 						local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
 						writeFile(fh, path .. "/" .. pack.name, #(path .. "/" .. pack.name))
 						closeFile(fh)
-						Keys[k] = true
+						allKeys[k] = true
 					else
 						Notifications.push(path .. "/" .. pack.name .. "\nerror: no supported images found")
 					end
 				end
 				if #Chapters > 0 then
 					Cache.saveChapters(Manga, Chapters)
-					Database.add(Manga)
+					Database.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Cache.removeManga(Manga)
@@ -449,32 +449,32 @@ function ChapterSaver.importManga(path)
 					Pages = {},
 					Manga = Manga
 				}
-				local zip_dir = listZip(path) or {}
+				local zipDir = listZip(path) or {}
 				table.sort(
-					zip_dir,
+					zipDir,
 					function(a, b)
 						return a.name < b.name
 					end
 				)
-				local cover_loaded = false
-				for _, file in ipairs(zip_dir) do
+				local is_cover_loaded = false
+				for _, file in ipairs(zipDir) do
 					Console.write(file.name)
 					if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
 						extractFromZip(path, file.name, "ux0:data/noboru/cache/" .. mk .. "/cover.image")
-						cover_loaded = true
+						is_cover_loaded = true
 						break
 					end
 				end
-				if cover_loaded then
-					local k = get_key(Chapter)
-					rem_dir(FOLDER .. k)
+				if is_cover_loaded then
+					local k = getKey(Chapter)
+					removeDirectory(FOLDER .. k)
 					createDirectory(FOLDER .. k)
 					local fh = openFile(FOLDER .. k .. "/custom.txt", FCREATE)
 					writeFile(fh, path, #path)
 					closeFile(fh)
-					Keys[k] = true
+					allKeys[k] = true
 					Cache.saveChapters(Manga, {Chapter})
-					Database.add(Manga)
+					Database.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Cache.removeManga(Manga)
@@ -489,40 +489,40 @@ function ChapterSaver.importManga(path)
 			end
 		end
 	end
-	UpdatedTable = false
-	Order[#Order + 1] = this
+	are_saved_chapters_updated = false
+	orderList[#orderList + 1] = this
 end
 
 ---@return boolean
 ---Gives info if download is running
 function ChapterSaver.is_download_running()
-	return Task ~= nil or #Order > 0
+	return currentTask ~= nil or #orderList > 0
 end
 
 ---@param key string
 ---Stops task by it's key
 local function stop(key, silent)
 	if Downloading[key] then
-		if Downloading[key] == Task then
+		if Downloading[key] == currentTask then
 			Downloading[key].Destroy = true
 			Downloading[key].Notify = silent == nil
 			Network.stopCurrentDownload()
 			local FolderPath = Downloading[key].Drive .. ":data/noboru/chapters/"
-			rem_dir(FolderPath .. key)
+			removeDirectory(FolderPath .. key)
 		else
-			local new_order = {}
-			for _, v in ipairs(Order) do
+			local newOrder = {}
+			for _, v in ipairs(orderList) do
 				if v == Downloading[key] then
-					if notify and silent == nil and not Settings.SilentDownloads then
+					if is_notify_needed and silent == nil and not Settings.SilentDownloads then
 						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
 					end
 				else
-					new_order[#new_order + 1] = v
+					newOrder[#newOrder + 1] = v
 				end
 			end
-			Order = new_order
+			orderList = newOrder
 		end
-		UpdatedTable = false
+		are_saved_chapters_updated = false
 		Downloading[key] = nil
 	end
 end
@@ -531,22 +531,22 @@ end
 ---@param silent boolean
 ---Stops List of `chapters` downloading and notify if `silent == nil`
 function ChapterSaver.stopList(chapters, silent)
-	local new_order = {}
-	local OrderLen = #Order
-	for k, v in ipairs(chapters) do
-		local key = get_key(v)
+	local newOrder = {}
+	local orderCount = #orderList
+	for _, v in ipairs(chapters) do
+		local key = getKey(v)
 		local d = Downloading[key]
 		if d then
-			if d == Task then
+			if d == currentTask then
 				d.Destroy = true
 				d.Notify = silent == nil
 				Network.stopCurrentDownload()
 				local FolderPath = Downloading[key].Drive .. ":data/noboru/chapters/"
-				rem_dir(FolderPath .. key)
+				removeDirectory(FolderPath .. key)
 			else
-				for i, od in pairs(Order) do
+				for i, od in pairs(orderList) do
 					if od == d then
-						Order[i] = nil
+						orderList[i] = nil
 						break
 					end
 				end
@@ -554,13 +554,13 @@ function ChapterSaver.stopList(chapters, silent)
 			Downloading[key] = nil
 		end
 	end
-	for i = 1, OrderLen do
-		if Order[i] ~= nil then
-			new_order[#new_order + 1] = Order[i]
+	for i = 1, orderCount do
+		if orderList[i] ~= nil then
+			newOrder[#newOrder + 1] = orderList[i]
 		end
 	end
-	Order = new_order
-	UpdatedTable = false
+	orderList = newOrder
+	are_saved_chapters_updated = false
 end
 
 ---@param chapter table
@@ -568,7 +568,7 @@ end
 ---Stops `chapter` downloading and notify if `silent == nil`
 function ChapterSaver.stop(chapter, silent)
 	if chapter then
-		stop(get_key(chapter), silent)
+		stop(getKey(chapter), silent)
 	end
 end
 
@@ -583,11 +583,11 @@ end
 ---@param chapter table
 ---Deletes saved chapter
 function ChapterSaver.delete(chapter, silent)
-	local k = get_key(chapter)
-	if Keys[k] then
-		local FolderPath = (Keys[k] == true and "ux0" or Keys[k]) .. ":data/noboru/chapters/"
-		rem_dir(FolderPath .. k)
-		Keys[k] = nil
+	local k = getKey(chapter)
+	if allKeys[k] then
+		local FolderPath = (allKeys[k] == true and "ux0" or allKeys[k]) .. ":data/noboru/chapters/"
+		removeDirectory(FolderPath .. k)
+		allKeys[k] = nil
 		ChapterSaver.save()
 		if not silent and not Settings.SilentDownloads then
 			Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
@@ -598,7 +598,7 @@ end
 ---@param key any
 ---Deletes saved chapter by key (unsafe only for settings)
 function ChapterSaver.removeByKeyUnsafe(key)
-	Keys[key] = nil
+	allKeys[key] = nil
 	ChapterSaver.save()
 end
 
@@ -607,37 +607,37 @@ local cached = {}
 ---@return table
 ---Returns all active downloadings
 function ChapterSaver.getDownloadingList()
-	if UpdatedTable then
+	if are_saved_chapters_updated then
 		return cached
 	end
 	local list = {}
-	Order[0] = Task
-	for i = Task and 0 or 1, #Order do
-		list[#list + 1] = Order[i]
+	orderList[0] = currentTask
+	for i = currentTask and 0 or 1, #orderList do
+		list[#list + 1] = orderList[i]
 	end
-	UpdatedTable = true
+	are_saved_chapters_updated = true
 	cached = list
 	return cached
 end
 
 function ChapterSaver.clearDownloadingList()
-	if Task then
-		stop(Task.Key, true)
+	if currentTask then
+		stop(currentTask.Key, true)
 	end
-	for i = 1, #Order do
-		local key = Order[i].Key
+	for i = 1, #orderList do
+		local key = orderList[i].Key
 		local FolderPath = Downloading[key].Drive .. ":data/noboru/chapters/"
 		Downloading[key] = nil
-		rem_dir(FolderPath .. key)
+		removeDirectory(FolderPath .. key)
 	end
-	Order = {}
+	orderList = {}
 end
 
 ---@param chapter table
 ---@return boolean
 ---Gives `true` if chapter is downloaded
 function ChapterSaver.check(chapter)
-	local key = Keys[get_key(chapter)]
+	local key = allKeys[getKey(chapter)]
 	return key == true or key == "uma0" and doesDirExist("uma0:data/noboru") or key == "ux0" or chapter and chapter.FastLoad
 end
 
@@ -645,7 +645,7 @@ end
 ---@return boolean
 ---Gives `true` if chapter is downloading
 function ChapterSaver.is_downloading(chapter)
-	return Downloading[get_key(chapter)]
+	return Downloading[getKey(chapter)]
 end
 
 local statFile = System.statFile
@@ -667,7 +667,7 @@ function ChapterSaver.getChapter(chapter)
 					return a.name < b.name
 				end
 			)
-			for i, file in ipairs(dir) do
+			for _, file in ipairs(dir) do
 				if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$") or file.name:find("%.image$")) then
 					_table_[#_table_ + 1] = {
 						Path = chapter.Path .. "/" .. file.name
@@ -682,7 +682,7 @@ function ChapterSaver.getChapter(chapter)
 					return a.name < b.name
 				end
 			)
-			for i, file in ipairs(zip) do
+			for _, file in ipairs(zip) do
 				if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
 					_table_[#_table_ + 1] = {
 						Extract = file.name,
@@ -693,17 +693,17 @@ function ChapterSaver.getChapter(chapter)
 		end
 		return _table_
 	end
-	local k = get_key(chapter)
+	local k = getKey(chapter)
 	local _table_ = {
 		Done = true
 	}
-	if Keys[k] then
-		local FolderPath = (Keys[k] == true and "ux0" or Keys[k]) .. ":data/noboru/chapters/"
+	if allKeys[k] then
+		local FolderPath = (allKeys[k] == true and "ux0" or allKeys[k]) .. ":data/noboru/chapters/"
 		if doesFileExist(FolderPath .. k .. "/custom.txt") then
 			local fh_2 = openFile(FolderPath .. k .. "/custom.txt", FREAD)
 			local pathes = readFile(fh_2, sizeFile(fh_2))
 			closeFile(fh_2)
-			local lines = To_lines(pathes)
+			local lines = ToLines(pathes)
 			if #lines == 1 and (lines[1]:find("%.cbz$") or lines[1]:find("%.zip$")) then
 				local zip = listZip(lines[1]) or {}
 				table.sort(
@@ -739,27 +739,25 @@ function ChapterSaver.getChapter(chapter)
 	return _table_
 end
 
-local CHAPTERSAV_PATH = "ux0:data/noboru/c.c"
-
 ---Saves saved chapters changes
 function ChapterSaver.save()
 	if doesFileExist(CHAPTERSAV_PATH) then
 		deleteFile(CHAPTERSAV_PATH)
 	end
 	local fh = openFile(CHAPTERSAV_PATH, FCREATE)
-	local save_data = "Keys = " .. table.serialize(Keys, true)
-	writeFile(fh, save_data, #save_data)
+	local saveData = "Keys = " .. table.serialize(allKeys, true)
+	writeFile(fh, saveData, #saveData)
 	closeFile(fh)
 end
 
 ---Loads saved chapters changes
 function ChapterSaver.load()
-	Keys = {}
+	allKeys = {}
 	if doesFileExist(CHAPTERSAV_PATH) then
 		local fh = openFile(CHAPTERSAV_PATH, FREAD)
-		local load_keys = load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")
-		if load_keys then
-			local keys = load_keys() or {}
+		local loadKeysFunction = load("local " .. readFile(fh, sizeFile(fh)) .. " return Keys")
+		if loadKeysFunction then
+			local keys = loadKeysFunction() or {}
 			local cnt = 0
 			for _, _ in pairs(keys) do
 				cnt = cnt + 1
@@ -773,14 +771,14 @@ function ChapterSaver.load()
 						local fh_2 = openFile(FolderPath .. k .. "/custom.txt", FREAD)
 						local pathes = readFile(fh_2, sizeFile(fh_2))
 						closeFile(fh_2)
-						for _, path in ipairs(To_lines(pathes)) do
+						for _, path in ipairs(ToLines(pathes)) do
 							if not doesFileExist(path) then
-								rem_dir(FolderPath .. k)
+								removeDirectory(FolderPath .. k)
 								Notifications.push("here chapters_error\n" .. k)
 								break
 							end
 						end
-						Keys[k] = true
+						allKeys[k] = true
 					elseif doesFileExist(FolderPath .. k .. "/done.txt") then
 						local fh_2 = openFile(FolderPath .. k .. "/done.txt", FREAD)
 						local pages = readFile(fh_2, sizeFile(fh_2))
@@ -804,31 +802,31 @@ function ChapterSaver.load()
                             if count < 2 then
                             Keys[k] = true
                             end]]
-							Keys[k] = _
+							allKeys[k] = _
 						else
-							rem_dir(FolderPath .. k)
+							removeDirectory(FolderPath .. k)
 							Notifications.push("chapters_error\n" .. k)
 						end
 					else
-						rem_dir(FolderPath .. k)
+						removeDirectory(FolderPath .. k)
 						Notifications.push("chapters_error\n" .. k)
 					end
 				else
-					Keys[k] = _
+					allKeys[k] = _
 				end
 				cntr = cntr + 1
 			end
-			local dir_list = listDirectory("ux0:data/noboru/chapters") or {}
-			for _, v in ipairs(dir_list) do
-				if not Keys[v.name] and v.directory then
-					rem_dir("ux0:data/noboru/chapters/" .. v.name)
+			local dirList = listDirectory("ux0:data/noboru/chapters") or {}
+			for _, v in ipairs(dirList) do
+				if not allKeys[v.name] and v.directory then
+					removeDirectory("ux0:data/noboru/chapters/" .. v.name)
 				end
 			end
 			if doesDirExist("uma0:data/noboru") then
-				dir_list = listDirectory("uma0:data/noboru/chapters") or {}
-				for _, v in ipairs(dir_list) do
-					if not Keys[v.name] and v.directory then
-						rem_dir("uma0:data/noboru/chapters/" .. v.name)
+				dirList = listDirectory("uma0:data/noboru/chapters") or {}
+				for _, v in ipairs(dirList) do
+					if not allKeys[v.name] and v.directory then
+						removeDirectory("uma0:data/noboru/chapters/" .. v.name)
 					end
 				end
 			end
@@ -839,25 +837,25 @@ function ChapterSaver.load()
 end
 
 function ChapterSaver.setKey(key)
-	Keys[key] = true
+	allKeys[key] = true
 	ChapterSaver.save()
 end
 
 ---Clears all saved chapters
 function ChapterSaver.clear()
-	notify = false
+	is_notify_needed = false
 	local list = ChapterSaver.getDownloadingList()
 	for i = 1, #list do
 		ChapterSaver.stopByListItem(list[i])
 	end
-	notify = true
-	rem_dir("ux0:data/noboru/chapters")
+	is_notify_needed = true
+	removeDirectory("ux0:data/noboru/chapters")
 	createDirectory("ux0:data/noboru/chapters")
 	if doesDirExist("uma0:data/noboru") then
-		rem_dir("uma0:data/noboru/chapters")
+		removeDirectory("uma0:data/noboru/chapters")
 		createDirectory("uma0:data/noboru/chapters")
 	end
-	Keys = {}
+	allKeys = {}
 	ChapterSaver.save()
 	Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
 end

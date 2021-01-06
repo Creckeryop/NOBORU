@@ -7,14 +7,15 @@ local order = {}
 local notification = nil
 
 ---Easing function that used here
-local easing = EaseInOutCubic
+local easingFunction = EaseInOutCubic
+local animationTimer = Timer.new()
 
 ---@param message string
 ---@param ms number
 ---Adds notification with given message that will be shown on screen
 function Notifications.push(message, ms)
 	order[#order + 1] = {
-		To_lines(message),
+		ToLines(message),
 		ms or 800,
 		message
 	}
@@ -33,19 +34,17 @@ function Notifications.pushUnique(message, ms)
 		end
 	end
 	order[#order + 1] = {
-		To_lines(message),
+		ToLines(message),
 		ms or 800,
 		message
 	}
 end
 
-local animation_timer = Timer.new()
-
 ---Updates notification animation
 function Notifications.update()
-	if not notification or Timer.getTime(animation_timer) > 1000 + notification[2] then
+	if not notification or Timer.getTime(animationTimer) > 1000 + notification[2] then
 		notification = table.remove(order, 1)
-		Timer.reset(animation_timer)
+		Timer.reset(animationTimer)
 	end
 end
 
@@ -54,7 +53,7 @@ function Notifications.draw()
 	if not notification then
 		return
 	end
-	local time = Timer.getTime(animation_timer)
+	local time = Timer.getTime(animationTimer)
 	local fade = 0
 	if time < 500 then
 		fade = time / 500
@@ -63,7 +62,7 @@ function Notifications.draw()
 	elseif time < 1000 + notification[2] then
 		fade = 1 - (time - 500 - notification[2]) / 500
 	end
-	fade = easing(fade)
+	fade = easingFunction(fade)
 	local NEW_WHITE = Color.new(255, 255, 255, 255 * fade)
 	local NEW_GRAY = Color.new(20, 20, 20, 255 * fade)
 	local y = 0

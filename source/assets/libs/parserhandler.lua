@@ -6,44 +6,40 @@ List of links to images of their chapter pages
 ]]
 ParserManager = {}
 
-local Order = {}
+local order = {}
 
-local Task = nil
-local Trash = {}
+local currentTask = nil
+local trash = {}
 local uniques = {}
 
 local doesFileExist = System.doesFileExist
 
 ---Updates ParserManager functions
 function ParserManager.update()
-	if #Order == 0 and not Task then
+	if #order == 0 and not currentTask then
 		return
 	end
-	if not Task then
-		Task = table.remove(Order, 1)
-		if Task.Type == "Skip" then
-			Task = nil
+	if not currentTask then
+		currentTask = table.remove(order, 1)
+		if currentTask.Type == "Skip" then
+			currentTask = nil
 		else
-			Task.Update = coroutine.create(Task.F)
+			currentTask.Update = coroutine.create(currentTask.F)
 		end
 	else
-		if coroutine.status(Task.Update) == "dead" then
-			if Task.Type ~= "UpdateParsers" and Task.Type ~= "UpdateCounters" then
-				Task.Table.Done = true
+		if coroutine.status(currentTask.Update) == "dead" then
+			if currentTask.Type ~= "UpdateParsers" and currentTask.Type ~= "UpdateCounters" then
+				currentTask.Table.Done = true
 			end
-			uniques[Task.Table] = nil
-			Task = nil
+			uniques[currentTask.Table] = nil
+			currentTask = nil
 		else
-			local _, isSafeToleave = coroutine.resume(Task.Update)
-			if Task.Stop then
+			local _, isSafeToleave = coroutine.resume(currentTask.Update)
+			if currentTask.Stop then
 				Network.stopCurrentDownload()
-				uniques[Task.Table] = nil
-				Task = nil
+				uniques[currentTask.Table] = nil
+				currentTask = nil
 			end
-			--[[if Task.Stop and isSafeToleave then
-            uniques[Task.Table] = nil
-            Task = nil
-            end]]
 			if not _ then
 				Console.error(isSafeToleave)
 			end
@@ -112,14 +108,14 @@ function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
 		end,
 		Table = Table
 	}
-	Order[#Order + 1] = T
+	order[#order + 1] = T
 	uniques[Table] = T
 end
 
 ---@param manga table
 ---@param Table table
 ---@param Insert boolean
----Puts all chapters info from `manga` to `Table`, `Insert` is priority (`true` for high or `false` for low)
+---Puts all chapters info from `manga` to `Table`, `insert` is priority (`true` for high or `false` for low)
 ---
 ---Chapter info table is a list of `{Name: string, Link: string, Manga: table}` values
 function ParserManager.getChaptersAsync(manga, Table, Insert)
@@ -135,18 +131,18 @@ function ParserManager.getChaptersAsync(manga, Table, Insert)
 		Table = Table
 	}
 	if Insert then
-		table.insert(Order, 1, T)
+		table.insert(order, 1, T)
 	else
-		Order[#Order + 1] = T
+		order[#order + 1] = T
 	end
 	uniques[Table] = T
 end
 
 ---@param chapter table
 ---@param Table table
----@param Insert boolean
+---@param insert boolean
 ---Puts all helpful for parser links to `Table`
-function ParserManager.prepareChapter(chapter, Table, Insert)
+function ParserManager.prepareChapter(chapter, Table, insert)
 	local parser = GetParserByID(chapter.Manga.ParserID)
 	if not parser or uniques[Table] then
 		return
@@ -158,10 +154,10 @@ function ParserManager.prepareChapter(chapter, Table, Insert)
 		end,
 		Table = Table
 	}
-	if Insert then
-		table.insert(Order, 1, T)
+	if insert then
+		table.insert(order, 1, T)
 	else
-		Order[#Order + 1] = T
+		order[#order + 1] = T
 	end
 	uniques[Table] = T
 end
@@ -169,9 +165,9 @@ end
 ---@param parserID string
 ---@param Link string
 ---@param Table table
----@param Insert boolean
+---@param insert boolean
 ---Parses `Link` from prepareChapter function to image link of the page
-function ParserManager.loadPageImage(parserID, Link, Table, Insert)
+function ParserManager.loadPageImage(parserID, Link, Table, insert)
 	local parser = GetParserByID(parserID)
 	if not parser or uniques[Table] then
 		return
@@ -181,7 +177,7 @@ function ParserManager.loadPageImage(parserID, Link, Table, Insert)
 		F = function()
 			parser:loadChapterPage(Link, Table)
 			coroutine.yield(true)
-			local foo = Insert and Threads.insertTask or Threads.addTask
+			local foo = insert and Threads.insertTask or Threads.addTask
 			foo(
 				Table,
 				{
@@ -194,10 +190,10 @@ function ParserManager.loadPageImage(parserID, Link, Table, Insert)
 		end,
 		Table = Table
 	}
-	if Insert then
-		table.insert(Order, 1, T)
+	if insert then
+		table.insert(order, 1, T)
 	else
-		Order[#Order + 1] = T
+		order[#order + 1] = T
 	end
 	uniques[Table] = T
 end
@@ -218,7 +214,7 @@ function ParserManager.getPageImage(parserID, Link, Table)
 		end,
 		Table = Table
 	}
-	table.insert(Order, 1, T)
+	table.insert(order, 1, T)
 	uniques[Table] = T
 end
 
@@ -230,28 +226,28 @@ function ParserManager.updateCounters()
 		Type = "UpdateCounters",
 		F = function()
 			local list = Database.getMangaList()
-			local connection = Threads.netActionUnSafe(Network.isWifiEnabled)
-			if connection then
+			local is_wifi_enabled = Threads.netActionUnSafe(Network.isWifiEnabled)
+			if is_wifi_enabled then
 				for j = 1, #list do
 					local v = list[j]
-					local old_name = v.Name
+					local oldName = v.Name
 					Cache.addManga(v)
 					local parser = GetParserByID(v.ParserID)
 					if parser then
-						local chps = {}
-						parser:getChapters(v, chps)
-						if #chps > 0 then
-							Cache.saveChapters(v, chps)
+						local chapters = {}
+						parser:getChapters(v, chapters)
+						if #chapters > 0 then
+							Cache.saveChapters(v, chapters)
 							Cache.loadBookmarks(v)
-							v.Counter = #chps
+							v.Counter = #chapters
 							local Latest = Cache.getLatestBookmark(v)
-							for i = 1, #chps do
-								local key = chps[i].Link:gsub("%p", "")
+							for i = 1, #chapters do
+								local key = chapters[i].Link:gsub("%p", "")
 								if key == Latest then
-									if Cache.getBookmark(chps[i]) == true then
-										v.Counter = #chps - i
+									if Cache.getBookmark(chapters[i]) == true then
+										v.Counter = #chapters - i
 									else
-										v.Counter = #chps - i + 1
+										v.Counter = #chapters - i + 1
 									end
 									break
 								end
@@ -260,18 +256,18 @@ function ParserManager.updateCounters()
 							v.Counter = 0
 						end
 					elseif v.ParserID == "IMPORTED" then
-						local chps = Cache.loadChapters(v, true)
-						if #chps > 0 then
+						local chapters = Cache.loadChapters(v, true)
+						if #chapters > 0 then
 							Cache.loadBookmarks(v)
-							v.Counter = #chps
+							v.Counter = #chapters
 							local Latest = Cache.getLatestBookmark(v)
-							for i = 1, #chps do
-								local key = chps[i].Link:gsub("%p", "")
+							for i = 1, #chapters do
+								local key = chapters[i].Link:gsub("%p", "")
 								if key == Latest then
-									if Cache.getBookmark(chps[i]) == true then
-										v.Counter = #chps - i
+									if Cache.getBookmark(chapters[i]) == true then
+										v.Counter = #chapters - i
 									else
-										v.Counter = #chps - i + 1
+										v.Counter = #chapters - i + 1
 									end
 									break
 								end
@@ -280,7 +276,7 @@ function ParserManager.updateCounters()
 							v.Counter = 0
 						end
 					end
-					if old_name ~= v.Name then
+					if oldName ~= v.Name then
 						v.PrintName = nil
 					end
 				end
@@ -288,18 +284,18 @@ function ParserManager.updateCounters()
 			else
 				for j = 1, #list do
 					local v = list[j]
-					local chps = Cache.loadChapters(v, true)
-					if #chps > 0 then
+					local chapters = Cache.loadChapters(v, true)
+					if #chapters > 0 then
 						Cache.loadBookmarks(v)
-						v.Counter = #chps
+						v.Counter = #chapters
 						local Latest = Cache.getLatestBookmark(v)
-						for i = 1, #chps do
-							local key = chps[i].Link:gsub("%p", "")
+						for i = 1, #chapters do
+							local key = chapters[i].Link:gsub("%p", "")
 							if key == Latest then
-								if Cache.getBookmark(chps[i]) == true then
-									v.Counter = #chps - i
+								if Cache.getBookmark(chapters[i]) == true then
+									v.Counter = #chapters - i
 								else
-									v.Counter = #chps - i + 1
+									v.Counter = #chapters - i + 1
 								end
 								break
 							end
@@ -313,7 +309,7 @@ function ParserManager.updateCounters()
 		end,
 		Table = "UpdateCounters"
 	}
-	table.insert(Order, 1, T)
+	table.insert(order, 1, T)
 	uniques["UpdateCounters"] = T
 end
 
@@ -328,9 +324,9 @@ end
 ---Removes task for `Table` from is running or order list
 function ParserManager.remove(Table)
 	if uniques[Table] then
-		if uniques[Table] == Task then
-			Task.Table = Trash
-			Task.Stop = true
+		if uniques[Table] == currentTask then
+			currentTask.Table = trash
+			currentTask.Stop = true
 			Network.stopCurrentDownload()
 		else
 			uniques[Table].Type = "Skip"
@@ -389,19 +385,19 @@ function ParserManager.updateParserList(Table, Insert)
 		Table = "UpdateParsers"
 	}
 	if Insert then
-		table.insert(Order, 1, T)
+		table.insert(order, 1, T)
 	else
-		Order[#Order + 1] = T
+		order[#order + 1] = T
 	end
 	uniques["UpdateParsers"] = T
 end
 
 ---Clears ParserManager tasks
 function ParserManager.clear()
-	Order = {}
+	order = {}
 	uniques = {}
-	if Task then
-		Task.Stop = true
+	if currentTask then
+		currentTask.Stop = true
 		Network.stopCurrentDownload()
 	end
 end

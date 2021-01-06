@@ -1,8 +1,11 @@
 Cache = {}
 
+local CACHE_INFO_PATH = "ux0:data/noboru/cache/info.txt"
+
 local data = {}
 local history = {}
 local bookmarks = {}
+local cachedHistory = {}
 
 local writeFile = System.writeFile
 local closeFile = System.closeFile
@@ -14,48 +17,56 @@ local doesFileExist = System.doesFileExist
 local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
 local listDirectory = System.listDirectory
-local rem_dir = RemoveDirectory
+local removeDirectory = RemoveDirectory
 
-local function get_key(Manga)
-	return (Manga.ParserID .. Manga.Link):gsub("%p", "")
+local is_history_updated = false
+
+---@param manga table
+---@return string
+---Gives key for a given `manga`
+local function getKey(manga)
+	return (manga.ParserID .. manga.Link):gsub("%p", "")
 end
 
-Cache.getKey = get_key
+---@param manga table
+---@return string
+---Gives key for a given `manga`
+Cache.getKey = getKey
 
 ---@return table
 ---Returns all manga in cache
 function Cache.getManga()
-	local t = {}
-	for k, v in pairs(data) do
-		t[k] = v
+	local mangaList = {}
+	for key, value in pairs(data) do
+		mangaList[key] = value
 	end
-	return t
+	return mangaList
 end
 
----@param Manga table
----@param Chapters table | nil
+---@param manga table
+---@param chapters table | nil
 ---Adds `Manga` to cache if it is not in cache
-function Cache.addManga(Manga, Chapters)
-	local key = get_key(Manga)
+function Cache.addManga(manga, chapters)
+	local key = getKey(manga)
 	if not data[key] then
-		data[key] = Manga
-		Manga.Path = "cache/" .. key .. "/cover.image"
+		data[key] = manga
+		manga.Path = "cache/" .. key .. "/cover.image"
 		if not doesDirExist("ux0:data/noboru/cache/" .. key) then
 			createDirectory("ux0:data/noboru/cache/" .. key)
 		end
 		if doesFileExist("ux0:data/noboru/cache/" .. key .. "/cover.image") then
 			deleteFile("ux0:data/noboru/cache/" .. key .. "/cover.image")
 		end
-		if Chapters then
-			Cache.saveChapters(Manga, Chapters)
+		if chapters then
+			Cache.saveChapters(manga, chapters)
 		end
-		if Manga.ParserID ~= "IMPORTED" then
+		if manga.ParserID ~= "IMPORTED" then
 			Threads.insertTask(
-				tostring(Manga) .. "coverDownload",
+				tostring(manga) .. "coverDownload",
 				{
 					Type = "FileDownload",
 					Path = "cache/" .. key .. "/cover.image",
-					Link = Manga.ImageLink
+					Link = manga.ImageLink
 				}
 			)
 		end
@@ -63,110 +74,109 @@ function Cache.addManga(Manga, Chapters)
 	end
 end
 
----@param Manga table
----Removes given `Manga` from cache
-function Cache.removeManga(Manga)
-	local key = get_key(Manga)
-	if data[key] then
-		data[key] = nil
-		Manga.Path = nil
-		rem_dir("ux0:data/noboru/cache/" .. key)
+---@param manga table
+---Removes given `manga` from cache
+function Cache.removeManga(manga)
+	local mangaKey = getKey(manga)
+	if data[mangaKey] then
+		data[mangaKey] = nil
+		manga.Path = nil
+		removeDirectory("ux0:data/noboru/cache/" .. mangaKey)
 		Cache.save()
 	end
 end
 
----@param Chapter table
+---@param chapter table
 ---@param mode integer | boolean
 ---Set's bookmark for given `Chapter`
-function Cache.setBookmark(Chapter, mode)
-	Cache.addManga(Chapter.Manga)
-	local mkey = get_key(Chapter.Manga)
-	local key = Chapter.Link:gsub("%p", "")
-	if not bookmarks[mkey] then
-		bookmarks[mkey] = {}
+function Cache.setBookmark(chapter, mode)
+	Cache.addManga(chapter.Manga)
+	local mangaKey = getKey(chapter.Manga)
+	local chapterKey = chapter.Link:gsub("%p", "")
+	if not bookmarks[mangaKey] then
+		bookmarks[mangaKey] = {}
 	end
-	bookmarks[mkey][key] = mode
-	bookmarks[mkey].LatestBookmark = key
-	if doesFileExist("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat") then
-		deleteFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat")
+	bookmarks[mangaKey][chapterKey] = mode
+	bookmarks[mangaKey].LatestBookmark = chapterKey
+	if doesFileExist("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat") then
+		deleteFile("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat")
 	end
-	local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FCREATE)
-	local serialized_bookmarks = "return " .. table.serialize(bookmarks[mkey], true)
-	writeFile(fh, serialized_bookmarks, #serialized_bookmarks)
+	local fh = openFile("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat", FCREATE)
+	local serializedBookmarks = "return " .. table.serialize(bookmarks[mangaKey], true)
+	writeFile(fh, serializedBookmarks, #serializedBookmarks)
 	closeFile(fh)
 end
 
----@param Chapter table
+---@param chapter table
 ---@return nil | boolean | number
 ---Gives latest readed page for `Chapter`
----
 ---`number` latest readed page, `true` if manga readed full, `nil` if no bookmark on this `Chapter`
-function Cache.getBookmark(Chapter)
-	local mkey = get_key(Chapter.Manga)
-	local key = Chapter.Link:gsub("%p", "")
-	return bookmarks[mkey] and bookmarks[mkey][key]
+function Cache.getBookmark(chapter)
+	local mangaKey = getKey(chapter.Manga)
+	local chapterKey = chapter.Link:gsub("%p", "")
+	return bookmarks[mangaKey] and bookmarks[mangaKey][chapterKey]
 end
 
----@param Manga table
+---@param manga table
 ---@return string
 ---Gives key for latest closed chapter
-function Cache.getLatestBookmark(Manga)
-	local mkey = get_key(Manga)
-	return bookmarks[mkey] and bookmarks[mkey].LatestBookmark
+function Cache.getLatestBookmark(manga)
+	local mangaKey = getKey(manga)
+	return bookmarks[mangaKey] and bookmarks[mangaKey].LatestBookmark
 end
 
-function Cache.getBookmarkKey(Chapter)
-	return Chapter.Link:gsub("%p", "")
+function Cache.getBookmarkKey(chapter)
+	return chapter.Link:gsub("%p", "")
 end
 
----@param Manga table
----Saves all bookmarks related to given `Manga`
-function Cache.saveBookmarks(Manga)
-	local mkey = get_key(Manga)
-	if doesDirExist("ux0:data/noboru/cache/" .. mkey) then
-		if doesFileExist("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat") then
-			deleteFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat")
+---@param manga table
+---Saves all bookmarks related to given `manga`
+function Cache.saveBookmarks(manga)
+	local mangaKey = getKey(manga)
+	if doesDirExist("ux0:data/noboru/cache/" .. mangaKey) then
+		if doesFileExist("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat") then
+			deleteFile("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat")
 		end
-		local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FCREATE)
-		local serialized_bookmarks = "return " .. table.serialize(bookmarks[mkey], true)
-		writeFile(fh, serialized_bookmarks, #serialized_bookmarks)
+		local fh = openFile("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat", FCREATE)
+		local serializedBookmarks = "return " .. table.serialize(bookmarks[mangaKey], true)
+		writeFile(fh, serializedBookmarks, #serializedBookmarks)
 		closeFile(fh)
 	end
 end
 
----@param Manga table
----Loads all bookmarks in cache for given `Manga`
-function Cache.loadBookmarks(Manga)
-	local mkey = get_key(Manga)
-	if doesFileExist("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat") then
-		local fh = openFile("ux0:data/noboru/cache/" .. mkey .. "/bookmarks.dat", FREAD)
-		local load_bookmarks = load(readFile(fh, sizeFile(fh)))
+---@param manga table
+---Loads all bookmarks in cache for given `manga`
+function Cache.loadBookmarks(manga)
+	local mangaKey = getKey(manga)
+	if doesFileExist("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat") then
+		local fh = openFile("ux0:data/noboru/cache/" .. mangaKey .. "/bookmarks.dat", FREAD)
+		local loadBookmarksFunction = load(readFile(fh, sizeFile(fh)))
 		closeFile(fh)
-		if load_bookmarks then
-			bookmarks[mkey] = load_bookmarks() or {}
+		if loadBookmarksFunction then
+			bookmarks[mangaKey] = loadBookmarksFunction() or {}
 		end
 	end
 end
 
----@param Manga table
+---@param manga table
 ---Checks if bookmarks is already loaded (in cache)
-function Cache.BookmarksLoaded(Manga)
-	local mkey = get_key(Manga)
-	return bookmarks[mkey] ~= nil
+function Cache.BookmarksLoaded(manga)
+	local mangaKey = getKey(manga)
+	return bookmarks[mangaKey] ~= nil
 end
 
-function Cache.clearBookmarks(Manga)
-	local mkey = get_key(Manga)
-	bookmarks[mkey] = {}
-	Cache.saveBookmarks(Manga)
+---@param manga table
+---Clears bookmarks for given `manga`
+function Cache.clearBookmarks(manga)
+	local mangaKey = getKey(manga)
+	bookmarks[mangaKey] = {}
+	Cache.saveBookmarks(manga)
 end
 
-local updated = false
-
----@param Manga table
+---@param manga table
 ---Creates/Updates History record
-function Cache.makeHistory(Manga)
-	local key = get_key(Manga)
+function Cache.makeHistory(manga)
+	local key = getKey(manga)
 	for i = 1, #history do
 		if history[i] == key then
 			if i == 1 then
@@ -178,47 +188,45 @@ function Cache.makeHistory(Manga)
 	end
 	table.insert(history, 1, key)
 	Cache.saveHistory()
-	updated = true
+	is_history_updated = true
 end
 
 ---@param Manga table
 ---Removes given `Manga` from history
 function Cache.removeHistory(Manga)
-	local key = get_key(Manga)
-	local deleted = false
+	local key = getKey(Manga)
+	local is_history_deleted = false
 	for i = 1, #history do
 		if history[i] == key then
 			table.remove(history, i)
-			deleted = true
+			is_history_deleted = true
 			break
 		end
 	end
-	if deleted then
+	if is_history_deleted then
 		Cache.saveHistory()
-		updated = true
+		is_history_updated = true
 	end
 end
-
-local cached_history = {}
 
 ---@return table
 ---Gives list of all History records
 function Cache.getHistory()
-	if updated then
-		local new_history = {}
-		local uma0_flag = doesDirExist("uma0:data/noboru")
+	if is_history_updated then
+		local newHistoryList = {}
+		local uma0Flag = doesDirExist("uma0:data/noboru")
 		for i = 1, #history do
-			local v = history[i]
-			if data[v] then
-				if data[v].Location ~= "uma0" or uma0_flag then
-					new_history[#new_history + 1] = data[v]
+			local file = history[i]
+			if data[file] then
+				if data[file].Location ~= "uma0" or uma0Flag then
+					newHistoryList[#newHistoryList + 1] = data[file]
 				end
 			end
 		end
-		updated = false
-		cached_history = new_history
+		is_history_updated = false
+		cachedHistory = newHistoryList
 	end
-	return cached_history
+	return cachedHistory
 end
 
 ---Saves all History records
@@ -227,8 +235,8 @@ function Cache.saveHistory()
 		deleteFile("ux0:data/noboru/cache/history.dat")
 	end
 	local fh = openFile("ux0:data/noboru/cache/history.dat", FCREATE)
-	local serialized_history = "return " .. table.serialize(history, true)
-	writeFile(fh, serialized_history, #serialized_history)
+	local serializedHistory = "return " .. table.serialize(history, true)
+	writeFile(fh, serializedHistory, #serializedHistory)
 	closeFile(fh)
 end
 
@@ -236,61 +244,61 @@ end
 function Cache.loadHistory()
 	if doesFileExist("ux0:data/noboru/cache/history.dat") then
 		local fh = openFile("ux0:data/noboru/cache/history.dat", FREAD)
-		local load_history = load(readFile(fh, sizeFile(fh)))
+		local loadHistoryFunction = load(readFile(fh, sizeFile(fh)))
 		closeFile(fh)
-		if load_history then
-			history = load_history() or {}
+		if loadHistoryFunction then
+			history = loadHistoryFunction() or {}
 		end
 	end
 	Cache.saveHistory()
-	updated = true
+	is_history_updated = true
 end
 
 ---@param manga table
 ---@return boolean
 ---Gives is manga in history
 function Cache.inHistory(manga)
-	return history[get_key(manga)] ~= nil
+	return history[getKey(manga)] ~= nil
 end
 
----@param Manga table
----Checks if `Manga` is cached
-function Cache.isCached(Manga)
-	return Manga and data[get_key(Manga)] ~= nil or false
+---@param manga table
+---Checks if `manga` is cached
+function Cache.isCached(manga)
+	return manga and data[getKey(manga)] ~= nil or false
 end
 
----@param Manga table
----@param Chapters table
----Updates `Chapter` List for given `Manga`
-function Cache.saveChapters(Manga, Chapters)
-	local key = get_key(Manga)
+---@param manga table
+---@param chapters table
+---Updates `chapter` List for given `manga`
+function Cache.saveChapters(manga, chapters)
+	local key = getKey(manga)
 	local path = "ux0:data/noboru/cache/" .. key .. "/chapters.dat"
+	local chaptersList = {}
 	if doesFileExist(path) then
 		deleteFile(path)
 	end
-	local chlist = {}
-	for i = 1, #Chapters do
-		chlist[i] = {}
-		for k, v in pairs(Chapters[i]) do
-			chlist[i][k] = k == "Manga" and "10101010101010" or v
+	for i = 1, #chapters do
+		chaptersList[i] = {}
+		for k, v in pairs(chapters[i]) do
+			chaptersList[i][k] = k == "Manga" and "10101010101010" or v
 		end
 	end
-	chlist.Description = Chapters.Description or ""
+	chaptersList.Description = chapters.Description or ""
 	local fh = openFile(path, FCREATE)
-	local serialized_chlist = "return " .. table.serialize(chlist, true)
-	writeFile(fh, serialized_chlist, #serialized_chlist)
+	local serializedChaptersList = "return " .. table.serialize(chaptersList, true)
+	writeFile(fh, serializedChaptersList, #serializedChaptersList)
 	closeFile(fh)
 end
 
----@param Manga table
+---@param manga table
 ---@return table
----Gives chapter list for given `Manga`
-function Cache.loadChapters(Manga, skiphiding)
-	local key = get_key(Manga)
+---Gives chapter list for given `manga`
+function Cache.loadChapters(manga, skipHiding)
+	local key = getKey(manga)
 	if data[key] then
 		if doesFileExist("ux0:data/noboru/cache/" .. key .. "/chapters.dat") then
 			local fh = openFile("ux0:data/noboru/cache/" .. key .. "/chapters.dat", FREAD)
-			local suc, new_chlist =
+			local success, newChaptersList =
 				pcall(
 				function()
 					local content = readFile(fh, sizeFile(fh))
@@ -298,54 +306,53 @@ function Cache.loadChapters(Manga, skiphiding)
 				end
 			)
 			closeFile(fh)
-			if suc then
-				if skiphiding then
-					new_chlist.Description = new_chlist.Description or ""
-					return new_chlist
+			if success then
+				if skipHiding then
+					newChaptersList.Description = newChaptersList.Description or ""
+					return newChaptersList
 				end
 				if Settings.HideInOffline then
 					local t = {}
-					for i = 1, #new_chlist do
-						local chapter = new_chlist[i]
+					for i = 1, #newChaptersList do
+						local chapter = newChaptersList[i]
 						t[#t + 1] = ChapterSaver.check(chapter) and chapter or nil
 					end
-					t.Description = new_chlist.Description or ""
+					t.Description = newChaptersList.Description or ""
 					return t
 				else
-					new_chlist.Description = new_chlist.Description or ""
-					return new_chlist
+					newChaptersList.Description = newChaptersList.Description or ""
+					return newChaptersList
 				end
 			else
-				Console.error(new_chlist)
+				Console.error(newChaptersList)
 			end
 		end
 	end
 	return {}
 end
 
-local CACHE_INFO_PATH = "ux0:data/noboru/cache/info.txt"
 ---Loads Cache
 function Cache.load()
 	data = {}
 	if doesFileExist(CACHE_INFO_PATH) then
 		local fh = openFile(CACHE_INFO_PATH, FREAD)
-		local load_data = load(readFile(fh, sizeFile(fh)))
-		if load_data then
-			local new_data = load_data() or {}
+		local loadCacheFunction = load(readFile(fh, sizeFile(fh)))
+		if loadCacheFunction then
+			local newData = loadCacheFunction() or {}
 			local count = 0
-			for _ in pairs(new_data) do
+			for _ in pairs(newData) do
 				count = count + 1
 			end
 			local i = 1
-			for k, v in pairs(new_data) do
+			for k, v in pairs(newData) do
 				local path = "ux0:data/noboru/cache/" .. k
 				coroutine.yield("Cache: Checking " .. path, i / count)
 				if not Settings.SkipCacheChapterChecking then
 					if doesDirExist(path) then
 						if doesFileExist("ux0:data/noboru/" .. v.Path) then
 							coroutine.yield("Cache: Checking ux0:data/noboru/" .. v.Path, i / count)
-							local image_size = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
-							if not image_size or image_size <= 0 then
+							local imageSize = System.getPictureResolution("ux0:data/noboru/" .. v.Path)
+							if not imageSize or imageSize <= 0 then
 								deleteFile("ux0:data/noboru/" .. v.Path)
 							end
 						end
@@ -370,15 +377,15 @@ function Cache.save()
 		deleteFile(CACHE_INFO_PATH)
 	end
 	local fh = openFile(CACHE_INFO_PATH, FCREATE)
-	local save_data = {}
+	local saveData = {}
 	for k, v in pairs(data) do
-		save_data[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
-		save_data[k].Data = v.Data
-		save_data[k].Path = "cache/" .. k .. "/cover.image"
-		save_data[k].Location = v.Location or "ux0"
+		saveData[k] = CreateManga(v.Name, v.Link, v.ImageLink, v.ParserID, v.RawLink)
+		saveData[k].Data = v.Data
+		saveData[k].Path = "cache/" .. k .. "/cover.image"
+		saveData[k].Location = v.Location or "ux0"
 	end
-	local serialized_data = "return " .. table.serialize(save_data, true)
-	writeFile(fh, serialized_data, #serialized_data)
+	local serializedData = "return " .. table.serialize(saveData, true)
+	writeFile(fh, serializedData, #serializedData)
 	closeFile(fh)
 end
 
@@ -391,36 +398,36 @@ function Cache.clear(mode)
 		for i = 1, #d do
 			local f = d[i]
 			if not Database.checkByKey(f.name) and f.directory then
-				rem_dir("ux0:data/noboru/cache/" .. f.name)
+				removeDirectory("ux0:data/noboru/cache/" .. f.name)
 				data[f.name] = nil
 			end
 		end
-		local new_history = {}
+		local newHistory = {}
 		for i = 1, #history do
 			if data[history[i]] then
-				new_history[#new_history + 1] = history[i]
+				newHistory[#newHistory + 1] = history[i]
 			end
 		end
-		history = new_history
+		history = newHistory
 	elseif mode == "all" then
-		local d = listDirectory("ux0:data/noboru/cache") or {}
-		for i = 1, #d do
-			local f = d[i]
-			if not f.name:find("^IMPORTED") or not Database.checkByKey(f.name) then
-				rem_dir("ux0:data/noboru/cache/" .. f.name)
-				data[f.name] = nil
+		local directory = listDirectory("ux0:data/noboru/cache") or {}
+		for i = 1, #directory do
+			local file = directory[i]
+			if not file.name:find("^IMPORTED") or not Database.checkByKey(file.name) then
+				removeDirectory("ux0:data/noboru/cache/" .. file.name)
+				data[file.name] = nil
 			end
 		end
-		local new_history = {}
+		local newHistory = {}
 		for i = 1, #history do
 			if data[history[i]] then
-				new_history[#new_history + 1] = history[i]
+				newHistory[#newHistory + 1] = history[i]
 			end
 		end
-		history = new_history
+		history = newHistory
 		bookmarks = {}
 	end
 	Cache.saveHistory()
-	updated = true
+	is_history_updated = true
 	Cache.save()
 end

@@ -3,26 +3,25 @@ Import = {}
 local listDirectory = System.listDirectory
 local doesDirExist = System.doesDirExist
 
-local fullpath = "ux0:data/noboru/import/"
-local path = fullpath
-local dir_list
+local rootPath = "ux0:data/noboru/import/"
+local currentPath = rootPath
+local directoryList
 
 ---@return table
 ---Gives folder list of opened directory
----
 ---Table elements: {`name`: string, `directory`: boolean, `active`: boolean, `size`: number}
 function Import.listDir()
-	if dir_list == nil then
-		local list = listDirectory(path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/")) or {}
-		local new_list = {}
+	if directoryList == nil then
+		local list = listDirectory(currentPath:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/")) or {}
+		local newList = {}
 		for i = 1, #list do
-			local v = list[i]
-			v.active = v.directory or v.name:find("%.cbz$") or v.name:find("%.zip$")
-			new_list[#new_list + 1] = v
+			local file = list[i]
+			file.active = file.directory or file.name:find("%.cbz$") or file.name:find("%.zip$")
+			newList[#newList + 1] = file
 		end
-		if path ~= fullpath then
+		if currentPath ~= rootPath then
 			table.insert(
-				new_list,
+				newList,
 				1,
 				{
 					name = "...",
@@ -33,7 +32,7 @@ function Import.listDir()
 			)
 		elseif doesDirExist("uma0:") then
 			table.insert(
-				new_list,
+				newList,
 				1,
 				{
 					name = "uma0:data/noboru/import",
@@ -43,19 +42,19 @@ function Import.listDir()
 				}
 			)
 		end
-		dir_list = new_list
+		directoryList = newList
 	end
-	return dir_list
+	return directoryList
 end
 
 ---@param item table
 ---Opens `item` directory / file
 function Import.go(item)
-	if item.name == "..." and path ~= fullpath then
+	if item.name == "..." and currentPath ~= rootPath then
 		Import.back()
 	elseif item.directory then
-		path = path .. item.name .. "/"
-		dir_list = nil
+		currentPath = currentPath .. item.name .. "/"
+		directoryList = nil
 	elseif item.name:find("%.cbz$") or item.name:find("%.zip$") then
 		Reader.load(
 			{
@@ -63,7 +62,7 @@ function Import.go(item)
 					FastLoad = true,
 					Name = item.name:match("(.*)%..-$"),
 					Link = "AABBCCDDEEFFGG",
-					Path = path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name,
+					Path = currentPath:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name,
 					Pages = {},
 					Manga = {
 						Name = item.name:match("(.*)%..-$"),
@@ -90,23 +89,23 @@ end
 ---@return string
 ---Returns fullpath of given item
 function Import.getPath(item)
-	return item and path:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name
+	return item and currentPath:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name
 end
 
 ---Go parent directory of current directory if it is possible
 function Import.back()
-	if path ~= fullpath then
-		if path == "ux0:data/noboru/import/uma0:data/noboru/import/" then
-			path = "ux0:data/noboru/import/"
+	if currentPath ~= rootPath then
+		if currentPath == "ux0:data/noboru/import/uma0:data/noboru/import/" then
+			currentPath = "ux0:data/noboru/import/"
 		else
-			path = path:match("(.*/).-/$")
+			currentPath = currentPath:match("(.*/).-/$")
 		end
-		dir_list = nil
+		directoryList = nil
 	end
 end
 
 ---@return boolean
 ---Says does current directory has accessible parent directory
 function Import.canBack()
-	return path ~= fullpath
+	return currentPath ~= rootPath
 end

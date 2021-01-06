@@ -1,8 +1,3 @@
-local doesDirExist = System.doesDirExist
-local listDirectory = System.listDirectory
-local deleteFile = System.deleteFile
-local deleteDirectory = System.deleteDirectory
-
 utf8ascii = {
 	["А"] = "%%C0",
 	["Б"] = "%%C1",
@@ -241,7 +236,7 @@ local a2u8 = {
 local byte, char = string.byte, string.char
 
 function AnsiToUtf8(s)
-	local r, b = {}
+	local r, b = {}, nil
 	for i = 1, s and #s or 0 do
 		b = byte(s, i)
 		if b < 128 then
@@ -295,14 +290,14 @@ function math.sign(x)
 	return x > 0 and 1 or x < 0 and -1 or 0
 end
 
-function ChangeAlpha(color, new_alpha)
+function CloneColorWithNewAlpha(color, new_alpha)
 	return Color.new(Color.getR(color), Color.getG(color), Color.getB(color), new_alpha)
 end
 
 ---@param str string
 ---@return table
 ---Breaks text into lines
-function To_lines(str)
+function ToLines(str)
 	if str:sub(-1) ~= "\n" then
 		str = str .. "\n"
 	end

@@ -31,7 +31,7 @@ Settings = {
 	SaveDataPath = "ux0"
 }
 
-local SettingsDefaults = table.clone(Settings)
+local settingsDefaults = table.clone(Settings)
 
 DeadZoneValues = {20, 30, 40, 50, 90}
 SensitivityValues = {0.25, 0.50, 0.75, 1, 1.25, 1.5, 1.75}
@@ -51,17 +51,19 @@ local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
-local rem_dir = RemoveDirectory
+local installApp = System.installApp
+local launchApp = System.launchApp
+local removeDirectory = RemoveDirectory
 
-local AppIsUpdating = false
+local is_app_updating = false
 
 ---@return boolean
 ---Gives true if app is updating
 function settings.isAppUpdating()
-	return AppIsUpdating
+	return is_app_updating
 end
 
-local cpy_file = Copy_File
+local copyFile = CopyFile
 
 ---Sets colors from Themes[Settings.Theme] to their values
 local function setTheme(name)
@@ -72,8 +74,6 @@ local function setTheme(name)
 	end
 end
 
-local installApp = System.installApp
-local launchApp = System.launchApp
 ---Unpacks downloaded NOBORU.vpk and installing it
 local function UpdateApp()
 	local notify = Notifications ~= nil
@@ -84,12 +84,12 @@ local function UpdateApp()
 			deleteFile("ux0:data/noboru/NOBORU.vpk")
 			if notify then
 				Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
-				AppIsUpdating = false
+				is_app_updating = false
 			end
 			return
 		end
 		closeFile(fh)
-		rem_dir("ux0:data/noboru/NOBORU")
+		removeDirectory("ux0:data/noboru/NOBORU")
 		if notify then
 			Notifications.push(Language[settings.Language].SETTINGS.UnzipingVPK)
 			Notifications.push(Language[settings.Language].SETTINGS.PleaseWait, 60000)
@@ -102,22 +102,22 @@ local function UpdateApp()
 				Path = "NOBORU.vpk",
 				OnComplete = function()
 					deleteFile("ux0:data/noboru/NOBORU.vpk")
-					rem_dir("ux0:data/noboru/pkg")
+					removeDirectory("ux0:data/noboru/pkg")
 					createDirectory("ux0:data/noboru/pkg")
 					createDirectory("ux0:data/noboru/pkg/sce_sys")
-					cpy_file("app0:updater/eboot.bin", "ux0:data/noboru/pkg/eboot.bin")
-					cpy_file("app0:updater/param.sfo", "ux0:data/noboru/pkg/sce_sys/param.sfo")
+					copyFile("app0:updater/eboot.bin", "ux0:data/noboru/pkg/eboot.bin")
+					copyFile("app0:updater/param.sfo", "ux0:data/noboru/pkg/sce_sys/param.sfo")
 					installApp("ux0:data/noboru/pkg")
-					rem_dir("ux0:data/noboru/pkg")
+					removeDirectory("ux0:data/noboru/pkg")
 					launchApp("NOBORUPDT")
-					AppIsUpdating = false
+					is_app_updating = false
 				end
 			}
 		)
 	end
 	if notify and not Threads.check("ExtractingApp") then
 		Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
-		AppIsUpdating = false
+		is_app_updating = false
 	end
 end
 
@@ -241,7 +241,7 @@ function settings.save()
 end
 
 ---Table of all available options
-local set_list = {
+local settingsListTree = {
 	"Language",
 	"ChangeUI",
 	"Library",
@@ -309,22 +309,22 @@ local set_list = {
 }
 
 ---Table of current options
-local set_list_tab = set_list
-local set_list_stack = {}
-local tab_name = "MainSettingsMenu"
-local tab_name_stack = {}
+local settingsListCurrentNode = settingsListTree
+local settingsListCurrentPath = {}
+local settingsListCurrentNodeName = "MainSettingsMenu"
+local settingsListCurrentPathNames = {}
 
 ---@return table
 ---Return list of available options
 function settings.list()
-	return set_list_tab
+	return settingsListCurrentNode
 end
 
 ---@param mode string
 ---@return boolean
 ---Checks if setting is submenu
 function settings.isTab(mode)
-	return set_list_tab[mode] ~= nil or tab_name == "AdvancedChaptersDeletion"
+	return settingsListCurrentNode[mode] ~= nil or settingsListCurrentNodeName == "AdvancedChaptersDeletion"
 end
 
 local listDirectory = System.listDirectory
@@ -332,14 +332,14 @@ local listDirectory = System.listDirectory
 ---@param mode string
 ---Sets settings menu as submenu `mode`
 function settings.setTab(mode)
-	if tab_name == "AdvancedChaptersDeletion" then
+	if settingsListCurrentNodeName == "AdvancedChaptersDeletion" then
 		Reader.load(
 			{
 				{
 					FastLoad = true,
 					Name = mode.name,
 					Link = "AABBCCDDEEFFGG",
-					Path = mode.chapter_path,
+					Path = mode.chapterPath,
 					Pages = {},
 					Manga = {
 						Name = mode.name,
@@ -353,73 +353,51 @@ function settings.setTab(mode)
 		)
 		AppMode = READER
 	else
-		if set_list_tab[mode] then
+		if settingsListCurrentNode[mode] then
 			if mode == "AdvancedChaptersDeletion" then
 				local possibilities = {}
-
-				local cached = Cache.getManga()
-				for _, manga in pairs(cached) do
+				local cachedManga = Cache.getManga()
+				for _, manga in pairs(cachedManga) do
 					local chapters = Cache.loadChapters(manga)
-					for _, chapter in pairs(chapters) do
+					for _, chapter in ipairs(chapters) do
 						possibilities[ChapterSaver.getKey(chapter)] = chapter
 					end
 				end
-
+				local drives = {"ux0:", "uma0"}
 				local t = {}
-				for _, v in pairs(listDirectory("ux0:data/noboru/chapters")) do
-					if v.directory and not v.name:find("^IMPORTED") then
-						if possibilities[v.name] then
-							local manga = possibilities[v.name].Manga
-							local chapter = possibilities[v.name]
-							t[#t + 1] = {
-								name = (GetParserByID(manga.ParserID) and GetParserByID(manga.ParserID).Name or "Unknown Catalog") .. " - " .. manga.Name,
-								info = chapter.Name,
-								type = "savedChapter",
-								chapter_path = "ux0:data/noboru/chapters/" .. v.name,
-								key = v.name
-							}
-						else
-							t[#t + 1] = {
-								name = "Unknown Manga ID: " .. (v.name:match("^([^_]+)_") or "UNKNOWN"),
-								info = v.name:match("^[^_]+_(.+)$") or v.name,
-								type = "savedChapter",
-								chapter_path = "ux0:data/noboru/chapters/" .. v.name,
-								key = v.name
-							}
-						end
-					end
-				end
-				if doesDirExist("uma0:") then
-					for _, v in pairs(listDirectory("uma0:data/noboru/chapters")) do
-						if v.directory and not v.name:find("^IMPORTED") then
-							if possibilities[v.name] then
-								local manga = possibilities[v.name].Manga
-								local chapter = possibilities[v.name]
-								t[#t + 1] = {
-									name = (GetParserByID(manga.ParserID) and GetParserByID(manga.ParserID).Name or "Unknown Catalog") .. " - " .. manga.Name,
-									info = chapter.Name,
-									type = "savedChapter",
-									chapter_path = "uma0:data/noboru/chapters/" .. v.name,
-									key = v.name
-								}
-							else
-								t[#t + 1] = {
-									name = "Unknown Manga ID: " .. (v.name:match("^([^_]+)_") or "UNKNOWN"),
-									info = v.name:match("^[^_]+_(.+)$") or v.name,
-									type = "savedChapter",
-									chapter_path = "uma0:data/noboru/chapters/" .. v.name,
-									key = v.name
-								}
+				for _, drive in ipairs(drives) do
+					if doesDirExist(drive) then
+						for _, v in pairs(listDirectory(drive .. "data/noboru/chapters")) do
+							if v.directory and not v.name:find("^IMPORTED") then
+								if possibilities[v.name] then
+									local manga = possibilities[v.name].Manga
+									local chapter = possibilities[v.name]
+									t[#t + 1] = {
+										name = (GetParserByID(manga.ParserID) and GetParserByID(manga.ParserID).Name or "Unknown Catalog") .. " - " .. manga.Name,
+										info = chapter.Name,
+										type = "savedChapter",
+										chapterPath = drive .. "data/noboru/chapters/" .. v.name,
+										key = v.name
+									}
+								else
+									t[#t + 1] = {
+										name = "Unknown Manga ID: " .. (v.name:match("^([^_]+)_") or "UNKNOWN"),
+										info = v.name:match("^[^_]+_(.+)$") or v.name,
+										type = "savedChapter",
+										chapterPath = drive .. "data/noboru/chapters/" .. v.name,
+										key = v.name
+									}
+								end
 							end
 						end
 					end
 				end
-				set_list_tab[mode] = t
+				settingsListCurrentNode[mode] = t
 			end
-			set_list_stack[#set_list_stack + 1] = set_list_tab
-			set_list_tab = set_list_tab[mode]
-			tab_name_stack[#tab_name_stack + 1] = tab_name
-			tab_name = mode
+			settingsListCurrentPath[#settingsListCurrentPath + 1] = settingsListCurrentNode
+			settingsListCurrentNode = settingsListCurrentNode[mode]
+			settingsListCurrentPathNames[#settingsListCurrentPathNames + 1] = settingsListCurrentNodeName
+			settingsListCurrentNodeName = mode
 		end
 	end
 end
@@ -427,13 +405,13 @@ end
 ---@param mode string
 ---Deletes `mode` submenu from settings
 function settings.delTab(mode)
-	if tab_name == "AdvancedChaptersDeletion" then
-		for k, v in pairs(set_list_tab) do
-			if v.chapter_path == mode.chapter_path then
-				table.remove(set_list_tab, k)
+	if settingsListCurrentNodeName == "AdvancedChaptersDeletion" then
+		for k, v in pairs(settingsListCurrentNode) do
+			if v.chapterPath == mode.chapterPath then
+				table.remove(settingsListCurrentNode, k)
 			end
 		end
-		rem_dir(mode.chapter_path)
+		removeDirectory(mode.chapterPath)
 		ChapterSaver.removeByKeyUnsafe(mode.key)
 	end
 end
@@ -441,40 +419,40 @@ end
 ---@return boolean
 ---Checks if settings not in main settings menu (subsettings screen)
 function settings.inTab()
-	return #set_list_stack > 0
+	return #settingsListCurrentPath > 0
 end
 
 ---@return string
 ---Returns tab name of settings that user is in
 function settings.getTab()
-	return tab_name
+	return settingsListCurrentNodeName
 end
 
 ---Throws in main settings menu
 function settings.back()
-	if #set_list_stack > 0 then
-		set_list_tab = set_list_stack[#set_list_stack]
-		set_list_stack[#set_list_stack] = nil
-		tab_name = tab_name_stack[#tab_name_stack]
-		tab_name_stack[#tab_name_stack] = nil
+	if #settingsListCurrentPath > 0 then
+		settingsListCurrentNode = settingsListCurrentPath[#settingsListCurrentPath]
+		settingsListCurrentPath[#settingsListCurrentPath] = nil
+		settingsListCurrentNodeName = settingsListCurrentPathNames[#settingsListCurrentPathNames]
+		settingsListCurrentPathNames[#settingsListCurrentPathNames] = nil
 	end
 end
 
-local last_vpk_link
-local last_vpk_size = "NaN"
-local changes
+local lastVpkLink
+local lastVpkSize = "NaN"
+local changesText
 
 ---Starting update for NOBORU Application
 function settings.updateApp()
 	if Threads.netActionUnSafe(Network.isWifiEnabled) then
-		if last_vpk_link then
-			AppIsUpdating = true
+		if lastVpkLink then
+			is_app_updating = true
 			Notifications.push(Language[settings.Language].SETTINGS.PleaseWait)
 			Threads.insertTask(
 				"DownloadAppUpdate",
 				{
 					Type = "FileDownload",
-					Link = "https://github.com" .. last_vpk_link,
+					Link = "https://github.com" .. lastVpkLink,
 					Path = "NOBORU.vpk",
 					OnComplete = function()
 						UpdateApp()
@@ -547,15 +525,16 @@ SettingsFunctions = {
 					OnComplete = function()
 						local content = file.string or ""
 						local late
-						late, last_vpk_link, last_vpk_size = content:match('d%-block mb%-1.-title="(.-)".-"(%S-.vpk)".-<small.->(.-)</small>')
+						late, lastVpkLink, lastVpkSize = content:match('d%-block mb%-1.-title="(.-)".-"(%S-.vpk)".-<small.->(.-)</small>')
 						if late == nil then
-							late, last_vpk_link, last_vpk_size = content:match('d%-block mb%-1.-title="(.-)".-"(%S-.vpk)"'), "NaN"
+							late, lastVpkLink = content:match('d%-block mb%-1.-title="(.-)".-"(%S-.vpk)"')
+							lastVpkSize = "NaN"
 						end
 						settings.LateVersion = late or settings.LateVersion
 						local body = content:match('markdown%-body">(.-)</div>') or ""
-						changes = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
+						changesText = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
 						if settings.LateVersion and settings.Version and tonumber(settings.LateVersion) > tonumber(settings.Version) then
-							Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changes)
+							Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changesText)
 							Notifications.push(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " " .. settings.LateVersion)
 						end
 					end
@@ -566,7 +545,7 @@ SettingsFunctions = {
 		end
 	end,
 	GetLastVpkSize = function()
-		return last_vpk_size
+		return lastVpkSize
 	end,
 	ShowAuthor = function()
 		Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
@@ -611,7 +590,7 @@ SettingsFunctions = {
 		SCE_RIGHT_STICK_SENSITIVITY = settings.RightStickSensitivity
 	end,
 	ResetAllSettings = function()
-		for k, v in pairs(SettingsDefaults) do
+		for k, v in pairs(settingsDefaults) do
 			if k ~= "FavouriteParsers" and k ~= "Language" and k ~= "Theme" then
 				settings[k] = v
 			end

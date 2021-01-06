@@ -1,6 +1,6 @@
 CuSettings = {}
 
-local custom_settings = {}
+local customSettings = {}
 
 local writeFile = System.writeFile
 local closeFile = System.closeFile
@@ -10,26 +10,36 @@ local readFile = System.readFile
 local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 
-local function get_key(manga)
+---@param manga table
+---@return string
+---Gives key for specific `manga`
+local function getKey(manga)
 	return (manga.ParserID .. manga.Link):gsub("%p", "")
 end
 
+---@param manga table
+---@param key string | nil
+---Saves custom settings for specific `manga`
 local function save(manga, key)
-	key = key or get_key(manga)
-	if custom_settings[key] then
+	key = key or getKey(manga)
+	if customSettings[key] then
 		if doesFileExist("ux0:data/noboru/cusettings/" .. key .. ".ini") then
 			deleteFile("ux0:data/noboru/cusettings/" .. key .. ".ini")
 		end
 		local file = openFile("ux0:data/noboru/cusettings/" .. key .. ".ini", FCREATE)
-		local save_data = table.serialize(custom_settings[key])
-		writeFile(file, save_data, #save_data)
+		local saveData = table.serialize(customSettings[key])
+		writeFile(file, saveData, #saveData)
 		closeFile(file)
 	end
 end
 
-local function clearDefs(manga, key)
-	key = key or get_key(manga)
-	for _, v in pairs(custom_settings[key]) do
+---@param manga table
+---@param key string | nil
+---@return boolean
+---Deletes save file for `manga` if all settings are set to defaults gives `false` if file was deleted
+local function resetToDefault(manga, key)
+	key = key or getKey(manga)
+	for _, v in pairs(customSettings[key]) do
 		if v ~= "Default" then
 			return true
 		end
@@ -40,55 +50,64 @@ local function clearDefs(manga, key)
 	return false
 end
 
+---@param manga table
+---@return table
+---Gives `manga` custom settings `{Orientation, ReaderDirection, ZoomReader}`
 function CuSettings.load(manga)
-	local key = get_key(manga)
-	if custom_settings[key] then
-		return custom_settings[key]
+	local key = getKey(manga)
+	if customSettings[key] then
+		return customSettings[key]
 	end
 	if doesFileExist("ux0:data/noboru/cusettings/" .. key .. ".ini") then
 		local file = openFile("ux0:data/noboru/cusettings/" .. key .. ".ini", FREAD)
-		local load_settings = load("return " .. readFile(file, sizeFile(file)))
+		local loadSettingsFunction = load("return " .. readFile(file, sizeFile(file)))
 		closeFile(file)
-		if load_settings then
+		if loadSettingsFunction then
 			local settings =
-				load_settings() or
+				loadSettingsFunction() or
 				{
 					Orientation = "Default",
 					ReaderDirection = "Default",
 					ZoomReader = "Default"
 				}
-			custom_settings[key] = settings
+			customSettings[key] = settings
 			return settings
 		end
 	end
-	custom_settings[key] = {
+	customSettings[key] = {
 		Orientation = "Default",
 		ReaderDirection = "Default",
 		ZoomReader = "Default"
 	}
-	return custom_settings[key]
+	return customSettings[key]
 end
 
+---@param manga table
+---Changes orientation settings for `manga`
 function CuSettings.changeOrientation(manga)
-	local key = get_key(manga)
-	custom_settings[key].Orientation = table.next(custom_settings[key].Orientation, {"Vertical", "Horizontal", "Default"})
-	if clearDefs(manga, key) then
+	local key = getKey(manga)
+	customSettings[key].Orientation = table.next(customSettings[key].Orientation, {"Vertical", "Horizontal", "Default"})
+	if resetToDefault(manga, key) then
 		save(manga, key)
 	end
 end
 
+---@param manga table
+---Changes readDirection settings for `manga`
 function CuSettings.changeDirection(manga)
-	local key = get_key(manga)
-	custom_settings[key].ReaderDirection = table.next(custom_settings[key].ReaderDirection, {"RIGHT", "LEFT", "DOWN", "Default"})
-	if clearDefs(manga, key) then
+	local key = getKey(manga)
+	customSettings[key].ReaderDirection = table.next(customSettings[key].ReaderDirection, {"RIGHT", "LEFT", "DOWN", "Default"})
+	if resetToDefault(manga, key) then
 		save(manga, key)
 	end
 end
 
+---@param manga table
+---Changes zoom settings for `manga`
 function CuSettings.changeZoom(manga)
-	local key = get_key(manga)
-	custom_settings[key].ZoomReader = table.next(custom_settings[key].ZoomReader, {"Smart", "Width", "Height", "Default"})
-	if clearDefs(manga, key) then
+	local key = getKey(manga)
+	customSettings[key].ZoomReader = table.next(customSettings[key].ZoomReader, {"Smart", "Width", "Height", "Default"})
+	if resetToDefault(manga, key) then
 		save(manga, key)
 	end
 end

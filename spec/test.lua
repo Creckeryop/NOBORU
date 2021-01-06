@@ -19,7 +19,7 @@ local function test(name, foo)
 			oldprint("\27[31m[fail] " .. name .. ": " .. msg:match(":%d+: (.*)") .. "\27[00m")
 		end
 	)
-	for k, v in pairs(_G) do
+	for k, _ in pairs(_G) do
 		if _Gcopy[k] == nil then
 			_G[k] = nil
 		else
@@ -63,7 +63,7 @@ test(
 					success = false
 				end
 				if type(Lang[var]) == "table" then
-					for k, v in pairs(Cat) do
+					for k, _ in pairs(Cat) do
 						if Lang[var][k] == nil then
 							print(name .. "." .. var .. "." .. k .. " not found!")
 							success = false
