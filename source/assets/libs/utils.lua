@@ -233,7 +233,8 @@ local a2u8 = {
 	[191] = "\209\151"
 }
 
-local byte, char = string.byte, string.char
+local byte = string.byte
+local char = string.char
 
 function AnsiToUtf8(s)
 	local r, b = {}, nil

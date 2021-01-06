@@ -32,8 +32,9 @@ local sure_clear_library
 local sure_clear_chapters
 local sure_clear_all_cache
 local sure_clear_cache
+local manga_load_status = 0
 
-local smilesList = {"ಥ_ಥ", "ಠ_ಠ", "ヽ(`Д´)ﾉ", "ఠ౬ఠ", "°Д°", "(ó﹏ò｡)", "(╥﹏╥)", "(⊙_⊙)", "(✖╭╮✖)", "ʘ‿ʘ"}
+local smilesList = {"ಥ_ಥ", "ಠ_ಠ", "ヽ(`Д´)ﾉ", "ఠ౬ఠ", "°Д°", "(ó﹏ò｡)", "(╥﹏╥)", "(⊙_⊙)", "(✖╭╮✖)", "ʘ‿ʘ", "(￣ω￣)", "(´• ω •`) ♡", "(⌒_⌒;)", "( ╥ω╥ )", "(✧∀✧)/", "	╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ"}
 local smile = nil
 
 local mangaSelector =
@@ -624,6 +625,7 @@ function Catalogs.update()
 	if status == "MANGA" or status == "LIBRARY" or status == "HISTORY" then
 		UpdateMangas()
 		if ParserManager.check(currentMangaList) then
+			manga_load_status = 1
 			Loading.setStatus(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 580, 272)
 		elseif Details.getStatus() == "END" then
 			Loading.setStatus("NONE")
@@ -796,28 +798,32 @@ function Catalogs.draw()
 		item = importSelector:getSelected()
 	elseif status == "DOWNLOAD" then
 		local list = ChapterSaver.getDownloadingList()
-		local start = max(1, floor((slider.Y - 10) / 75))
-		local y = start * 75 - slider.Y
-		for i = start, min(#list, start + 9) do
-			local task = list[i]
-			local pageCount = task.page_count or 0
-			local page = task.page or 0
-			if slider.ItemID == i then
-				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
+		if #list > 0 then
+			local start = max(1, floor((slider.Y - 10) / 75))
+			local y = start * 75 - slider.Y
+			for i = start, min(#list, start + 9) do
+				local task = list[i]
+				local pageCount = task.page_count or 0
+				local page = task.page or 0
+				if slider.ItemID == i then
+					Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
+				end
+				Font.print(FONT20, 225, y - 70, task.MangaName, COLOR_FONT)
+				Font.print(FONT16, 225, y - 44, task.ChapterName, COLOR_FONT)
+				if pageCount > 0 then
+					local textCounter = math.ceil(page) .. "/" .. pageCount
+					local w = Font.getTextWidth(FONT16, textCounter)
+					downloadBarValue = page / pageCount
+					Graphics.fillRect(220 + 10 + w, 220 + 10 + w + (940 - 220 - 10 - w) * downloadBarValue, y - 20, y - 8, COLOR_ROYAL_BLUE)
+					Graphics.fillEmptyRect(220 + 10 + w, 940, y - 20, y - 8, COLOR_FONT)
+					Font.print(FONT16, 225, y - 24, textCounter, COLOR_FONT)
+				elseif i == 1 then
+					downloadBarValue = 0
+				end
+				y = y + 75
 			end
-			Font.print(FONT20, 225, y - 70, task.MangaName, COLOR_FONT)
-			Font.print(FONT16, 225, y - 44, task.ChapterName, COLOR_FONT)
-			if pageCount > 0 then
-				local textCounter = math.ceil(page) .. "/" .. pageCount
-				local w = Font.getTextWidth(FONT16, textCounter)
-				downloadBarValue = page / pageCount
-				Graphics.fillRect(220 + 10 + w, 220 + 10 + w + (940 - 220 - 10 - w) * downloadBarValue, y - 20, y - 8, COLOR_ROYAL_BLUE)
-				Graphics.fillEmptyRect(220 + 10 + w, 940, y - 20, y - 8, COLOR_FONT)
-				Font.print(FONT16, 225, y - 24, textCounter, COLOR_FONT)
-			elseif i == 1 then
-				downloadBarValue = 0
-			end
-			y = y + 75
+		else
+			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_DOWNLOADING_MANGA
 		end
 		local elementsCount = #list
 		if elementsCount > 7 then
@@ -1035,7 +1041,9 @@ function Catalogs.draw()
 			if status == "LIBRARY" then
 				centerScreenMessage = Language[Settings.Language].MESSAGE.NO_LIBRARY_MANGA
 			elseif status == "MANGA" then
-				centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS_MANGA
+				if not ParserManager.check(currentMangaList) and manga_load_status == 1 then
+					centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOG_MANGA
+				end
 			elseif status == "HISTORY" then
 				centerScreenMessage = Language[Settings.Language].MESSAGE.NO_HISTORY_MANGA
 			end
@@ -1109,6 +1117,7 @@ function Catalogs.setStatus(newStatus)
 	sure_clear_library = 0
 	sure_clear_chapters = 0
 	sure_clear_cache = 0
+	manga_load_status = 0
 	sure_clear_all_cache = 0
 	local smileIdx = math.random(1, #smilesList)
 	if smilesList[smileIdx] then
