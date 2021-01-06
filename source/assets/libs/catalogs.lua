@@ -33,7 +33,7 @@ local sure_clear_chapters
 local sure_clear_all_cache
 local sure_clear_cache
 
-local smilesList = {"ಥ_ಥ", "ಠ_ಠ", "ヽ(`Д´)ﾉ", "ఠ౬ఠ", "°Д°", "(ó﹏ò｡)", "(╥﹏╥)", "(⊙_⊙)", "(✖╭╮✖)","ʘ‿ʘ"}
+local smilesList = {"ಥ_ಥ", "ಠ_ಠ", "ヽ(`Д´)ﾉ", "ఠ౬ఠ", "°Д°", "(ó﹏ò｡)", "(╥﹏╥)", "(⊙_⊙)", "(✖╭╮✖)", "ʘ‿ʘ"}
 local smile = nil
 
 local mangaSelector =
@@ -315,7 +315,7 @@ end
 
 local function selectSetting(index)
 	local item = Settings.list()[index]
-	if Settings.isTab(item) then
+	if item and Settings.isTab(item) then
 		if Settings.getTab() ~= "AdvancedChaptersDeletion" then
 			settingSelector:resetSelected()
 		end
@@ -672,8 +672,17 @@ function Catalogs.update()
 		elseif status == "SETTINGS" then
 			list = Settings.list()
 			Panels["SETTINGS"].Cirlce = Settings.inTab() and Language[Settings.Language].PANEL.BACK
-			Panels["SETTINGS"].Cross = Settings.getTab() == "AdvancedChaptersDeletion" and Language[Settings.Language].PANEL.READ or Language[Settings.Language].PANEL.SELECT
-			Panels["SETTINGS"].Square = Settings.getTab() == "AdvancedChaptersDeletion" and Language[Settings.Language].PANEL.DELETE
+			if Settings.getTab() == "AdvancedChaptersDeletion" then
+				if #list > 0 then
+					Panels["SETTINGS"].Cross = Language[Settings.Language].PANEL.READ
+					Panels["SETTINGS"].Square = Language[Settings.Language].PANEL.DELETE
+				else
+					Panels["SETTINGS"].Cross = nil
+					Panels["SETTINGS"].Square = nil
+				end
+			else
+				Panels["SETTINGS"].Cross = Language[Settings.Language].PANEL.SELECT
+			end
 			item = settingSelector:getSelected()
 		elseif status == "IMPORT" then
 			list = Import.listDir()
@@ -1049,7 +1058,7 @@ function Catalogs.draw()
 			dy = dy + line.Height + 4
 		end
 		if smile then
-			Font.print(FONT26, 582 - math.floor(Font.getTextWidth(FONT26, smile)/2), 272 - math.floor(height / 2) + dy + 6, smile, Themes[Settings.Theme].COLOR_SUBFONT)
+			Font.print(FONT26, 582 - math.floor(Font.getTextWidth(FONT26, smile) / 2), 272 - math.floor(height / 2) + dy + 6, smile, Themes[Settings.Theme].COLOR_SUBFONT)
 		end
 	end
 	if item and item ~= 0 then
