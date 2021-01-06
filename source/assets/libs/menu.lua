@@ -64,7 +64,7 @@ function Menu.setMode(newMode)
 	if mode == newMode then
 		return
 	end
-	Catalogs.setMode(newMode)
+	Catalogs.setStatus(newMode)
 	mode = newMode
 end
 

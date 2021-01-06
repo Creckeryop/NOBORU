@@ -18,7 +18,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Соединение потеряно\n\nОжидание подключения...\n\n(Сверните приложение, Зайдите в настройки соединения, нажмите Присоединиться)\n\nНажмите X для отмены всех загрузок и закрытия сообщения\n\nВсе загрузки продолжаться, если соединение восстановится",
-			PRESS_TO_UPDATE = "Нажмите X для обновления\nНажмите O для отмены"
+			PRESS_TO_UPDATE = "Нажмите X для обновления\nНажмите O для отмены",
+			NO_LIBRARY_MANGA = "Нет манги.\nЧтобы добавить мангу, найдите мангу в меню \"КАТАЛОГИ\".\nЗатем нажмите \"Добавить в библиотеку\".",
+			NO_HISTORY_MANGA = "Нет манги.\nКогда нибудь она здесь появится",
+			NO_CATALOG_MANGA = "Нет манги.\nОшибка сервера, соединения либо парсера",
+			NO_CATALOGS = "Нет каталогов.\nНажмите Треугольник и дождитесь загрузки всех каталогов",
 		},
 		SETTINGS = {
 			Language = "Язык",
@@ -237,7 +241,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored",
-			PRESS_TO_UPDATE = "Press X to update\nPress O to cancel"
+			PRESS_TO_UPDATE = "Press X to update\nPress O to cancel",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".",
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday",
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error",
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded",
 		},
 		SETTINGS = {
 			Language = "Language",
@@ -456,7 +464,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Bağlantı kesildi\n\nBağlantı için bekleniyor...\n\n(Uygulamayı küçültün, Wi-Fİ seçeneklerine gidin ve ağa bağlanın)\n\nMesajı kapatmak ve bütün indirmeleri iptal etmek için X e basın\n\nAğa bağlanınca tüm indirmeler devam edecek.",
-			PRESS_TO_UPDATE = "Güncellemek için X e basın\nVazgeçmek için O ya basın."
+			PRESS_TO_UPDATE = "Güncellemek için X e basın\nVazgeçmek için O ya basın.",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "Dil",
@@ -675,7 +687,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Mất kết nối\n\nĐang đợi mạng...\n\n(Hãy chạy ẩn ứng dụng, đi đến cài đặt và tiến hành kết nối mạng)\n\nNhấn X để hủy tất cả tiến trình tải và tắt thông báo\n\nCác tiến trình tải sẽ tự động tiếp tục khi có kết nối mạng",
-			PRESS_TO_UPDATE = "Nhấn X để cập nhật\nNhấn O để hủy bỏ"
+			PRESS_TO_UPDATE = "Nhấn X để cập nhật\nNhấn O để hủy bỏ",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "Ngôn ngữ",
@@ -894,7 +910,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Se ha perdido la conexión\n\nEsperando conexión...\n\n(Minimiza la app, vete a los ajustes wifi y conectate a tu red wifi)\n\nPresiona X para cancelar todas las descargas y cerrar el mensaje\n\nTodas las descargas continuaran, cuando la conexión sea restaurada.",
-			PRESS_TO_UPDATE = "Presiona X para actualizar\nPresiona O para cancelar"
+			PRESS_TO_UPDATE = "Presiona X para actualizar\nPresiona O para cancelar",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "Idioma:",
@@ -1113,7 +1133,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Connessione persa \n\nIn attesa di connessione ......\n\n(Riduci a icona l'applicazione, vai su Impostazioni Wi-Fi e premi Connetti)\n\nPremi X per annullare tutti i download e chiudere il messaggio \n\nTutti i download continueranno se la rete viene ripristinata",
-			PRESS_TO_UPDATE = "Premi X per aggiornare\nPremi O per annullare"
+			PRESS_TO_UPDATE = "Premi X per aggiornare\nPremi O per annullare",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "Linguaggio",
@@ -1332,7 +1356,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Connection perdu\n\nEn attente de la reconnection......\n\n(Réduir l'application, aller au paramètres Wi-Fi et appuyez sur connection)\n\nAppuyez sur X pour annuler tout les téléchargments et fermer le message\n\nTout les téléchargements reprondront une fois la connection établie",
-			PRESS_TO_UPDATE = "Appuez sur X pour mettre à jour\nAppuyez sur O pour annuler"
+			PRESS_TO_UPDATE = "Appuez sur X pour mettre à jour\nAppuyez sur O pour annuler",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "Language",
@@ -1551,7 +1579,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Conexão foi perdida\n\nEsperando por conexão...\n\n(Minimize a aplicação, vá para as configurações do Wi-Fi e pressione Conectar)\n\nAperte X para cancelar todos os downloads e fechar a mensagem\n\nTodos os downloads vão continuar se a conexão for restaurada",
-			PRESS_TO_UPDATE = "Aperte X para atualizar\nAperte O para cancelar"
+			PRESS_TO_UPDATE = "Aperte X para atualizar\nAperte O para cancelar",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "Idioma",
@@ -1772,7 +1804,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "连接失败\n\n等待连接...\n\n(最小化应用程序 , 转到设置到WIFI设置 , 然后选择连接网络)\n\n按 × 取消所有下载并关闭消息\n\n如果网络恢复正常 , 将继续所有下载",
-			PRESS_TO_UPDATE = "按 × 更新\n按 ○ 取消"
+			PRESS_TO_UPDATE = "按 × 更新\n按 ○ 取消",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "语言",
@@ -1991,7 +2027,11 @@ Language = {
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "連接失敗\n\n等待連接...\n\n(最小化應用程序 , 轉到設置到WIFI設置 , 然後選擇連接網絡)\n\n按 × 取消所有下載並關閉消息\n\n如果網絡恢復正常 , 將繼續所有下載",
-			PRESS_TO_UPDATE = "按 × 更新\n按 ○ 取消"
+			PRESS_TO_UPDATE = "按 × 更新\n按 ○ 取消",
+			NO_LIBRARY_MANGA = "No manga.\nTo add manga, find manga in \"CATALOGS\" menu and press \"Add to library\".", --translate please
+			NO_HISTORY_MANGA = "No manga.\nIt will appear here someday", --translate please
+			NO_CATALOG_MANGA = "No manga.\nServer, connection or parser error", --translate please
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
 		},
 		SETTINGS = {
 			Language = "語言",
