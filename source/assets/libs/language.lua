@@ -1587,11 +1587,11 @@ Language = {
 		MESSAGE = {
 			LOST_CONNECTION = "Conexão foi perdida\n\nEsperando por conexão...\n\n(Minimize a aplicação, vá para as configurações do Wi-Fi e pressione Conectar)\n\nAperte X para cancelar todos os downloads e fechar a mensagem\n\nTodos os downloads vão continuar se a conexão for restaurada",
 			PRESS_TO_UPDATE = "Aperte X para atualizar\nAperte O para cancelar",
-			NO_LIBRARY_MANGA = "No manga/comics.\nTo add manga/comics, find it in \"CATALOGS\" menu and press \"Add to library\".", --translate please
-			NO_HISTORY_MANGA = "No manga/comics.\nIt will appear here someday", --translate please
-			NO_CATALOG_MANGA = "No manga/comics.\nServer, connection or parser error", --translate please
-			NO_DOWNLOADING_MANGA = "No downloading manga/comics", --translate please
-			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded", --translate please
+			NO_LIBRARY_MANGA = "Sem mangás/comics.\nPara adicionar mangás / quadrinhos, encontre no menu \"CATÁLOGOS\" e pressione \"Adicionar a biblioteca\".",
+			NO_HISTORY_MANGA = "Sem mangás/comics.\nVai aparecer aqui algum dia",
+			NO_CATALOG_MANGA = "Sem mangás/comics.\nErro de servidor, conexão ou analisador",
+			NO_DOWNLOADING_MANGA = "Sem mangá/banda desenhada para Download",
+			NO_CATALOGS = "Sem catálogs.\nPressione o Triângulo e espere até que todos OS catálogos sejam carregados",
 		},
 		SETTINGS = {
 			Language = "Idioma",
@@ -1654,16 +1654,13 @@ Language = {
 			InputValue = "Insira um valor",
 			OpenInBrowser = "Abrir no navegador",
 			SaveDataPath = "Salvar caminho dos dados",
-<<<<<<< HEAD
 			SetPageAsCover = "Defina esta imagem como capa",
 			ResetCover = "Redefinir imagem da capa",
 			SupportDev = "Apoiar o desenvolvedor",
-=======
-			SetPageAsCover = "Defina esta imagem como capa"
+			SetPageAsCover = "Defina esta imagem como capa",
 			ResetCover = "Redefinir imagem da capa",
 			SupportDev = "Apoiar o desenvolvedor",
 			PressEdgesToChangePage = "Mude a página tocando na borda da página",
->>>>>>> upstream/master
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configurações relacionadas ao rastreamento de mangás",
