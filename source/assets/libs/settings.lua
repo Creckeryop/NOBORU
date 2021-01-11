@@ -1,15 +1,16 @@
 Settings = {
 	Language = "Default",
+	Theme = "Light",
+	Version = 0.68,
 	NSFW = false,
 	Orientation = "Horizontal",
 	ZoomReader = "Smart",
 	DoubleTapReader = true,
-	Version = 0.68,
+	PressEdgesToChangePage = false,
 	KeyType = "EU",
 	ReaderDirection = "RIGHT",
 	HideInOffline = true,
 	SkipFontLoad = false,
-	Theme = "Light",
 	ParserLanguage = "DIF",
 	LibrarySorting = "Date added",
 	ChapterSorting = "1->N",
@@ -138,7 +139,7 @@ function Settings.getSaveDrivePath()
 end
 
 ---@param source table
----@param setting_name string
+---@param settingName string
 ---@param values table
 ---Sets `settings[setting_name]` value to `source[setting_name]` if value is in `values` table
 ---
@@ -147,22 +148,22 @@ end
 ---`setSetting(new_settings, "SpeedOfScrolling", {1,5,10}) ->`
 ---
 ---`sets Settings.SpeedOfScrolling to new_settings.SpeedOfScrolling if it is 1, 5 or 10 else sets to nil`
-local function setSetting(source, setting_name, values)
-	local new_set = source[setting_name]
-	if new_set == nil then
+local function setSetting(source, settingName, values)
+	local newValue = source[settingName]
+	if newValue == nil then
 		return
 	end
 	if #values == 0 then
-		settings[setting_name] = new_set
+		settings[settingName] = newValue
 	end
 	for _, v in pairs(values) do
-		if new_set == v then
-			settings[setting_name] = new_set
+		if newValue == v then
+			settings[settingName] = newValue
 			return
 		end
 	end
-	if values[new_set] then
-		settings[setting_name] = new_set
+	if values[newValue] then
+		settings[settingName] = newValue
 	end
 end
 
@@ -205,6 +206,7 @@ function settings.load()
 				setSetting(new, "ConnectionTime", {})
 				setSetting(new, "FavouriteParsers", {})
 				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
+				setSetting(new, "PressEdgesToChangePage", {true, false})
 			end
 		end
 		closeFile(fh)
@@ -229,14 +231,14 @@ function settings.save()
 		deleteFile(SETTINGS_SAVE_PATH)
 	end
 	local fh = openFile(SETTINGS_SAVE_PATH, FCREATE)
-	local copy_settings = {}
+	local copiedSettings = {}
 	for k, v in pairs(settings) do
 		if type(v) ~= "function" and k ~= "Version" then
-			copy_settings[k] = v
+			copiedSettings[k] = v
 		end
 	end
-	local save_content = "Settings = " .. table.serialize(copy_settings)
-	writeFile(fh, save_content, #save_content)
+	local saveSettingsContent = "Settings = " .. table.serialize(copiedSettings)
+	writeFile(fh, saveSettingsContent, #saveSettingsContent)
 	closeFile(fh)
 end
 
@@ -266,7 +268,8 @@ local settingsListTree = {
 		"ReaderOrientation",
 		"ZoomReader",
 		"ReaderDirection",
-		"DoubleTapReader"
+		"DoubleTapReader",
+		"PressEdgesToChangePage"
 	},
 	Network = {
 		"ConnectionTime",
@@ -668,6 +671,9 @@ SettingsFunctions = {
 			end
 		end
 		Keyboard.clear()
+	end,
+	PressEdgesToChangePage = function ()
+		settings.PressEdgesToChangePage = not settings.PressEdgesToChangePage
 	end,
 	SaveDataPath = function()
 		settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "uma0"})

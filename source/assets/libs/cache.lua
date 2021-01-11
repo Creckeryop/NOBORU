@@ -195,17 +195,13 @@ end
 ---Removes given `Manga` from history
 function Cache.removeHistory(Manga)
 	local key = getKey(Manga)
-	local is_history_deleted = false
 	for i = 1, #history do
 		if history[i] == key then
 			table.remove(history, i)
-			is_history_deleted = true
+			Cache.saveHistory()
+			is_history_updated = true
 			break
 		end
-	end
-	if is_history_deleted then
-		Cache.saveHistory()
-		is_history_updated = true
 	end
 end
 

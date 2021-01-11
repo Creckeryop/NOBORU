@@ -24,7 +24,7 @@ local EXTRA_MENU_NORMAL = {"DownloadAll", "RemoveAll", "CancelAll", "ClearBookma
 local EXTRA_MENU_NORMAL_WITH_BROWSER = {"OpenMangaInBrowser", "DownloadAll", "RemoveAll", "CancelAll", "ClearBookmarks", "ResetCover"}
 local EXTRA_MENU_IMPORTED = {"ClearBookmarks"}
 local EXTRA_MENU_READER = {"OpenInBrowser", "ReaderOrientation", "ReaderDirection", "ZoomReader", "SetPageAsCover"}
-local EXTRA_MENU_READER_IMPORTED = {"OpenInBrowser", "ReaderOrientation", "ReaderDirection", "ZoomReader"}
+local EXTRA_MENU_READER_IMPORTED = {--[["OpenInBrowser",]] "ReaderOrientation", "ReaderDirection", "ZoomReader"}
 
 local fade = 0
 local oldFade = 1

@@ -286,7 +286,7 @@ function ChapterSaver.importManga(path)
 				end
 			)
 			if type == "folder" then
-				local cover_loaded = false
+				local is_cover_loaded = false
 				for _, folder in ipairs(dir) do
 					local dir_ = listDirectory(path .. "/" .. folder.name) or {}
 					tmp_dir = {}
@@ -314,24 +314,24 @@ function ChapterSaver.importManga(path)
 						Pages = {},
 						Manga = Manga
 					}
-					local subdir = listDirectory(path .. "/" .. folder.name) or {}
+					local subDir = listDirectory(path .. "/" .. folder.name) or {}
 					table.sort(
-						subdir,
+						subDir,
 						function(a, b)
 							return a.name < b.name
 						end
 					)
 					local imageLinks = {}
-					for _, f in ipairs(subdir) do
+					for _, f in ipairs(subDir) do
 						if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. f.name) or -1) > 0 then
 							imageLinks[#imageLinks + 1] = path .. "/" .. folder.name .. "/" .. f.name
 						end
 					end
 					if #imageLinks > 0 then
 						Chapters[#Chapters + 1] = Chapter
-						if not cover_loaded then
+						if not is_cover_loaded then
 							copyFile(imageLinks[1], "ux0:data/noboru/cache/" .. Cache.getKey(Manga) .. "/cover.image")
-							cover_loaded = true
+							is_cover_loaded = true
 						end
 						imageLinks = table.concat(imageLinks, "\n")
 						local k = getKey(Chapter)
