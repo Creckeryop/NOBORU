@@ -1582,14 +1582,14 @@ Language = {
 			DOWNLOAD = "DOWNLOADS",
 			IMPORT = "IMPORTAR",
 			HISTORY = "HISTÓRICO",
-			SEARCH = "PESQUISAR"
+			SEARCH = "Pesquisar"
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Conexão foi perdida\n\nEsperando por conexão...\n\n(Minimize a aplicação, vá para as configurações do Wi-Fi e pressione Conectar)\n\nAperte X para cancelar todos os downloads e fechar a mensagem\n\nTodos os downloads vão continuar se a conexão for restaurada",
 			PRESS_TO_UPDATE = "Aperte X para atualizar\nAperte O para cancelar",
 			NO_LIBRARY_MANGA = "Nenhum mangá/HQ.\nPara adicionar mangá/HQ, encontre-os no menu \"CATÁLOGOS\" e aperte \"Adicionar a biblioteca\".",
 			NO_HISTORY_MANGA = "Nenhum mangá/HQ.\nVai aparecer aqui algum dia",
-			NO_CATALOG_MANGA = "Nenhum mangá/HQ.\Erro de servidor, conexão ou de analisador",
+			NO_CATALOG_MANGA = "Nenhum mangá/HQ.\nErro de servidor, conexão ou de analisador",
 			NO_DOWNLOADING_MANGA = "Nenhum mangá/HQ sendo baixado",
 			NO_CATALOGS = "Nenhum catálogo.\nAperte Triângulo e espere até todos os catálogos serem carregados",
 		},
