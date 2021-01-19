@@ -29,11 +29,15 @@ local function removeDirectory(path)
 				removeDirectory(path .. "/" .. f.name)
 			else
 				deleteFile(path .. "/" .. f.name)
-				Console.write("Delete " .. path .. "/" .. f.name)
+				if Console then
+					Console.write("Delete " .. path .. "/" .. f.name)
+				end
 			end
 		end
 		deleteDirectory(path)
-		Console.write("Delete " .. path)
+		if Console then
+			Console.write("Delete " .. path)
+		end
 	end
 end
 
