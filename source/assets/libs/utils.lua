@@ -109,7 +109,7 @@ function table.serialize(t, fast)
 				key = "[" .. k .. "] = "
 			end
 			if type(v) == "string" then
-				P[#P + 1] = key .. '"' .. v:gsub("\\", "\\\\"):gsub('"', '\\"') .. '"'
+				P[#P + 1] = key .. '"' .. v:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n","\\n") .. '"'
 			elseif type(v) == "table" then
 				P[#P + 1] = key .. serialize(v, _tab + 1)
 			elseif type(v) == "boolean" or type(v) == "number" then
