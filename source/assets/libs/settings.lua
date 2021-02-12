@@ -32,6 +32,8 @@ Settings = {
 	SaveDataPath = "ux0"
 }
 
+NSFWLock = System.doesFileExist("ux0:data/noboru/.lock")
+
 local settingsDefaults = table.clone(Settings)
 
 DeadZoneValues = {20, 30, 40, 50, 90}
@@ -138,110 +140,6 @@ function Settings.getSaveDrivePath()
 	end
 end
 
----@param source table
----@param settingName string
----@param values table
----Sets `settings[setting_name]` value to `source[setting_name]` if value is in `values` table
----
----Example:
----
----`setSetting(new_settings, "SpeedOfScrolling", {1,5,10}) ->`
----
----`sets Settings.SpeedOfScrolling to new_settings.SpeedOfScrolling if it is 1, 5 or 10 else sets to nil`
-local function setSetting(source, settingName, values)
-	local newValue = source[settingName]
-	if newValue == nil then
-		return
-	end
-	if #values == 0 then
-		settings[settingName] = newValue
-	end
-	for _, v in pairs(values) do
-		if newValue == v then
-			settings[settingName] = newValue
-			return
-		end
-	end
-	if values[newValue] then
-		settings[settingName] = newValue
-	end
-end
-
-local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
-
----Loads settings from `ux0:data/noboru/settings.ini`
-function settings.load()
-	if doesFileExist(SETTINGS_SAVE_PATH) then
-		local fh = openFile(SETTINGS_SAVE_PATH, FREAD)
-		local suc = load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")
-		if suc then
-			local new = suc()
-			if type(new) == "table" then
-				setSetting(new, "Language", Language)
-				setSetting(new, "NSFW", {true, false})
-				setSetting(new, "SkipFontLoad", {true, false})
-				setSetting(new, "Orientation", {"Horizontal", "Vertical"})
-				setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
-				setSetting(new, "ReaderDirection", {"LEFT", "RIGHT", "DOWN"})
-				setSetting(new, "KeyType", {"JP", "EU"})
-				setSetting(new, "HideInOffline", {true, false})
-				setSetting(new, "DoubleTapReader", {true, false})
-				setSetting(new, "Theme", Themes)
-				setSetting(new, "ParserLanguage", GetParserLanguages())
-				setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
-				setSetting(new, "ChapterSorting", {"1->N", "N->1"})
-				setSetting(new, "RefreshLibAtStart", {true, false})
-				setSetting(new, "ChangingPageButtons", {"DPAD", "LR"})
-				setSetting(new, "LeftStickDeadZone", DeadZoneValues)
-				setSetting(new, "LeftStickSensitivity", SensitivityValues)
-				setSetting(new, "RightStickDeadZone", DeadZoneValues)
-				setSetting(new, "RightStickSensitivity", SensitivityValues)
-				setSetting(new, "SilentDownloads", {true, false})
-				setSetting(new, "UseProxy", {true, false})
-				setSetting(new, "ProxyIP", {})
-				setSetting(new, "ProxyPort", {})
-				setSetting(new, "UseProxyAuth", {true, false})
-				setSetting(new, "ProxyAuth", {})
-				setSetting(new, "SkipCacheChapterChecking", {true, false})
-				setSetting(new, "ConnectionTime", {})
-				setSetting(new, "FavouriteParsers", {})
-				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
-				setSetting(new, "PressEdgesToChangePage", {true, false})
-			end
-		end
-		closeFile(fh)
-	end
-	settings.save()
-	GenPanels()
-	Network.setConnectionTime(settings.ConnectionTime or 10)
-	SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
-	SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
-	SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
-	SCE_CTRL_LEFTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_LEFT or SCE_CTRL_LTRIGGER
-	SCE_LEFT_STICK_DEADZONE = settings.LeftStickDeadZone
-	SCE_LEFT_STICK_SENSITIVITY = settings.LeftStickSensitivity
-	SCE_RIGHT_STICK_DEADZONE = settings.RightStickDeadZone
-	SCE_RIGHT_STICK_SENSITIVITY = settings.RightStickSensitivity
-	setTheme(settings.Theme)
-end
-
----Saves settings in `ux0:data/noboru/settings.ini`
-function settings.save()
-	if doesFileExist(SETTINGS_SAVE_PATH) then
-		deleteFile(SETTINGS_SAVE_PATH)
-	end
-	local fh = openFile(SETTINGS_SAVE_PATH, FCREATE)
-	local copiedSettings = {}
-	for k, v in pairs(settings) do
-		if type(v) ~= "function" and k ~= "Version" then
-			copiedSettings[k] = v
-		end
-	end
-	local saveSettingsContent = "Settings = " .. table.serialize(copiedSettings)
-	writeFile(fh, saveSettingsContent, #saveSettingsContent)
-	closeFile(fh)
-end
-
 ---Table of all available options
 local settingsListTree = {
 	"Language",
@@ -318,6 +216,120 @@ local settingsListCurrentNode = settingsListTree
 local settingsListCurrentPath = {}
 local settingsListCurrentNodeName = "MainSettingsMenu"
 local settingsListCurrentPathNames = {}
+
+---@param source table
+---@param settingName string
+---@param values table
+---Sets `settings[setting_name]` value to `source[setting_name]` if value is in `values` table
+---
+---Example:
+---
+---`setSetting(new_settings, "SpeedOfScrolling", {1,5,10}) ->`
+---
+---`sets Settings.SpeedOfScrolling to new_settings.SpeedOfScrolling if it is 1, 5 or 10 else sets to nil`
+local function setSetting(source, settingName, values)
+	local newValue = source[settingName]
+	if newValue == nil then
+		return
+	end
+	if #values == 0 then
+		settings[settingName] = newValue
+	end
+	for _, v in pairs(values) do
+		if newValue == v then
+			settings[settingName] = newValue
+			return
+		end
+	end
+	if values[newValue] then
+		settings[settingName] = newValue
+	end
+end
+
+local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
+
+---Loads settings from `ux0:data/noboru/settings.ini`
+function settings.load()
+	if doesFileExist(SETTINGS_SAVE_PATH) then
+		local fh = openFile(SETTINGS_SAVE_PATH, FREAD)
+		local suc = load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")
+		if suc then
+			local new = suc()
+			if type(new) == "table" then
+				setSetting(new, "Language", Language)
+				if NSFWLock then
+					setSetting(new, "NSFW", {false})
+					if settingsListTree and settingsListTree.Catalogs and settingsListTree.Catalogs[1] then
+						table.remove(settingsListTree.Catalogs, 1)
+						for k, v in pairs(Language) do
+							Language[k].SETTINGS_DESCRIPTION.Catalogs = nil
+						end
+					end
+				else
+					setSetting(new, "NSFW", {true, false})
+				end
+				setSetting(new, "SkipFontLoad", {true, false})
+				setSetting(new, "Orientation", {"Horizontal", "Vertical"})
+				setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
+				setSetting(new, "ReaderDirection", {"LEFT", "RIGHT", "DOWN"})
+				setSetting(new, "KeyType", {"JP", "EU"})
+				setSetting(new, "HideInOffline", {true, false})
+				setSetting(new, "DoubleTapReader", {true, false})
+				setSetting(new, "Theme", Themes)
+				setSetting(new, "ParserLanguage", GetParserLanguages())
+				setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
+				setSetting(new, "ChapterSorting", {"1->N", "N->1"})
+				setSetting(new, "RefreshLibAtStart", {true, false})
+				setSetting(new, "ChangingPageButtons", {"DPAD", "LR"})
+				setSetting(new, "LeftStickDeadZone", DeadZoneValues)
+				setSetting(new, "LeftStickSensitivity", SensitivityValues)
+				setSetting(new, "RightStickDeadZone", DeadZoneValues)
+				setSetting(new, "RightStickSensitivity", SensitivityValues)
+				setSetting(new, "SilentDownloads", {true, false})
+				setSetting(new, "UseProxy", {true, false})
+				setSetting(new, "ProxyIP", {})
+				setSetting(new, "ProxyPort", {})
+				setSetting(new, "UseProxyAuth", {true, false})
+				setSetting(new, "ProxyAuth", {})
+				setSetting(new, "SkipCacheChapterChecking", {true, false})
+				setSetting(new, "ConnectionTime", {})
+				setSetting(new, "FavouriteParsers", {})
+				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
+				setSetting(new, "PressEdgesToChangePage", {true, false})
+			end
+		end
+		closeFile(fh)
+	end
+	settings.save()
+	GenPanels()
+	Network.setConnectionTime(settings.ConnectionTime or 10)
+	SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
+	SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
+	SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
+	SCE_CTRL_LEFTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_LEFT or SCE_CTRL_LTRIGGER
+	SCE_LEFT_STICK_DEADZONE = settings.LeftStickDeadZone
+	SCE_LEFT_STICK_SENSITIVITY = settings.LeftStickSensitivity
+	SCE_RIGHT_STICK_DEADZONE = settings.RightStickDeadZone
+	SCE_RIGHT_STICK_SENSITIVITY = settings.RightStickSensitivity
+	setTheme(settings.Theme)
+end
+
+---Saves settings in `ux0:data/noboru/settings.ini`
+function settings.save()
+	if doesFileExist(SETTINGS_SAVE_PATH) then
+		deleteFile(SETTINGS_SAVE_PATH)
+	end
+	local fh = openFile(SETTINGS_SAVE_PATH, FCREATE)
+	local copiedSettings = {}
+	for k, v in pairs(settings) do
+		if type(v) ~= "function" and k ~= "Version" then
+			copiedSettings[k] = v
+		end
+	end
+	local saveSettingsContent = "Settings = " .. table.serialize(copiedSettings)
+	writeFile(fh, saveSettingsContent, #saveSettingsContent)
+	closeFile(fh)
+end
 
 ---@return table
 ---Return list of available options
