@@ -406,7 +406,7 @@ function ChapterSaver.importManga(path)
 					local is_contain_images = false
 					for _, file in ipairs(zipDir) do
 						Console.write(file.name)
-						if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
+						if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$")  or file.name:find("%.gif$") then
 							if not is_cover_loaded then
 								extractFromZip(path .. "/" .. pack.name, file.name, "ux0:data/noboru/cache/" .. mk .. "/cover.image")
 								is_cover_loaded = true
@@ -459,7 +459,7 @@ function ChapterSaver.importManga(path)
 				local is_cover_loaded = false
 				for _, file in ipairs(zipDir) do
 					Console.write(file.name)
-					if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") then
+					if file.name:find("%.jpeg$") or file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.bmp$") or file.name:find("%.gif$") then
 						extractFromZip(path, file.name, "ux0:data/noboru/cache/" .. mk .. "/cover.image")
 						is_cover_loaded = true
 						break
@@ -668,7 +668,7 @@ function ChapterSaver.getChapter(chapter)
 				end
 			)
 			for _, file in ipairs(dir) do
-				if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$") or file.name:find("%.image$")) then
+				if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$") or file.name:find("%.gif$") or file.name:find("%.image$")) then
 					_table_[#_table_ + 1] = {
 						Path = chapter.Path .. "/" .. file.name
 					}
@@ -683,7 +683,7 @@ function ChapterSaver.getChapter(chapter)
 				end
 			)
 			for _, file in ipairs(zip) do
-				if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
+				if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$") or file.name:find("%.gif$")) then
 					_table_[#_table_ + 1] = {
 						Extract = file.name,
 						Path = chapter.Path
@@ -713,7 +713,7 @@ function ChapterSaver.getChapter(chapter)
 					end
 				)
 				for _, file in ipairs(zip) do
-					if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$")) then
+					if not file.directory and (file.name:find("%.jpg$") or file.name:find("%.png$") or file.name:find("%.jpeg$") or file.name:find("%.bmp$") or file.name:find("%.gif$")) then
 						_table_[#_table_ + 1] = {
 							Extract = file.name,
 							Path = lines[1]
