@@ -23,8 +23,8 @@ local DEFAULT_MAX_EXTRA_MENU_WIDTH = 512
 local EXTRA_MENU_NORMAL = {"DownloadAll", "RemoveAll", "CancelAll", "ClearBookmarks", "ResetCover"}
 local EXTRA_MENU_NORMAL_WITH_BROWSER = {"OpenMangaInBrowser", "DownloadAll", "RemoveAll", "CancelAll", "ClearBookmarks", "ResetCover"}
 local EXTRA_MENU_IMPORTED = {"ClearBookmarks"}
-local EXTRA_MENU_READER = {"OpenInBrowser", "ReaderOrientation", "ReaderDirection", "ZoomReader", "SetPageAsCover"}
-local EXTRA_MENU_READER_IMPORTED = {--[["OpenInBrowser",]] "ReaderOrientation", "ReaderDirection", "ZoomReader"}
+local EXTRA_MENU_READER = {"OpenInBrowser", "ReaderOrientation", "ReaderDirection", "ZoomReader", "SetPageAsCover", "DownloadImageToMemory"}
+local EXTRA_MENU_READER_IMPORTED = {--[["OpenInBrowser",]] "ReaderOrientation", "ReaderDirection", "ZoomReader", "DownloadImageToMemory"}
 
 local fade = 0
 local oldFade = 1
@@ -118,6 +118,12 @@ function Extra.setChapters(manga, chapters, page)
 		end
 	end
 end
+
+local getTime = System.getTime
+local getDate = System.getDate
+local getImageFormat = System.getImageFormat
+local rename = System.rename
+local last_unique = nil
 
 local function pressOption(id)
 	if selectedExtraMenu[id] == "DownloadAll" then
@@ -265,6 +271,91 @@ local function pressOption(id)
 				)
 			else
 				return
+			end
+		end
+	elseif selectedExtraMenu[id] == "DownloadImageToMemory" then
+		local page = Reader.getCurrentPageImageLink()
+		if page then
+			local tempTable = {}
+			local h, mn, s = getTime()
+			local _, d, mo, y = getDate()
+			if #tostring(d) == 1 then
+				d = "0"..tostring(d)
+			end
+			if #tostring(mo) == 1 then
+				mo = "0"..tostring(mo)
+			end
+			if #tostring(h) == 1 then
+				h = "0"..tostring(h)
+			end
+			if #tostring(mn) == 1 then
+				mn = "0"..tostring(mn)
+			end
+			if #tostring(s) == 1 then
+				s = "0"..tostring(s)
+			end
+			local unique_name = y .. "." .. mo .. "." .. d .. "-" .. h .. "." .. mn .. "." .. s
+			if unique_name ~= last_unique then
+				last_unique = unique_name
+				if page.Extract then
+				elseif page.Path then
+					copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/pictures/" .. unique_name .. ".image")
+					local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+					if f ~= nil then
+						rename("ux0:data/noboru/pictures/" .. unique_name .. ".image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f)
+					end
+					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+				elseif page.ParserID then
+					Threads.insertTask(
+						tempTable,
+						{
+							Type = "function",
+							OnComplete = function()
+								ParserManager.getPageImage(page.ParserID, page.Link, tempTable)
+								while (ParserManager.check(tempTable)) do
+									coroutine.yield(false)
+								end
+								Threads.insertTask(
+									tempTable,
+									{
+										Type = "FileDownload",
+										Link = tempTable.Link,
+										Path = "ux0:data/noboru/pictures/" .. unique_name .. ".image",
+										OnComplete = function()
+											if doesFileExist("ux0:data/noboru/pictures/" .. unique_name .. ".image") then
+												local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+												if f ~= nil then
+													rename("ux0:data/noboru/pictures/" .. unique_name .. ".image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f)
+												end
+												Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+											end
+										end
+									}
+								)
+							end
+						}
+					)
+				elseif page.Link then
+					Threads.insertTask(
+						tempTable,
+						{
+							Type = "FileDownload",
+							Link = page.Link,
+							Path = "ux0:data/noboru/pictures/" .. unique_name .. ".image",
+							OnComplete = function()
+								if doesFileExist("ux0:data/noboru/pictures/" .. unique_name .. ".image") then
+									local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+									if f ~= nil then
+										rename("ux0:data/noboru/pictures/" .. unique_name .. ".image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f)
+									end
+									Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+								end
+							end
+						}
+					)
+				else
+					return
+				end
 			end
 		end
 	end

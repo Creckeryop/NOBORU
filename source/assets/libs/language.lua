@@ -91,7 +91,8 @@ Language = {
 			SetPageAsCover = "Установить в качестве обложки манги",
 			ResetCover = "Сбросить обложку",
 			SupportDev = "Поддержать разработчика",
-			PressEdgesToChangePage = "Смена страниц по нажатию на грани страницы"
+			PressEdgesToChangePage = "Смена страниц по нажатию на грани страницы",
+			DownloadImageToMemory = "Сохранить в память",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Настройки связанные с отслеживанием манги",
@@ -318,7 +319,8 @@ Language = {
 			SetPageAsCover = "Set page as cover",
 			ResetCover = "Reset cover",
 			SupportDev = "Support the developer",
-			PressEdgesToChangePage = "Change pages by pressing edges of page"
+			PressEdgesToChangePage = "Change pages by pressing edges of page",
+			DownloadImageToMemory = "Download image",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking",
@@ -546,6 +548,7 @@ Language = {
 			ResetCover = "Kapağı Sıfırla", 
 			SupportDev = "Geliştiriciye Destek Ol", 
 			PressEdgesToChangePage = "Sayfaların Kenralarına Basarak Sayfaları Değiştirin", 
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Manga Takibi İle İlgili Ayarlar.", 
@@ -773,6 +776,7 @@ Language = {
 			ResetCover = "Xóa ảnh bìa",
 			SupportDev = "Hỗ trợ nhà phát triển",
 			PressEdgesToChangePage = "Chuyển trang bằng chạm vào cạnh",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Cài đặt về tủ truyện",
@@ -1000,6 +1004,7 @@ Language = {
 			ResetCover = "Resetear portada",
 			SupportDev = "Apoya al desarrollador", 
 			PressEdgesToChangePage = "Cambiar de pagina presionando el borde",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configuración relacionada con los mangas en seguimiento",
@@ -1227,6 +1232,7 @@ Language = {
 			ResetCover = "Ripristina le cover", --translate please
 			SupportDev = "Supporta lo sviluppatore", --translate please
 			PressEdgesToChangePage = "Cambia le pagine premendo i bordi della pagina",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Impostazioni relative al tracciamento dei manga",
@@ -1454,6 +1460,7 @@ Language = {
 			ResetCover = "Restaurer la couverture",
 			SupportDev = "Supporter le développeur",
 			PressEdgesToChangePage = "Changer de page en appuyant sur le bord des pages",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Paramètres de suivi des mangas",
@@ -1681,6 +1688,7 @@ Language = {
 			ResetCover = "Resetar capa",
 			SupportDev = "Apoie o desenvolvedor",
 			PressEdgesToChangePage = "Mude as páginas apertando as bordas da página",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configurações relacionadas ao rastreamento de mangás",
@@ -1910,6 +1918,7 @@ Language = {
 			ResetCover = "重置封面",
 			SupportDev = "支持开发者",
 			PressEdgesToChangePage = "点击屏幕边缘进行翻页",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "书架排序, 漫画追踪相关的设置",
@@ -2137,6 +2146,7 @@ Language = {
 			ResetCover = "重置封面",
 			SupportDev = "支持開發者",
 			PressEdgesToChangePage = "點擊屏幕邊緣進行翻頁",
+			DownloadImageToMemory = "Download image", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "書架排序, 漫畫追蹤相關的設置",
