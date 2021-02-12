@@ -299,7 +299,9 @@ local settingsListTree = {
 		"CheckUpdate",
 		"ShowAuthor",
 		"SupportDev",
-		"Translators"
+		"DonatorsList",
+		"Translators",
+		DonatorsList = {}
 	},
 	Controls = {
 		"SwapXO",
@@ -355,6 +357,7 @@ function settings.setTab(mode)
 			1
 		)
 		AppMode = READER
+	elseif settingsListCurrentNodeName == "DonatorsList" then
 	else
 		if settingsListCurrentNode[mode] then
 			if mode == "AdvancedChaptersDeletion" then
@@ -394,6 +397,26 @@ function settings.setTab(mode)
 							end
 						end
 					end
+				end
+				settingsListCurrentNode[mode] = t
+			elseif mode == "DonatorsList" then
+				local t = {}
+				t[#t + 1] = {
+					name = Language[Settings.Language].MESSAGE.THANK_YOU,
+					info = ""
+				}
+				if doesFileExist("ux0:data/noboru/donators") then
+					local fh = openFile("ux0:data/noboru/donators", FREAD)
+					local d_list = ToLines(readFile(fh, sizeFile(fh))) or {}
+					for i = 1, #d_list do
+						if d_list[i]:gsub("%s", "") ~= "" then
+							t[#t + 1] = {
+								name = d_list[i],
+								info = ""
+							}
+						end
+					end
+					closeFile(fh)
 				end
 				settingsListCurrentNode[mode] = t
 			end
@@ -547,6 +570,18 @@ SettingsFunctions = {
 			Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
 		end
 	end,
+	CheckDonators = function()
+		if Threads.netActionUnSafe(Network.isWifiEnabled) then
+			Threads.insertTask(
+				"CheckDonators",
+				{
+					Type = "FileDownload",
+					Link = "https://creckeryop.github.io/DONATIONS.md",
+					Path = "ux0:data/noboru/donators"
+				}
+			)
+		end
+	end,
 	GetLastVpkSize = function()
 		return lastVpkSize
 	end,
@@ -672,7 +707,7 @@ SettingsFunctions = {
 		end
 		Keyboard.clear()
 	end,
-	PressEdgesToChangePage = function ()
+	PressEdgesToChangePage = function()
 		settings.PressEdgesToChangePage = not settings.PressEdgesToChangePage
 	end,
 	SaveDataPath = function()
