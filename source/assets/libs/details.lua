@@ -515,16 +515,18 @@ function Details.draw()
 		Graphics.fillRect(260, 890 - 18, 95 + chaptersMaxHeightOffset, 544, backgroundColor)
 		local listCount = #chaptersList
 		for n = start, math.min(listCount, start + 8) do
-			local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
-			local bookmark = Cache.getBookmark(chaptersList[i])
-			if bookmark ~= nil and bookmark ~= true then
-				Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, textColor)
-				Font.print(BONT16, 290, y + 14, chaptersList[i].Name or ("Chapter " .. i), textColor)
-			elseif bookmark == true then
-				Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.DONE, secondTextColor)
-				Font.print(BONT16, 290, y + 14, chaptersList[i].Name or ("Chapter " .. i), secondTextColor)
-			else
-				Font.print(BONT16, 290, y + 28, chaptersList[i].Name or ("Chapter " .. i), textColor)
+			if y + 80 > 95 + chaptersMaxHeightOffset then
+				local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
+				local bookmark = Cache.getBookmark(chaptersList[i])
+				if bookmark ~= nil and bookmark ~= true then
+					Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, textColor)
+					Font.print(BONT16, 290, y + 14, chaptersList[i].Name or ("Chapter " .. i), textColor)
+				elseif bookmark == true then
+					Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.DONE, secondTextColor)
+					Font.print(BONT16, 290, y + 14, chaptersList[i].Name or ("Chapter " .. i), secondTextColor)
+				else
+					Font.print(BONT16, 290, y + 28, chaptersList[i].Name or ("Chapter " .. i), textColor)
+				end
 			end
 			y = y + 80
 			if y > 544 then
@@ -535,26 +537,28 @@ function Details.draw()
 		Graphics.fillRect(890 - 18, 955, 95 + chaptersMaxHeightOffset, 544, backgroundColor)
 		y = shift - slider.Y + start * 80 + chaptersMaxHeightOffset
 		for n = start, math.min(listCount, start + 8) do
-			local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
-			if selectedManga.ParserID ~= "IMPORTED" then
-				if ChapterSaver.check(chaptersList[i]) then
-					Graphics.drawImage(920 - 14 - 18, y + 40 - 12, crossIcon.e)
-				else
-					local chapterDownloadInfo = ChapterSaver.is_downloading(chaptersList[i])
-					if chapterDownloadInfo then
-						local downloadProgressPercentageText = "0%"
-						if chapterDownloadInfo.page_count and chapterDownloadInfo.page_count > 0 then
-							downloadProgressPercentageText = math.ceil(100 * chapterDownloadInfo.page / chapterDownloadInfo.page_count) .. "%"
-						end
-						local width = Font.getTextWidth(FONT20, downloadProgressPercentageText)
-						Font.print(FONT20, 920 - width / 2 - 18, y + 26, downloadProgressPercentageText, COLOR_WHITE)
+			if y + 80 > 95 + chaptersMaxHeightOffset then
+				local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
+				if selectedManga.ParserID ~= "IMPORTED" then
+					if ChapterSaver.check(chaptersList[i]) then
+						Graphics.drawImage(920 - 14 - 18, y + 40 - 12, crossIcon.e)
 					else
-						Graphics.drawImage(920 - 14 - 18, y + 40 - 12, DownloadIcon.e)
+						local chapterDownloadInfo = ChapterSaver.is_downloading(chaptersList[i])
+						if chapterDownloadInfo then
+							local downloadProgressPercentageText = "0%"
+							if chapterDownloadInfo.page_count and chapterDownloadInfo.page_count > 0 then
+								downloadProgressPercentageText = math.ceil(100 * chapterDownloadInfo.page / chapterDownloadInfo.page_count) .. "%"
+							end
+							local width = Font.getTextWidth(FONT20, downloadProgressPercentageText)
+							Font.print(FONT20, 920 - width / 2 - 18, y + 26, downloadProgressPercentageText, COLOR_WHITE)
+						else
+							Graphics.drawImage(920 - 14 - 18, y + 40 - 12, DownloadIcon.e)
+						end
 					end
 				end
-			end
-			if i == slider.ItemID then
-				Graphics.fillRect(270, 945, y, y + 79, Color.new(255, 255, 255, 24 * M))
+				if i == slider.ItemID then
+					Graphics.fillRect(270, 945, y, y + 79, Color.new(255, 255, 255, 24 * M))
+				end
 			end
 			y = y + 80
 		end
@@ -565,14 +569,16 @@ function Details.draw()
 		local item = detailsSelector.getSelected()
 		if item ~= 0 then
 			y = shift - slider.Y + item * 80 + chaptersMaxHeightOffset
-			local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
-			local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
-			for i = ks, ks + 1 do
-				Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
-				Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
-			end
-			if selectedManga.ParserID ~= "IMPORTED" then
-				Graphics.drawImage(929 - ks, y + 5 + ks, ButtonsIcons.Square.e)
+			if y + 80 > 95 + chaptersMaxHeightOffset then
+				local SELECTED_RED = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
+				local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
+				for i = ks, ks + 1 do
+					Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, Color.new(255, 0, 51))
+					Graphics.fillEmptyRect(272 + i, 950 - i, y + i + 2, y + 75 - i + 1, SELECTED_RED)
+				end
+				if selectedManga.ParserID ~= "IMPORTED" then
+					Graphics.drawImage(929 - ks, y + 5 + ks, ButtonsIcons.Square.e)
+				end
 			end
 		end
 		if #descriptionWordList > 0 and chaptersMaxHeightOffset > 0 then
