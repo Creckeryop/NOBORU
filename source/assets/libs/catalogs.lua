@@ -864,7 +864,11 @@ function Catalogs.draw()
 			end
 			if type(task) == "table" then
 				if Settings.getTab() == "DonatorsList" then
-					Font.print(FONT26, (215 + 945) / 2 - Font.getTextWidth(FONT26, task.name) / 2, y - 45 - Font.getTextHeight(FONT26, task.name) / 2, task.name, COLOR_FONT)
+					if i == 1 then
+						Font.print(FONT26, (215 + 945) / 2 - Font.getTextWidth(FONT26, task.name) / 2, y - 45 - Font.getTextHeight(FONT26, task.name) / 2, task.name, COLOR_CRIMSON)
+					else
+						Font.print(FONT26, (215 + 945) / 2 - Font.getTextWidth(FONT26, task.name) / 2, y - 45 - Font.getTextHeight(FONT26, task.name) / 2, task.name, COLOR_FONT)
+					end
 				else
 					Font.print(FONT20, 225, y - 70, task.name, COLOR_FONT)
 					if task.type == "savedChapter" then
@@ -872,9 +876,16 @@ function Catalogs.draw()
 					end
 				end
 			else
-				Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
-				if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUBFONT)
+				if task == "DonatorsList" then
+					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, Color.new(136, 0, 255))
+					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
+						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_ROYAL_BLUE)
+					end
+				else
+					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
+					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
+						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUBFONT)
+					end
 				end
 				if task == "Language" then
 					Font.print(FONT16, 225, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
