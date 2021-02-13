@@ -93,6 +93,7 @@ Language = {
 			SupportDev = "Поддержать разработчика",
 			PressEdgesToChangePage = "Смена страниц по нажатию на грани страницы",
 			DownloadImageToMemory = "Сохранить в память",
+			AnimatedGif = "Анимировать Гифки (Экспериментально)",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Настройки связанные с отслеживанием манги",
@@ -321,6 +322,7 @@ Language = {
 			SupportDev = "Support the developer",
 			PressEdgesToChangePage = "Change pages by pressing edges of page",
 			DownloadImageToMemory = "Download image",
+			AnimatedGif = "Animate gif (Experimental)",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking",
@@ -549,6 +551,7 @@ Language = {
 			SupportDev = "Geliştiriciye Destek Ol", 
 			PressEdgesToChangePage = "Sayfaların Kenralarına Basarak Sayfaları Değiştirin", 
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Manga Takibi İle İlgili Ayarlar.", 
@@ -777,6 +780,7 @@ Language = {
 			SupportDev = "Hỗ trợ nhà phát triển",
 			PressEdgesToChangePage = "Chuyển trang bằng chạm vào cạnh",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Cài đặt về tủ truyện",
@@ -1005,6 +1009,7 @@ Language = {
 			SupportDev = "Apoya al desarrollador", 
 			PressEdgesToChangePage = "Cambiar de pagina presionando el borde",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configuración relacionada con los mangas en seguimiento",
@@ -1228,11 +1233,12 @@ Language = {
 			InputValue = "Valore di Input",
 			OpenInBrowser = "Apri nel browser",
 			SaveDataPath = "Salva percorso dati",
-			SetPageAsCover = "Imposta la pagina come cover", --translate please
-			ResetCover = "Ripristina le cover", --translate please
-			SupportDev = "Supporta lo sviluppatore", --translate please
+			SetPageAsCover = "Imposta la pagina come cover",
+			ResetCover = "Ripristina le cover",
+			SupportDev = "Supporta lo sviluppatore",
 			PressEdgesToChangePage = "Cambia le pagine premendo i bordi della pagina",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Impostazioni relative al tracciamento dei manga",
@@ -1461,6 +1467,7 @@ Language = {
 			SupportDev = "Supporter le développeur",
 			PressEdgesToChangePage = "Changer de page en appuyant sur le bord des pages",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Paramètres de suivi des mangas",
@@ -1689,6 +1696,7 @@ Language = {
 			SupportDev = "Apoie o desenvolvedor",
 			PressEdgesToChangePage = "Mude as páginas apertando as bordas da página",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configurações relacionadas ao rastreamento de mangás",
@@ -1919,6 +1927,7 @@ Language = {
 			SupportDev = "支持开发者",
 			PressEdgesToChangePage = "点击屏幕边缘进行翻页",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "书架排序, 漫画追踪相关的设置",
@@ -2147,6 +2156,7 @@ Language = {
 			SupportDev = "支持開發者",
 			PressEdgesToChangePage = "點擊屏幕邊緣進行翻頁",
 			DownloadImageToMemory = "Download image", --Translate please
+			AnimatedGif = "Animate gif (Experimental)", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "書架排序, 漫畫追蹤相關的設置",

@@ -184,7 +184,8 @@ function ParserManager.loadPageImage(parserID, Link, Table, insert)
 					Type = "ImageDownload",
 					Link = Table.Link,
 					Table = Table,
-					Index = "Image"
+					Index = "Image",
+					Animated = Settings.AnimatedGif
 				}
 			)
 		end,

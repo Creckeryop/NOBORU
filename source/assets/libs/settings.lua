@@ -29,6 +29,7 @@ Settings = {
 	SkipCacheChapterChecking = true,
 	ConnectionTime = 10,
 	FavouriteParsers = {},
+	AnimatedGif = false,
 	SaveDataPath = "ux0"
 }
 
@@ -167,7 +168,8 @@ local settingsListTree = {
 		"ZoomReader",
 		"ReaderDirection",
 		"DoubleTapReader",
-		"PressEdgesToChangePage"
+		"PressEdgesToChangePage",
+		"AnimatedGif"
 	},
 	Network = {
 		"ConnectionTime",
@@ -296,6 +298,7 @@ function settings.load()
 				setSetting(new, "FavouriteParsers", {})
 				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
 				setSetting(new, "PressEdgesToChangePage", {true, false})
+				setSetting(new, "AnimatedGif", {true, false})
 			end
 		end
 		closeFile(fh)
@@ -724,5 +727,8 @@ SettingsFunctions = {
 	end,
 	SaveDataPath = function()
 		settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "uma0"})
+	end,
+	AnimatedGif = function()
+		settings.AnimatedGif = not settings.AnimatedGif
 	end
 }

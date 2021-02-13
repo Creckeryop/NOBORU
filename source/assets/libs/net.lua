@@ -21,6 +21,7 @@ local openFile = System.openFile
 local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 local removeDirectory = RemoveDirectory
+local getImageFormat = System.getImageFormat
 
 local function img2bytes(width, height, dScale)
 	return bit32.band(width + 7, bit32.bnot(7)) * height * 4 / (dScale * dScale) + 1024
@@ -212,8 +213,15 @@ function Threads.update()
 							else
 								scale = 64
 							end
-							Graphics.loadImageAsync(currentTask.Path, scale)
-							currentTask.Type = "ImageLoad"
+							if scale == 1 and currentTask.Animated and getImageFormat(currentTask.Path) == "gif" then
+								Graphics.loadGifAsync(currentTask.Path, scale)
+								currentTask.Type = "ImageLoad"
+								currentTask.Animated = true
+							else
+								Graphics.loadImageAsync(currentTask.Path, scale)
+								currentTask.Type = "ImageLoad"
+								currentTask.Animated = false
+							end
 						end
 					end
 				else
@@ -230,7 +238,25 @@ function Threads.update()
 				return
 			elseif currentTask.Type == "ImageLoad" then
 				if doesFileExist(currentTask.Path) then
-					currentTask.Table[currentTask.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
+					if currentTask.Animated then
+						local res = getAsyncResult()
+						if res ~= nil then
+							local gif = Graphics.returnGif(res)
+							if gif ~= nil then
+								currentTask.Table[currentTask.Index] = {}
+								for i = 1, #gif do
+									currentTask.Table[currentTask.Index][i] = {
+										Image = Image:new(gif[i].image, FILTER_LINEAR),
+										Delay = gif[i].delay
+									}
+								end
+								currentTask.Table[currentTask.Index].Height = Graphics.getImageHeight(gif[1].image)
+								currentTask.Table[currentTask.Index].Width = Graphics.getImageWidth(gif[1].image)
+							end
+						end
+					else
+						currentTask.Table[currentTask.Index] = Image:new(getAsyncResult(), FILTER_LINEAR)
+					end
 					currentTask.Final = true
 				else
 					Console.error("(ImageLoad)File not found")
@@ -403,6 +429,7 @@ local function taskete(uniqueKey, t, foo)
 		Header4 = t.Header4 or "",
 		MaxHeight = t.MaxHeight,
 		MaxWidth = t.MaxWidth,
+		Animated = t.Animated,
 		OnComplete = t.OnComplete,
 		OnFinalComplete = t.OnFinalComplete,
 		Extract = t.Extract,
