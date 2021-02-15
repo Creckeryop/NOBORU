@@ -2681,6 +2681,20 @@ LanguageNames = {
 		TraditionalChinese = "繁體中文",
 		Romanian = "Romanian",--Translate please
 		Default = "默認"
+	},
+	Romanian = {
+		Russian = "Russian",
+		English = "English",
+		Turkish = "Turkish",
+		Spanish = "Spanish",
+		Vietnamese = "Vietnamese",
+		French = "French",
+		Italian = "Italian",
+		PortugueseBR = "Brazilian portuguese",
+		SimplifiedChinese = "Simplified Chinese",
+		TraditionalChinese = "Traditional Chinese",
+		Romanian = "Romanian",
+		Default = "System"
 	}
 }
 
