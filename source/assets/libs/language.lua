@@ -149,7 +149,7 @@ Language = {
 			POL = "Польский",
 			IDN = "Индонезийский",
 			CHN = "Китайский",
-			ROU = "Romanian",--Translate please
+			ROU = "Румынский",
 			RAW = "Оригинал (Непереведенные комиксы)"
 		},
 		WARNINGS = {
@@ -2553,7 +2553,7 @@ LanguageNames = {
 		PortugueseBR = "Бразильский португальский",
 		SimplifiedChinese = "Упрощенный китайский",
 		TraditionalChinese = "Традиционный китайский",
-		Romanian = "Romanian",--Translate please
+		Romanian = "Румынский",
 		Default = "Системный"
 	},
 	English = {
