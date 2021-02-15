@@ -2308,7 +2308,7 @@ Language = {
 			FILE = "文件",
 			UNSUPFILE = "不支持文件"
 		}
-	}
+	},
 	Romanian = {
 		APP = {
 			LIBRARY = "BIBLIOTECĂ",
