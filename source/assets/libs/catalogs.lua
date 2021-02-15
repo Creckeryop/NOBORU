@@ -859,7 +859,7 @@ function Catalogs.draw()
 		for i = start, min(#list, start + 9) do
 			local task = list[i]
 			if slider.ItemID == i then
-				local dyForTranslators = list[i] == "Translators" and 90 or 0
+				local dyForTranslators = list[i] == "Translators" and 110 or 0
 				Graphics.fillRect(215, 945, y - 75, y - 1 + dyForTranslators, COLOR_SELECTED)
 			end
 			if type(task) == "table" then
@@ -984,7 +984,7 @@ function Catalogs.draw()
 						FONT16,
 						225,
 						y - 44,
-						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese "):gsub(
+						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese \n@tmihai20 :- Romanian "):gsub(
 							"%- (.-) ",
 							function(a)
 								return " " .. (LanguageNames[Settings.Language][a] or a) .. " "
@@ -1046,7 +1046,7 @@ function Catalogs.draw()
 			scrollHeight = elementsCount * 75 / 524
 		end
 		item = settingSelector:getSelected()
-		itemHeight = list[item] == "Translators" and 90 or 0
+		itemHeight = list[item] == "Translators" and 110 or 0
 	elseif status == "MANGA" or status == "LIBRARY" or status == "HISTORY" then
 		if #currentMangaList ~= 0 then
 			local start = max(1, floor(slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)

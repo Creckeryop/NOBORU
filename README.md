@@ -113,3 +113,4 @@ Execute `build.bat` to create working .vpk
 <br>[Kemal Sanlı](https://github.com/kemalsanli) - Turkish translation
 <br>[rutantan](https://github.com/rutantan) - Portuguese (Brazil) translation
 <br>[Qingyu510](https://github.com/Qingyu510) - Simplified Chinese & Traditional Chinese translation
+<br>[tmihai20](https://github.com/tmihai20) - Romanian translation
