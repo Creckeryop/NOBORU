@@ -2709,9 +2709,6 @@ elseif language_now == 11 then
 elseif language_now == 10 then
 	Language.Default = Language.TraditionalChinese
 	LanguageNames.Default = LanguageNames.TraditionalChinese
-elseif language_now == 18 then
-	Language.Default = Language.Romanian
-	LanguageNames.Default = LanguageNames.Romanian
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
