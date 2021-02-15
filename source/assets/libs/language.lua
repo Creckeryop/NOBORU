@@ -5,6 +5,7 @@
 --Turkish translation created by @kemalsanli
 --PortugueseBR translation created by @rutantan
 --SimplifiedChinese translation & Traditional Chinese created by @Qingyu510
+--Romanian translation by tmihai20
 Language = {
 	Russian = {
 		APP = {
@@ -148,6 +149,7 @@ Language = {
 			POL = "Польский",
 			IDN = "Индонезийский",
 			CHN = "Китайский",
+			ROU = "Romanian",--Translate please
 			RAW = "Оригинал (Непереведенные комиксы)"
 		},
 		WARNINGS = {
@@ -377,6 +379,7 @@ Language = {
 			POL = "Polish",
 			IDN = "Indonesian",
 			CHN = "Chinese",
+			ROU = "Romanian",
 			RAW = "Raw (Untranslated manga)"
 		},
 		WARNINGS = {
@@ -606,6 +609,7 @@ Language = {
 			POL = "Lehçe",
 			IDN = "Endonezya",
 			CHN = "Çin",
+			ROU = "Romanian",--Translate please
 			RAW = "Raw (Çevrilmemiş çizgi romanlar)"
 		},
 		WARNINGS = {
@@ -835,6 +839,7 @@ Language = {
 			POL = "Ba Lan",
 			IDN = "Tiếng Indonesia",
 			CHN = "Trung Quốc",
+			ROU = "Romanian",--Translate please
 			RAW = "Raw (Truyện tranh chưa được dịch)"
 		},
 		WARNINGS = {
@@ -1064,6 +1069,7 @@ Language = {
 			POL = "Polaco",
 			IDN = "Indonesia",
 			CHN = "China",
+			ROU = "Romanian",--Translate please
 			RAW = "Raw (Cómics sin traducir)"
 		},
 		WARNINGS = {
@@ -1293,6 +1299,7 @@ Language = {
 			POL = "Polacco",
 			IDN = "Indonesiano",
 			CHN = "Cina",
+			ROU = "Rumena",
 			RAW = "Raw (Fumetti non tradotti)"
 		},
 		WARNINGS = {
@@ -1522,6 +1529,7 @@ Language = {
 			POL = "Polonais",
 			IDN = "Indonésien",
 			CHN = "Chine",
+			ROU = "Roumaine",
 			RAW = "Raw (Bandes dessinées non traduites)"
 		},
 		WARNINGS = {
@@ -1751,6 +1759,7 @@ Language = {
 			POL = "Polonês",
 			IDN = "Indonésien",
 			CHN = "China",
+			ROU = "Romanian",--Translate please
 			RAW = "Raw (Quadrinhos não traduzidos)"
 		},
 		WARNINGS = {
@@ -1982,6 +1991,7 @@ Language = {
 			POL = "波兰",
 			IDN = "印度尼西亚",
 			CHN = "中国",
+			ROU = "Romanian",--Translate please
 			RAW = "生肉 (未翻译的原版漫画)"
 		},
 		WARNINGS = {
@@ -2211,6 +2221,7 @@ Language = {
 			POL = "波蘭",
 			IDN = "印度尼西亞",
 			CHN = "中國",
+			ROU = "Romanian",--Translate please
 			RAW = "生肉 (未經翻譯的原版漫畫)"
 		},
 		WARNINGS = {
@@ -2298,6 +2309,236 @@ Language = {
 			UNSUPFILE = "不支持文件"
 		}
 	}
+	Romanian = {
+		APP = {
+			LIBRARY = "BIBLIOTECĂ",
+			CATALOGS = "CATALOAGE",
+			SETTINGS = "SETĂRI",
+			DOWNLOAD = "DESCĂRCĂRI",
+			IMPORT = "IMPORTĂ",
+			HISTORY = "ISTORIC",
+			SEARCH = "Caută"
+		},
+		MESSAGE = {
+			LOST_CONNECTION = "Fără conexiune\n\nSe așteaptă conexiunea...\n\n(Minimizați aplicația, mergeți la setările Wi-Fi și apăsați Conectare)\n\nApăsați X pentru a anula toate descărcările și pentru a închide mesajul\n\nToate descărcările vor continua după restabilirea conexiunii",
+			PRESS_TO_UPDATE = "Apăsați X pentru actualizare\nApăsați O pentru anulare",
+			NO_LIBRARY_MANGA = "Nu există manga/comic-uri.\nPentru a adăuga manga/comic-uri, căutați-le în meniul \"CATALOAGE\" și apăsați \"Adăugați la bibliotecă\".",
+			NO_HISTORY_MANGA = "Nu există manga/comic-uri.\nVa apare aici în viitor",
+			NO_CATALOG_MANGA = "Nu există manga/comic-uri.\nEroare de server, conexiune sau parser",
+			NO_DOWNLOADING_MANGA = "Nu se descarcă manga/comic-uri.",
+			NO_CATALOGS = "Nu există cataloage.\nApăsați Triunghi și așteptați până când toate cataloagele vor fi descărcate",
+			THANK_YOU = "Vă mulțumim pentru că susțineți acest proiect!",
+		},
+		SETTINGS = {
+			Language = "Limbă",
+			AdvancedChaptersDeletion = "Ștergere avansată a capitolelor",
+			DonatorsList = "Listă de donatori",
+			ClearChapters = "Eliminați toate capitolele salvate",
+			ShowNSFW = "Arătați cataloagele NSFW",
+			ClearLibrary = "Goliți biblioteca",
+			ClearCache = "Goliți cache pentru conținut pe care nu-l urmăriți",
+			ClearAllCache = "Goliți tot cache-ul",
+			ReaderOrientation = "Orientare implicită a citirii",
+			DoubleTapReader = "Activați apăsarea dublă pentru zoom",
+			ZoomReader = "Redimensionare citire",
+			SwapXO = "Schimbă X cu O",
+			ShowAuthor = "Dezvoltator",
+			ShowVersion = "Versiune a aplicației",
+			CheckUpdate = "Caută actualizări",
+			SkipFontLoading = "Ignoră încărcarea fontului",
+			LatestVersion = "Ultima versiune: ",
+			PleaseWait = "Așteptați",
+			FailedToUpdate = "Actualizare eșuată",
+			NoConnection = "Fără conexiune",
+			HideInOffline = "Arată doar capitolele descărcate în modull offline",
+			UnzipingVPK = "Se extrage din vpk",
+			CurrentVersionIs = "Versiunea curentă este:",
+			Space = "Memorie utilizată",
+			ReaderDirection = "Ordine de citire pentru manga",
+			VersionIsUpToDate = "Sunteți la zi",
+			EU = "Europa",
+			JP = "Japonia",
+			PressAgainToAccept = "Apăsați din nou pentru a accepta",
+			PressAgainToUpdate = "Apăsați din nou pentru a actualiza pe:",
+			Reader = "Cititor",
+			Controls = "Configurare taste",
+			Data = "Setări de date",
+			About = "Despre program",
+			Catalogs = "Cataloage",
+			Library = "Bibliotecă",
+			ChangeUI = "Temă",
+			PreferredCatalogLanguage = "Limba preferată",
+			LibrarySorting = "Sortarea bibliotecii",
+			ChapterSorting = "Sortarea capitolelor",
+			RefreshLibAtStart = "Actualizează librăria la pornire",
+			Translators = "Mulțumim traducătorilor",
+			ChangingPageButtons = "Butoane pentru a schimba pagina",
+			LeftStickDeadZone = "Zonă moartă pentru stick-ul stânga",
+			LeftStickSensitivity = "Sensibilitate pentru stick-ul stânga",
+			RightStickDeadZone = "Zonă moartă pentru stick-ul dreapta",
+			RightStickSensitivity = "Sensibilitate pentru stick-ul dreapta",
+			ResetAllSettings = "Resetați toate setările",
+			Other = "Altele",
+			SilentDownloads = "Nu arăta notificări despre descărcări",
+			Network = "Rețea",
+			UseProxy = "Folosește proxy",
+			ProxyIP = "Adresă IP",
+			ProxyPort = "Port",
+			UseProxyAuth = "Folosește autentificarea pentru proxy",
+			ProxyAuth = "Utilizator:parolă",
+			SkipCacheChapterChecking = "Nu mai verifica memoria cache sau capitolele salvate la încărcare",
+			ConnectionTime = "Timp maxim pentru conexiunea la server",
+			InputValue = "Introduceți valoare",
+			OpenInBrowser = "Deschide în browser",
+			SaveDataPath = "Salvează calea pentru date",
+			SetPageAsCover = "Setează pagina drept copertă",
+			ResetCover = "Resetează coperta",
+			SupportDev = "Suportă dezvoltatorul",
+			PressEdgesToChangePage = "Schimbă paginile apăsând pe marginea foii",
+			DownloadImageToMemory = "Descarcă imaginea",
+			AnimatedGif = "Animează gif (experimental)",
+		},
+		SETTINGS_DESCRIPTION = {
+			Library = "Setări legate de urmărirea manga",
+			Catalogs = "Limbă, conținut NSFW",
+			Reader = "Direcție citire, orientare, redimensionare",
+			Network = "Timp maxim pentru conexiune, proxy",
+			Data = "Salvări, cache, setări",
+			AdvancedChaptersDeletion = "Citire, ștergere",
+			DonatorsList = "Listă a celor care susțin proiectul",
+			Other = "Încărcare fonturi, sortare capitole, notificări",
+			Controls = "Taste, schimbare butoane pagină, setări stick-uri",
+			About = "Versiune, actualizare"
+		},
+		PAGINGCONTROLS = {
+			["LR"] = "Butoane L și R",
+			["DPAD"] = "Folosire DPad"
+		},
+		EXTRA = {
+			["DownloadAll"] = "Descarcă toate capitolele",
+			["RemoveAll"] = "Șterge toate capitolele",
+			["CancelAll"] = "Anulează descărcarea capitolelor",
+			["ClearBookmarks"] = "Elimină semne de carte",
+			["OpenMangaInBrowser"] = "Deschide manga în browser"
+		},
+		THEME = {
+			Dark = "Întunecat",
+			Light = "Luminos",
+			Blue = "Albastru",
+			Crimson = "Purpuriu"
+		},
+		NSFW = {
+			[true] = "Arată",
+			[false] = "Ascunde"
+		},
+		YORN = {
+			[true] = "Da",
+			[false] = "Nu"
+		},
+		PARSERS = {
+			RUS = "Rusă",
+			ENG = "Engleză",
+			ESP = "Spaniolă",
+			PRT = "Portugheză",
+			FRA = "Franceză",
+			JAP = "Japoneză",
+			DIF = "Different",
+			TUR = "Turcă",
+			ITA = "Italiană",
+			VIE = "Vietnameză",
+			DEU = "Germană",
+			BRA = "Brazilină",
+			POL = "Poloneză",
+			IDN = "Indoneziană",
+			CHN = "Chineză",
+			ROU = "Română",
+			RAW = "Raw (netraduse)"
+		},
+		WARNINGS = {
+			NO_CHAPTERS = "Nu există capitole"
+		},
+		READER = {
+			PREPARING_PAGES = "Paginile sunt pregătite",
+			LOADING_PAGE = "Pagina se încarcă",
+			LOADING_SEGMENT = "Segmentul se încarcă",
+			Horizontal = "Orizontală",
+			Vertical = "Verticală",
+			Smart = "Adaptiv",
+			Height = "Înălțime",
+			Width = "Lățime",
+			LEFT = "De la dreapta la stânga",
+			RIGHT = "De la stânga la dreapta",
+			DOWN = "De sus în jos",
+			Default = "Implicit"
+		},
+		DETAILS = {
+			ADD_TO_LIBRARY = "Adaugă la bibliotecă",
+			REMOVE_FROM_LIBRARY = "Șterge din bibliotecă",
+			PAGE = "Pagina: ",
+			CONTINUE = "Contină",
+			START = "Începe să citești",
+			DONE = "Terminat!",
+			SUMMARY = "Sumar",
+			SHRINK = "Micșorează",
+			EXPAND = "Citește mai multe"
+		},
+		NOTIFICATIONS = {
+			ADDED_TO_LIBRARY = "Adăugat la bibliotecă",
+			REMOVED_FROM_LIBRARY = "Șters din bibliotecă",
+			SEARCHING = 'Se caută "%s"',
+			START_DOWNLOAD = "%s: %s\ndescărcare începută!",
+			END_DOWNLOAD = "%s: %s\ndescărcat cu succes!",
+			CANCEL_DOWNLOAD = "%s: %s\ndescărcare anulată!",
+			CHAPTER_REMOVE = "%s a fost șters!",
+			NET_PROBLEM = "Există o problemă cu conexiunea!",
+			CHAPTERS_CLEARED = "Toate capitolele salvate au fost eliminate!",
+			LIBRARY_CLEARED = "Bibliotecă golită!",
+			CACHE_CLEARED = "Cache-ul a fost golit!",
+			DEVELOPER_THING = "Pune o stea pe Github!",
+			NEW_UPDATE_AVAILABLE = "Actualizare nouă disponibilă",
+			NO_SPACE_LEFT = "Spațiu insuficient",
+			REFRESH_COMPLETED = "Reîmprospătare finalizată!",
+			IMPORT_COMPLETED = "Import terminat!",
+			SETTINGS_RESET = "Setările au fost resetate",
+			BAD_IMAGE_FOUND = "Imagine invalidă găsită!",
+			COVER_SET_COMPLETED = "Coperta a fost actualizată!"
+		},
+		MODES = {
+			Popular = "Popular",
+			Latest = "Noutăți",
+			Search = "Căutare",
+			Alphabet = "Alfabetic",
+			ByLetter = "După literă",
+			ByTag = "După tag"
+		},
+		PANEL = {
+			BACK = "Înapoi",
+			MODE = "Mod",
+			READ = "Citește",
+			--MODE_POPULAR = "Mod: popular",
+			--MODE_LATEST = "Mod: noutăți",
+			--MODE_SEARCHING = 'Mod: se caută "%s"',
+			JUMPTOPAGE = "Sari la pagina",
+			SEARCH = "Căutare",
+			SELECT = "Selectare",
+			CHOOSE = "Alege",
+			IMPORT = "Importă",
+			CHANGE_SECTION = "Schimbă selecția",
+			UPDATE = "Reîmprospătare",
+			CANCEL = "Anulare",
+			DELETE = "Ștergere",
+			FOLLOW = "Urmărește",
+			UNFOLLOW = "Nu mai urmări"
+		},
+		IMPORT = {
+			EXTERNAL_MEMORY = "Memorie externă",
+			DRIVE = "Partiție",
+			FOLDER = "Director",
+			GOBACK = "Mergi înapoi",
+			FILE = "Fișier",
+			UNSUPFILE = "Fișier necunoscut"
+		}
+	},
 }
 
 LanguageNames = {
@@ -2312,6 +2553,7 @@ LanguageNames = {
 		PortugueseBR = "Бразильский португальский",
 		SimplifiedChinese = "Упрощенный китайский",
 		TraditionalChinese = "Традиционный китайский",
+		Romanian = "Romanian",--Translate please
 		Default = "Системный"
 	},
 	English = {
@@ -2325,6 +2567,7 @@ LanguageNames = {
 		PortugueseBR = "Brazilian portuguese",
 		SimplifiedChinese = "Simplified Chinese",
 		TraditionalChinese = "Traditional Chinese",
+		Romanian = "Romanian",
 		Default = "System"
 	},
 	Turkish = {
@@ -2338,6 +2581,7 @@ LanguageNames = {
 		PortugueseBR = "Brezilya Portekizcesi",
 		SimplifiedChinese = "Basitleştirilmiş Çince",
 		TraditionalChinese = "Geleneksel Çince",
+		Romanian = "Romanian",--Translate please
 		Default = "Sistem Dili"
 	},
 	Spanish = {
@@ -2351,6 +2595,7 @@ LanguageNames = {
 		PortugueseBR = "Portugués Brasileño",
 		SimplifiedChinese = "Chino Simplificado",
 		TraditionalChinese = "Chino Tradicional",
+		Romanian = "Romanian",--Translate please
 		Default = "Sistema"
 	},
 	Vietnamese = {
@@ -2364,6 +2609,7 @@ LanguageNames = {
 		PortugueseBR = "Tiếng Bồ Đào Nha của người brazi",
 		SimplifiedChinese = "Tiếng Trung Giản Thể",
 		TraditionalChinese = "Truyền Thống Trung Quốc",
+		Romanian = "Romanian",--Translate please
 		Default = "Hệ thống"
 	},
 	Italian = {
@@ -2377,6 +2623,7 @@ LanguageNames = {
 		PortugueseBR = "Portoghese Brasiliano",
 		SimplifiedChinese = "Cinese Semplificato",
 		TraditionalChinese = "Cinese Tradizionale",
+		Romanian = "Romanian",--Translate please
 		Default = "Sistema"
 	},
 	French = {
@@ -2390,6 +2637,7 @@ LanguageNames = {
 		PortugueseBR = "Portugais brésilien",
 		SimplifiedChinese = "Chinois simplifié",
 		TraditionalChinese = "Chinois traditionnel",
+		Romanian = "Roumaine",
 		Default = "Système"
 	},
 	PortugueseBR = {
@@ -2403,6 +2651,7 @@ LanguageNames = {
 		PortugueseBR = "Português Brasileiro",
 		SimplifiedChinese = "Chinês Simplificado",
 		TraditionalChinese = "Chinês Tradicional",
+		Romanian = "Romanian",--Translate please
 		Default = "Sistema"
 	},
 	SimplifiedChinese = {
@@ -2416,6 +2665,7 @@ LanguageNames = {
 		PortugueseBR = "巴西葡萄牙语",
 		SimplifiedChinese = "简体中文",
 		TraditionalChinese = "繁体中文",
+		Romanian = "Romanian",--Translate please
 		Default = "默认"
 	},
 	TraditionalChinese = {
@@ -2429,6 +2679,7 @@ LanguageNames = {
 		PortugueseBR = "巴西葡萄牙語",
 		SimplifiedChinese = "簡體中文",
 		TraditionalChinese = "繁體中文",
+		Romanian = "Romanian",--Translate please
 		Default = "默認"
 	}
 }
@@ -2458,6 +2709,9 @@ elseif language_now == 11 then
 elseif language_now == 10 then
 	Language.Default = Language.TraditionalChinese
 	LanguageNames.Default = LanguageNames.TraditionalChinese
+elseif language_now == 18 then
+	Language.Default = Language.Romanian
+	LanguageNames.Default = LanguageNames.Romanian
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
