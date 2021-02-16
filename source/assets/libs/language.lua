@@ -2683,18 +2683,18 @@ LanguageNames = {
 		Default = "默認"
 	},
 	Romanian = {
-		Russian = "Russian",
-		English = "English",
-		Turkish = "Turkish",
-		Spanish = "Spanish",
-		Vietnamese = "Vietnamese",
-		French = "French",
-		Italian = "Italian",
-		PortugueseBR = "Brazilian portuguese",
-		SimplifiedChinese = "Simplified Chinese",
-		TraditionalChinese = "Traditional Chinese",
-		Romanian = "Romanian",
-		Default = "System"
+		Russian = "Rusă",
+		English = "Engleză",
+		Turkish = "Turcă",
+		Spanish = "Spaniolă",
+		Vietnamese = "Vietnameză",
+		French = "Franceză",
+		Italian = "Italiană",
+		PortugueseBR = "Portugheză braziliană",
+		SimplifiedChinese = "Chineză simplificată",
+		TraditionalChinese = "Chineză tradițională",
+		Romanian = "Română",
+		Default = "Limba sistemului"
 	}
 }
 
