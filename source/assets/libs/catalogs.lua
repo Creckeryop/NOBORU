@@ -319,6 +319,7 @@ local function selectSetting(index)
 	if item and Settings.isTab(item) then
 		if Settings.getTab() ~= "AdvancedChaptersDeletion" then
 			settingSelector:resetSelected()
+			slider.Y = -100
 		end
 		Settings.setTab(item)
 	elseif item then
@@ -682,8 +683,12 @@ function Catalogs.update()
 					Panels["SETTINGS"].Cross = nil
 					Panels["SETTINGS"].Square = nil
 				end
+			elseif Settings.getTab() == "DonatorsList" then
+				Panels["SETTINGS"].Cross = nil
+				Panels["SETTINGS"].Square = nil
 			else
 				Panels["SETTINGS"].Cross = Language[Settings.Language].PANEL.SELECT
+				Panels["SETTINGS"].Square = nil
 			end
 			item = settingSelector:getSelected()
 		elseif status == "IMPORT" then
@@ -692,15 +697,32 @@ function Catalogs.update()
 			Panels["IMPORT"].Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT
 			Panels["IMPORT"].Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
 		end
-		if item ~= 0 then
-			slider.Y = slider.Y + (item * 75 - 272 - slider.Y) / 8
-		end
-		if slider.Y < -10 then
-			slider.Y = -10
-			slider.V = 0
-		elseif slider.Y > ceil(#list) * 75 - 514 then
-			slider.Y = max(-10, ceil(#list) * 75 - 514)
-			slider.V = 0
+		if status == "SETTINGS" then
+			if item ~= 0 then
+				slider.Y = slider.Y + (item * 75 - 272 - slider.Y) / 8
+			end
+			local height = ceil(#list) * 75
+			if Settings.getTab() == "About" then
+				height = height + 90
+			end
+			if slider.Y < -10 then
+				slider.Y = -10
+				slider.V = 0
+			elseif slider.Y > height - 514 then
+				slider.Y = max(-10, height - 514)
+				slider.V = 0
+			end
+		else
+			if item ~= 0 then
+				slider.Y = slider.Y + (item * 75 - 272 - slider.Y) / 8
+			end
+			if slider.Y < -10 then
+				slider.Y = -10
+				slider.V = 0
+			elseif slider.Y > ceil(#list) * 75 - 514 then
+				slider.Y = max(-10, ceil(#list) * 75 - 514)
+				slider.V = 0
+			end
 		end
 	end
 	Panel.set(Panels[status] or {})
@@ -837,18 +859,33 @@ function Catalogs.draw()
 		for i = start, min(#list, start + 9) do
 			local task = list[i]
 			if slider.ItemID == i then
-				local dyForTranslators = list[i] == "Translators" and 90 or 0
+				local dyForTranslators = list[i] == "Translators" and 110 or 0
 				Graphics.fillRect(215, 945, y - 75, y - 1 + dyForTranslators, COLOR_SELECTED)
 			end
 			if type(task) == "table" then
-				Font.print(FONT20, 225, y - 70, task.name, COLOR_FONT)
-				if task.type == "savedChapter" then
-					Font.print(FONT16, 225, y - 44, task.info, COLOR_SUBFONT)
+				if Settings.getTab() == "DonatorsList" then
+					if i == 1 then
+						Font.print(FONT26, (215 + 945) / 2 - Font.getTextWidth(FONT26, task.name) / 2, y - 45 - Font.getTextHeight(FONT26, task.name) / 2, task.name, COLOR_CRIMSON)
+					else
+						Font.print(FONT26, (215 + 945) / 2 - Font.getTextWidth(FONT26, task.name) / 2, y - 45 - Font.getTextHeight(FONT26, task.name) / 2, task.name, COLOR_FONT)
+					end
+				else
+					Font.print(FONT20, 225, y - 70, task.name, COLOR_FONT)
+					if task.type == "savedChapter" then
+						Font.print(FONT16, 225, y - 44, task.info, COLOR_SUBFONT)
+					end
 				end
 			else
-				Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
-				if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUBFONT)
+				if task == "DonatorsList" then
+					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, Color.new(136, 0, 255))
+					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
+						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_ROYAL_BLUE)
+					end
+				else
+					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
+					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
+						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUBFONT)
+					end
 				end
 				if task == "Language" then
 					Font.print(FONT16, 225, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
@@ -947,7 +984,7 @@ function Catalogs.draw()
 						FONT16,
 						225,
 						y - 44,
-						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese "):gsub(
+						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese \n@tmihai20 :- Romanian "):gsub(
 							"%- (.-) ",
 							function(a)
 								return " " .. (LanguageNames[Settings.Language][a] or a) .. " "
@@ -998,6 +1035,8 @@ function Catalogs.draw()
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_SUBFONT)
 				elseif task == "SaveDataPath" then
 					Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_SUBFONT)
+				elseif task == "AnimatedGif" then
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.AnimatedGif], COLOR_SUBFONT)
 				end
 			end
 			y = y + 75
@@ -1007,7 +1046,7 @@ function Catalogs.draw()
 			scrollHeight = elementsCount * 75 / 524
 		end
 		item = settingSelector:getSelected()
-		itemHeight = list[item] == "Translators" and 90 or 0
+		itemHeight = list[item] == "Translators" and 110 or 0
 	elseif status == "MANGA" or status == "LIBRARY" or status == "HISTORY" then
 		if #currentMangaList ~= 0 then
 			local start = max(1, floor(slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)

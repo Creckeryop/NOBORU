@@ -1,7 +1,7 @@
 Settings = {
 	Language = "Default",
 	Theme = "Light",
-	Version = 0.68,
+	Version = 0.82,
 	NSFW = false,
 	Orientation = "Horizontal",
 	ZoomReader = "Smart",
@@ -29,8 +29,11 @@ Settings = {
 	SkipCacheChapterChecking = true,
 	ConnectionTime = 10,
 	FavouriteParsers = {},
+	AnimatedGif = false,
 	SaveDataPath = "ux0"
 }
+
+NSFWLock = System.doesFileExist("ux0:data/noboru/.lock")
 
 local settingsDefaults = table.clone(Settings)
 
@@ -138,6 +141,84 @@ function Settings.getSaveDrivePath()
 	end
 end
 
+---Table of all available options
+local settingsListTree = {
+	"Language",
+	"ChangeUI",
+	"Library",
+	"Catalogs",
+	"Reader",
+	"Network",
+	"Data",
+	"AdvancedChaptersDeletion",
+	"Other",
+	"Controls",
+	"About",
+	Library = {
+		"LibrarySorting",
+		"RefreshLibAtStart"
+	},
+	Catalogs = {
+		"ShowNSFW",
+		"HideInOffline",
+		"PreferredCatalogLanguage"
+	},
+	Reader = {
+		"ReaderOrientation",
+		"ZoomReader",
+		"ReaderDirection",
+		"DoubleTapReader",
+		"PressEdgesToChangePage",
+		"AnimatedGif"
+	},
+	Network = {
+		"ConnectionTime",
+		"UseProxy",
+		"ProxyIP",
+		"ProxyPort",
+		"UseProxyAuth",
+		"ProxyAuth"
+	},
+	Data = {
+		"SaveDataPath",
+		"ClearLibrary",
+		"ClearCache",
+		"ClearAllCache",
+		"ClearChapters",
+		"ResetAllSettings"
+	},
+	AdvancedChaptersDeletion = {},
+	Other = {
+		"SkipFontLoading",
+		"ChapterSorting",
+		"SilentDownloads",
+		"SkipCacheChapterChecking"
+	},
+	About = {
+		"ShowVersion",
+		"CheckUpdate",
+		"ShowAuthor",
+		"SupportDev",
+		"DonatorsList",
+		"Translators",
+		DonatorsList = {}
+	},
+	Controls = {
+		"SwapXO",
+		"ChangingPageButtons",
+		"LeftStickDeadZone",
+		"LeftStickSensitivity",
+		"RightStickDeadZone",
+		"RightStickSensitivity"
+	}
+}
+
+---Table of current options
+local settingsListCurrentNode = settingsListTree
+local settingsListCurrentPath = {}
+local settingsListCurrentNodeName = "MainSettingsMenu"
+local settingsListCurrentPathNames = {}
+
 ---@param source table
 ---@param settingName string
 ---@param values table
@@ -178,7 +259,17 @@ function settings.load()
 			local new = suc()
 			if type(new) == "table" then
 				setSetting(new, "Language", Language)
-				setSetting(new, "NSFW", {true, false})
+				if NSFWLock then
+					setSetting(new, "NSFW", {false})
+					if settingsListTree and settingsListTree.Catalogs and settingsListTree.Catalogs[1] then
+						table.remove(settingsListTree.Catalogs, 1)
+						for k, v in pairs(Language) do
+							Language[k].SETTINGS_DESCRIPTION.Catalogs = nil
+						end
+					end
+				else
+					setSetting(new, "NSFW", {true, false})
+				end
 				setSetting(new, "SkipFontLoad", {true, false})
 				setSetting(new, "Orientation", {"Horizontal", "Vertical"})
 				setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
@@ -207,6 +298,7 @@ function settings.load()
 				setSetting(new, "FavouriteParsers", {})
 				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
 				setSetting(new, "PressEdgesToChangePage", {true, false})
+				setSetting(new, "AnimatedGif", {true, false})
 			end
 		end
 		closeFile(fh)
@@ -241,81 +333,6 @@ function settings.save()
 	writeFile(fh, saveSettingsContent, #saveSettingsContent)
 	closeFile(fh)
 end
-
----Table of all available options
-local settingsListTree = {
-	"Language",
-	"ChangeUI",
-	"Library",
-	"Catalogs",
-	"Reader",
-	"Network",
-	"Data",
-	"AdvancedChaptersDeletion",
-	"Other",
-	"Controls",
-	"About",
-	Library = {
-		"LibrarySorting",
-		"RefreshLibAtStart"
-	},
-	Catalogs = {
-		"ShowNSFW",
-		"HideInOffline",
-		"PreferredCatalogLanguage"
-	},
-	Reader = {
-		"ReaderOrientation",
-		"ZoomReader",
-		"ReaderDirection",
-		"DoubleTapReader",
-		"PressEdgesToChangePage"
-	},
-	Network = {
-		"ConnectionTime",
-		"UseProxy",
-		"ProxyIP",
-		"ProxyPort",
-		"UseProxyAuth",
-		"ProxyAuth"
-	},
-	Data = {
-		"SaveDataPath",
-		"ClearLibrary",
-		"ClearCache",
-		"ClearAllCache",
-		"ClearChapters",
-		"ResetAllSettings"
-	},
-	AdvancedChaptersDeletion = {},
-	Other = {
-		"SkipFontLoading",
-		"ChapterSorting",
-		"SilentDownloads",
-		"SkipCacheChapterChecking"
-	},
-	About = {
-		"ShowVersion",
-		"CheckUpdate",
-		"ShowAuthor",
-		"SupportDev",
-		"Translators"
-	},
-	Controls = {
-		"SwapXO",
-		"ChangingPageButtons",
-		"LeftStickDeadZone",
-		"LeftStickSensitivity",
-		"RightStickDeadZone",
-		"RightStickSensitivity"
-	}
-}
-
----Table of current options
-local settingsListCurrentNode = settingsListTree
-local settingsListCurrentPath = {}
-local settingsListCurrentNodeName = "MainSettingsMenu"
-local settingsListCurrentPathNames = {}
 
 ---@return table
 ---Return list of available options
@@ -355,6 +372,7 @@ function settings.setTab(mode)
 			1
 		)
 		AppMode = READER
+	elseif settingsListCurrentNodeName == "DonatorsList" then
 	else
 		if settingsListCurrentNode[mode] then
 			if mode == "AdvancedChaptersDeletion" then
@@ -394,6 +412,26 @@ function settings.setTab(mode)
 							end
 						end
 					end
+				end
+				settingsListCurrentNode[mode] = t
+			elseif mode == "DonatorsList" then
+				local t = {}
+				t[#t + 1] = {
+					name = Language[Settings.Language].MESSAGE.THANK_YOU,
+					info = ""
+				}
+				if doesFileExist("ux0:data/noboru/donators") then
+					local fh = openFile("ux0:data/noboru/donators", FREAD)
+					local d_list = ToLines(readFile(fh, sizeFile(fh))) or {}
+					for i = 1, #d_list do
+						if d_list[i]:gsub("%s", "") ~= "" then
+							t[#t + 1] = {
+								name = d_list[i],
+								info = ""
+							}
+						end
+					end
+					closeFile(fh)
 				end
 				settingsListCurrentNode[mode] = t
 			end
@@ -547,6 +585,18 @@ SettingsFunctions = {
 			Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
 		end
 	end,
+	CheckDonators = function()
+		if Threads.netActionUnSafe(Network.isWifiEnabled) then
+			Threads.insertTask(
+				"CheckDonators",
+				{
+					Type = "FileDownload",
+					Link = "https://creckeryop.github.io/DONATIONS.md",
+					Path = "ux0:data/noboru/donators"
+				}
+			)
+		end
+	end,
 	GetLastVpkSize = function()
 		return lastVpkSize
 	end,
@@ -672,10 +722,13 @@ SettingsFunctions = {
 		end
 		Keyboard.clear()
 	end,
-	PressEdgesToChangePage = function ()
+	PressEdgesToChangePage = function()
 		settings.PressEdgesToChangePage = not settings.PressEdgesToChangePage
 	end,
 	SaveDataPath = function()
 		settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "uma0"})
+	end,
+	AnimatedGif = function()
+		settings.AnimatedGif = not settings.AnimatedGif
 	end
 }

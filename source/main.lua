@@ -131,6 +131,10 @@ local function preloadData()
 	if not suc then
 		Console.error(err)
 	end
+	suc, err = pcall(SettingsFunctions.CheckDonators)
+	if not suc then
+		Console.error(err)
+	end
 end
 
 Screen.flip()

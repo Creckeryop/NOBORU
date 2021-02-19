@@ -91,6 +91,10 @@ if not doesDirExist("ux0:data/noboru/chapters") then
 	createDirectory("ux0:data/noboru/chapters")
 end
 
+if not doesDirExist("ux0:data/noboru/pictures") then
+	createDirectory("ux0:data/noboru/pictures")
+end
+
 if not doesDirExist("ux0:data/noboru/cache") then
 	createDirectory("ux0:data/noboru/cache")
 end
@@ -130,6 +134,10 @@ if doesDirExist("uma0:") then
 
 	if not doesDirExist("uma0:data/noboru/import") then
 		createDirectory("uma0:data/noboru/import")
+	end
+
+	if not doesDirExist("uma0:data/noboru/pictures") then
+		createDirectory("uma0:data/noboru/pictures")
 	end
 end
 

@@ -162,9 +162,17 @@ local function deletePageImage(page)
 		if type(allPages[page].Image.e or allPages[page].Image) == "table" then
 			Threads.remove(allPages[page])
 			ParserManager.remove(allPages[page])
-			for i = 1, allPages[page].Image.Parts do
-				if allPages[page].Image[i] and allPages[page].Image[i].free then
-					allPages[page].Image[i]:free()
+			if allPages[page].Image.Parts then
+				for i = 1, allPages[page].Image.Parts do
+					if allPages[page].Image[i] and allPages[page].Image[i].free then
+						allPages[page].Image[i]:free()
+					end
+				end
+			else
+				for i = 1, #allPages[page].Image do
+					if allPages[page].Image[i] and allPages[page].Image[i].Image and allPages[page].Image[i].Image.free then
+						allPages[page].Image[i].Image:free()
+					end
 				end
 			end
 		else
@@ -198,7 +206,8 @@ local function loadPageImage(page)
 								Type = "Image",
 								Table = PageTable,
 								Path = "temp/cache.image",
-								Index = "Image"
+								Index = "Image",
+								Animated = Settings.AnimatedGif
 							}
 						)
 					end
@@ -211,7 +220,8 @@ local function loadPageImage(page)
 					Type = "Image",
 					Path = PageTable.Path,
 					Table = PageTable,
-					Index = "Image"
+					Index = "Image",
+					Animated = Settings.AnimatedGif
 				}
 			)
 		elseif PageTable.Link then
@@ -221,7 +231,8 @@ local function loadPageImage(page)
 					Type = "ImageDownload",
 					Link = PageTable.Link,
 					Table = PageTable,
-					Index = "Image"
+					Index = "Image",
+					Animated = Settings.AnimatedGif
 				}
 			)
 		else
@@ -989,7 +1000,8 @@ function Reader.update()
 											Type = "Image",
 											Table = new_page,
 											Path = "temp/cache.image",
-											Index = "Image"
+											Index = "Image",
+											Animated = Settings.AnimatedGif
 										}
 									)
 								end
@@ -1002,7 +1014,8 @@ function Reader.update()
 								Type = "Image",
 								Path = allPages[p].Path,
 								Table = allPages[p],
-								Index = "Image"
+								Index = "Image",
+								Animated = Settings.AnimatedGif
 							}
 						)
 					elseif allPages[p].Link then
@@ -1012,7 +1025,8 @@ function Reader.update()
 								Type = "ImageDownload",
 								Link = allPages[p].Link,
 								Table = allPages[p],
-								Index = "Image"
+								Index = "Image",
+								Animated = Settings.AnimatedGif
 							}
 						)
 					else
@@ -1396,7 +1410,7 @@ function Reader.draw()
 			local i = o[j]
 			local page = allPages[allPages.Page + i]
 			if page and page.Image then
-				if type(page.Image.e or page.Image) == "table" then
+				if type(page.Image.e or page.Image) == "table" and page.Image.Parts then
 					for k = 1, page.Image.Parts do
 						if page.Image[k] and page.Image[k].e then
 							local Height = Graphics.getImageHeight(page.Image[k].e)
@@ -1422,13 +1436,40 @@ function Reader.draw()
 						end
 					end
 				else
-					local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4, math.ceil((currentPageOffset.y + page.y) * 4) / 4
-					if orientation == "Horizontal" then
-						Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom, y + page.Height / 2 * page.Zoom, COLOR_BLACK)
-						Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
-					elseif orientation == "Vertical" then
-						Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
-						Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, PI / 2, page.Zoom, page.Zoom)
+					if type(page.Image.e or page.Image) == "table" then
+						local all_delay = 0
+						for k = 1, #page.Image do
+							all_delay = all_delay + page.Image[k].Delay
+						end
+						local anim_timer = Timer.getTime(GlobalTimer) % all_delay
+						local frame = 1
+						for k = 1, #page.Image do
+							if anim_timer > page.Image[k].Delay then
+								frame = frame + 1
+								anim_timer = anim_timer - page.Image[k].Delay
+							else
+								break
+							end
+						end
+						if page.Image[frame] and page.Image[frame].Image and page.Image[frame].Image.e then
+							local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4, math.ceil((currentPageOffset.y + page.y) * 4) / 4
+							if orientation == "Horizontal" then
+								Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom, y + page.Height / 2 * page.Zoom, COLOR_BLACK)
+								Graphics.drawImageExtended(x, y, page.Image[frame].Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
+							elseif orientation == "Vertical" then
+								Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
+								Graphics.drawImageExtended(x, y, page.Image[frame].Image.e, 0, 0, page.Width, page.Height, PI / 2, page.Zoom, page.Zoom)
+							end
+						end
+					else
+						local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4, math.ceil((currentPageOffset.y + page.y) * 4) / 4
+						if orientation == "Horizontal" then
+							Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom, y + page.Height / 2 * page.Zoom, COLOR_BLACK)
+							Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
+						elseif orientation == "Vertical" then
+							Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
+							Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, PI / 2, page.Zoom, page.Zoom)
+						end
 					end
 				end
 			elseif page then

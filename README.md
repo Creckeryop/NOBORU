@@ -59,7 +59,7 @@ So if you want to add your manga to library, you have four ways:
 
 Also if you want to read .cbz file directly you can just open file in import section<br><br>
 <b>Requirements to .cbz or .zip file:</b>
-* Names of images should end with .jpg .jpeg .png or .bmp (webp not supported yet)
+* Names of images should end with .jpg .jpeg .png .bmp or .gif (webp not supported yet)
 
 <b>Requirements to folders:</b>
 * No extra (non-image) files
@@ -113,3 +113,4 @@ Execute `build.bat` to create working .vpk
 <br>[Kemal Sanlı](https://github.com/kemalsanli) - Turkish translation
 <br>[rutantan](https://github.com/rutantan) - Portuguese (Brazil) translation
 <br>[Qingyu510](https://github.com/Qingyu510) - Simplified Chinese & Traditional Chinese translation
+<br>[tmihai20](https://github.com/tmihai20) - Romanian translation
