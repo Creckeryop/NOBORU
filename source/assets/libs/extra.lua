@@ -276,6 +276,7 @@ local function pressOption(id)
 	elseif selectedExtraMenu[id] == "DownloadImageToMemory" then
 		local page = Reader.getCurrentPageImageLink()
 		if page then
+			local drive = Settings.SaveDataPath
 			local tempTable = {}
 			local h, mn, s = getTime()
 			local _, d, mo, y = getDate()
@@ -299,12 +300,12 @@ local function pressOption(id)
 				last_unique = unique_name
 				if page.Extract then
 				elseif page.Path then
-					copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/pictures/" .. unique_name .. ".image")
+					copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), drive..":data/noboru/pictures/" .. unique_name .. ".image")
 					local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
 					if f ~= nil then
-						rename("ux0:data/noboru/pictures/" .. unique_name .. ".image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f)
+						rename(drive..":data/noboru/pictures/" .. unique_name .. ".image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f)
 					end
-					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
 				elseif page.ParserID then
 					Threads.insertTask(
 						tempTable,
@@ -320,14 +321,14 @@ local function pressOption(id)
 									{
 										Type = "FileDownload",
 										Link = tempTable.Link,
-										Path = "ux0:data/noboru/pictures/" .. unique_name .. ".image",
+										Path = drive..":data/noboru/pictures/" .. unique_name .. ".image",
 										OnComplete = function()
-											if doesFileExist("ux0:data/noboru/pictures/" .. unique_name .. ".image") then
-												local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+											if doesFileExist(drive..":data/noboru/pictures/" .. unique_name .. ".image") then
+												local f = getImageFormat(drive..":data/noboru/pictures/" .. unique_name .. ".image")
 												if f ~= nil then
-													rename("ux0:data/noboru/pictures/" .. unique_name .. ".image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f)
+													rename(drive..":data/noboru/pictures/" .. unique_name .. ".image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f)
 												end
-												Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+												Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
 											end
 										end
 									}
@@ -341,14 +342,14 @@ local function pressOption(id)
 						{
 							Type = "FileDownload",
 							Link = page.Link,
-							Path = "ux0:data/noboru/pictures/" .. unique_name .. ".image",
+							Path = drive..":data/noboru/pictures/" .. unique_name .. ".image",
 							OnComplete = function()
-								if doesFileExist("ux0:data/noboru/pictures/" .. unique_name .. ".image") then
-									local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+								if doesFileExist(drive..":data/noboru/pictures/" .. unique_name .. ".image") then
+									local f = getImageFormat(drive..":data/noboru/pictures/" .. unique_name .. ".image")
 									if f ~= nil then
-										rename("ux0:data/noboru/pictures/" .. unique_name .. ".image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f)
+										rename(drive..":data/noboru/pictures/" .. unique_name .. ".image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f)
 									end
-									Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", "ux0:data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+									Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
 								end
 							end
 						}
@@ -470,7 +471,7 @@ function Extra.draw()
 				Graphics.fillEmptyRect(480 - maxExtraMenuWidth / 2 + i + 3, 480 + maxExtraMenuWidth / 2 - i - 2, y + i + 3, y + 75 - i + 2, selectedRedColor)
 			end
 		end
-		if status == "START" and #selectedExtraMenu > 5 then
+		if status == "START" and #selectedExtraMenu > 6 then
 			local h = #selectedExtraMenu * 80 / 454
 			Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
 			Graphics.fillRect(926, 936, 90 + (slider.Y + 20) / h, 90 + (slider.Y + 464) / h, COLOR_GRAY)

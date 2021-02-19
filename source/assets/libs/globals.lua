@@ -135,6 +135,10 @@ if doesDirExist("uma0:") then
 	if not doesDirExist("uma0:data/noboru/import") then
 		createDirectory("uma0:data/noboru/import")
 	end
+
+	if not doesDirExist("uma0:data/noboru/pictures") then
+		createDirectory("uma0:data/noboru/pictures")
+	end
 end
 
 local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, System.closeFile, System.readFile, System.sizeFile, System.writeFile
