@@ -150,6 +150,7 @@ Language = {
 			IDN = "Индонезийский",
 			CHN = "Китайский",
 			ROU = "Румынский",
+			KOR = "Корейский",
 			RAW = "Оригинал (Непереведенные комиксы)"
 		},
 		WARNINGS = {
@@ -380,6 +381,7 @@ Language = {
 			IDN = "Indonesian",
 			CHN = "Chinese",
 			ROU = "Romanian",
+			KOR = "Korean",
 			RAW = "Raw (Untranslated manga)"
 		},
 		WARNINGS = {
@@ -610,6 +612,7 @@ Language = {
 			IDN = "Endonezya",
 			CHN = "Çin",
 			ROU = "Romanian",--Translate please
+			KOR = "Korean", --Translate please
 			RAW = "Raw (Çevrilmemiş çizgi romanlar)"
 		},
 		WARNINGS = {
@@ -840,6 +843,7 @@ Language = {
 			IDN = "Tiếng Indonesia",
 			CHN = "Trung Quốc",
 			ROU = "Romanian",--Translate please
+			KOR = "Korean", --Translate please
 			RAW = "Raw (Truyện tranh chưa được dịch)"
 		},
 		WARNINGS = {
@@ -1070,6 +1074,7 @@ Language = {
 			IDN = "Indonesia",
 			CHN = "China",
 			ROU = "Romanian",--Translate please
+			KOR = "Korean", --Translate please
 			RAW = "Raw (Cómics sin traducir)"
 		},
 		WARNINGS = {
@@ -1300,6 +1305,7 @@ Language = {
 			IDN = "Indonesiano",
 			CHN = "Cina",
 			ROU = "Rumena",
+			KOR = "Korean", --Translate please
 			RAW = "Raw (Fumetti non tradotti)"
 		},
 		WARNINGS = {
@@ -1530,6 +1536,7 @@ Language = {
 			IDN = "Indonésien",
 			CHN = "Chine",
 			ROU = "Roumaine",
+			KOR = "Korean", --Translate please
 			RAW = "Raw (Bandes dessinées non traduites)"
 		},
 		WARNINGS = {
@@ -1760,6 +1767,7 @@ Language = {
 			IDN = "Indonésien",
 			CHN = "China",
 			ROU = "Romanian",--Translate please
+			KOR = "Korean", --Translate please
 			RAW = "Raw (Quadrinhos não traduzidos)"
 		},
 		WARNINGS = {
@@ -1992,6 +2000,7 @@ Language = {
 			IDN = "印度尼西亚",
 			CHN = "中国",
 			ROU = "罗马尼亚",
+			KOR = "Korean", --Translate please
 			RAW = "生肉 (未翻译的原版漫画)"
 		},
 		WARNINGS = {
@@ -2222,6 +2231,7 @@ Language = {
 			IDN = "印度尼西亞",
 			CHN = "中國",
 			ROU = "羅馬尼亞",
+			KOR = "Korean", --Translate please
 			RAW = "生肉 (未經翻譯的原版漫畫)"
 		},
 		WARNINGS = {
@@ -2452,6 +2462,7 @@ Language = {
 			IDN = "Indoneziană",
 			CHN = "Chineză",
 			ROU = "Română",
+			KOR = "Korean", --Translate please
 			RAW = "Raw (netraduse)"
 		},
 		WARNINGS = {
