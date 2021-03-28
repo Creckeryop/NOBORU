@@ -2417,7 +2417,7 @@ Language = {
 			PressEdgesToChangePage = "Schimbă paginile apăsând pe marginea foii",
 			DownloadImageToMemory = "Descarcă imaginea",
 			AnimatedGif = "Animează gif (experimental)",
-			LoadSummary = "Show summary of a manga", --Translate please
+			LoadSummary = "Arată sumarul pentru manga/comic",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Setări legate de urmărirea manga",
