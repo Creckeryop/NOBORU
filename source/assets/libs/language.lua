@@ -2617,7 +2617,7 @@ LanguageNames = {
 		PortugueseBR = "Portugués Brasileño",
 		SimplifiedChinese = "Chino Simplificado",
 		TraditionalChinese = "Chino Tradicional",
-		Romanian = "Romanian",--Translate please
+		Romanian = "Rumeno",
 		Default = "Sistema"
 	},
 	Vietnamese = {
