@@ -2603,7 +2603,7 @@ LanguageNames = {
 		PortugueseBR = "Brezilya Portekizcesi",
 		SimplifiedChinese = "Basitleştirilmiş Çince",
 		TraditionalChinese = "Geleneksel Çince",
-		Romanian = "Romanian",--Translate please
+		Romanian = "Romence",
 		Default = "Sistem Dili"
 	},
 	Spanish = {
