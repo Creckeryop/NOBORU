@@ -2000,7 +2000,7 @@ Language = {
 			IDN = "印度尼西亚",
 			CHN = "中国",
 			ROU = "罗马尼亚",
-			KOR = "Korean", --Translate please
+			KOR = "韩国",
 			RAW = "生肉 (未翻译的原版漫画)"
 		},
 		WARNINGS = {
@@ -2231,7 +2231,7 @@ Language = {
 			IDN = "印度尼西亞",
 			CHN = "中國",
 			ROU = "羅馬尼亞",
-			KOR = "Korean", --Translate please
+			KOR = "韓國",
 			RAW = "生肉 (未經翻譯的原版漫畫)"
 		},
 		WARNINGS = {
@@ -2676,7 +2676,7 @@ LanguageNames = {
 		PortugueseBR = "巴西葡萄牙语",
 		SimplifiedChinese = "简体中文",
 		TraditionalChinese = "繁体中文",
-		Romanian = "Romanian",--Translate please
+		Romanian = "罗马尼亚",
 		Default = "默认"
 	},
 	TraditionalChinese = {
@@ -2690,7 +2690,7 @@ LanguageNames = {
 		PortugueseBR = "巴西葡萄牙語",
 		SimplifiedChinese = "簡體中文",
 		TraditionalChinese = "繁體中文",
-		Romanian = "Romanian",--Translate please
+		Romanian = "羅馬尼亞",
 		Default = "默認"
 	},
 	Romanian = {
