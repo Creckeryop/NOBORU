@@ -95,6 +95,7 @@ Language = {
 			PressEdgesToChangePage = "Смена страниц по нажатию на грани страницы",
 			DownloadImageToMemory = "Сохранить в память",
 			AnimatedGif = "Анимировать Гифки (Экспериментально)",
+			LoadSummary = "Загружать краткое описание манги",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Настройки связанные с отслеживанием манги",
@@ -326,6 +327,7 @@ Language = {
 			PressEdgesToChangePage = "Change pages by pressing edges of page",
 			DownloadImageToMemory = "Download image",
 			AnimatedGif = "Animate gif (Experimental)",
+			LoadSummary = "Show summary of a manga",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Settings related to manga tracking",
@@ -557,6 +559,7 @@ Language = {
 			PressEdgesToChangePage = "Sayfaların Kenralarına Basarak Sayfaları Değiştirin", 
 			DownloadImageToMemory = "Download image", --Translate please
 			AnimatedGif = "Animate gif (Experimental)", --Translate please
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Manga Takibi İle İlgili Ayarlar.", 
@@ -788,6 +791,7 @@ Language = {
 			PressEdgesToChangePage = "Chuyển trang bằng chạm vào cạnh",
 			DownloadImageToMemory = "Download image", --Translate please
 			AnimatedGif = "Animate gif (Experimental)", --Translate please
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Cài đặt về tủ truyện",
@@ -1019,6 +1023,7 @@ Language = {
 			PressEdgesToChangePage = "Cambiar de pagina presionando el borde",
 			DownloadImageToMemory = "Download image", --Translate please
 			AnimatedGif = "Animate gif (Experimental)", --Translate please
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configuración relacionada con los mangas en seguimiento",
@@ -1250,6 +1255,7 @@ Language = {
 			PressEdgesToChangePage = "Cambia le pagine premendo i bordi della pagina",
 			DownloadImageToMemory = "Download image", --Translate please
 			AnimatedGif = "Animate gif (Experimental)", --Translate please
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Impostazioni relative al tracciamento dei manga",
@@ -1481,6 +1487,7 @@ Language = {
 			PressEdgesToChangePage = "Changer de page en appuyant sur le bord des pages",
 			DownloadImageToMemory = "Download image", --Translate please
 			AnimatedGif = "Animate gif (Experimental)", --Translate please
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Paramètres de suivi des mangas",
@@ -1712,6 +1719,7 @@ Language = {
 			PressEdgesToChangePage = "Mude as páginas apertando as bordas da página",
 			DownloadImageToMemory = "Download image", --Translate please
 			AnimatedGif = "Animate gif (Experimental)", --Translate please
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Configurações relacionadas ao rastreamento de mangás",
@@ -1945,6 +1953,7 @@ Language = {
 			PressEdgesToChangePage = "点击屏幕边缘进行翻页",
 			DownloadImageToMemory = "下载图像",
 			AnimatedGif = "GIF动画（实验性）",
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "书架排序, 漫画追踪相关的设置",
@@ -2176,6 +2185,7 @@ Language = {
 			PressEdgesToChangePage = "點擊屏幕邊緣進行翻頁",
 			DownloadImageToMemory = "下載圖像",
 			AnimatedGif = "GIF動畫（實驗性）",
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "書架排序, 漫畫追蹤相關的設置",
@@ -2407,6 +2417,7 @@ Language = {
 			PressEdgesToChangePage = "Schimbă paginile apăsând pe marginea foii",
 			DownloadImageToMemory = "Descarcă imaginea",
 			AnimatedGif = "Animează gif (experimental)",
+			LoadSummary = "Show summary of a manga", --Translate please
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "Setări legate de urmărirea manga",

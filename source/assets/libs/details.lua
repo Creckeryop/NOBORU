@@ -204,7 +204,11 @@ local function updateChaptersList()
 	end
 	if not is_chapter_list_ready and not ParserManager.check(chaptersList) then
 		is_chapter_list_ready = true
-		updateMangaDescription(chaptersList.Description or "")
+		if Settings.LoadSummary then
+			updateMangaDescription(chaptersList.Description or "")
+		else
+			updateMangaDescription("")
+		end
 	end
 end
 

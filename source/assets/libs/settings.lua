@@ -30,7 +30,8 @@ Settings = {
 	ConnectionTime = 10,
 	FavouriteParsers = {},
 	AnimatedGif = false,
-	SaveDataPath = "ux0"
+	SaveDataPath = "ux0",
+	LoadSummary = true,
 }
 
 NSFWLock = System.doesFileExist("ux0:data/noboru/.lock")
@@ -192,7 +193,8 @@ local settingsListTree = {
 		"SkipFontLoading",
 		"ChapterSorting",
 		"SilentDownloads",
-		"SkipCacheChapterChecking"
+		"SkipCacheChapterChecking",
+		"LoadSummary",
 	},
 	About = {
 		"ShowVersion",
@@ -299,6 +301,7 @@ function settings.load()
 				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
 				setSetting(new, "PressEdgesToChangePage", {true, false})
 				setSetting(new, "AnimatedGif", {true, false})
+				setSetting(new, "LoadSummary", {true, false})
 			end
 		end
 		closeFile(fh)
@@ -730,5 +733,8 @@ SettingsFunctions = {
 	end,
 	AnimatedGif = function()
 		settings.AnimatedGif = not settings.AnimatedGif
+	end,
+	LoadSummary = function()
+		settings.LoadSummary = not settings.LoadSummary
 	end
 }

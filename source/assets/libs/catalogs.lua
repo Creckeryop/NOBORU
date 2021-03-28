@@ -1037,6 +1037,8 @@ function Catalogs.draw()
 					Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_SUBFONT)
 				elseif task == "AnimatedGif" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.AnimatedGif], COLOR_SUBFONT)
+				elseif task == "LoadSummary" then
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.LoadSummary], COLOR_SUBFONT)
 				end
 			end
 			y = y + 75
