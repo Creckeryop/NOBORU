@@ -1953,7 +1953,7 @@ Language = {
 			PressEdgesToChangePage = "点击屏幕边缘进行翻页",
 			DownloadImageToMemory = "下载图像",
 			AnimatedGif = "GIF动画（实验性）",
-			LoadSummary = "Show summary of a manga", --Translate please
+			LoadSummary = "显示漫画摘要",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "书架排序, 漫画追踪相关的设置",
@@ -2185,7 +2185,7 @@ Language = {
 			PressEdgesToChangePage = "點擊屏幕邊緣進行翻頁",
 			DownloadImageToMemory = "下載圖像",
 			AnimatedGif = "GIF動畫（實驗性）",
-			LoadSummary = "Show summary of a manga", --Translate please
+			LoadSummary = "顯示漫畫摘要",
 		},
 		SETTINGS_DESCRIPTION = {
 			Library = "書架排序, 漫畫追蹤相關的設置",
