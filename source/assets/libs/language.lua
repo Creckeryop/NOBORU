@@ -1639,7 +1639,7 @@ Language = {
 			DOWNLOAD = "DOWNLOADS",
 			IMPORT = "IMPORTAR",
 			HISTORY = "HISTÓRICO",
-			SEARCH = "PESQUISAR"
+			SEARCH = "Pesquisar" 
 		},
 		MESSAGE = {
 			LOST_CONNECTION = "Conexão foi perdida\n\nEsperando por conexão...\n\n(Minimize a aplicação, vá para as configurações do Wi-Fi e pressione Conectar)\n\nAperte X para cancelar todos os downloads e fechar a mensagem\n\nTodos os downloads vão continuar se a conexão for restaurada",
@@ -2673,7 +2673,7 @@ LanguageNames = {
 		PortugueseBR = "Português Brasileiro",
 		SimplifiedChinese = "Chinês Simplificado",
 		TraditionalChinese = "Chinês Tradicional",
-		Romanian = "Romanian",--Translate please
+		Romanian = "Romeno",
 		Default = "Sistema"
 	},
 	SimplifiedChinese = {
