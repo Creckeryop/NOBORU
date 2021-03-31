@@ -2561,6 +2561,238 @@ Language = {
 			UNSUPFILE = "Fișier necunoscut"
 		}
 	},
+	Polish = {
+		APP = {
+			LIBRARY = "BIBLIOTEKA",
+			CATALOGS = "KATALOGI",
+			SETTINGS = "USTAWIENIA",
+			DOWNLOAD = "POBRANIE",
+			IMPORT = "IMPORTOWANIE",
+			HISTORY = "HISTORIA",
+			SEARCH = "Szukaj"
+		},
+		MESSAGE = {
+			LOST_CONNECTION = "Connection is lost\n\nWaiting for connection...\n\n(Minimize application, go Wi-Fi Settings and press Connect)\n\nPress X to cancel all downloads and close message\n\nAll downloads will continue if the network is restored",
+			PRESS_TO_UPDATE = "Press X to update\nPress O to cancel",
+			NO_LIBRARY_MANGA = "No manga/comics.\nTo add manga/comics, find it in \"CATALOGS\" menu and press \"Add to library\".",
+			NO_HISTORY_MANGA = "No manga/comics.\nIt will appear here someday",
+			NO_CATALOG_MANGA = "No manga/comics.\nServer, connection or parser error",
+			NO_DOWNLOADING_MANGA = "No downloading manga/comics",
+			NO_CATALOGS = "No catalogs.\nPress Triangle and wait until all catalogs will be loaded",
+			THANK_YOU = "Thank you for supporting this project!",
+		},
+		SETTINGS = {
+			Language = "Language",
+			AdvancedChaptersDeletion = "Advanced chapters deletion",
+			DonatorsList = "Donators List",
+			ClearChapters = "Clear all saved chapters",
+			ShowNSFW = "Show NSFW catalogs",
+			ClearLibrary = "Clear library",
+			ClearCache = "Clear cache of non followed manga",
+			ClearAllCache = "Clear all cache",
+			ReaderOrientation = "Default reader orientation",
+			DoubleTapReader = "Enable double tap zoom",
+			ZoomReader = "Reader scaling",
+			SwapXO = "Swap X and O",
+			ShowAuthor = "Developer",
+			ShowVersion = "App version",
+			CheckUpdate = "Check for updates",
+			SkipFontLoading = "Skip font loading",
+			LatestVersion = "Latest version : ",
+			PleaseWait = "Please wait",
+			FailedToUpdate = "Failed to update app",
+			NoConnection = "No connection",
+			HideInOffline = "Show only downloaded chapters in offline mode",
+			UnzipingVPK = "Extracting vpk to install",
+			CurrentVersionIs = "Current version is:",
+			Space = "Memory used",
+			ReaderDirection = "Manga reading direction",
+			VersionIsUpToDate = "Your version is up to date",
+			EU = "Europe",
+			JP = "Japan",
+			PressAgainToAccept = "Press again to accept",
+			PressAgainToUpdate = "Press again to update on:",
+			Reader = "Reader",
+			Controls = "Controls Setup",
+			Data = "Data settings",
+			About = "About program",
+			Catalogs = "Catalogs",
+			Library = "Library",
+			ChangeUI = "Theme",
+			PreferredCatalogLanguage = "Preferred Language",
+			LibrarySorting = "Library sorting",
+			ChapterSorting = "Chapters sorting",
+			RefreshLibAtStart = "Refresh library at startup",
+			Translators = "Thanks to translators",
+			ChangingPageButtons = "Buttons to change page",
+			LeftStickDeadZone = "Left stick deadzone",
+			LeftStickSensitivity = "Left stick sensitivity",
+			RightStickDeadZone = "Right stick deadzone",
+			RightStickSensitivity = "Right stick sensitivity",
+			ResetAllSettings = "Reset all settings",
+			Other = "Other",
+			SilentDownloads = "Don't show downloads notifications",
+			Network = "Network",
+			UseProxy = "Use proxy",
+			ProxyIP = "IP address",
+			ProxyPort = "Port",
+			UseProxyAuth = "Use proxy authentication",
+			ProxyAuth = "login:password",
+			SkipCacheChapterChecking = "Skip checking cache and saved chapters while loading",
+			ConnectionTime = "Connection time for server",
+			InputValue = "Input value",
+			OpenInBrowser = "Open in browser",
+			SaveDataPath = "Save data path",
+			SetPageAsCover = "Set page as cover",
+			ResetCover = "Reset cover",
+			SupportDev = "Support the developer",
+			PressEdgesToChangePage = "Change pages by pressing edges of page",
+			DownloadImageToMemory = "Download image",
+			AnimatedGif = "Animate gif (Experimental)",
+			LoadSummary = "Show summary of a manga",
+		},
+		SETTINGS_DESCRIPTION = {
+			Library = "Settings related to manga tracking",
+			Catalogs = "Language, NSFW content",
+			Reader = "Read direction, orientation, zoom",
+			Network = "Connection timeout, proxy",
+			Data = "Saves, cache, settings",
+			AdvancedChaptersDeletion = "Read, remove",
+			DonatorsList = "List of guys who supported project",
+			Other = "Font loading, chapters sorting, notifications",
+			Controls = "KeyType, change page buttons, sticks settings",
+			About = "Version, update"
+		},
+		PAGINGCONTROLS = {
+			["LR"] = "L and R triggers",
+			["DPAD"] = "Using DPad"
+		},
+		EXTRA = {
+			["DownloadAll"] = "Download all chapters",
+			["RemoveAll"] = "Remove all chapters",
+			["CancelAll"] = "Cancel downloading chapters",
+			["ClearBookmarks"] = "Clear bookmarks",
+			["OpenMangaInBrowser"] = "Open manga in browser"
+		},
+		THEME = {
+			Dark = "Dark",
+			Light = "Light",
+			Blue = "Blue",
+			Crimson = "Crimson"
+		},
+		NSFW = {
+			[true] = "Show",
+			[false] = "Don't show"
+		},
+		YORN = {
+			[true] = "Yes",
+			[false] = "No"
+		},
+		PARSERS = {
+			RUS = "Russian",
+			ENG = "English",
+			ESP = "Spanish",
+			PRT = "Portuguese",
+			FRA = "French",
+			JAP = "Japanese",
+			DIF = "Different",
+			TUR = "Turkish",
+			ITA = "Italian",
+			VIE = "Vietnamese",
+			DEU = "German",
+			BRA = "Brazil",
+			POL = "Polish",
+			IDN = "Indonesian",
+			CHN = "Chinese",
+			ROU = "Romanian",
+			KOR = "Korean",
+			RAW = "Raw (Untranslated manga)"
+		},
+		WARNINGS = {
+			NO_CHAPTERS = "No chapters"
+		},
+		READER = {
+			PREPARING_PAGES = "Preparing pages",
+			LOADING_PAGE = "Loading page",
+			LOADING_SEGMENT = "Loading segment",
+			Horizontal = "Horizontal",
+			Vertical = "Vertical",
+			Smart = "Smart",
+			Height = "Height",
+			Width = "Width",
+			LEFT = "Right to left",
+			RIGHT = "Left to right",
+			DOWN = "Up to down",
+			Default = "Default"
+		},
+		DETAILS = {
+			ADD_TO_LIBRARY = "Add to library",
+			REMOVE_FROM_LIBRARY = "Remove from library",
+			PAGE = "Page : ",
+			CONTINUE = "Continue",
+			START = "Start reading",
+			DONE = "Сompleted!",
+			SUMMARY = "Summary",
+			SHRINK = "Shrink",
+			EXPAND = "Read more"
+		},
+		NOTIFICATIONS = {
+			ADDED_TO_LIBRARY = "Added to library",
+			REMOVED_FROM_LIBRARY = "Removed from library",
+			SEARCHING = 'Searching "%s"',
+			START_DOWNLOAD = "%s: %s\ndownloading started!",
+			END_DOWNLOAD = "%s: %s\nsuccessfuly downloaded!",
+			CANCEL_DOWNLOAD = "%s: %s\ndownload is canceled!",
+			CHAPTER_REMOVE = "%s deleted!",
+			NET_PROBLEM = "There is problems with connection!",
+			CHAPTERS_CLEARED = "All saved chapters are cleared!",
+			LIBRARY_CLEARED = "Library cleared!",
+			CACHE_CLEARED = "Cache has been cleared!",
+			DEVELOPER_THING = "Star app on Github!",
+			NEW_UPDATE_AVAILABLE = "New update available",
+			NO_SPACE_LEFT = "No space left",
+			REFRESH_COMPLETED = "Refresh completed!",
+			IMPORT_COMPLETED = "Import completed!",
+			SETTINGS_RESET = "Settings have been reset",
+			BAD_IMAGE_FOUND = "Bad Image found!",
+			COVER_SET_COMPLETED = "Cover was updated!"
+		},
+		MODES = {
+			Popular = "Popular",
+			Latest = "Latest",
+			Search = "Search",
+			Alphabet = "Alphabet",
+			ByLetter = "By Letter",
+			ByTag = "By Tag"
+		},
+		PANEL = {
+			BACK = "Back",
+			MODE = "Mode",
+			READ = "Read",
+			--MODE_POPULAR = "Mode: Popular",
+			--MODE_LATEST = "Mode: Latest",
+			--MODE_SEARCHING = 'Mode: Searching "%s"',
+			JUMPTOPAGE = "Jump to page",
+			SEARCH = "Search",
+			SELECT = "Select",
+			CHOOSE = "Choose",
+			IMPORT = "Import",
+			CHANGE_SECTION = "Change section",
+			UPDATE = "Refresh",
+			CANCEL = "Cancel",
+			DELETE = "Delete",
+			FOLLOW = "Follow",
+			UNFOLLOW = "Unfollow"
+		},
+		IMPORT = {
+			EXTERNAL_MEMORY = "External Memory",
+			DRIVE = "Drive",
+			FOLDER = "Folder",
+			GOBACK = "Go back",
+			FILE = "File",
+			UNSUPFILE = "Unsupported file"
+		}
+	},
 }
 
 LanguageNames = {
@@ -2576,6 +2808,7 @@ LanguageNames = {
 		SimplifiedChinese = "Упрощенный китайский",
 		TraditionalChinese = "Традиционный китайский",
 		Romanian = "Румынский",
+		Polish = "Польский",
 		Default = "Системный"
 	},
 	English = {
@@ -2590,6 +2823,7 @@ LanguageNames = {
 		SimplifiedChinese = "Simplified Chinese",
 		TraditionalChinese = "Traditional Chinese",
 		Romanian = "Romanian",
+		Polish = "Polish",
 		Default = "System"
 	},
 	Turkish = {
@@ -2604,6 +2838,7 @@ LanguageNames = {
 		SimplifiedChinese = "Basitleştirilmiş Çince",
 		TraditionalChinese = "Geleneksel Çince",
 		Romanian = "Romence",
+		Polish = "Lehçe", 
 		Default = "Sistem Dili"
 	},
 	Spanish = {
@@ -2618,6 +2853,7 @@ LanguageNames = {
 		SimplifiedChinese = "Chino Simplificado",
 		TraditionalChinese = "Chino Tradicional",
 		Romanian = "Romanian",--Translate please
+		Polish = "Polaco",
 		Default = "Sistema"
 	},
 	Vietnamese = {
@@ -2632,6 +2868,7 @@ LanguageNames = {
 		SimplifiedChinese = "Tiếng Trung Giản Thể",
 		TraditionalChinese = "Truyền Thống Trung Quốc",
 		Romanian = "Romanian",--Translate please
+		Polish = "Tiếng ba lan",
 		Default = "Hệ thống"
 	},
 	Italian = {
@@ -2646,6 +2883,7 @@ LanguageNames = {
 		SimplifiedChinese = "Cinese Semplificato",
 		TraditionalChinese = "Cinese Tradizionale",
 		Romanian = "Rumeno",
+		Polski = "Polacco",
 		Default = "Sistema"
 	},
 	French = {
@@ -2660,6 +2898,7 @@ LanguageNames = {
 		SimplifiedChinese = "Chinois simplifié",
 		TraditionalChinese = "Chinois traditionnel",
 		Romanian = "Roumaine",
+		Polski = "Polonaise",
 		Default = "Système"
 	},
 	PortugueseBR = {
@@ -2674,6 +2913,7 @@ LanguageNames = {
 		SimplifiedChinese = "Chinês Simplificado",
 		TraditionalChinese = "Chinês Tradicional",
 		Romanian = "Romeno",
+		Polish = "Polonesa",
 		Default = "Sistema"
 	},
 	SimplifiedChinese = {
@@ -2688,6 +2928,7 @@ LanguageNames = {
 		SimplifiedChinese = "简体中文",
 		TraditionalChinese = "繁体中文",
 		Romanian = "罗马尼亚",
+		Polish = "波兰语",
 		Default = "默认"
 	},
 	TraditionalChinese = {
@@ -2702,6 +2943,7 @@ LanguageNames = {
 		SimplifiedChinese = "簡體中文",
 		TraditionalChinese = "繁體中文",
 		Romanian = "羅馬尼亞",
+		Polski = "波蘭語",
 		Default = "默認"
 	},
 	Romanian = {
@@ -2716,8 +2958,24 @@ LanguageNames = {
 		SimplifiedChinese = "Chineză simplificată",
 		TraditionalChinese = "Chineză tradițională",
 		Romanian = "Română",
+		Polish = "Poloneza",
 		Default = "Limba sistemului"
-	}
+	},
+	Polish = {
+		Russian = "Rosyjski",
+		English = "Angielski",
+		Turkish = "Turecki",
+		Spanish = "Hiszpański",
+		Vietnamese = "Wietnamski",
+		French = "Francuski",
+		Italian = "Włoski",
+		PortugueseBR = "Brazylijski portugalski",
+		SimplifiedChinese = "Chiński uproszczony",
+		TraditionalChinese = "Chiński tradycyjny",
+		Romanian = "Rumuński",
+		Polish = "Polski",
+		Default = "Systemowy"
+	},
 }
 
 local language_now = System.getLanguage()
@@ -2745,6 +3003,9 @@ elseif language_now == 11 then
 elseif language_now == 10 then
 	Language.Default = Language.TraditionalChinese
 	LanguageNames.Default = LanguageNames.TraditionalChinese
+elseif language_now == 16 then
+	Language.Default = Language.Polish
+	LanguageNames.Default = LanguageNames.Polish
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
