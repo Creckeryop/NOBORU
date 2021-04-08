@@ -6,6 +6,7 @@
 --PortugueseBR translation created by @rutantan
 --SimplifiedChinese translation & Traditional Chinese created by @Qingyu510
 --Romanian translation by tmihai20
+--Polish translation by tofudd
 Language = {
 	Russian = {
 		APP = {
@@ -2561,6 +2562,238 @@ Language = {
 			UNSUPFILE = "Fișier necunoscut"
 		}
 	},
+	Polish = {
+		APP = {
+			LIBRARY = "BIBLIOTEKA",
+			CATALOGS = "KATALOGI",
+			SETTINGS = "USTAWIENIA",
+			DOWNLOAD = "POBRANIE",
+			IMPORT = "IMPORTOWANIE",
+			HISTORY = "HISTORIA",
+			SEARCH = "Szukaj"
+		},
+		MESSAGE = {
+			LOST_CONNECTION = "Utracono połączenie.\n\nCzekanie na połączenie...\n\n(Zminimalizuj aplikację, wejdź do ustawień Wi-Fi i wybierz Połącz)\n\nNaciśnij X aby anulować pobieranie i zamknąć komunikat.\n\nPobieranie zostanie kontynuowane po odzyskaniu połączenia z siecią.",
+			PRESS_TO_UPDATE = "Naciśnij X aby zaktualizować aplikację\nNaciśnij O aby anulować",
+			NO_LIBRARY_MANGA = "Brak mang/komiksów.\nAby dodać mangi/komiksy znajdź je w menu \"KATALOGI\" i naciśnij \"Dodaj do biblioteki\".",
+			NO_HISTORY_MANGA = "Brak mang/komiksów.\nKiedyś się tu pojawią",
+			NO_CATALOG_MANGA = "Brak mang/komiksów.\nBłąd serwera, połączenia lub parsera",
+			NO_DOWNLOADING_MANGA = "Brak pobieranych mang/komiksów",
+			NO_CATALOGS = "Brak katalogów.\nNaciśnij Trójkąt i poczekaj aż zostaną załadowane.",
+			THANK_YOU = "Dziękujemy Ci za wspieranie projektu!",
+		},
+		SETTINGS = {
+			Language = "Język",
+			AdvancedChaptersDeletion = "Zaawansowane usuwanie rozdziałów",
+			DonatorsList = "Lista wspierających",
+			ClearChapters = "Wyczyść wszystkie zapisane rozdziały",
+			ShowNSFW = "Pokaż katalogi NSFW",
+			ClearLibrary = "Wyczyść bibliotekę",
+			ClearCache = "Wyczyść pamięć podręczną nie śledzonych mang",
+			ClearAllCache = "Wyczyść całą pamięć podręczną",
+			ReaderOrientation = "Domyślna orientacja czytnika",
+			DoubleTapReader = "Włącz podwójne tapnięcie aby przybliżyć",
+			ZoomReader = "Skalowanie czytnika",
+			SwapXO = "Zamień X i O",
+			ShowAuthor = "Deweloper",
+			ShowVersion = "Wersja aplikacji",
+			CheckUpdate = "Sprawdź aktualizacje",
+			SkipFontLoading = "Pomiń ładowanie czcionek",
+			LatestVersion = "Ostatnia wersja : ",
+			PleaseWait = "Proszę czekać",
+			FailedToUpdate = "Aktualizacja zakończona niepowodzeniem",
+			NoConnection = "Brak połączenia",
+			HideInOffline = "W trybie offline pokazuj tylko pobrane rozdziały",
+			UnzipingVPK = "Wypakowywanie pliku VPK",
+			CurrentVersionIs = "Aktualna wersja to:",
+			Space = "Zużycie pamięci",
+			ReaderDirection = "Kierunek czytania mangi",
+			VersionIsUpToDate = "Twoja wersja jest aktualna",
+			EU = "Europa",
+			JP = "Japonia",
+			PressAgainToAccept = "Naciśnij ponownie aby zaakceptować",
+			PressAgainToUpdate = "Naciśnij ponownie aby zaktualizować:",
+			Reader = "Czytnik",
+			Controls = "Ustawienia sterowania",
+			Data = "Ustawienia daty",
+			About = "O programie",
+			Catalogs = "Katalogi",
+			Library = "Biblioteka",
+			ChangeUI = "Motyw",
+			PreferredCatalogLanguage = "Preferowany język",
+			LibrarySorting = "Sortowanie biblioteki",
+			ChapterSorting = "Sortowanie rozdziałów",
+			RefreshLibAtStart = "Odśwież bibliotekę po uruchomieniu",
+			Translators = "Podziękowania dla tłumaczy",
+			ChangingPageButtons = "Przyciski zmieniające strony",
+			LeftStickDeadZone = "Martwa strefa lewej gałki analogowej",
+			LeftStickSensitivity = "Czułość lewej gałki analogowej",
+			RightStickDeadZone = "Martwa strefa prawej gałki analogowej",
+			RightStickSensitivity = "Czułość prawej gałki analogowej",
+			ResetAllSettings = "Zresetuj wszystkie ustawienia",
+			Other = "Inne",
+			SilentDownloads = "Nie pokazuj powiadomień o stanie pobierania",
+			Network = "Sieć",
+			UseProxy = "Użyj proxy",
+			ProxyIP = "Adres IP",
+			ProxyPort = "Port",
+			UseProxyAuth = "Użyj uwierzytelnienia proxy",
+			ProxyAuth = "login:hasło",
+			SkipCacheChapterChecking = "Pomiń sprawdzanie pamięci podręcznej i zapisanych rozdziałów w trakcie ładowania",
+			ConnectionTime = "Czas połączenia z serwerem",
+			InputValue = "Wprowadź wartość",
+			OpenInBrowser = "Otwórz w przeglądarce",
+			SaveDataPath = "Zapisz ścieżkę do danych",
+			SetPageAsCover = "Ustaw stronę jako okładkę",
+			ResetCover = "Zresetuj okładkę",
+			SupportDev = "Wesprzyj twórcę",
+			PressEdgesToChangePage = "Zmieniaj strony przez naciskanie krawędzi",
+			DownloadImageToMemory = "Pobierz obraz",
+			AnimatedGif = "Animuj gify (Eksperymentalne)",
+			LoadSummary = "Pokaż podsumowanie mangi",
+		},
+		SETTINGS_DESCRIPTION = {
+			Library = "Ustawienia powiązane ze śledzeniem mangi",
+			Catalogs = "Język, zawartość NSFW",
+			Reader = "Kierunek czytania, orientacja ekranu, przybliżenie",
+			Network = "Czas połączenia minął, proxy",
+			Data = "Zapisy, pamięć podręczna, ustawienia",
+			AdvancedChaptersDeletion = "Czytaj, usuń",
+			DonatorsList = "Lista wspierających projekt",
+			Other = "Ładowanie czcionek, sortowanie rozdziałów, powiadomienia",
+			Controls = "Typ klawiszy, przyciski zmiany stron, ustawienia gałek",
+			About = "Wersja, aktualizacje"
+		},
+		PAGINGCONTROLS = {
+			["LR"] = "Spusty L i R",
+			["DPAD"] = "Używaj D-Pada"
+		},
+		EXTRA = {
+			["DownloadAll"] = "Pobierz wszystkie rozdziały",
+			["RemoveAll"] = "Usuń wszystkie rozdziały",
+			["CancelAll"] = "Anuluj pobieranie rozdziałów",
+			["ClearBookmarks"] = "Wyczyść zakładki",
+			["OpenMangaInBrowser"] = "Otwórz mangę w przeglądarce"
+		},
+		THEME = {
+			Dark = "Ciemny",
+			Light = "Jasny",
+			Blue = "Niebieski",
+			Crimson = "Karmazynowy"
+		},
+		NSFW = {
+			[true] = "Pokazuj",
+			[false] = "Nie pokazuj show"
+		},
+		YORN = {
+			[true] = "Tak",
+			[false] = "Nie"
+		},
+		PARSERS = {
+			RUS = "Rosyjskie",
+			ENG = "Angielskie",
+			ESP = "Hiszpańskie",
+			PRT = "Portugalskie",
+			FRA = "Francuskie",
+			JAP = "Japońskie",
+			DIF = "Różne",
+			TUR = "Tureckie",
+			ITA = "Włoskie",
+			VIE = "Wietnamskie",
+			DEU = "Niemieckie",
+			BRA = "Brazylijskie",
+			POL = "Polskie",
+			IDN = "Indonezyjskie",
+			CHN = "Chińskie",
+			ROU = "Rumuńskie",
+			KOR = "Koreańskie",
+			RAW = "RAW (Nieprzetłumaczona manga)"
+		},
+		WARNINGS = {
+			NO_CHAPTERS = "Brak rozdziałów"
+		},
+		READER = {
+			PREPARING_PAGES = "Przygotowywanie stron",
+			LOADING_PAGE = "Ładowanie strony",
+			LOADING_SEGMENT = "Ładowanie strony",
+			Horizontal = "Poziome",
+			Vertical = "Pionowe",
+			Smart = "Inteligentne",
+			Height = "Wysokość",
+			Width = "Szerokość",
+			LEFT = "Od prawej do lewej",
+			RIGHT = "Od lewej do prawej",
+			DOWN = "Od góry do dołu",
+			Default = "Domyślne"
+		},
+		DETAILS = {
+			ADD_TO_LIBRARY = "Dodaj do biblioteki",
+			REMOVE_FROM_LIBRARY = "Usuń z biblioteki",
+			PAGE = "Strona : ",
+			CONTINUE = "Kontynuuj",
+			START = "Zacznij czytać",
+			DONE = "Ukończone!",
+			SUMMARY = "Podsumowanie",
+			SHRINK = "Zmniejsz",
+			EXPAND = "Przeczytaj więcej"
+		},
+		NOTIFICATIONS = {
+			ADDED_TO_LIBRARY = "Dodano do biblioteki",
+			REMOVED_FROM_LIBRARY = "Usunięto z biblioteki",
+			SEARCHING = 'Wyszukiwanie "%s"',
+			START_DOWNLOAD = "%s: %s\npobieranie rozpoczęte!",
+			END_DOWNLOAD = "%s: %s\npobieranie zakończone sukcesem!",
+			CANCEL_DOWNLOAD = "%s: %s\npobieranie anulowane!",
+			CHAPTER_REMOVE = "%s usunięte!",
+			NET_PROBLEM = "Wystąpił problem z połączeniem!",
+			CHAPTERS_CLEARED = "Wszystkie zapisane rozdziały zostały wyczyszczone!",
+			LIBRARY_CLEARED = "Biblioteka została wyczyszczona!",
+			CACHE_CLEARED = "Pamięć podręczna została wyczyszczona!",
+			DEVELOPER_THING = "Daj gwiazdkę na GitHub!",
+			NEW_UPDATE_AVAILABLE = "Dostępna aktualizacja",
+			NO_SPACE_LEFT = "Brak dostępnej pamięci",
+			REFRESH_COMPLETED = "Odświeżenie zakończone!",
+			IMPORT_COMPLETED = "Import zakończone!",
+			SETTINGS_RESET = "Ustawienia zostały zresetowane",
+			BAD_IMAGE_FOUND = "Znaleziono nieprawidłowy obraz!",
+			COVER_SET_COMPLETED = "Okładka została zaktualizowana!"
+		},
+		MODES = {
+			Popular = "Popularne",
+			Latest = "Ostatnie",
+			Search = "Szukaj",
+			Alphabet = "Alfabetycznie",
+			ByLetter = "Po literze",
+			ByTag = "Po tagu"
+		},
+		PANEL = {
+			BACK = "Powrót",
+			MODE = "Tryb",
+			READ = "Czytaj",
+			--MODE_POPULAR = "Mode: Popular",
+			--MODE_LATEST = "Mode: Latest",
+			--MODE_SEARCHING = 'Mode: Searching "%s"',
+			JUMPTOPAGE = "Skocz do strony",
+			SEARCH = "Szukaj",
+			SELECT = "Wybierz",
+			CHOOSE = "Wybierz",
+			IMPORT = "Importuj",
+			CHANGE_SECTION = "Zmień sekcje",
+			UPDATE = "Odśwież",
+			CANCEL = "Anuluj",
+			DELETE = "Usuń",
+			FOLLOW = "Obserwuj",
+			UNFOLLOW = "Przestań obserwować"
+		},
+		IMPORT = {
+			EXTERNAL_MEMORY = "Pamięć zewnętrzna",
+			DRIVE = "Dysk",
+			FOLDER = "Folder",
+			GOBACK = "Powrót",
+			FILE = "Plik",
+			UNSUPFILE = "Nieobsługiwany format pliku"
+		}
+	},
 }
 
 LanguageNames = {
@@ -2576,6 +2809,7 @@ LanguageNames = {
 		SimplifiedChinese = "Упрощенный китайский",
 		TraditionalChinese = "Традиционный китайский",
 		Romanian = "Румынский",
+		Polish = "Польский",
 		Default = "Системный"
 	},
 	English = {
@@ -2590,6 +2824,7 @@ LanguageNames = {
 		SimplifiedChinese = "Simplified Chinese",
 		TraditionalChinese = "Traditional Chinese",
 		Romanian = "Romanian",
+		Polish = "Polish",
 		Default = "System"
 	},
 	Turkish = {
@@ -2604,6 +2839,7 @@ LanguageNames = {
 		SimplifiedChinese = "Basitleştirilmiş Çince",
 		TraditionalChinese = "Geleneksel Çince",
 		Romanian = "Romence",
+		Polish = "Lehçe", 
 		Default = "Sistem Dili"
 	},
 	Spanish = {
@@ -2617,6 +2853,7 @@ LanguageNames = {
 		PortugueseBR = "Portugués Brasileño",
 		SimplifiedChinese = "Chino Simplificado",
 		TraditionalChinese = "Chino Tradicional",
+		Polish = "Polaco",
 		Romanian = "Rumano",
 		Default = "Sistema"
 	},
@@ -2632,6 +2869,7 @@ LanguageNames = {
 		SimplifiedChinese = "Tiếng Trung Giản Thể",
 		TraditionalChinese = "Truyền Thống Trung Quốc",
 		Romanian = "Romanian",--Translate please
+		Polish = "Tiếng ba lan",
 		Default = "Hệ thống"
 	},
 	Italian = {
@@ -2646,6 +2884,7 @@ LanguageNames = {
 		SimplifiedChinese = "Cinese Semplificato",
 		TraditionalChinese = "Cinese Tradizionale",
 		Romanian = "Rumeno",
+		Polski = "Polacco",
 		Default = "Sistema"
 	},
 	French = {
@@ -2660,6 +2899,7 @@ LanguageNames = {
 		SimplifiedChinese = "Chinois simplifié",
 		TraditionalChinese = "Chinois traditionnel",
 		Romanian = "Roumaine",
+		Polski = "Polonaise",
 		Default = "Système"
 	},
 	PortugueseBR = {
@@ -2674,6 +2914,7 @@ LanguageNames = {
 		SimplifiedChinese = "Chinês Simplificado",
 		TraditionalChinese = "Chinês Tradicional",
 		Romanian = "Romeno",
+		Polish = "Polonesa",
 		Default = "Sistema"
 	},
 	SimplifiedChinese = {
@@ -2688,6 +2929,7 @@ LanguageNames = {
 		SimplifiedChinese = "简体中文",
 		TraditionalChinese = "繁体中文",
 		Romanian = "罗马尼亚",
+		Polish = "波兰语",
 		Default = "默认"
 	},
 	TraditionalChinese = {
@@ -2702,6 +2944,7 @@ LanguageNames = {
 		SimplifiedChinese = "簡體中文",
 		TraditionalChinese = "繁體中文",
 		Romanian = "羅馬尼亞",
+		Polski = "波蘭語",
 		Default = "默認"
 	},
 	Romanian = {
@@ -2716,8 +2959,24 @@ LanguageNames = {
 		SimplifiedChinese = "Chineză simplificată",
 		TraditionalChinese = "Chineză tradițională",
 		Romanian = "Română",
+		Polish = "Poloneza",
 		Default = "Limba sistemului"
-	}
+	},
+	Polish = {
+		Russian = "Rosyjski",
+		English = "Angielski",
+		Turkish = "Turecki",
+		Spanish = "Hiszpański",
+		Vietnamese = "Wietnamski",
+		French = "Francuski",
+		Italian = "Włoski",
+		PortugueseBR = "Brazylijski portugalski",
+		SimplifiedChinese = "Chiński uproszczony",
+		TraditionalChinese = "Chiński tradycyjny",
+		Romanian = "Rumuński",
+		Polish = "Polski",
+		Default = "Systemowy"
+	},
 }
 
 local language_now = System.getLanguage()
@@ -2745,6 +3004,9 @@ elseif language_now == 11 then
 elseif language_now == 10 then
 	Language.Default = Language.TraditionalChinese
 	LanguageNames.Default = LanguageNames.TraditionalChinese
+elseif language_now == 16 then
+	Language.Default = Language.Polish
+	LanguageNames.Default = LanguageNames.Polish
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
