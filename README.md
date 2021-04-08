@@ -17,7 +17,7 @@ Application for PlayStation Vita to read manga or comics<br>
 * Manga / Comics tracking
 * Support of longpages without downscaling (downscales only if no enough vram)
 * Support of formats such as: .ZIP .CBZ
-* Multi-language (English, Russian, Spanish, Vietnamese, Italian, French, Turkish, Portuguese (Brazil), Traditional and Simplified Chinese)
+* Multi-language (English, Russian, Spanish, Vietnamese, Italian, French, Turkish, Portuguese (Brazil), Traditional and Simplified Chinese, Romanian, Polish)
 * Offline mode (if you forgot to track manga / comics you downloaded, check history tab, and don't clear cache)
 * Advanced search (Filters, Tags, etc.)
 * Custom settings for manga / comics (Orientation, Read Direction, Zoom mode)
@@ -114,3 +114,4 @@ Execute `build.bat` to create working .vpk
 <br>[rutantan](https://github.com/rutantan) - Portuguese (Brazil) translation
 <br>[Qingyu510](https://github.com/Qingyu510) - Simplified Chinese & Traditional Chinese translation
 <br>[tmihai20](https://github.com/tmihai20) - Romanian translation
+<br>[tofudd](https://github.com/tofudd) - Polish translation
