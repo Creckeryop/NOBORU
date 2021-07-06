@@ -80,8 +80,11 @@ local function animationUpdate()
 	end
 end
 
+local mode = ""
+
 function Extra.setChapters(manga, chapters, page)
 	if manga then
+		mode = "setChapters"
 		selectedManga = manga
 		chaptersList = chapters
 		status = "START"
@@ -119,6 +122,29 @@ function Extra.setChapters(manga, chapters, page)
 	end
 end
 
+local lang_to_code = {}
+
+function Extra.setLanguage()
+	mode = "setLanguage"
+	selectedExtraMenu = {}
+	lang_to_code = {}
+	status = "START"
+	oldFade = 1
+	slider.Y = -50
+	for k, _ in pairs(Language) do
+		lang_to_code[#lang_to_code + 1] = k
+		if k == Settings.Language then
+			selectedExtraMenu[#selectedExtraMenu + 1] = ">> " .. LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ") <<"
+		else
+			selectedExtraMenu[#selectedExtraMenu + 1] = LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ")"
+		end
+	end
+	extraSelector:resetSelected()
+	Timer.reset(fadeAnimationTimer)
+	extraMenuYDrawStart = 0
+	maxExtraMenuWidth = DEFAULT_MAX_EXTRA_MENU_WIDTH
+end
+
 local getTime = System.getTime
 local getDate = System.getDate
 local getImageFormat = System.getImageFormat
@@ -126,187 +152,114 @@ local rename = System.rename
 local last_unique = nil
 
 local function pressOption(id)
-	if selectedExtraMenu[id] == "DownloadAll" then
-		Cache.addManga(selectedManga)
-		Cache.makeHistory(selectedManga)
-		for i = 1, #chaptersList do
-			local chapter = chaptersList[i]
-			if not ChapterSaver.is_downloading(chapter) and not ChapterSaver.check(chapter) then
-				ChapterSaver.downloadChapter(chapter, true)
+	if mode == "setChapters" then
+		if selectedExtraMenu[id] == "DownloadAll" then
+			Cache.addManga(selectedManga)
+			Cache.makeHistory(selectedManga)
+			for i = 1, #chaptersList do
+				local chapter = chaptersList[i]
+				if not ChapterSaver.is_downloading(chapter) and not ChapterSaver.check(chapter) then
+					ChapterSaver.downloadChapter(chapter, true)
+				end
 			end
-		end
-	elseif selectedExtraMenu[id] == "RemoveAll" then
-		ChapterSaver.stopList(chaptersList, true)
-		for i = 1, #chaptersList do
-			ChapterSaver.delete(chaptersList[i], true)
-		end
-	elseif selectedExtraMenu[id] == "CancelAll" then
-		ChapterSaver.stopList(chaptersList, true)
-	elseif selectedExtraMenu[id] == "ClearBookmarks" then
-		Cache.clearBookmarks(selectedManga)
-		was_bookmarks_updated = true
-	elseif selectedExtraMenu[id] == "OpenInBrowser" then
-		if doesFileExist("ux0:data/noboru/temp/image.html") then
-			deleteFile("ux0:data/noboru/temp/image.html")
-		end
-		local file = openFile("ux0:data/noboru/temp/image.html", FCREATE)
-		if type(selectedPage) == "table" then
-			if selectedManga.ParserID == "IMPORTED" then
-				extractZip("ux0:data/noboru/" .. selectedPage.Path, selectedPage.Extract, "ux0:data/noboru/temp/page.image")
-				selectedPage = "file:///ux0:data/noboru/temp/page.image"
-			elseif selectedPage.Path then
-				selectedPage = "file:///ux0:data/noboru/" .. selectedPage.Path
-			elseif type(selectedPage.Link) == "string" then
-				if selectedPage.Link:find("^http") then
-					selectedPage = selectedPage.Link
+		elseif selectedExtraMenu[id] == "RemoveAll" then
+			ChapterSaver.stopList(chaptersList, true)
+			for i = 1, #chaptersList do
+				ChapterSaver.delete(chaptersList[i], true)
+			end
+		elseif selectedExtraMenu[id] == "CancelAll" then
+			ChapterSaver.stopList(chaptersList, true)
+		elseif selectedExtraMenu[id] == "ClearBookmarks" then
+			Cache.clearBookmarks(selectedManga)
+			was_bookmarks_updated = true
+		elseif selectedExtraMenu[id] == "OpenInBrowser" then
+			if doesFileExist("ux0:data/noboru/temp/image.html") then
+				deleteFile("ux0:data/noboru/temp/image.html")
+			end
+			local file = openFile("ux0:data/noboru/temp/image.html", FCREATE)
+			if type(selectedPage) == "table" then
+				if selectedManga.ParserID == "IMPORTED" then
+					extractZip("ux0:data/noboru/" .. selectedPage.Path, selectedPage.Extract, "ux0:data/noboru/temp/page.image")
+					selectedPage = "file:///ux0:data/noboru/temp/page.image"
+				elseif selectedPage.Path then
+					selectedPage = "file:///ux0:data/noboru/" .. selectedPage.Path
+				elseif type(selectedPage.Link) == "string" then
+					if selectedPage.Link:find("^http") then
+						selectedPage = selectedPage.Link
+					else
+						selectedPage = "http://" .. selectedPage.Link
+					end
+				elseif type(selectedPage.Link) == "table" then
+					local image = {}
+					Threads.insertTask(
+						image,
+						{
+							Type = "FileDownload",
+							Link = selectedPage.Link,
+							Table = image
+						}
+					)
+					while Threads.check(image) do
+						Threads.update()
+					end
+					selectedPage = "file:///ux0:data/noboru/temp/cache.image"
 				else
-					selectedPage = "http://" .. selectedPage.Link
-				end
-			elseif type(selectedPage.Link) == "table" then
-				local image = {}
-				Threads.insertTask(
-					image,
-					{
-						Type = "FileDownload",
-						Link = selectedPage.Link,
-						Table = image
-					}
-				)
-				while Threads.check(image) do
-					Threads.update()
-				end
-				selectedPage = "file:///ux0:data/noboru/temp/cache.image"
-			else
-				return
-			end
-		end
-		local content = ([[<html><head><title>%s</title></head><body style="background-color: black;"><div style="text-align: center;"><img src="%s" width="100%%"></div></body></html>]]):format("NOBORU: " .. selectedManga.Name .. " | " .. chaptersList.Name, selectedPage)
-		writeFile(file, content, #content)
-		closeFile(file)
-		callUri("webmodal: file:///ux0:data/noboru/temp/image.html")
-	elseif selectedExtraMenu[id] == "ReaderOrientation" then
-		CuSettings.changeOrientation(selectedManga)
-		Reader.updateSettings()
-		customSettings = CuSettings.load(selectedManga)
-	elseif selectedExtraMenu[id] == "ReaderDirection" then
-		CuSettings.changeDirection(selectedManga)
-		Reader.updateSettings()
-		customSettings = CuSettings.load(selectedManga)
-	elseif selectedExtraMenu[id] == "ZoomReader" then
-		CuSettings.changeZoom(selectedManga)
-		Reader.updateSettings()
-		customSettings = CuSettings.load(selectedManga)
-	elseif selectedExtraMenu[id] == "OpenMangaInBrowser" then
-		callUri("webmodal: " .. selectedManga.BrowserLink)
-	elseif selectedExtraMenu[id] == "ResetCover" then
-		if selectedManga and selectedManga.ParserID ~= "IMPORTED" then
-			local coverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/cover.image"
-			if doesFileExist(coverPath) then
-				deleteFile(coverPath)
-			end
-			local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/custom_cover.image"
-			if doesFileExist(customCoverPath) then
-				deleteFile(customCoverPath)
-			end
-			CustomCovers.setMangaCover(selectedManga, nil)
-			selectedManga.ImageDownload = nil
-			collectgarbage("collect")
-			Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
-		end
-	elseif selectedExtraMenu[id] == "SetPageAsCover" then
-		local page = Reader.getCurrentPageImageLink()
-		if page then
-			local cacheKey = Cache.getKey(selectedManga)
-			if cacheKey == nil then
-				Cache.addManga(selectedManga)
-				cacheKey = Cache.getKey(selectedManga)
-				if cacheKey == nil then
 					return
 				end
-				Cache.save()
 			end
-			local tempTable = {}
-			if page.Extract then
-			elseif page.Path then
-				CustomCovers.setMangaCover(selectedManga, page)
-				copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image")
+			local content = ([[<html><head><title>%s</title></head><body style="background-color: black;"><div style="text-align: center;"><img src="%s" width="100%%"></div></body></html>]]):format("NOBORU: " .. selectedManga.Name .. " | " .. chaptersList.Name, selectedPage)
+			writeFile(file, content, #content)
+			closeFile(file)
+			callUri("webmodal: file:///ux0:data/noboru/temp/image.html")
+		elseif selectedExtraMenu[id] == "ReaderOrientation" then
+			CuSettings.changeOrientation(selectedManga)
+			Reader.updateSettings()
+			customSettings = CuSettings.load(selectedManga)
+		elseif selectedExtraMenu[id] == "ReaderDirection" then
+			CuSettings.changeDirection(selectedManga)
+			Reader.updateSettings()
+			customSettings = CuSettings.load(selectedManga)
+		elseif selectedExtraMenu[id] == "ZoomReader" then
+			CuSettings.changeZoom(selectedManga)
+			Reader.updateSettings()
+			customSettings = CuSettings.load(selectedManga)
+		elseif selectedExtraMenu[id] == "OpenMangaInBrowser" then
+			callUri("webmodal: " .. selectedManga.BrowserLink)
+		elseif selectedExtraMenu[id] == "ResetCover" then
+			if selectedManga and selectedManga.ParserID ~= "IMPORTED" then
+				local coverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/cover.image"
+				if doesFileExist(coverPath) then
+					deleteFile(coverPath)
+				end
+				local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/custom_cover.image"
+				if doesFileExist(customCoverPath) then
+					deleteFile(customCoverPath)
+				end
+				CustomCovers.setMangaCover(selectedManga, nil)
+				selectedManga.ImageDownload = nil
+				collectgarbage("collect")
 				Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
-			elseif page.ParserID then
-				CustomCovers.setMangaCover(selectedManga, page)
-				Threads.insertTask(
-					tempTable,
-					{
-						Type = "function",
-						OnComplete = function()
-							ParserManager.getPageImage(page.ParserID, page.Link, tempTable)
-							while (ParserManager.check(tempTable)) do
-								coroutine.yield(false)
-							end
-							Threads.insertTask(
-								tempTable,
-								{
-									Type = "FileDownload",
-									Link = tempTable.Link,
-									Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
-									OnComplete = function()
-										Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
-									end
-								}
-							)
-						end
-					}
-				)
-			elseif page.Link then
-				CustomCovers.setMangaCover(selectedManga, page)
-				Threads.insertTask(
-					tempTable,
-					{
-						Type = "FileDownload",
-						Link = page.Link,
-						Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
-						OnComplete = function()
-							Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
-						end
-					}
-				)
-			else
-				return
 			end
-		end
-	elseif selectedExtraMenu[id] == "DownloadImageToMemory" then
-		local page = Reader.getCurrentPageImageLink()
-		if page then
-			local drive = Settings.SaveDataPath
-			local tempTable = {}
-			local h, mn, s = getTime()
-			local _, d, mo, y = getDate()
-			if #tostring(d) == 1 then
-				d = "0"..tostring(d)
-			end
-			if #tostring(mo) == 1 then
-				mo = "0"..tostring(mo)
-			end
-			if #tostring(h) == 1 then
-				h = "0"..tostring(h)
-			end
-			if #tostring(mn) == 1 then
-				mn = "0"..tostring(mn)
-			end
-			if #tostring(s) == 1 then
-				s = "0"..tostring(s)
-			end
-			local unique_name = y .. "." .. mo .. "." .. d .. "-" .. h .. "." .. mn .. "." .. s
-			if unique_name ~= last_unique then
-				last_unique = unique_name
+		elseif selectedExtraMenu[id] == "SetPageAsCover" then
+			local page = Reader.getCurrentPageImageLink()
+			if page then
+				local cacheKey = Cache.getKey(selectedManga)
+				if cacheKey == nil then
+					Cache.addManga(selectedManga)
+					cacheKey = Cache.getKey(selectedManga)
+					if cacheKey == nil then
+						return
+					end
+					Cache.save()
+				end
+				local tempTable = {}
 				if page.Extract then
 				elseif page.Path then
-					copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), drive..":data/noboru/pictures/" .. unique_name .. ".image")
-					local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
-					if f ~= nil then
-						rename(drive..":data/noboru/pictures/" .. unique_name .. ".image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f)
-					end
-					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+					CustomCovers.setMangaCover(selectedManga, page)
+					copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image")
+					Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 				elseif page.ParserID then
+					CustomCovers.setMangaCover(selectedManga, page)
 					Threads.insertTask(
 						tempTable,
 						{
@@ -321,15 +274,9 @@ local function pressOption(id)
 									{
 										Type = "FileDownload",
 										Link = tempTable.Link,
-										Path = drive..":data/noboru/pictures/" .. unique_name .. ".image",
+										Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 										OnComplete = function()
-											if doesFileExist(drive..":data/noboru/pictures/" .. unique_name .. ".image") then
-												local f = getImageFormat(drive..":data/noboru/pictures/" .. unique_name .. ".image")
-												if f ~= nil then
-													rename(drive..":data/noboru/pictures/" .. unique_name .. ".image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f)
-												end
-												Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
-											end
+											Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 										end
 									}
 								)
@@ -337,20 +284,15 @@ local function pressOption(id)
 						}
 					)
 				elseif page.Link then
+					CustomCovers.setMangaCover(selectedManga, page)
 					Threads.insertTask(
 						tempTable,
 						{
 							Type = "FileDownload",
 							Link = page.Link,
-							Path = drive..":data/noboru/pictures/" .. unique_name .. ".image",
+							Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 							OnComplete = function()
-								if doesFileExist(drive..":data/noboru/pictures/" .. unique_name .. ".image") then
-									local f = getImageFormat(drive..":data/noboru/pictures/" .. unique_name .. ".image")
-									if f ~= nil then
-										rename(drive..":data/noboru/pictures/" .. unique_name .. ".image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f)
-									end
-									Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive..":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
-								end
+								Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
 							end
 						}
 					)
@@ -358,6 +300,98 @@ local function pressOption(id)
 					return
 				end
 			end
+		elseif selectedExtraMenu[id] == "DownloadImageToMemory" then
+			local page = Reader.getCurrentPageImageLink()
+			if page then
+				local drive = Settings.SaveDataPath
+				local tempTable = {}
+				local h, mn, s = getTime()
+				local _, d, mo, y = getDate()
+				if #tostring(d) == 1 then
+					d = "0" .. tostring(d)
+				end
+				if #tostring(mo) == 1 then
+					mo = "0" .. tostring(mo)
+				end
+				if #tostring(h) == 1 then
+					h = "0" .. tostring(h)
+				end
+				if #tostring(mn) == 1 then
+					mn = "0" .. tostring(mn)
+				end
+				if #tostring(s) == 1 then
+					s = "0" .. tostring(s)
+				end
+				local unique_name = y .. "." .. mo .. "." .. d .. "-" .. h .. "." .. mn .. "." .. s
+				if unique_name ~= last_unique then
+					last_unique = unique_name
+					if page.Extract then
+					elseif page.Path then
+						copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
+						local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+						if f ~= nil then
+							rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
+						end
+						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+					elseif page.ParserID then
+						Threads.insertTask(
+							tempTable,
+							{
+								Type = "function",
+								OnComplete = function()
+									ParserManager.getPageImage(page.ParserID, page.Link, tempTable)
+									while (ParserManager.check(tempTable)) do
+										coroutine.yield(false)
+									end
+									Threads.insertTask(
+										tempTable,
+										{
+											Type = "FileDownload",
+											Link = tempTable.Link,
+											Path = drive .. ":data/noboru/pictures/" .. unique_name .. ".image",
+											OnComplete = function()
+												if doesFileExist(drive .. ":data/noboru/pictures/" .. unique_name .. ".image") then
+													local f = getImageFormat(drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
+													if f ~= nil then
+														rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
+													end
+													Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+												end
+											end
+										}
+									)
+								end
+							}
+						)
+					elseif page.Link then
+						Threads.insertTask(
+							tempTable,
+							{
+								Type = "FileDownload",
+								Link = page.Link,
+								Path = drive .. ":data/noboru/pictures/" .. unique_name .. ".image",
+								OnComplete = function()
+									if doesFileExist(drive .. ":data/noboru/pictures/" .. unique_name .. ".image") then
+										local f = getImageFormat(drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
+										if f ~= nil then
+											rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
+										end
+										Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+									end
+								end
+							}
+						)
+					else
+						return
+					end
+				end
+			end
+		end
+	elseif mode == "setLanguage" then
+		if lang_to_code[id] then
+			Settings.Language = lang_to_code[id]
+			GenPanels()
+			Settings.save()
 		end
 	end
 end
@@ -378,6 +412,18 @@ function Extra.input(oldPad, pad, oldTouch, touch)
 				if oldTouch.x > 480 - maxExtraMenuWidth / 2 and oldTouch.x < 480 + maxExtraMenuWidth / 2 and oldTouch.y > extraMenuYDrawStart and oldTouch.y < extraMenuYDrawStart + #selectedExtraMenu * 80 then
 					local id = math.floor((slider.Y + oldTouch.y - extraMenuYDrawStart) / 80) + 1
 					pressOption(id)
+					if mode == "setLanguage" then
+						if mode == "setLanguage" then
+							selectedExtraMenu = {}
+							for k, _ in pairs(Language) do
+								if k == Settings.Language then
+									selectedExtraMenu[#selectedExtraMenu + 1] = ">> " .. LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ") <<"
+								else
+									selectedExtraMenu[#selectedExtraMenu + 1] = LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ")"
+								end
+							end
+						end
+					end
 				end
 			end
 			TOUCH_MODES.MODE = TOUCH_MODES.NONE
@@ -386,6 +432,16 @@ function Extra.input(oldPad, pad, oldTouch, touch)
 		if Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldPad, SCE_CTRL_CROSS) then
 			local id = extraSelector.getSelected()
 			pressOption(id)
+			if mode == "setLanguage" then
+				selectedExtraMenu = {}
+				for k, _ in pairs(Language) do
+					if k == Settings.Language then
+						selectedExtraMenu[#selectedExtraMenu + 1] = ">> " .. LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ") <<"
+					else
+						selectedExtraMenu[#selectedExtraMenu + 1] = LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ")"
+					end
+				end
+			end
 		elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) then
 			status = "WAIT"
 			Timer.reset(fadeAnimationTimer)
@@ -471,10 +527,10 @@ function Extra.draw()
 				Graphics.fillEmptyRect(480 - maxExtraMenuWidth / 2 + i + 3, 480 + maxExtraMenuWidth / 2 - i - 2, y + i + 3, y + 75 - i + 2, selectedRedColor)
 			end
 		end
-		if status == "START" and #selectedExtraMenu > 6 then
-			local h = #selectedExtraMenu * 80 / 454
-			Graphics.fillRect(930, 932, 90, 544, Color.new(92, 92, 92, Alpha))
-			Graphics.fillRect(926, 936, 90 + (slider.Y + 20) / h, 90 + (slider.Y + 464) / h, COLOR_GRAY)
+		if #selectedExtraMenu > 6 then
+			Graphics.fillRect(480 + maxExtraMenuWidth / 2, 480 + maxExtraMenuWidth / 2 + 10, 0 + shift, 544 + shift, whiteColor)
+			local h = #selectedExtraMenu * 80 / 540
+			Graphics.fillRect(480 + maxExtraMenuWidth / 2 + 2, 480 + maxExtraMenuWidth / 2 + 8, 2 + (slider.Y) / h + shift, 2 + (slider.Y + 544) / h + shift, blackColor)
 		end
 	end
 end

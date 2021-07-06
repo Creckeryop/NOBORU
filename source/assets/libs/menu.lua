@@ -71,28 +71,32 @@ end
 function Menu.input(oldPad, pad, oldTouch, touch)
 	if Details.getStatus() == "END" then
 		if CatalogModes.getStatus() == "END" then
-			if Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldPad, SCE_CTRL_RTRIGGER) then
-				Menu.setMode(NEXT_MODES[mode])
-			end
-			if Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldPad, SCE_CTRL_LTRIGGER) then
-				Menu.setMode(PREV_MODES[mode])
-			end
-			if touch.x and not oldTouch.x and touch.x < 205 then
-				if touch.y >= 85 and touch.y < 135 then
-					Menu.setMode("LIBRARY")
-				elseif touch.y < 185 then
-					Menu.setMode("CATALOGS")
-				elseif touch.y < 235 then
-					Menu.setMode("HISTORY")
-				elseif touch.y > 460 then
-					Menu.setMode("SETTINGS")
-				elseif touch.y > 410 then
-					Menu.setMode("DOWNLOAD")
-				elseif touch.y > 360 then
-					Menu.setMode("IMPORT")
+			if Extra.getStatus() == "END" then
+				if Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldPad, SCE_CTRL_RTRIGGER) then
+					Menu.setMode(NEXT_MODES[mode])
 				end
+				if Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldPad, SCE_CTRL_LTRIGGER) then
+					Menu.setMode(PREV_MODES[mode])
+				end
+				if touch.x and not oldTouch.x and touch.x < 205 then
+					if touch.y >= 85 and touch.y < 135 then
+						Menu.setMode("LIBRARY")
+					elseif touch.y < 185 then
+						Menu.setMode("CATALOGS")
+					elseif touch.y < 235 then
+						Menu.setMode("HISTORY")
+					elseif touch.y > 460 then
+						Menu.setMode("SETTINGS")
+					elseif touch.y > 410 then
+						Menu.setMode("DOWNLOAD")
+					elseif touch.y > 360 then
+						Menu.setMode("IMPORT")
+					end
+				end
+				Catalogs.input(oldPad, pad, oldTouch, touch)
+			else
+				Extra.input(oldPad, pad, oldTouch, touch)
 			end
-			Catalogs.input(oldPad, pad, oldTouch, touch)
 		else
 			CatalogModes.input(pad, oldPad, touch, oldTouch)
 		end

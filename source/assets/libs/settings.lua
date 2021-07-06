@@ -31,7 +31,7 @@ Settings = {
 	FavouriteParsers = {},
 	AnimatedGif = false,
 	SaveDataPath = "ux0",
-	LoadSummary = true,
+	LoadSummary = true
 }
 
 NSFWLock = System.doesFileExist("ux0:data/noboru/.lock")
@@ -194,7 +194,7 @@ local settingsListTree = {
 		"ChapterSorting",
 		"SilentDownloads",
 		"SkipCacheChapterChecking",
-		"LoadSummary",
+		"LoadSummary"
 	},
 	About = {
 		"ShowVersion",
@@ -512,8 +512,9 @@ end
 ---Table with Option Names and their Functions
 SettingsFunctions = {
 	Language = function()
-		settings.Language = table.next(settings.Language, GetLanguages())
-		GenPanels()
+		Extra.setLanguage()
+		--settings.Language = table.next(settings.Language, GetLanguages())
+		--GenPanels()
 	end,
 	SkipFontLoading = function()
 		settings.SkipFontLoad = not settings.SkipFontLoad

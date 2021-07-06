@@ -70,7 +70,7 @@ if doesDirExist("ux0:data/noboru/parsers") then
 				end
 			)
 			if not suc then
-				Console.error("Cant load " .. path .. ":" .. err)
+				Console.error("Can't load " .. path .. ":" .. err)
 			end
 		end
 	end
@@ -258,7 +258,11 @@ local function update()
 	if AppMode == MENU then
 		Menu.update()
 		if Details.getStatus() == "END" and CatalogModes.getStatus() == "END" then
-			Panel.show()
+			if Extra.getStatus() == "END" then
+				Panel.show()
+			else
+				Panel.hide()
+			end
 		else
 			Panel.hide()
 		end
