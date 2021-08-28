@@ -1,7 +1,7 @@
 Settings = {
 	Language = "Default",
 	Theme = "Light",
-	Version = 0.87,
+	Version = 0.89,
 	NSFW = false,
 	Orientation = "Horizontal",
 	ZoomReader = "Smart",
@@ -261,6 +261,9 @@ function settings.load()
 			local new = suc()
 			if type(new) == "table" then
 				setSetting(new, "Language", Language)
+				if Language[settings.Language] == nil then
+					settings.Language = "Default"
+				end
 				if NSFWLock then
 					setSetting(new, "NSFW", {false})
 					if settingsListTree and settingsListTree.Catalogs and settingsListTree.Catalogs[1] then
