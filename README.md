@@ -116,4 +116,4 @@ Execute `build.bat` to create working .vpk
 <br>[rutantan](https://github.com/rutantan) - Portuguese (Brazil) translation
 <br>[Qingyu510](https://github.com/Qingyu510) - Simplified Chinese & Traditional Chinese translation
 <br>[tmihai20](https://github.com/tmihai20) - Romanian translation
-<br>[tofudd](https://github.com/tofudd) - Polish translation
+<br>[tof4](https://github.com/tof4) - Polish translation
