@@ -984,7 +984,7 @@ function Catalogs.draw()
 						FONT16,
 						225,
 						y - 44,
-						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese \n@tmihai20 :- Romanian \n@tofudd :- Polish \n@lukrynka :- German "):gsub(
+						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese \n@tmihai20 :- Romanian \n@tof4 :- Polish \n@lukrynka :- German "):gsub(
 							"%- (.-) ",
 							function(a)
 								return " " .. (LanguageNames[Settings.Language][a] or a) .. " "
