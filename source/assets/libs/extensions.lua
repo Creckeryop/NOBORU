@@ -19,7 +19,7 @@ function Extensions.UpdateList()
             "EXTENSIONSCHECK",
             {
                 Type = "FileDownload",
-                Link = "https://raw.githubusercontent.com/Creckeryop/NOBORU-parsers/extensions/extensions/parsers.ini",
+                Link = "https://raw.githubusercontent.com/Creckeryop/NOBORU-extensions/main/parsers.ini",
                 Path = savePath,
                 OnComplete = function()
                     if doesFileExist(savePath) then
