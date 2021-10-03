@@ -16,6 +16,7 @@ Language = {
 			SETTINGS = "НАСТРОЙКИ",
 			DOWNLOAD = "ЗАГРУЗКИ",
 			HISTORY = "ИСТОРИЯ",
+			EXTENSIONS = "РАСШИРЕНИЯ",
 			IMPORT = "ИМПОРТ",
 			SEARCH = "Поиск"
 		},
@@ -248,6 +249,7 @@ Language = {
 			SETTINGS = "SETTINGS",
 			DOWNLOAD = "DOWNLOADS",
 			IMPORT = "IMPORT",
+			EXTENSIONS = "EXTENSIONS",
 			HISTORY = "HISTORY",
 			SEARCH = "Search"
 		},
@@ -480,6 +482,7 @@ Language = {
 			SETTINGS = "SEÇENEKLER",
 			DOWNLOAD = "İNDİRİLENLER",
 			IMPORT = "İÇE AKTAR",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "GEÇMİŞ",
 			SEARCH = "Ara"
 		},
@@ -712,6 +715,7 @@ Language = {
 			SETTINGS = "Cài đặt",
 			DOWNLOAD = "Tải xuống",
 			IMPORT = "Thêm truyện",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "Lịch sử",
 			SEARCH = "Tìm kiếm"
 		},
@@ -944,6 +948,7 @@ Language = {
 			SETTINGS = "AJUSTES",
 			DOWNLOAD = "DESCARGAS",
 			IMPORT = "IMPORTAR",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "HISTORIAL",
 			SEARCH = "Buscar"
 		},
@@ -1176,6 +1181,7 @@ Language = {
 			SETTINGS = "IMPOSTAZIONI",
 			DOWNLOAD = "DOWNLOADS",
 			IMPORT = "IMPORTA",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "CRONOLOGIA",
 			SEARCH = "Ricerca"
 		},
@@ -1408,6 +1414,7 @@ Language = {
 			SETTINGS = "PARAMETRES",
 			DOWNLOAD = "TELECHARGEMENT",
 			IMPORT = "IMPORTER",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "HISTORIQUE",
 			SEARCH = "Recherche"
 		},
@@ -1640,6 +1647,7 @@ Language = {
 			SETTINGS = "CONFIGURAÇÕES",
 			DOWNLOAD = "DOWNLOADS",
 			IMPORT = "IMPORTAR",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "HISTÓRICO",
 			SEARCH = "Pesquisar" 
 		},
@@ -1874,6 +1882,7 @@ Language = {
 			SETTINGS = "设置",
 			DOWNLOAD = "下载",
 			IMPORT = "导入",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "历史",
 			SEARCH = "搜索"
 		},
@@ -2106,6 +2115,7 @@ Language = {
 			SETTINGS = "設置",
 			DOWNLOAD = "下載",
 			IMPORT = "導入",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "歷史",
 			SEARCH = "搜索"
 		},
@@ -2338,6 +2348,7 @@ Language = {
 			SETTINGS = "SETĂRI",
 			DOWNLOAD = "DESCĂRCĂRI",
 			IMPORT = "IMPORTĂ",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "ISTORIC",
 			SEARCH = "Caută"
 		},
@@ -2570,6 +2581,7 @@ Language = {
 			SETTINGS = "USTAWIENIA",
 			DOWNLOAD = "POBRANIE",
 			IMPORT = "IMPORTUJ",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "HISTORIA",
 			SEARCH = "Szukaj"
 		},
@@ -2802,6 +2814,7 @@ Language = {
 			SETTINGS = "EINSTELLUGEN",
 			DOWNLOAD = "DOWNLOADS",
 			IMPORT = "IMPORTIEREN",
+			EXTENSIONS = "EXTENSIONS", --translate please
 			HISTORY = "VERLAUF",
 			SEARCH = "Suche"
 		},

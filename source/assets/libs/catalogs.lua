@@ -743,7 +743,8 @@ function Catalogs.draw()
 	local scrollHeight, item
 	local itemHeight = 0
 	local centerScreenMessage
-	if status == "CATALOGS" then
+	if status == "EXTENSIONS" then
+	elseif status == "CATALOGS" then
 		if #parsersList == 0 and not ParserManager.check("UpdateParsers") then
 			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
 		end

@@ -40,6 +40,7 @@ loadlib("chsaver")
 loadlib("cache")
 loadlib("reader")
 loadlib("import")
+loadlib("extensions")
 loadlib("parserchecker")
 
 os = nil
@@ -138,6 +139,11 @@ local function preloadData()
 		Console.error(err)
 	end
 	suc, err = pcall(SettingsFunctions.CheckDonators)
+	if not suc then
+		Console.error(err)
+	end
+	coroutine.yield("Checking for extensions")
+	suc, err = pcall(Extensions.UpdateList)
 	if not suc then
 		Console.error(err)
 	end

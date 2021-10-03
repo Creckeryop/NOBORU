@@ -7,6 +7,7 @@ MiniStarIcon = Image:new(Graphics.loadImage("app0:assets/icons/mini_star.png"))
 local WebIcon = Image:new(Graphics.loadImage("app0:assets/icons/web.png"))
 HistoryIcon = Image:new(Graphics.loadImage("app0:assets/icons/history.png"))
 ImportIcon = Image:new(Graphics.loadImage("app0:assets/icons/import.png"))
+local ExtensionsIcon = Image:new(Graphics.loadImage("app0:assets/icons/extensions.png"))
 HotIcon = Image:new(Graphics.loadImage("app0:assets/icons/hot.png"))
 SearchIcon = Image:new(Graphics.loadImage("app0:assets/icons/search.png"))
 AZIcon = Image:new(Graphics.loadImage("app0:assets/icons/az.png"))
@@ -35,6 +36,7 @@ local buttonsAlpha = {
 	["LIBRARY"] = 1,
 	["CATALOGS"] = 1,
 	["HISTORY"] = 1,
+	["EXTENSIONS"] = 1,
 	["IMPORT"] = 1,
 	["DOWNLOAD"] = 1,
 	["SETTINGS"] = 1
@@ -43,7 +45,8 @@ local buttonsAlpha = {
 local NEXT_MODES = {
 	["LIBRARY"] = "CATALOGS",
 	["CATALOGS"] = "HISTORY",
-	["HISTORY"] = "IMPORT",
+	["HISTORY"] = "EXTENSIONS",
+	["EXTENSIONS"] = "IMPORT",
 	["IMPORT"] = "DOWNLOAD",
 	["DOWNLOAD"] = "SETTINGS",
 	["SETTINGS"] = "SETTINGS"
@@ -53,7 +56,8 @@ local PREV_MODES = {
 	["LIBRARY"] = "LIBRARY",
 	["CATALOGS"] = "LIBRARY",
 	["HISTORY"] = "CATALOGS",
-	["IMPORT"] = "HISTORY",
+	["EXTENSIONS"] = "HISTORY",
+	["IMPORT"] = "EXTENSIONS",
 	["DOWNLOAD"] = "IMPORT",
 	["SETTINGS"] = "DOWNLOAD"
 }
@@ -85,6 +89,8 @@ function Menu.input(oldPad, pad, oldTouch, touch)
 						Menu.setMode("CATALOGS")
 					elseif touch.y < 235 then
 						Menu.setMode("HISTORY")
+					elseif touch.y < 285 then
+						Menu.setMode("EXTENSIONS")
 					elseif touch.y > 460 then
 						Menu.setMode("SETTINGS")
 					elseif touch.y > 410 then
@@ -132,6 +138,11 @@ function Menu.draw()
 	Font.print(FONT16, (1 - buttonsAlpha["CATALOGS"]) * 5 + 52, 157, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["CATALOGS"])))
 	Graphics.drawImage((1 - buttonsAlpha["HISTORY"]) * 5 + 14, 205, HistoryIcon.e, COLOR_GRADIENT(Color.new(0, 188, 18), Color.new(255, 255, 255, 128), buttonsAlpha["HISTORY"]))
 	Font.print(FONT16, (1 - buttonsAlpha["HISTORY"]) * 5 + 52, 207, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["HISTORY"])))
+	Graphics.drawImage((1 - buttonsAlpha["EXTENSIONS"]) * 5 + 14, 255, ExtensionsIcon.e, COLOR_GRADIENT(Color.new(255, 106, 0), Color.new(255, 255, 255, 128), buttonsAlpha["EXTENSIONS"]))
+	if Extensions.GetCounter() > 0 then
+		Graphics.drawImage((1 - buttonsAlpha["EXTENSIONS"]) * 5 + 14 + 18, 255 - 6, CircleIcon.e, Color.new(255, 74, 58))
+	end
+	Font.print(FONT16, (1 - buttonsAlpha["EXTENSIONS"]) * 5 + 52, 257, Language[Settings.Language].APP.EXTENSIONS, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["EXTENSIONS"])))
 	Graphics.drawImage((1 - buttonsAlpha["IMPORT"]) * 5 + 14, 376, ImportIcon.e, COLOR_GRADIENT(Color.new(255, 74, 58), Color.new(255, 255, 255, 128), buttonsAlpha["IMPORT"]))
 	Font.print(FONT16, (1 - buttonsAlpha["IMPORT"]) * 5 + 52, 378, Language[Settings.Language].APP.IMPORT, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["IMPORT"])))
 	if ChapterSaver.is_download_running() then
