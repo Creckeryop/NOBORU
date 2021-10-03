@@ -15,7 +15,7 @@ function Console.write(message, color, mode)
 		Console.Lines[mode] = {}
 	end
 	local lines = Console.Lines[mode]
-	if #lines > 25 then
+	if #lines > 24 then
 		table.remove(lines, 1)
 	end
 	lines[#lines + 1] = {
