@@ -68,7 +68,7 @@ function GetParserList()
 	is_parsers_list_updated = false
 	local list = {}
 	for _, v in pairs(parserTable) do
-		if (Settings.NSFW and v.NSFW or not v.NSFW) and not v.Disabled and (Settings.ParserLanguage == "DIF" or v.Lang == Settings.ParserLanguage or v.Lang == "DIF" or ((Settings.ParserLanguage == "CHN" or Settings.ParserLanguage == "JAP") and v.Lang == "RAW")) then
+		if (Settings.NSFW and v.NSFW or not v.NSFW) and not v.Disabled then
 			list[#list + 1] = v
 		end
 	end
@@ -76,45 +76,30 @@ function GetParserList()
 	table.sort(
 		list,
 		function(a, b)
-			if Settings.FavouriteParsers[a.ID] == Settings.FavouriteParsers[b.ID] then
-				if a.isChanged ~= b.isChanged then
-					return a.isChanged > b.isChanged
-				else
-					return string.upper(a.ID) < string.upper(b.ID)
-				end
+			if a.isChanged ~= b.isChanged then
+				return a.isChanged > b.isChanged
 			else
-				return Settings.FavouriteParsers[a.ID] == true
+				return string.upper(a.ID) < string.upper(b.ID)
 			end
 		end
 	)
 	return list
 end
 
-function GetParserLanguages()
-	local t = {}
+function GetParserRawList()
+	local list = {}
 	for _, v in pairs(parserTable) do
-		if not v.Disabled then
-			t[v.Lang] = true
+		if Settings.NSFW and v.NSFW or not v.NSFW then
+			list[#list + 1] = v
 		end
-	end
-	t["DIF"] = nil
-	if t["RAW"] then
-		t["CHN"] = true
-		t["JAP"] = true
-	end
-	t["RAW"] = nil
-	local newLanguageList = {}
-	for k, _ in pairs(t) do
-		newLanguageList[#newLanguageList + 1] = k
 	end
 	table.sort(
-		newLanguageList,
+		list,
 		function(a, b)
-			return a < b
+			return string.upper(a.ID) < string.upper(b.ID)
 		end
 	)
-	table.insert(newLanguageList, 1, "DIF")
-	return newLanguageList
+	return list
 end
 
 ---Sets update flag to `true`, for regenerating parsers list

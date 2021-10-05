@@ -11,7 +11,6 @@ Settings = {
 	ReaderDirection = "RIGHT",
 	HideInOffline = true,
 	SkipFontLoad = false,
-	ParserLanguage = "DIF",
 	LibrarySorting = "Date added",
 	ChapterSorting = "1->N",
 	RefreshLibAtStart = false,
@@ -28,7 +27,6 @@ Settings = {
 	ProxyAuth = "login:password",
 	SkipCacheChapterChecking = true,
 	ConnectionTime = 10,
-	FavouriteParsers = {},
 	AnimatedGif = false,
 	SaveDataPath = "ux0",
 	LoadSummary = true
@@ -126,14 +124,6 @@ local function UpdateApp()
 	end
 end
 
-function Settings.toggleFavouriteParser(Parser)
-	if Parser and Parser.ID then
-		settings.FavouriteParsers[Parser.ID] = not settings.FavouriteParsers[Parser.ID] and true or nil
-		ChangeNSFW()
-		Settings.save()
-	end
-end
-
 function Settings.getSaveDrivePath()
 	if settings.SaveDataPath == "uma0" and not doesDirExist("uma0:data/noboru") then
 		return "ux0"
@@ -161,8 +151,7 @@ local settingsListTree = {
 	},
 	Catalogs = {
 		"ShowNSFW",
-		"HideInOffline",
-		"PreferredCatalogLanguage"
+		"HideInOffline"
 	},
 	Reader = {
 		"ReaderOrientation",
@@ -283,7 +272,6 @@ function settings.load()
 				setSetting(new, "HideInOffline", {true, false})
 				setSetting(new, "DoubleTapReader", {true, false})
 				setSetting(new, "Theme", Themes)
-				setSetting(new, "ParserLanguage", GetParserLanguages())
 				setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
 				setSetting(new, "ChapterSorting", {"1->N", "N->1"})
 				setSetting(new, "RefreshLibAtStart", {true, false})
@@ -300,7 +288,6 @@ function settings.load()
 				setSetting(new, "ProxyAuth", {})
 				setSetting(new, "SkipCacheChapterChecking", {true, false})
 				setSetting(new, "ConnectionTime", {})
-				setSetting(new, "FavouriteParsers", {})
 				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
 				setSetting(new, "PressEdgesToChangePage", {true, false})
 				setSetting(new, "AnimatedGif", {true, false})
@@ -615,10 +602,6 @@ SettingsFunctions = {
 		SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
 		SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
 	end,
-	PreferredCatalogLanguage = function()
-		settings.ParserLanguage = table.next(settings.ParserLanguage, GetParserLanguages())
-		ChangeNSFW()
-	end,
 	LibrarySorting = function()
 		settings.LibrarySorting = table.next(settings.LibrarySorting, {"Date added", "A-Z", "Z-A"})
 	end,
@@ -651,7 +634,7 @@ SettingsFunctions = {
 	end,
 	ResetAllSettings = function()
 		for k, v in pairs(settingsDefaults) do
-			if k ~= "FavouriteParsers" and k ~= "Language" and k ~= "Theme" then
+			if k ~= "Language" and k ~= "Theme" then
 				settings[k] = v
 			end
 		end

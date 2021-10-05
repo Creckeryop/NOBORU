@@ -21,7 +21,7 @@ local getRAM = System.getFreeRamMemory
 
 function Debug.draw()
 	if status == 1 then
-		Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
+		Graphics.fillRect(0, 960, 0, 40, Color.new(0, 0, 0, 128))
 		Font.print(FONT16, 0, 0, "TASKS " .. Threads.getNonSkipTasksNum(), COLOR_WHITE)
 		Font.print(FONT16, 930, 0, System.getAsyncState(), COLOR_WHITE)
 		local netMemoryUsed = "NET: " .. BytesToStr(Threads.getMemoryDownloaded())
@@ -36,7 +36,7 @@ function Debug.draw()
 		Font.print(FONT16, 240 - Font.getTextWidth(FONT16, gpuMemoryFree) / 2, 20, gpuMemoryFree, Color.new(0, 0, 255))
 		Console.draw(1)
 	elseif status == 2 then
-		Graphics.fillRect(0, 960, 0, 20, Color.new(0, 0, 0, 128))
+		Graphics.fillRect(0, 960, 0, 40, Color.new(0, 0, 0, 128))
 		local text = "CATALOGS CHECK MODE: Press Select on catalog to check"
 		Font.print(FONT16, 480 - Font.getTextWidth(FONT16, text) / 2, 0, text, COLOR_WHITE)
 		Console.draw(2)

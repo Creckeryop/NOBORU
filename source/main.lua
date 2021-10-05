@@ -143,7 +143,7 @@ local function preloadData()
 		Console.error(err)
 	end
 	coroutine.yield("Checking for extensions")
-	suc, err = pcall(Extensions.UpdateList)
+	suc, err = pcall(Extensions.RefreshList)
 	if not suc then
 		Console.error(err)
 	end

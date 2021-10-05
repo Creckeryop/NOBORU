@@ -92,6 +92,17 @@ local importSelector =
 	end
 )
 
+local extensionSelector =
+	Selector:new(
+	-1,
+	1,
+	-3,
+	3,
+	function()
+		return max(1, floor((slider.Y - 10) / 75))
+	end
+)
+
 local function freeMangaImage(manga)
 	if manga and manga.ImageDownload then
 		Threads.remove(manga)
@@ -314,6 +325,13 @@ local function selectParser(index)
 	end
 end
 
+local function selectExtension(index)
+	local extension = Extensions.GetList()[index]
+	if extension then
+
+	end
+end
+
 local function selectSetting(index)
 	local item = Settings.list()[index]
 	if item and Settings.isTab(item) then
@@ -387,6 +405,8 @@ downloadSelector:xaction(
 )
 settingSelector:xaction(selectSetting)
 importSelector:xaction(selectImport)
+extensionSelector:xaction(selectExtension)
+
 function Catalogs.input(oldpad, pad, oldtouch, touch)
 	if status == "MANGA" then
 		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
@@ -401,12 +421,6 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	elseif status == "CATALOGS" then
 		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
 			ParserManager.updateParserList(parsersList)
-		end
-		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
-			local item = parsersList[parserSelector:getSelected()]
-			if item then
-				Settings.toggleFavouriteParser(item)
-			end
 		end
 		if Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) and Debug.getStatus() == 2 then
 			local item = parsersList[parserSelector:getSelected()]
@@ -463,6 +477,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 		settingSelector:input(#Settings.list(), oldpad, pad, touch.x)
 	elseif status == "IMPORT" then
 		importSelector:input(#Import.listDir(), oldpad, pad, touch.x)
+	elseif status == "EXTENSIONS" then
+		extensionSelector:input(#Extensions.GetList(), oldpad, pad, touch.x)
 	end
 	if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldtouch.x and touch.x and touch.x > 240 then
 		TOUCH_MODES.MODE = TOUCH_MODES.READ
@@ -526,6 +542,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 			elseif status == "SETTINGS" and Settings.list()[id] then
 				newItemID = id
 			elseif status == "IMPORT" and Import.listDir()[id] then
+				newItemID = id
+			elseif status == "EXTENSIONS" and Extensions.GetList()[id] then
 				newItemID = id
 			end
 		end
@@ -614,6 +632,12 @@ function GenPanels()
 		DPad = Language[Settings.Language].PANEL.CHOOSE,
 		Cross = Language[Settings.Language].PANEL.SELECT
 	}
+	Panels["EXTENSIONS"] = {
+		"L\\R",
+		"DPad",
+		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
+		DPad = Language[Settings.Language].PANEL.CHOOSE
+	}
 end
 
 function Catalogs.update()
@@ -668,7 +692,6 @@ function Catalogs.update()
 			parsersList = GetParserList()
 			list = parsersList
 			item = parserSelector:getSelected()
-			Panels["CATALOGS"].Square = parsersList[item] and (Settings.FavouriteParsers[parsersList[item].ID] and Language[Settings.Language].PANEL.UNFOLLOW or Language[Settings.Language].PANEL.FOLLOW)
 		elseif status == "DOWNLOAD" then
 			list = ChapterSaver.getDownloadingList()
 			item = downloadSelector:getSelected()
@@ -696,6 +719,10 @@ function Catalogs.update()
 			item = importSelector:getSelected()
 			Panels["IMPORT"].Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT
 			Panels["IMPORT"].Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
+		elseif status == "EXTENSIONS" then
+			list = Extensions.GetList()
+			parsersList = list
+			item = extensionSelector:getSelected()
 		end
 		if status == "SETTINGS" then
 			if item ~= 0 then
@@ -744,6 +771,44 @@ function Catalogs.draw()
 	local itemHeight = 0
 	local centerScreenMessage
 	if status == "EXTENSIONS" then
+		if #parsersList == 0 and not ParserManager.check("EXTENSIONSPARSERSCHECK") then
+			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
+		end
+		local first = max(1, floor((slider.Y - 10) / 75))
+		local y = first * 75 - slider.Y
+		local last = min(#parsersList, first + 9)
+		for i = first, last do
+			local parser = parsersList[i]
+			if slider.ItemID == i then
+				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
+			end
+			Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
+			local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
+			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
+			local width = Font.getTextWidth(FONT26, parser.Name)
+			if parser.NSFW then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
+				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
+			end
+			if parser.Status == "New Version" then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "New version available"), "New version available", COLOR_CRIMSON)
+			elseif parser.Status == "Not Supported" then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "This catalog no more supported"), "This catalog no more supported", COLOR_CRIMSON)
+			elseif parser.Status == "Latest" then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Installed"), "Installed", COLOR_GRAY)
+			elseif parser.Status == "Not Installed" then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Not Installed"), "Not Installed", COLOR_CRIMSON)
+			end
+			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUBFONT)
+			local link_text = parser.Link .. "/"
+			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
+			y = y + 75
+		end
+		local elementsCount = #parsersList
+		if elementsCount > 7 then
+			scrollHeight = elementsCount * 75 / 524
+		end
+		item = extensionSelector:getSelected()
 	elseif status == "CATALOGS" then
 		if #parsersList == 0 and not ParserManager.check("UpdateParsers") then
 			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
@@ -760,10 +825,6 @@ function Catalogs.draw()
 			local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
 			local width = Font.getTextWidth(FONT26, parser.Name)
-			if Settings.FavouriteParsers[parser.ID] then
-				Graphics.drawImage(230 + width, y - 70 + 8, MiniStarIcon.e, COLOR_ROYAL_BLUE)
-				width = width + 16 + 5
-			end
 			if parser.NSFW then
 				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
 				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
@@ -914,8 +975,6 @@ function Catalogs.draw()
 					end
 				elseif task == "ReaderOrientation" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_SUBFONT)
-				elseif task == "PreferredCatalogLanguage" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].PARSERS[Settings.ParserLanguage] or Settings.ParserLanguage or "error_type", COLOR_SUBFONT)
 				elseif task == "ShowNSFW" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
 				elseif task == "HideInOffline" then
@@ -1151,7 +1210,7 @@ function Catalogs.terminate()
 	importSelector:resetSelected()
 end
 
----@param newStatus string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"'
+---@param newStatus string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"' | '"EXTENSIONS"' | '"IMPORT"' | '"SETTINGS"'
 function Catalogs.setStatus(newStatus)
 	status = newStatus
 	chaptersFolderSize = nil
