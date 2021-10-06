@@ -61,25 +61,58 @@ function Extensions.GetList()
         local uk = {}
         for _, v in pairs(GetParserRawList()) do
             if not uk[v.ID] then
-                t[#t + 1] = v
-                uk[v.ID] = v
-                if not extensionsList.parsers[v.ID] then
-                    uk[v.ID].Status = "Not Supported"
-                else
-                    uk[v.ID].Status = "Latest"
-                end
+                local extInfo = {
+                    Type = "Parser",
+                    Name = v.Name or "ERROR_NO_NAME",
+                    Link = v.Link or "ERROR_NO_LINK",
+                    Lang = v.Lang or "ERROR_NO_LANG",
+                    ID = v.ID or "ERROR_NO_ID",
+                    Version = v.Version or -1,
+                    NewVersion = v.Version or -1,
+                    Installed = true,
+                    Status = not extensionsList.parsers[v.ID] and "Not supported" or "Latest"
+                }
+                t[#t + 1] = extInfo
+                uk[v.ID] = extInfo
+            else
+                Console.error("Found 2 same ID's: " .. v.Name .. ", " .. uk[v.ID].Name)
             end
         end
-        for k, v in pairs(extensionsList.parsers) do
-            if not uk[k] then
-                t[#t + 1] = v
-                uk[k] = v
-                uk[k].Status = "Not Installed"
-            else
-                if v.Version > uk[k].Version then
-                    uk[k].isNewVersionAvailable = true
-                    uk[k].Status = "New Version"
+        local extParsers = table.clone(extensionsList.parsers)
+        table.sort(
+            extParsers,
+            function(a, b)
+                local scoreA = GetLanguagePriority(a.Lang)
+                local scoreB = GetLanguagePriority(b.Lang)
+                if scoreA == scoreB then
+                    if a.Lang == b.Lang then
+                        return string.upper(a.ID) < string.upper(b.ID)
+                    else
+                        return a.Lang < b.Lang
+                    end
+                else
+                    return scoreA < scoreB
                 end
+            end
+        )
+        for k, v in pairs(extParsers) do
+            local extInfo = {
+                Type = "Parser",
+                Name = v.Name or "ERROR_NO_NAME",
+                Link = v.Link or "ERROR_NO_LINK",
+                Lang = v.Lang or "ERROR_NO_LANG",
+                ID = v.ID or "ERROR_NO_ID",
+                Version = v.Version or -1,
+                NewVersion = v.Version or -1,
+                Installed = false
+            }
+            if not uk[k] then
+                t[#t + 1] = extInfo
+                uk[k] = extInfo
+                extInfo.Status = ""
+            elseif v.Version > uk[k].Version then
+                uk[k].Status = "New version"
+                uk[k].NewVersion = v.Version
             end
         end
         cachedList = t

@@ -10,6 +10,7 @@
 --German translation by lukrynka
 Language = {
 	Russian = {
+		Code = "RUS",
 		APP = {
 			LIBRARY = "БИБЛИОТЕКА",
 			CATALOGS = "КАТАЛОГИ",
@@ -243,6 +244,7 @@ Language = {
 		}
 	},
 	English = {
+		Code = "ENG",
 		APP = {
 			LIBRARY = "LIBRARY",
 			CATALOGS = "CATALOGS",
@@ -476,6 +478,7 @@ Language = {
 		}
 	},
 	Turkish = {
+		Code = "TUR",
 		APP = {
 			LIBRARY = "KÜTÜPHANE",
 			CATALOGS = "KATALOG",
@@ -709,6 +712,7 @@ Language = {
 		}
 	},
 	Vietnamese = {
+		Code = "VIE",
 		APP = {
 			LIBRARY = "Thư viện",
 			CATALOGS = "Danh mục",
@@ -942,6 +946,7 @@ Language = {
 		}
 	},
 	Spanish = {
+		Code = "ESP",
 		APP = {
 			LIBRARY = "LIBRERIA",
 			CATALOGS = "CATALOGO",
@@ -1175,6 +1180,7 @@ Language = {
 		}
 	},
 	Italian = {
+		Code = "ITA",
 		APP = {
 			LIBRARY = "LIBRERIA",
 			CATALOGS = "CATALOGHI",
@@ -1408,6 +1414,7 @@ Language = {
 		}
 	},
 	French = {
+		Code = "FRA",
 		APP = {
 			LIBRARY = "LIBRAIRIE",
 			CATALOGS = "CATALOGUE",
@@ -1641,6 +1648,7 @@ Language = {
 		}
 	},
 	PortugueseBR = {
+		Code = "PRT",
 		APP = {
 			LIBRARY = "BIBLIOTECA",
 			CATALOGS = "CATÁLOGOS",
@@ -1876,6 +1884,7 @@ Language = {
 		}
 	},
 	SimplifiedChinese = {
+		Code = "CHN",
 		APP = {
 			LIBRARY = "书架",
 			CATALOGS = "目录",
@@ -2109,6 +2118,7 @@ Language = {
 		}
 	},
 	TraditionalChinese = {
+		Code = "CHN",
 		APP = {
 			LIBRARY = "書架",
 			CATALOGS = "目錄",
@@ -2342,6 +2352,7 @@ Language = {
 		}
 	},
 	Romanian = {
+		Code = "ROU",
 		APP = {
 			LIBRARY = "BIBLIOTECĂ",
 			CATALOGS = "CATALOAGE",
@@ -2575,6 +2586,7 @@ Language = {
 		}
 	},
 	Polish = {
+		Code = "POL",
 		APP = {
 			LIBRARY = "BIBLIOTEKA",
 			CATALOGS = "KATALOGI",
@@ -2808,6 +2820,7 @@ Language = {
 		}
 	},
 	German = {
+		Code = "DEU",
 		APP = {
 			LIBRARY = "BIBLIOTHEK",
 			CATALOGS = "KATALOGE",

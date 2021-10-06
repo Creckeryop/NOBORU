@@ -790,16 +790,21 @@ function Catalogs.draw()
 				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
 				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
 			end
-			if parser.Status == "New Version" then
-				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "New version available"), "New version available", COLOR_CRIMSON)
-			elseif parser.Status == "Not Supported" then
-				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "This catalog no more supported"), "This catalog no more supported", COLOR_CRIMSON)
+			local text = ""
+			local color = COLOR_GRAY
+			if parser.Status == "New version" then
+				text = "New version available: v"..parser.Version.." → v"..parser.NewVersion
+				color = Color.new(136, 0, 255)
+			elseif parser.Status == "Not supported" then
+				text = "This catalog no more supported"
+				color = COLOR_CRIMSON
 			elseif parser.Status == "Latest" then
-				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Installed"), "Installed", COLOR_GRAY)
-			elseif parser.Status == "Not Installed" then
-				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Not Installed"), "Not Installed", COLOR_CRIMSON)
+				text = "Installed"
+			else
+				text = "Not installed"
 			end
-			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUBFONT)
+			Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v"..parser.Version), "v"..parser.Version, COLOR_BLACK)
+			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, text), y - 65, text, color)
 			local link_text = parser.Link .. "/"
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
 			y = y + 75
@@ -1223,6 +1228,9 @@ function Catalogs.setStatus(newStatus)
 	local smileIdx = math.random(1, #smilesList)
 	if smilesList[smileIdx] then
 		smile = smilesList[smileIdx]
+	end
+	if newStatus == "EXTENSIONS" then
+		Extensions.ResetCache()
 	end
 	Catalogs.terminate()
 end

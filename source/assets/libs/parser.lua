@@ -86,6 +86,16 @@ function GetParserList()
 	return list
 end
 
+function GetLanguagePriority(code)
+	if code == "DIF" then
+		return 0
+	elseif Language[Settings.Language].Code == code then
+		return 1
+	else
+		return 2
+	end
+end
+
 function GetParserRawList()
 	local list = {}
 	for _, v in pairs(parserTable) do
@@ -96,7 +106,17 @@ function GetParserRawList()
 	table.sort(
 		list,
 		function(a, b)
-			return string.upper(a.ID) < string.upper(b.ID)
+			local scoreA = GetLanguagePriority(a.Lang)
+			local scoreB = GetLanguagePriority(b.Lang)
+			if scoreA == scoreB then
+				if a.Lang == b.Lang then
+					return string.upper(a.ID) < string.upper(b.ID)
+				else
+					return a.Lang < b.Lang
+				end
+			else
+				return scoreA < scoreB
+			end
 		end
 	)
 	return list
