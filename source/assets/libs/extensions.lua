@@ -41,12 +41,20 @@ function Extensions.RefreshList()
                             Console.error("Can't load parsers.ini : " .. err)
                         end
                         closeFile(fh)
+                        Extensions.ResetCache()
+                        Extensions.GetList()
                     else
                         Console.error("Can't load parsers.ini : file is missing")
                     end
                 end
             }
         )
+    else
+        extensionsList.parsers = {}
+        counter = 0
+        Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
+        Extensions.ResetCache()
+        Extensions.GetList()
     end
 end
 
@@ -109,7 +117,7 @@ function Extensions.GetList()
             if not uk[k] then
                 t[#t + 1] = extInfo
                 uk[k] = extInfo
-                extInfo.Status = ""
+                extInfo.Status = "Installable"
             elseif v.Version > uk[k].Version then
                 uk[k].Status = "New version"
                 uk[k].NewVersion = v.Version

@@ -17,6 +17,7 @@ loadlib("browser")
 loadlib("customsettings")
 loadlib("customcovers")
 loadlib("catalogmodes")
+loadlib("extensionoptions")
 loadlib("changes")
 loadlib("conmessage")
 loadlib("selector")
@@ -269,7 +270,7 @@ local function update()
 	end
 	if AppMode == MENU then
 		Menu.update()
-		if Details.getStatus() == "END" and CatalogModes.getStatus() == "END" then
+		if Details.getStatus() == "END" and CatalogModes.getStatus() == "END" and ExtensionOptions.getStatus() == "END" then
 			if Extra.getStatus() == "END" then
 				Panel.show()
 			else

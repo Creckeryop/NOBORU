@@ -328,7 +328,8 @@ end
 local function selectExtension(index)
 	local extension = Extensions.GetList()[index]
 	if extension then
-
+		ExtensionOptions.load(extension)
+		ExtensionOptions.show()
 	end
 end
 
@@ -428,6 +429,13 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 				ParserChecker.addCheck(item)
 			end
 		end
+	elseif status == "EXTENSIONS" then
+		if not Threads.check("EXTENSIONSPARSERSCHECK") then
+			if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+				Extensions.RefreshList()
+				extensionSelector:resetSelected()
+			end
+		end
 	elseif status == "HISTORY" then
 		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
 			local item = currentMangaList[mangaSelector:getSelected()]
@@ -478,7 +486,9 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	elseif status == "IMPORT" then
 		importSelector:input(#Import.listDir(), oldpad, pad, touch.x)
 	elseif status == "EXTENSIONS" then
-		extensionSelector:input(#Extensions.GetList(), oldpad, pad, touch.x)
+		if not Threads.check("EXTENSIONSPARSERSCHECK") then
+			extensionSelector:input(#Extensions.GetList(), oldpad, pad, touch.x)
+		end
 	end
 	if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldtouch.x and touch.x and touch.x > 240 then
 		TOUCH_MODES.MODE = TOUCH_MODES.READ
@@ -635,8 +645,10 @@ function GenPanels()
 	Panels["EXTENSIONS"] = {
 		"L\\R",
 		"DPad",
+		"Triangle",
 		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE
+		DPad = Language[Settings.Language].PANEL.CHOOSE,
+		Triangle = Language[Settings.Language].PANEL.UPDATE
 	}
 end
 
@@ -771,7 +783,7 @@ function Catalogs.draw()
 	local itemHeight = 0
 	local centerScreenMessage
 	if status == "EXTENSIONS" then
-		if #parsersList == 0 and not ParserManager.check("EXTENSIONSPARSERSCHECK") then
+		if #parsersList == 0 and not Threads.check("EXTENSIONSPARSERSCHECK") then
 			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
 		end
 		local first = max(1, floor((slider.Y - 10) / 75))
@@ -1213,6 +1225,7 @@ function Catalogs.terminate()
 	downloadSelector:resetSelected()
 	settingSelector:resetSelected()
 	importSelector:resetSelected()
+	extensionSelector:resetSelected()
 end
 
 ---@param newStatus string | '"CATALOGS"' | '"MANGA"' | '"LIBRARY"' | '"DOWNLOAD"' | '"EXTENSIONS"' | '"IMPORT"' | '"SETTINGS"'

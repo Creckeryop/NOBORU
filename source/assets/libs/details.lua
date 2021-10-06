@@ -22,7 +22,7 @@ local descriptionMaxHeightOffset = 0
 local fade = 0
 local oldFade = 1
 
-local crossIcon = Image:new(Graphics.loadImage("app0:assets/icons/cross.png"))
+RemoveIcon = Image:new(Graphics.loadImage("app0:assets/icons/cross.png"))
 local menuIcon = Image:new(Graphics.loadImage("app0:assets/icons/menu.png"))
 local sortIcons = {
 	["N->1"] = Image:new(Graphics.loadImage("app0:assets/icons/sort-9-1.png")),
@@ -545,7 +545,7 @@ function Details.draw()
 				local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
 				if selectedManga.ParserID ~= "IMPORTED" then
 					if ChapterSaver.check(chaptersList[i]) then
-						Graphics.drawImage(920 - 14 - 18, y + 40 - 12, crossIcon.e)
+						Graphics.drawImage(920 - 14 - 18, y + 40 - 12, RemoveIcon.e)
 					else
 						local chapterDownloadInfo = ChapterSaver.is_downloading(chaptersList[i])
 						if chapterDownloadInfo then
