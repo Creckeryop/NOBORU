@@ -805,15 +805,15 @@ function Catalogs.draw()
 			local text = ""
 			local color = COLOR_GRAY
 			if parser.Status == "New version" then
-				text = "New version available: v" .. parser.Version .. " → v" .. parser.NewVersion
+				text = Language[Settings.Language].EXTENSIONS.NEW_VERSION_AVAILABLE .. " : v" .. parser.Version .. " → v" .. parser.NewVersion
 				color = Color.new(136, 0, 255)
 			elseif parser.Status == "Not supported" then
-				text = "This catalog no more supported"
+				text = Language[Settings.Language].EXTENSIONS.NOT_SUPPORTED
 				color = COLOR_CRIMSON
 			elseif parser.Status == "Latest" then
-				text = "Installed"
+				text = Language[Settings.Language].EXTENSIONS.INSTALLED
 			else
-				text = "Not installed"
+				text = Language[Settings.Language].EXTENSIONS.NOT_INSTALLED
 			end
 			Font.print(FONT16, 230 + width - 4, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v" .. parser.Version), "v" .. parser.Version, COLOR_BLACK)
 			width = width + Font.getTextWidth(FONT16, "v" .. parser.Version) + 1

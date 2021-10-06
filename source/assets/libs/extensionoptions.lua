@@ -106,13 +106,13 @@ function ExtensionOptions.load(parser)
 		buttons = {}
 		if isInstalled then
 			if parserStatus == "Not supported" then
-				buttons[#buttons + 1] = "Remove"
+				buttons[#buttons + 1] = "REMOVE"
 			else
-				buttons[#buttons + 1] = "Update"
-				buttons[#buttons + 1] = "Remove"
+				buttons[#buttons + 1] = "UPDATE"
+				buttons[#buttons + 1] = "REMOVE"
 			end
 		else
-			buttons[#buttons + 1] = "Install"
+			buttons[#buttons + 1] = "INSTALL"
 		end
 		changesString = nil
 		changesWordList = {}
@@ -210,23 +210,23 @@ function ExtensionOptions.draw()
 		for i = 1, #buttons do
 			local is_downloading = false
 			local v = buttons[i]
-			if v == "Update" then
+			if v == "UPDATE" then
 				if parserStatus == "New version" and not is_downloading then
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, Color.new(136, 0, 255))
 				else
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, COLOR_GRAY)
 				end
-			elseif v == "Remove" then
+			elseif v == "REMOVE" then
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, RemoveIcon.e, Color.new(255, 74, 58))
-			elseif v == "Install" then
+			elseif v == "INSTALL" then
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, is_downloading and COLOR_GRAY or COLOR_ROYAL_BLUE)
 			end
-			local text = Language[Settings.Language].MODES[buttons[i]] or buttons[i] or ""
-			if (parserStatus == "New version" and v == "Update" or v ~= "Update") and not (is_downloading and (v == "Update" or v == "Install")) then
+			local text = Language[Settings.Language].EXTENSIONS[buttons[i]] or buttons[i] or ""
+			if (parserStatus == "New version" and v == "UPDATE" or v ~= "UPDATE") and not (is_downloading and (v == "UPDATE" or v == "INSTALL")) then
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_WHITE)
 			else
-				if is_downloading and (v == "Update" or v == "Install") then
-					text = Language[Settings.Language].MODES["Downloading"] or "Downloading..." or ""
+				if is_downloading and (v == "UPDATE" or v == "INSTALL") then
+					text = Language[Settings.Language].EXTENSIONS.DOWNLOADING or "Downloading..." or ""
 				end
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_GRAY)
 			end
@@ -249,15 +249,15 @@ function ExtensionOptions.draw()
 		end
 		if extension.Version then
 			if parserStatus ~= "Installable" then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "Current version: v" .. extension.Version) / 2, 4 + height, "Current version: v" .. extension.Version, COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, "Current version: v" .. extension.Version) + 5
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version, COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version) + 5
 			else
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "Not installed") / 2, 4 + height, "Not installed", COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, "Not installed") + 5
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED, COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED) + 5
 			end
 			if extension.NewVersion then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "Latest version: v" .. extension.NewVersion) / 2, 4 + height, "Latest version: v" .. extension.NewVersion, parserStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, "Latest version: v" .. extension.NewVersion) + 5
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.NewVersion) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.NewVersion, parserStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.NewVersion) + 5
 			end
 			if extension.NSFW then
 				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Lang] or "")) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
@@ -268,8 +268,8 @@ function ExtensionOptions.draw()
 		end
 		if #changesWordList > 0 then
 			local y = 17 + 25 + (#buttons + 2) * 50
-			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, "Last changes") / 2, y, "Last changes", COLOR_WHITE)
-			local descriptionYOffset = y + Font.getTextHeight(BONT16, "Last changes") + 10
+			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) / 2, y, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES, COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) + 10
 			for i = 1, #changesWordList do
 				local line = changesWordList[i]
 				local x = 960 - M * 350 + 14

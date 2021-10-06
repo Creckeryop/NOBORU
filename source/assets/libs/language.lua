@@ -186,6 +186,19 @@ Language = {
 			SHRINK = "Скрыть",
 			EXPAND = "Раскрыть"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "Доступна новая версия",
+			NOT_SUPPORTED = "Каталог не поддерживается",
+			INSTALLED = "Установлен",
+			NOT_INSTALLED = "Не установлен",
+			CURRENT_VERSION = "Текущая версия",
+			LATEST_VERSION = "Последняя версия",
+			INSTALL = "Установить",
+			UPDATE = "Обновить",
+			REMOVE = "Удалить",
+			LATEST_CHANGES = "Последние изменения",
+			DOWNLOADING = "Загрузка...",
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Добавлено в библиотеку",
 			REMOVED_FROM_LIBRARY = "Удалено из библиотеки",
@@ -419,6 +432,19 @@ Language = {
 			SUMMARY = "Summary",
 			SHRINK = "Shrink",
 			EXPAND = "Read more"
+		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available",
+			NOT_SUPPORTED = "Catalog isn't supported",
+			INSTALLED = "Installed",
+			NOT_INSTALLED = "Not installed",
+			CURRENT_VERSION = "Current version",
+			LATEST_VERSION = "Latest version",
+			INSTALL = "Install",
+			UPDATE = "Update",
+			REMOVE = "Remove",
+			LATEST_CHANGES = "Latest changes",
+			DOWNLOADING = "Downloading...",
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Added to library",
@@ -654,6 +680,19 @@ Language = {
 			SHRINK = "Daha Az", 
 			EXPAND = "Daha Fazla"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Kütüphaneye Eklendi",
 			REMOVED_FROM_LIBRARY = "Kütüphaneden Silindi",
@@ -887,6 +926,19 @@ Language = {
 			SUMMARY = "Tổng quan",
 			SHRINK = "Thu lại",
 			EXPAND = "Đọc thêm"
+		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Đã thêm vào thư viện",
@@ -1122,6 +1174,19 @@ Language = {
 			SHRINK = "Encoger",
 			EXPAND = "Leer mas"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Añadir a la librería",
 			REMOVED_FROM_LIBRARY = "Eliminar de la librería",
@@ -1355,6 +1420,19 @@ Language = {
 			SUMMARY = "Sommario",
 			SHRINK = "Riduci",
 			EXPAND = "Continua a leggere"
+		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Aggiunto alla libreria",
@@ -1590,6 +1668,19 @@ Language = {
 			SHRINK = "Réduire",
 			EXPAND = "Lire plus"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Ajouté à la librairie",
 			REMOVED_FROM_LIBRARY = "Retiré de la librairie",
@@ -1823,6 +1914,19 @@ Language = {
 			SUMMARY = "Sumário",
 			SHRINK = "Encolher",
 			EXPAND = "Ler mais"
+		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Adicionado a biblioteca",
@@ -2060,6 +2164,19 @@ Language = {
 			SHRINK = "收展",
 			EXPAND = "阅读更多"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "已添加到书架",
 			REMOVED_FROM_LIBRARY = "从书架中已删除",
@@ -2293,6 +2410,19 @@ Language = {
 			SUMMARY = "概要",
 			SHRINK = "收展",
 			EXPAND = "閱讀更多"
+		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "已添加到書架",
@@ -2528,6 +2658,19 @@ Language = {
 			SHRINK = "Micșorează",
 			EXPAND = "Citește mai multe"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Adăugat la bibliotecă",
 			REMOVED_FROM_LIBRARY = "Șters din bibliotecă",
@@ -2762,6 +2905,19 @@ Language = {
 			SHRINK = "Zmniejsz",
 			EXPAND = "Przeczytaj więcej"
 		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
+		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Dodano do biblioteki",
 			REMOVED_FROM_LIBRARY = "Usunięto z biblioteki",
@@ -2995,6 +3151,19 @@ Language = {
 			SUMMARY = "Zusammenfassung",
 			SHRINK = "Verkleinern",
 			EXPAND = "Mehr Anzeigen"
+		},
+		EXTENSIONS = {
+			NEW_VERSION_AVAILABLE = "New version available", --Translate please
+			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			INSTALLED = "Installed", --Translate please
+			NOT_INSTALLED = "Not installed", --Translate please
+			CURRENT_VERSION = "Current version", --Translate please
+			LATEST_VERSION = "Latest version", --Translate please
+			INSTALL = "Install", --Translate please
+			UPDATE = "Update", --Translate please
+			REMOVE = "Remove", --Translate please
+			LATEST_CHANGES = "Latest changes", --Translate please
+			DOWNLOADING = "Downloading...", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Zu Bibliothek Hinzugefügt",
