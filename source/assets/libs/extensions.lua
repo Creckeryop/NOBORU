@@ -78,7 +78,8 @@ function Extensions.GetList()
                     Version = v.Version or -1,
                     NewVersion = v.Version or -1,
                     Installed = true,
-                    Status = not extensionsList.parsers[v.ID] and "Not supported" or "Latest"
+                    Status = not extensionsList.parsers[v.ID] and "Not supported" or "Latest",
+                    LastChange = ""
                 }
                 t[#t + 1] = extInfo
                 uk[v.ID] = extInfo
@@ -112,7 +113,8 @@ function Extensions.GetList()
                 ID = v.ID or "ERROR_NO_ID",
                 Version = v.Version or -1,
                 NewVersion = v.Version or -1,
-                Installed = false
+                Installed = false,
+                LastChange = v.LastChange or ""
             }
             if not uk[k] then
                 t[#t + 1] = extInfo
@@ -121,6 +123,7 @@ function Extensions.GetList()
             elseif v.Version > uk[k].Version then
                 uk[k].Status = "New version"
                 uk[k].NewVersion = v.Version
+                uk[k].LastChange = v.LastChange or ""
             end
         end
         cachedList = t

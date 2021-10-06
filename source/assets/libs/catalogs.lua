@@ -510,6 +510,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 					local id = floor((slider.Y - 10 + oldtouch.y) / 75) + 1
 					if status == "CATALOGS" then
 						selectParser(id)
+					elseif status == "EXTENSIONS" then
+						selectExtension(id)
 					elseif status == "DOWNLOAD" then
 						local list = ChapterSaver.getDownloadingList()
 						if list[id] then
@@ -646,6 +648,7 @@ function GenPanels()
 		"L\\R",
 		"DPad",
 		"Triangle",
+		"Cross",
 		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
 		DPad = Language[Settings.Language].PANEL.CHOOSE,
 		Triangle = Language[Settings.Language].PANEL.UPDATE
@@ -735,6 +738,7 @@ function Catalogs.update()
 			list = Extensions.GetList()
 			parsersList = list
 			item = extensionSelector:getSelected()
+			Panels["EXTENSIONS"].Cross = list[item] and Language[Settings.Language].PANEL.SELECT or nil
 		end
 		if status == "SETTINGS" then
 			if item ~= 0 then
@@ -805,7 +809,7 @@ function Catalogs.draw()
 			local text = ""
 			local color = COLOR_GRAY
 			if parser.Status == "New version" then
-				text = "New version available: v"..parser.Version.." → v"..parser.NewVersion
+				text = "New version available: v" .. parser.Version .. " → v" .. parser.NewVersion
 				color = Color.new(136, 0, 255)
 			elseif parser.Status == "Not supported" then
 				text = "This catalog no more supported"
@@ -815,7 +819,7 @@ function Catalogs.draw()
 			else
 				text = "Not installed"
 			end
-			Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v"..parser.Version), "v"..parser.Version, COLOR_BLACK)
+			Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v" .. parser.Version), "v" .. parser.Version, COLOR_BLACK)
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, text), y - 65, text, color)
 			local link_text = parser.Link .. "/"
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)

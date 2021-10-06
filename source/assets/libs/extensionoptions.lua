@@ -30,36 +30,107 @@ local function animationUpdate()
 	end
 end
 
+local CHANGES_TEXT_WIDTH = 350 - 14*2
+local LINE_HEIGHT = 22
+
+local changesString = nil
+local changesWordList = {}
+
+local isCJK = IsCJK
+
+local function updateChangesText(newChangesString)
+	changesString = (newChangesString or ""):gsub("^%s+", ""):gsub("%s+$", "")
+	local wordList = {}
+	for word in changesString:gmatch("[^ ]+") do
+		local newWord = ""
+		for i = 1, #word do
+			local s = string.sub(word, i, 1)
+			if s ~= "" and isCJK(s) or s == "\n" then
+				if newWord ~= "" then
+					wordList[#wordList + 1] = newWord
+					newWord = ""
+				end
+				wordList[#wordList + 1] = s
+			else
+				if s:match("[%.,]") then
+					newWord = newWord .. s
+					wordList[#wordList + 1] = newWord
+					newWord = ""
+				else
+					newWord = newWord .. s
+				end
+			end
+		end
+		if newWord ~= "" then
+			wordList[#wordList + 1] = newWord
+		end
+	end
+	local lines = {}
+	if #wordList > 0 then
+		local w = 0
+		lines[1] = {}
+		for n = 1, #wordList do
+			local word = wordList[n]
+			local wordWidth = Font.getTextWidth(FONT16, word)
+			if word == "\n" then
+				w = 0
+				lines[#lines].SpaceWidth = 4
+				lines[#lines + 1] = {}
+			elseif w + wordWidth + 4 > CHANGES_TEXT_WIDTH then
+				w = wordWidth
+				local spaceWidth = 0
+				for i = 1, #lines[#lines] do
+					spaceWidth = spaceWidth + lines[#lines][i].Width
+				end
+				spaceWidth = (CHANGES_TEXT_WIDTH - spaceWidth) / #lines[#lines]
+				lines[#lines].SpaceWidth = spaceWidth
+				lines[#lines + 1] = {}
+			else
+				w = w + wordWidth + 4
+			end
+			if word ~= "\n" then
+				lines[#lines][#lines[#lines] + 1] = {Word = word, Width = wordWidth}
+			end
+		end
+		lines[#lines].SpaceWidth = 4
+	end
+	changesWordList = lines
+end
 
 function ExtensionOptions.load(parser)
 	if parser and parser.ID then
 		Name = parser.Name
-        extension = parser
-        isInstalled = parser and parser.Installed == true
-        parserStatus = parser and parser.Status or ""
-        buttons = {}
-        if isInstalled then
-            if parserStatus == "Not supported" then
-                buttons[#buttons+1] = "Remove"
-            else
-                buttons[#buttons+1] = "Update"
-                buttons[#buttons+1] = "Remove"
-            end
-        else
-            buttons[#buttons+1] = "Install"
-        end
+		extension = parser
+		isInstalled = parser and parser.Installed == true
+		parserStatus = parser and parser.Status or ""
+		buttons = {}
+		if isInstalled then
+			if parserStatus == "Not supported" then
+				buttons[#buttons + 1] = "Remove"
+			else
+				buttons[#buttons + 1] = "Update"
+				buttons[#buttons + 1] = "Remove"
+			end
+		else
+			buttons[#buttons + 1] = "Install"
+		end
+		changesString = nil
+		changesWordList = {}
+		if parser.LastChange then
+			updateChangesText(parser.LastChange)
+		end
 	end
 end
 
 function ExtensionOptions.show()
-    if parserStatus == "" then
-        Console.error("Invalid parser")
-    else
-        status = "START"
-        oldFade = 1
-        Timer.reset(animationTimer)
-        selectedIndex = 0
-    end
+	if parserStatus == "" then
+		Console.error("Invalid parser")
+	else
+		status = "START"
+		oldFade = 1
+		Timer.reset(animationTimer)
+		selectedIndex = 0
+	end
 end
 
 function ExtensionOptions.input(pad, oldpad, touch, oldtouch)
@@ -69,10 +140,10 @@ function ExtensionOptions.input(pad, oldpad, touch, oldtouch)
 		elseif TOUCH_MODES.MODE ~= TOUCH_MODES.NONE and not touch.x then
 			if TOUCH_MODES.MODE == TOUCH_MODES.READ and oldtouch.x then
 				if oldtouch.x > 960 - 350 * fade * oldFade then
-					if oldtouch.y <= 40 + 8 + 50 * #buttons then
-						local id = math.floor((oldtouch.y - 40) / 50)
+					if oldtouch.y <= 15 + 8 + 50 * #buttons then
+						local id = math.floor((oldtouch.y - 15) / 50) - 1
 						if id > 0 and id <= #buttons then
-							--
+						--
 						end
 					end
 				end
@@ -92,7 +163,7 @@ function ExtensionOptions.input(pad, oldpad, touch, oldtouch)
 		elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
 			if selectedIndex > 0 then
 				if selectedIndex <= #buttons then
-					--
+				--
 				end
 			end
 		end
@@ -139,24 +210,24 @@ function ExtensionOptions.draw()
 		for i = 1, #buttons do
 			local v = buttons[i]
 			if v == "Update" then
-                if parserStatus == "New version" then
-				    Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + i * 50 - 1, DownloadIcon.e, Color.new(136, 0, 255))
-                else
-                    Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + i * 50 - 1, DownloadIcon.e, COLOR_GRAY)
-                end
+				if parserStatus == "New version" then
+					Graphics.drawImage(960 - M * 350 + 14, 17 + 15 + (i + 1) * 50 - 1, DownloadIcon.e, Color.new(136, 0, 255))
+				else
+					Graphics.drawImage(960 - M * 350 + 14, 17 + 15 + (i + 1) * 50 - 1, DownloadIcon.e, COLOR_GRAY)
+				end
 			elseif v == "Remove" then
-				Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + i * 50 - 1, RemoveIcon.e, Color.new(255, 74, 58))
+				Graphics.drawImage(960 - M * 350 + 14, 17 + 15 + (i + 1) * 50 - 1, RemoveIcon.e, Color.new(255, 74, 58))
 			elseif v == "Install" then
-				Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + i * 50 - 1, DownloadIcon.e, COLOR_ROYAL_BLUE)
+				Graphics.drawImage(960 - M * 350 + 14, 17 + 15 + (i + 1) * 50 - 1, DownloadIcon.e, COLOR_ROYAL_BLUE)
 			end
 			local text = Language[Settings.Language].MODES[buttons[i]] or buttons[i] or ""
-            if parserStatus == "New version" and v == "Update" or v ~= "Update"  then
-			    Font.print(FONT16, 960 - M * 350 + 52, 17 + 40 + i * 50, text, COLOR_WHITE)
-            else
-                Font.print(FONT16, 960 - M * 350 + 52, 17 + 40 + i * 50, text, COLOR_GRAY)
-            end
+			if parserStatus == "New version" and v == "Update" or v ~= "Update" then
+				Font.print(FONT16, 960 - M * 350 + 52, 17 + 15 + (i + 1) * 50, text, COLOR_WHITE)
+			else
+				Font.print(FONT16, 960 - M * 350 + 52, 17 + 15 + (i + 1) * 50, text, COLOR_GRAY)
+			end
 			if i == selectedIndex then
-				local y = 42 + i * 50
+				local y = 2 + 15 + (i + 1) * 50
 				local selectedRedColor = Color.new(255, 255, 255, 100 * M * math.abs(math.sin(Timer.getTime(GlobalTimer) / 500)))
 				local ks = math.ceil(2 * math.sin(Timer.getTime(GlobalTimer) / 100))
 				for n = ks, ks + 1 do
@@ -165,7 +236,40 @@ function ExtensionOptions.draw()
 				end
 			end
 		end
+		local height = 0
 		Font.print(BONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT30, Name) / 2, 4, Name, COLOR_WHITE)
+		height = height + Font.getTextHeight(BONT30, Name) + 10
+		if extension.Link then
+			Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, extension.Link .. "/") / 2, 4 + height, extension.Link .. "/", COLOR_GRAY)
+			height = height + Font.getTextHeight(FONT16, extension.Link .. "/") + 5
+		end
+		if extension.Version then
+			if parserStatus ~= "Installable" then
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "Current Version: v" .. extension.Version) / 2, 4 + height, "Current Version: v" .. extension.Version, COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, "Current Version: v" .. extension.Version) + 5
+			else
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "Not installed") / 2, 4 + height, "Not installed", COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, "Not installed") + 5
+			end
+			if extension.NewVersion then
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "Latest Version: v" .. extension.NewVersion) / 2, 4 + height, "Latest Version: v" .. extension.NewVersion, parserStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, "Latest Version: v" .. extension.NewVersion) + 5
+			end
+		end
+		if #changesWordList > 0 then
+			local y = 17 + 15 + (#buttons + 2) * 50
+			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, "Last changes") / 2, y, "Last changes", COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BONT16, "Last changes") + 10
+			for i = 1, #changesWordList do
+				local line = changesWordList[i]
+				local x = 960 - M * 350 + 14
+				for j = 1, #line do
+					Font.print(FONT16, x, descriptionYOffset, line[j].Word, COLOR_WHITE)
+					x = x + line.SpaceWidth + line[j].Width
+				end
+				descriptionYOffset = descriptionYOffset + LINE_HEIGHT
+			end
+		end
 	end
 end
 
