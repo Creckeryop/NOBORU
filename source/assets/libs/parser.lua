@@ -99,9 +99,7 @@ end
 function GetParserRawList()
 	local list = {}
 	for _, v in pairs(parserTable) do
-		if Settings.NSFW and v.NSFW or not v.NSFW then
-			list[#list + 1] = v
-		end
+		list[#list + 1] = v
 	end
 	table.sort(
 		list,

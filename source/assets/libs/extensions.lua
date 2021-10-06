@@ -79,7 +79,8 @@ function Extensions.GetList()
                     NewVersion = v.Version or -1,
                     Installed = true,
                     Status = not extensionsList.parsers[v.ID] and "Not supported" or "Latest",
-                    LastChange = ""
+                    LastChange = "",
+                    NSFW = v.NSFW or false
                 }
                 t[#t + 1] = extInfo
                 uk[v.ID] = extInfo
@@ -114,12 +115,15 @@ function Extensions.GetList()
                 Version = v.Version or -1,
                 NewVersion = v.Version or -1,
                 Installed = false,
-                LastChange = v.LastChange or ""
+                LastChange = v.LastChange or "",
+                NSFW = v.NSFW or false
             }
             if not uk[k] then
-                t[#t + 1] = extInfo
-                uk[k] = extInfo
-                extInfo.Status = "Installable"
+                if v.NSFW and Settings.NSFW or not v.NSFW then
+                    t[#t + 1] = extInfo
+                    uk[k] = extInfo
+                    extInfo.Status = "Installable"
+                end
             elseif v.Version > uk[k].Version then
                 uk[k].Status = "New version"
                 uk[k].NewVersion = v.Version

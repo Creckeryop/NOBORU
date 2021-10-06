@@ -802,10 +802,6 @@ function Catalogs.draw()
 			local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
 			local width = Font.getTextWidth(FONT26, parser.Name)
-			if parser.NSFW then
-				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
-				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
-			end
 			local text = ""
 			local color = COLOR_GRAY
 			if parser.Status == "New version" then
@@ -819,7 +815,12 @@ function Catalogs.draw()
 			else
 				text = "Not installed"
 			end
-			Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v" .. parser.Version), "v" .. parser.Version, COLOR_BLACK)
+			Font.print(FONT16, 230 + width - 4, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v" .. parser.Version), "v" .. parser.Version, COLOR_BLACK)
+			width = width + Font.getTextWidth(FONT16, "v" .. parser.Version) + 1
+			if parser.NSFW then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
+				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
+			end
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, text), y - 65, text, color)
 			local link_text = parser.Link .. "/"
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
