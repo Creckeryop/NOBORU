@@ -151,7 +151,7 @@ function ExtensionOptions.input(pad, oldpad, touch, oldtouch)
 					if oldtouch.y <= 17 + 25 + (#buttons + 2) * 50 - 1 then
 						local id = math.floor((oldtouch.y - 25 - 17) / 50) - 1
 						if id > 0 and id <= #buttons then
-							if buttons[id] == "INSTALL" or (extension and extension.Version and extension.LatestVersion and extension.LatestVersion > extension.Version and buttons[id] == "UPDATE") then
+							if buttons[id] == "INSTALL" or (extension and extension.LatestVersion ~= extension.Version and buttons[id] == "UPDATE") then
 								Extensions.Install(extension.ID)
 							elseif buttons[id] == "REMOVE" then
 								Extensions.Remove(extension.ID)
@@ -238,8 +238,7 @@ function ExtensionOptions.draw()
 		local M = oldFade * fade
 		Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
 		Graphics.fillRect(960 - M * 350, 960, 0, 544, Color.new(0, 0, 0))
-		for i = 1, #buttons do
-			local v = buttons[i]
+		for i, v in ipairs(buttons) do
 			if v == "UPDATE" then
 				if extStatus == "New version" and not is_downloading then
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, Color.new(136, 0, 255))

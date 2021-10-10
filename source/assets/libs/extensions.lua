@@ -65,6 +65,9 @@ local function refreshList()
             elseif v.Version ~= t[id].Version then
                 t[id].Status = "New version"
                 t[id].LatestVersion = v.Version
+                if v.Type == "Parsers" then
+                    t[id].LatestChanges = v.LatestChanges
+                end
             end
         end
         cachedList = t

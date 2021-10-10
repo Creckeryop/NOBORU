@@ -244,8 +244,9 @@ local SETTINGS_SAVE_PATH = "ux0:data/noboru/settings.ini"
 ---Loads settings from `ux0:data/noboru/settings.ini`
 function settings.load()
 	if doesFileExist(SETTINGS_SAVE_PATH) then
-		local fh = openFile(SETTINGS_SAVE_PATH, FREAD)
-		local suc = load("local " .. readFile(fh, sizeFile(fh)) .. " return Settings")
+		local file = openFile(SETTINGS_SAVE_PATH, FREAD)
+		local suc = load("local " .. readFile(file, sizeFile(file)) .. " return Settings")
+		closeFile(file)
 		if suc then
 			local new = suc()
 			if type(new) == "table" then
@@ -294,7 +295,6 @@ function settings.load()
 				setSetting(new, "LoadSummary", {true, false})
 			end
 		end
-		closeFile(fh)
 	end
 	settings.save()
 	GenPanels()
