@@ -109,7 +109,7 @@ function table.serialize(t, fast)
 				key = "[" .. k .. "] = "
 			end
 			if type(v) == "string" then
-				P[#P + 1] = key .. '"' .. v:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n","\\n") .. '"'
+				P[#P + 1] = key .. '"' .. v:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n") .. '"'
 			elseif type(v) == "table" then
 				P[#P + 1] = key .. serialize(v, _tab + 1)
 			elseif type(v) == "boolean" or type(v) == "number" then
@@ -307,4 +307,50 @@ function ToLines(str)
 		lines[#lines + 1] = line
 	end
 	return lines
+end
+
+local HTML_STRING = 0
+local JSON_STRING = 1
+
+function Stringify(string, mode)
+	if not mode or mode == HTML_STRING then
+		return string:gsub(
+			"&#([^;]-);",
+			function(a)
+				local number = tonumber("0" .. a) or tonumber(a)
+				return number and u8c(number) or "&#" .. a .. ";"
+			end
+		):gsub(
+			"&(.-);",
+			function(a)
+				return HTML_entities and HTML_entities[a] and u8c(HTML_entities[a]) or "&" .. a .. ";"
+			end
+		)
+	elseif mode == JSON_STRING then
+		return string:gsub(
+			"\\u(....)",
+			function(a)
+				return u8c(tonumber("0x" .. a))
+			end
+		)
+	else
+		return ""
+	end
+end
+
+function DownloadContent(link)
+	local f = {}
+	Threads.insertTask(
+		f,
+		{
+			Type = "StringRequest",
+			Link = link,
+			Table = f,
+			Index = "text"
+		}
+	)
+	while Threads.check(f) do
+		coroutine.yield(false)
+	end
+	return f.text or ""
 end

@@ -25,6 +25,7 @@ local downloadedImages = {}
 local page = 1
 local currentMangaList = {}
 local parsersList = {}
+local extensionsList = {}
 
 local chaptersFolderSize
 local cacheFolderSize
@@ -328,7 +329,7 @@ end
 local function selectExtension(index)
 	local extension = Extensions.GetList()[index]
 	if extension then
-		ExtensionOptions.load(extension)
+		ExtensionOptions.load(extension.ID)
 		ExtensionOptions.show()
 	end
 end
@@ -420,9 +421,6 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 			keyboardMode = "JUMP_PAGE"
 		end
 	elseif status == "CATALOGS" then
-		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
-			ParserManager.updateParserList(parsersList)
-		end
 		if Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) and Debug.getStatus() == 2 then
 			local item = parsersList[parserSelector:getSelected()]
 			if item then
@@ -432,7 +430,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	elseif status == "EXTENSIONS" then
 		if not Threads.check("EXTENSIONSPARSERSCHECK") then
 			if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
-				Extensions.RefreshList()
+				Extensions.UpdateList()
 				extensionSelector:resetSelected()
 			end
 		end
@@ -622,7 +620,6 @@ function GenPanels()
 		"Cross",
 		"Triangle",
 		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		Triangle = Language[Settings.Language].PANEL.UPDATE,
 		DPad = Language[Settings.Language].PANEL.CHOOSE,
 		Cross = Language[Settings.Language].PANEL.SELECT
 	}
@@ -707,6 +704,7 @@ function Catalogs.update()
 			parsersList = GetParserList()
 			list = parsersList
 			item = parserSelector:getSelected()
+			--Panels["CATALOGS"].Triangle = list[item] and Language[Settings.Language].PANEL.UPDATE
 		elseif status == "DOWNLOAD" then
 			list = ChapterSaver.getDownloadingList()
 			item = downloadSelector:getSelected()
@@ -736,7 +734,7 @@ function Catalogs.update()
 			Panels["IMPORT"].Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
 		elseif status == "EXTENSIONS" then
 			list = Extensions.GetList()
-			parsersList = list
+			extensionsList = list
 			item = extensionSelector:getSelected()
 			Panels["EXTENSIONS"].Cross = list[item] and Language[Settings.Language].PANEL.SELECT or nil
 		end
@@ -787,46 +785,46 @@ function Catalogs.draw()
 	local itemHeight = 0
 	local centerScreenMessage
 	if status == "EXTENSIONS" then
-		if #parsersList == 0 and not Threads.check("EXTENSIONSPARSERSCHECK") then
+		if #extensionsList == 0 and not Threads.check("EXTENSIONSPARSERSCHECK") then
 			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
 		end
 		local first = max(1, floor((slider.Y - 10) / 75))
 		local y = first * 75 - slider.Y
-		local last = min(#parsersList, first + 9)
+		local last = min(#extensionsList, first + 9)
 		for i = first, last do
-			local parser = parsersList[i]
+			local extension = extensionsList[i]
 			if slider.ItemID == i then
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
-			Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
-			local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
+			Font.print(FONT26, 225, y - 70, extension.Name, COLOR_FONT)
+			local lang_text = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
-			local width = Font.getTextWidth(FONT26, parser.Name)
+			local width = Font.getTextWidth(FONT26, extension.Name)
 			local text = ""
 			local color = COLOR_GRAY
-			if parser.Status == "New version" then
-				text = Language[Settings.Language].EXTENSIONS.NEW_VERSION_AVAILABLE .. " : v" .. parser.Version .. " → v" .. parser.NewVersion
+			if extension.Status == "New version" then
+				text = Language[Settings.Language].EXTENSIONS.NEW_VERSION_AVAILABLE .. " : v" .. extension.Version .. " → v" .. extension.LatestVersion
 				color = Color.new(136, 0, 255)
-			elseif parser.Status == "Not supported" then
+			elseif extension.Status == "Not supported" then
 				text = Language[Settings.Language].EXTENSIONS.NOT_SUPPORTED
 				color = COLOR_CRIMSON
-			elseif parser.Status == "Latest" then
+			elseif extension.Status == "Installed" then
 				text = Language[Settings.Language].EXTENSIONS.INSTALLED
 			else
 				text = Language[Settings.Language].EXTENSIONS.NOT_INSTALLED
 			end
-			Font.print(FONT16, 230 + width - 4, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "v" .. parser.Version), "v" .. parser.Version, COLOR_BLACK)
-			width = width + Font.getTextWidth(FONT16, "v" .. parser.Version) + 1
-			if parser.NSFW then
-				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
+			Font.print(FONT16, 230 + width - 4, y - 70 + Font.getTextHeight(FONT26, extension.Name) - Font.getTextHeight(FONT16, "v" .. extension.Version), "v" .. extension.Version, COLOR_BLACK)
+			width = width + Font.getTextWidth(FONT16, "v" .. extension.Version) + 1
+			if extension.NSFW then
+				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, extension.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
 				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
 			end
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, text), y - 65, text, color)
-			local link_text = parser.Link .. "/"
+			local link_text = extension.Link .. "/"
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
 			y = y + 75
 		end
-		local elementsCount = #parsersList
+		local elementsCount = #extensionsList
 		if elementsCount > 7 then
 			scrollHeight = elementsCount * 75 / 524
 		end
@@ -844,7 +842,7 @@ function Catalogs.draw()
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
-			local lang_text = Language[Settings.Language].PARSERS[parser.Lang] or parser.Lang or ""
+			local lang_text = Language[Settings.Language].PARSERS[parser.Language] or parser.Language or ""
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
 			local width = Font.getTextWidth(FONT26, parser.Name)
 			if parser.NSFW then
@@ -856,7 +854,7 @@ function Catalogs.draw()
 			elseif parser.isUpdated then
 				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Updated"), "Updated", COLOR_CRIMSON)
 			end
-			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUBFONT)
+			--Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUBFONT)
 			local link_text = parser.Link .. "/"
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
 			y = y + 75
@@ -1246,9 +1244,6 @@ function Catalogs.setStatus(newStatus)
 	local smileIdx = math.random(1, #smilesList)
 	if smilesList[smileIdx] then
 		smile = smilesList[smileIdx]
-	end
-	if newStatus == "EXTENSIONS" then
-		Extensions.ResetCache()
 	end
 	Catalogs.terminate()
 end

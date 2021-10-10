@@ -59,25 +59,18 @@ System = {
 	extractFromZipAsync = System.extractFromZipAsync
 }
 
-if doesDirExist("ux0:data/noboru/parsers") then
-	local path = "ux0:data/noboru/parsers/"
+if doesDirExist("ux0:data/noboru/ext/") then
+	local path = "ux0:data/noboru/ext/"
 	local files = listDirectory(path) or {}
 	for i = 1, #files do
 		local file = files[i]
 		if not file.directory then
-			local suc, err =
-				pcall(
-				function()
-					dofile(path .. file.name)
-				end
-			)
-			if not suc then
-				Console.error("Can't load " .. path .. ":" .. err)
-			end
+			local ext_name = file.name:match("^(.-)%.lua$")
+			Extensions.Load(ext_name)
 		end
 	end
 else
-	createDirectory("ux0:data/noboru/parsers")
+	createDirectory("ux0:data/noboru/ext")
 end
 
 local fonts = {
@@ -97,7 +90,7 @@ local function preloadData()
 	if not Settings.SkipFontLoad then
 		local loadFontString = '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—'
 		if Settings.Language == "Vietnamese" then
-			loadFontString = loadFontString .. '\nĂăÂâĐđÊê\nÔôƠơƯư\nÁáÀàẢảÃãẠạĂăẮắẰằẲẳẴẵẶặÂâẤấẦầẨ\nẩẪẫẬậĐđÉéÈèẺẻẼẽẸẹÊêẾếỀ\nềỂểỄễỆệÍíÌìỈỉĨĩỊịÓóÒò\nỎỏÕõỌọÔôỐốỒồỔổỖỗỘộƠ\nơỚớỜờỞởỠỡỢợÚúÙùỦủ\nŨũỤụƯưỨứỪừỬửỮữỰựÝýỲỳỶỷỸ\nỹỴỵ' --to disable lag for vietnamese (very slow loading)
+			loadFontString = loadFontString .. "\nĂăÂâĐđÊê\nÔôƠơƯư\nÁáÀàẢảÃãẠạĂăẮắẰằẲẳẴẵẶặÂâẤấẦầẨ\nẩẪẫẬậĐđÉéÈèẺẻẼẽẸẹÊêẾếỀ\nềỂểỄễỆệÍíÌìỈỉĨĩỊịÓóÒò\nỎỏÕõỌọÔôỐốỒồỔổỖỗỘộƠ\nơỚớỜờỞởỠỡỢợÚúÙùỦủ\nŨũỤụƯưỨứỪừỬửỮữỰựÝýỲỳỶỷỸ\nỹỴỵ" --to disable lag for vietnamese (very slow loading)
 		end
 		for langName, _ in pairs(Language) do
 			loadFontString = loadFontString .. (LanguageNames and LanguageNames[langName] and LanguageNames[langName][langName] or "")
@@ -144,7 +137,7 @@ local function preloadData()
 		Console.error(err)
 	end
 	coroutine.yield("Checking for extensions")
-	suc, err = pcall(Extensions.RefreshList)
+	suc, err = pcall(Extensions.UpdateList)
 	if not suc then
 		Console.error(err)
 	end

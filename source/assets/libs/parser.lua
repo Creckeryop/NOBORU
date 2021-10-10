@@ -22,33 +22,21 @@ local deleteFile = System.deleteFile
 
 ---@param Name string
 ---@param Link string
----@param Lang string
----@param ID integer
+---@param Language string
+---@param ID string
+---@param ExtID string
 ---@return Parser
 ---Creates/Updates Parser Object
-function Parser:new(Name, Link, Lang, ID, Version)
+function Parser:new(Name, Link, Language, ID, ExtID)
 	local p = {
 		Name = Name,
 		Link = Link,
-		Lang = Lang,
+		Language = Language,
 		ID = ID,
-		Version = Version or 0,
-		isChanged = 0,
-		Disabled = false
+		ExtID = ExtID
 	}
 	setmetatable(p, self)
 	self.__index = self
-	if parserTable[ID] and parserTable[ID].Version < p.Version then
-		p.isUpdated = true
-		p.isChanged = 1
-	elseif parserTable[ID] == nil and LAUNCHED then
-		p.isNew = true
-		p.isChanged = 2
-	end
-	local message = 'Parser "' .. Name .. '" ' .. (parserTable[ID] and "Updated!" or "Loaded!") .. "!"
-	Console.write(message)
-	parserTable[ID] = p
-	is_parsers_list_updated = true
 	return p
 end
 
@@ -68,7 +56,7 @@ function GetParserList()
 	is_parsers_list_updated = false
 	local list = {}
 	for _, v in pairs(parserTable) do
-		if (Settings.NSFW and v.NSFW or not v.NSFW) and not v.Disabled then
+		if Settings.NSFW or not v.NSFW then
 			list[#list + 1] = v
 		end
 	end
@@ -76,11 +64,7 @@ function GetParserList()
 	table.sort(
 		list,
 		function(a, b)
-			if a.isChanged ~= b.isChanged then
-				return a.isChanged > b.isChanged
-			else
-				return string.upper(a.ID) < string.upper(b.ID)
-			end
+			return string.upper(a.ID) < string.upper(b.ID)
 		end
 	)
 	return list
@@ -96,51 +80,20 @@ function GetLanguagePriority(code)
 	end
 end
 
-function GetParserRawList()
-	local list = {}
-	for _, v in pairs(parserTable) do
-		list[#list + 1] = v
-	end
-	table.sort(
-		list,
-		function(a, b)
-			local scoreA = GetLanguagePriority(a.Lang)
-			local scoreB = GetLanguagePriority(b.Lang)
-			if scoreA == scoreB then
-				if a.Lang == b.Lang then
-					return string.upper(a.ID) < string.upper(b.ID)
-				else
-					return a.Lang < b.Lang
-				end
-			else
-				return scoreA < scoreB
-			end
-		end
-	)
-	return list
-end
-
 ---Sets update flag to `true`, for regenerating parsers list
 function ChangeNSFW()
 	is_parsers_list_updated = true
 end
 
----Deletes all parsers and their files
-function ClearParsers()
-	if doesDirExist("ux0:data/noboru/parsers") then
-		local list = listDirectory("ux0:/data/noboru/parsers") or {}
-		for i = 1, #list do
-			local v = list[i]
-			if not v.directory then
-				deleteFile("ux0:data/noboru/parsers/" .. v.name)
-			end
-		end
-	end
-	--[[
-    parserTable = {}
-    cachedList = {}]]
-	for _, v in pairs(parserTable) do
-		v.Disabled = true
-	end
+function LoadParser(id, parser)
+	Console.write('Parser "' .. parser.Name .. '" ' .. "Loaded!")
+	parserTable[id] = parser
 	is_parsers_list_updated = true
+end
+
+function UnloadParser(id)
+	if parserTable[id] then
+		parserTable[id] = nil
+		is_parsers_list_updated = true
+	end
 end

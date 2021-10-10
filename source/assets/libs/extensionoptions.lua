@@ -8,9 +8,8 @@ local oldFade = 0
 local animationTimer = Timer.new()
 
 local Name = ""
-local extension = {}
-local isInstalled = false
-local parserStatus = ""
+local extension = nil
+local extStatus = nil
 local selectedIndex = 0
 local controlTimer = Timer.new()
 local controlInterval = 400
@@ -35,6 +34,9 @@ local LINE_HEIGHT = 22
 
 local changesString = nil
 local changesWordList = {}
+
+local is_downloading = false
+local was_downloading = false
 
 local isCJK = IsCJK
 
@@ -97,39 +99,45 @@ local function updateChangesText(newChangesString)
 	changesWordList = lines
 end
 
-function ExtensionOptions.load(parser)
-	if parser and parser.ID then
-		Name = parser.Name
-		extension = parser
-		isInstalled = parser and parser.Installed == true
-		parserStatus = parser and parser.Status or ""
+function ExtensionOptions.load(id)
+	if id and Extensions.getByID(id) ~= nil then
+		Name = Extensions.getByID(id).Name
+		extension = Extensions.getByID(id)
+		extStatus = Extensions.getByID(id).Status or nil
 		buttons = {}
-		if isInstalled then
-			if parserStatus == "Not supported" then
-				buttons[#buttons + 1] = "REMOVE"
-			else
-				buttons[#buttons + 1] = "UPDATE"
-				buttons[#buttons + 1] = "REMOVE"
-			end
-		else
-			buttons[#buttons + 1] = "INSTALL"
+		if extStatus == "Not supported" then
+			buttons = {"REMOVE"}
+		elseif extStatus == "Installed" then
+			buttons = {"UPDATE", "REMOVE"}
+		elseif extStatus == "New version" then
+			buttons = {"UPDATE", "REMOVE"}
+		elseif extStatus == "Available" then
+			buttons = {"INSTALL"}
 		end
 		changesString = nil
+		is_downloading = false
+		was_downloading = false
 		changesWordList = {}
-		if parser.LastChange then
-			updateChangesText(parser.LastChange)
+		if extension.LatestChanges then
+			updateChangesText(extension.LatestChanges)
 		end
+	else
+		extension = nil
 	end
 end
 
 function ExtensionOptions.show()
-	if parserStatus == "" then
-		Console.error("Invalid parser")
+	if extension == nil then
+		Console.error("Extension isn't loaded!")
 	else
-		status = "START"
-		oldFade = 1
-		Timer.reset(animationTimer)
-		selectedIndex = 0
+		if extStatus == nil then
+			Console.error("Invalid extension is loaded")
+		else
+			status = "START"
+			oldFade = 1
+			Timer.reset(animationTimer)
+			selectedIndex = 0
+		end
 	end
 end
 
@@ -140,10 +148,17 @@ function ExtensionOptions.input(pad, oldpad, touch, oldtouch)
 		elseif TOUCH_MODES.MODE ~= TOUCH_MODES.NONE and not touch.x then
 			if TOUCH_MODES.MODE == TOUCH_MODES.READ and oldtouch.x then
 				if oldtouch.x > 960 - 350 * fade * oldFade then
-					if oldtouch.y <= 25 + 8 + 50 * #buttons then
-						local id = math.floor((oldtouch.y - 25) / 50) - 1
+					if oldtouch.y <= 17 + 25 + (#buttons + 2) * 50 - 1 then
+						local id = math.floor((oldtouch.y - 25 - 17) / 50) - 1
 						if id > 0 and id <= #buttons then
-						--
+							if buttons[id] == "INSTALL" or (extension and extension.Version and extension.LatestVersion and extension.LatestVersion > extension.Version and buttons[id] == "UPDATE") then
+								Extensions.Install(extension.ID)
+							elseif buttons[id] == "REMOVE" then
+								Extensions.Remove(extension.ID)
+								status = "WAIT"
+								Timer.reset(animationTimer)
+								oldFade = fade
+							end
 						end
 					end
 				end
@@ -163,7 +178,14 @@ function ExtensionOptions.input(pad, oldpad, touch, oldtouch)
 		elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
 			if selectedIndex > 0 then
 				if selectedIndex <= #buttons then
-				--
+					if buttons[selectedIndex] == "INSTALL" or (extension.LatestVersion ~= extension.Version and buttons[selectedIndex] == "UPDATE") then
+						Extensions.Install(extension.ID)
+					elseif buttons[selectedIndex] == "REMOVE" then
+						Extensions.Remove(extension.ID)
+						status = "WAIT"
+						Timer.reset(animationTimer)
+						oldFade = fade
+					end
 				end
 			end
 		end
@@ -199,19 +221,27 @@ end
 function ExtensionOptions.update()
 	if status ~= "END" then
 		animationUpdate()
+		if extension then
+			is_downloading = Threads.check(extension.ID .. "_INSTALL")
+			if is_downloading then
+				was_downloading = true
+			elseif was_downloading then
+				ExtensionOptions.load(extension.ID)
+				was_downloading = false
+			end
+		end
 	end
 end
 
 function ExtensionOptions.draw()
-	if status ~= "END" then
+	if status ~= "END" and extension then
 		local M = oldFade * fade
 		Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
 		Graphics.fillRect(960 - M * 350, 960, 0, 544, Color.new(0, 0, 0))
 		for i = 1, #buttons do
-			local is_downloading = false
 			local v = buttons[i]
 			if v == "UPDATE" then
-				if parserStatus == "New version" and not is_downloading then
+				if extStatus == "New version" and not is_downloading then
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, Color.new(136, 0, 255))
 				else
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, COLOR_GRAY)
@@ -222,7 +252,7 @@ function ExtensionOptions.draw()
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, is_downloading and COLOR_GRAY or COLOR_ROYAL_BLUE)
 			end
 			local text = Language[Settings.Language].EXTENSIONS[buttons[i]] or buttons[i] or ""
-			if (parserStatus == "New version" and v == "UPDATE" or v ~= "UPDATE") and not (is_downloading and (v == "UPDATE" or v == "INSTALL")) then
+			if (extStatus == "New version" and v == "UPDATE" or v ~= "UPDATE") and not (is_downloading and (v == "UPDATE" or v == "INSTALL")) then
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_WHITE)
 			else
 				if is_downloading and (v == "UPDATE" or v == "INSTALL") then
@@ -244,26 +274,30 @@ function ExtensionOptions.draw()
 		Font.print(BONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT30, Name) / 2, 4, Name, COLOR_WHITE)
 		height = height + Font.getTextHeight(BONT30, Name) + 6
 		if extension.Link then
-			Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, extension.Link .. "/") / 2, 4 + height, extension.Link .. "/", COLOR_GRAY)
-			height = height + Font.getTextHeight(FONT16, extension.Link .. "/") + 5
+			local link = extension.Link
+			if link:match("^http") then
+				link = link .. "/"
+			end
+			Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, link) / 2, 4 + height, link, COLOR_GRAY)
+			height = height + Font.getTextHeight(FONT16, link) + 5
 		end
 		if extension.Version then
-			if parserStatus ~= "Installable" then
+			if extStatus ~= "Available" then
 				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version, COLOR_GRAY)
 				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version) + 5
 			else
 				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED, COLOR_GRAY)
 				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED) + 5
 			end
-			if extension.NewVersion then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.NewVersion) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.NewVersion, parserStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.NewVersion) + 5
+			if extension.LatestVersion then
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion, extStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) + 5
 			end
 			if extension.NSFW then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Lang] or "")) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
-				Font.print(FONT16, 960 - (M - 0.5) * 350 + Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Lang] or "")) / 2, 4 + height, " | " .. (Language[Settings.Language].PARSERS[extension.Lang] or ""), COLOR_GRAY)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or "")) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 + Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or "")) / 2, 4 + height, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or ""), COLOR_GRAY)
 			else
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "SFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Lang] or "")) / 2, 4 + height, "SFW | " .. (Language[Settings.Language].PARSERS[extension.Lang] or ""), COLOR_GRAY)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "SFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or "")) / 2, 4 + height, "SFW | " .. (Language[Settings.Language].PARSERS[extension.Language] or ""), COLOR_GRAY)
 			end
 		end
 		if #changesWordList > 0 then
