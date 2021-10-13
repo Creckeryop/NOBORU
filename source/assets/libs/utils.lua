@@ -331,8 +331,8 @@ function ToLines(str)
 	return lines
 end
 
-local HTML_STRING = 0
-local JSON_STRING = 1
+HTML_STRING = 0
+JSON_STRING = 1
 
 function Stringify(string, mode)
 	if not mode or mode == HTML_STRING then

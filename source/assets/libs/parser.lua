@@ -16,10 +16,6 @@ local cachedList = {}
 ---Local variable used in Parser functions
 local is_parsers_list_updated = false
 
-local listDirectory = System.listDirectory
-local doesDirExist = System.doesDirExist
-local deleteFile = System.deleteFile
-
 ---@param Name string
 ---@param Link string
 ---@param Language string

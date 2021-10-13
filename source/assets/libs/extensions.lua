@@ -67,6 +67,7 @@ local function refreshList()
                 t[id].LatestVersion = v.Version
                 if v.Type == "Parsers" then
                     t[id].LatestChanges = v.LatestChanges
+                    t[id].Language = v.Language
                 end
             end
         end

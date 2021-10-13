@@ -124,7 +124,7 @@ end
 
 local langToCode = {}
 
-function updateLanguagePick()
+local function updateLanguagePick()
 	selectedExtraMenu = {}
 	langToCode = {}
 	local langNames = {}
@@ -429,9 +429,7 @@ function Extra.input(oldPad, pad, oldTouch, touch)
 					local id = math.floor((slider.Y + oldTouch.y - extraMenuYDrawStart) / 80) + 1
 					pressOption(id)
 					if mode == "setLanguage" then
-						if mode == "setLanguage" then
-							updateLanguagePick()
-						end
+						updateLanguagePick()
 					end
 				end
 			end

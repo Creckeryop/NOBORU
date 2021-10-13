@@ -339,8 +339,8 @@ function ExtensionOptions.draw()
 				descriptionYOffset = descriptionYOffset + LINE_HEIGHT
 			end
 			y = descriptionYOffset
+			y = y + 20
 		end
-		y = y + 20
 		if #changesWordList > 0 then
 			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) / 2, y, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES, COLOR_WHITE)
 			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) + 10
