@@ -146,6 +146,7 @@ function table.reverse(t)
 	end
 end
 
+--[[
 ---@param t table
 ---@return table
 ---Creates copyied table
@@ -164,6 +165,27 @@ function table.clone(t)
 		return new_t
 	end
 	return clone(t)
+end
+--]]
+
+---https://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
+function table.clone(t)
+	local function copy(o, seen)
+		if type(o) ~= "table" then
+			return o
+		end
+		if seen and seen[o] then
+			return seen[o]
+		end
+		local s = seen or {}
+		local res = setmetatable({}, getmetatable(o))
+		s[o] = res
+		for k, v in pairs(o) do
+			res[copy(k, s)] = copy(v, s)
+		end
+		return res
+	end
+	return copy(t)
 end
 
 local a2u8 = {
