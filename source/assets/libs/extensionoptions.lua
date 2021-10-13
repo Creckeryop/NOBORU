@@ -32,18 +32,18 @@ end
 local CHANGES_TEXT_WIDTH = 350 - 14 * 2
 local LINE_HEIGHT = 22
 
-local changesString = nil
 local changesWordList = {}
+local langsWordList = {}
 
 local is_downloading = false
 local was_downloading = false
 
 local isCJK = IsCJK
 
-local function updateChangesText(newChangesString)
-	changesString = (newChangesString or ""):gsub("^%s+", ""):gsub("%s+$", "")
+local function updateChangesText(str, finalWordList)
+	str = (str or ""):gsub("^%s+", ""):gsub("%s+$", "")
 	local wordList = {}
-	for word in changesString:gmatch("[^ ]+") do
+	for word in str:gmatch("[^ ]+") do
 		local newWord = ""
 		for i = 1, #word do
 			local s = string.sub(word, i, 1)
@@ -67,7 +67,7 @@ local function updateChangesText(newChangesString)
 			wordList[#wordList + 1] = newWord
 		end
 	end
-	local lines = {}
+	local lines = finalWordList
 	if #wordList > 0 then
 		local w = 0
 		lines[1] = {}
@@ -96,7 +96,6 @@ local function updateChangesText(newChangesString)
 		end
 		lines[#lines].SpaceWidth = 4
 	end
-	changesWordList = lines
 end
 
 function ExtensionOptions.load(id)
@@ -104,7 +103,6 @@ function ExtensionOptions.load(id)
 		Name = Extensions.getByID(id).Name
 		extension = Extensions.getByID(id)
 		extStatus = Extensions.getByID(id).Status or nil
-		buttons = {}
 		if extStatus == "Not supported" then
 			buttons = {"REMOVE"}
 		elseif extStatus == "Installed" then
@@ -113,13 +111,25 @@ function ExtensionOptions.load(id)
 			buttons = {"UPDATE", "REMOVE"}
 		elseif extStatus == "Available" then
 			buttons = {"INSTALL"}
+		else
+			buttons = {}
 		end
-		changesString = nil
 		is_downloading = false
 		was_downloading = false
 		changesWordList = {}
+		langsWordList = {}
 		if extension.LatestChanges then
-			updateChangesText(extension.LatestChanges)
+			updateChangesText(extension.LatestChanges, changesWordList)
+		end
+		if type(extension.Language) == "table" then
+			local l = {}
+			for i = 1, #extension.Language do
+				if not l[extension.Language[i]] then
+					l[i] = Language[Settings.Language].PARSERS[extension.Language[i]] or extension.Language[i]
+					l[extension.Language[i]] = true
+				end
+			end
+			updateChangesText(table.concat(l, ", "), langsWordList)
 		end
 	else
 		extension = nil
@@ -292,15 +302,36 @@ function ExtensionOptions.draw()
 				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion, extStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
 				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) + 5
 			end
-			if extension.NSFW then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or "")) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
-				Font.print(FONT16, 960 - (M - 0.5) * 350 + Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or "")) / 2, 4 + height, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or ""), COLOR_GRAY)
+			local lang_name = ""
+			if type(extension.Language) == "table" then
+				lang_name = Language[Settings.Language].PARSERS["DIF"] or "DIF"
 			else
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "SFW") / 2 - Font.getTextWidth(FONT16, " | " .. (Language[Settings.Language].PARSERS[extension.Language] or "")) / 2, 4 + height, "SFW | " .. (Language[Settings.Language].PARSERS[extension.Language] or ""), COLOR_GRAY)
+				lang_name = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+			end
+			if extension.NSFW then
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. lang_name) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 + Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. lang_name) / 2, 4 + height, " | " .. lang_name, COLOR_GRAY)
+			else
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "SFW") / 2 - Font.getTextWidth(FONT16, " | " .. lang_name) / 2, 4 + height, "SFW | " .. lang_name, COLOR_GRAY)
 			end
 		end
+		local y = 17 + 25 + (#buttons + 2) * 50
+		if #langsWordList > 0 then
+			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) / 2, y, Language[Settings.Language].EXTENSIONS.LANGUAGES, COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) + 10
+			for i = 1, #langsWordList do
+				local line = langsWordList[i]
+				local x = 960 - M * 350 + 14
+				for j = 1, #line do
+					Font.print(FONT16, x, descriptionYOffset, line[j].Word, COLOR_WHITE)
+					x = x + line.SpaceWidth + line[j].Width
+				end
+				descriptionYOffset = descriptionYOffset + LINE_HEIGHT
+			end
+			y = descriptionYOffset
+		end
+		y = y + 20
 		if #changesWordList > 0 then
-			local y = 17 + 25 + (#buttons + 2) * 50
 			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) / 2, y, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES, COLOR_WHITE)
 			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) + 10
 			for i = 1, #changesWordList do

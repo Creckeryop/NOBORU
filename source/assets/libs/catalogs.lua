@@ -427,6 +427,13 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 				ParserChecker.addCheck(item)
 			end
 		end
+		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+			local item = parsersList[parserSelector:getSelected()]
+			if item and item.ExtID then
+				ExtensionOptions.load(item.ExtID)
+				ExtensionOptions.show()
+			end
+		end
 	elseif status == "EXTENSIONS" then
 		if not Threads.check("EXTENSIONSPARSERSCHECK") then
 			if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
@@ -701,10 +708,10 @@ function Catalogs.update()
 		local list = {}
 		local item = 0
 		if status == "CATALOGS" then
+			--Panels["CATALOGS"].Triangle = list[item] and Language[Settings.Language].PANEL.UPDATE
 			parsersList = GetParserList()
 			list = parsersList
 			item = parserSelector:getSelected()
-			--Panels["CATALOGS"].Triangle = list[item] and Language[Settings.Language].PANEL.UPDATE
 		elseif status == "DOWNLOAD" then
 			list = ChapterSaver.getDownloadingList()
 			item = downloadSelector:getSelected()
@@ -797,7 +804,12 @@ function Catalogs.draw()
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT26, 225, y - 70, extension.Name, COLOR_FONT)
-			local lang_text = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+			local lang_text = ""
+			if type(extension.Language) == "table" then
+				lang_text = Language[Settings.Language].PARSERS["DIF"] or "DIF"
+			else
+				lang_text = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+			end
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
 			local width = Font.getTextWidth(FONT26, extension.Name)
 			local text = ""

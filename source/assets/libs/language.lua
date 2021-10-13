@@ -198,6 +198,7 @@ Language = {
 			REMOVE = "Удалить",
 			LATEST_CHANGES = "Последние изменения",
 			DOWNLOADING = "Загрузка...",
+			LANGUAGES = "Языки",
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Добавлено в библиотеку",
@@ -445,6 +446,7 @@ Language = {
 			REMOVE = "Remove",
 			LATEST_CHANGES = "Latest changes",
 			DOWNLOADING = "Downloading...",
+			LANGUAGES = "Languages",
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Added to library",
@@ -692,6 +694,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Kütüphaneye Eklendi",
@@ -939,6 +942,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Đã thêm vào thư viện",
@@ -1186,6 +1190,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Añadir a la librería",
@@ -1433,6 +1438,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Aggiunto alla libreria",
@@ -1680,6 +1686,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Ajouté à la librairie",
@@ -1927,6 +1934,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Adicionado a biblioteca",
@@ -2176,6 +2184,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "已添加到书架",
@@ -2423,6 +2432,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "已添加到書架",
@@ -2670,6 +2680,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Adăugat la bibliotecă",
@@ -2917,6 +2928,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Dodano do biblioteki",
@@ -3164,6 +3176,7 @@ Language = {
 			REMOVE = "Remove", --Translate please
 			LATEST_CHANGES = "Latest changes", --Translate please
 			DOWNLOADING = "Downloading...", --Translate please
+			LANGUAGES = "Languages", --Translate please
 		},
 		NOTIFICATIONS = {
 			ADDED_TO_LIBRARY = "Zu Bibliothek Hinzugefügt",
