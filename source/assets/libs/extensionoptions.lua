@@ -40,6 +40,14 @@ local was_downloading = false
 
 local isCJK = IsCJK
 
+local LANG_COLOR_TABLE = {
+	COLOR_ROYAL_BLUE,
+	Color.new(255, 74, 58),
+	Color.new(178, 0, 255),
+	Color.new(0, 188, 18),
+	Color.new(255, 106, 0)
+}
+
 local function updateChangesText(str, finalWordList)
 	str = (str or ""):gsub("^%s+", ""):gsub("%s+$", "")
 	local wordList = {}
@@ -129,7 +137,7 @@ function ExtensionOptions.load(id)
 					l[extension.Language[i]] = true
 				end
 			end
-			updateChangesText(table.concat(l, ", "), langsWordList)
+			updateChangesText(table.concat(l, " "), langsWordList)
 		end
 	else
 		extension = nil
@@ -319,12 +327,14 @@ function ExtensionOptions.draw()
 		if #langsWordList > 0 then
 			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) / 2, y, Language[Settings.Language].EXTENSIONS.LANGUAGES, COLOR_WHITE)
 			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) + 10
+			local clr = 0
 			for i = 1, #langsWordList do
 				local line = langsWordList[i]
 				local x = 960 - M * 350 + 14
 				for j = 1, #line do
-					Font.print(FONT16, x, descriptionYOffset, line[j].Word, COLOR_WHITE)
+					Font.print(FONT16, x, descriptionYOffset, line[j].Word, LANG_COLOR_TABLE[(clr % #LANG_COLOR_TABLE) + 1])
 					x = x + line.SpaceWidth + line[j].Width
+					clr = clr + 1
 				end
 				descriptionYOffset = descriptionYOffset + LINE_HEIGHT
 			end

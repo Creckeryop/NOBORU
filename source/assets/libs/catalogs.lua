@@ -819,9 +819,10 @@ function Catalogs.draw()
 				color = Color.new(136, 0, 255)
 			elseif extension.Status == "Not supported" then
 				text = Language[Settings.Language].EXTENSIONS.NOT_SUPPORTED
-				color = COLOR_CRIMSON
+				color = Color.new(255, 74, 58)
 			elseif extension.Status == "Installed" then
 				text = Language[Settings.Language].EXTENSIONS.INSTALLED
+				color = COLOR_ROYAL_BLUE
 			else
 				text = Language[Settings.Language].EXTENSIONS.NOT_INSTALLED
 			end
