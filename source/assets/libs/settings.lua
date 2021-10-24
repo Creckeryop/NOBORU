@@ -572,14 +572,12 @@ SettingsFunctions = {
 					Index = "string",
 					OnComplete = function()
 						local content = file.string or ""
-						local late
-						late, lastVpkLink, lastVpkSize = content:match('d%-block mb%-1.-title="(.-)".-"(%S-.vpk)".-<small.->(.-)</small>')
-						if late == nil then
-							late, lastVpkLink = content:match('d%-block mb%-1.-title="(.-)".-"(%S-.vpk)"')
-							lastVpkSize = "NaN"
-						end
+						local link = content:match('href="([^"]-%.vpk)"')
+						local late = link:match("/([^/]-)/[^/]-%.vpk")
+						lastVpkLink = link
+						lastVpkSize = content:match('size%-label[^>]->([^<]-)<') or "NaN"
 						settings.LateVersion = late or settings.LateVersion
-						local body = content:match('markdown%-body">(.-)</div>') or ""
+						local body = content:match('markdown%-body[^>]-">(.-)</div>') or ""
 						changesText = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
 						if settings.LateVersion and settings.Version and tonumber(settings.LateVersion) > tonumber(settings.Version) then
 							Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changesText)
