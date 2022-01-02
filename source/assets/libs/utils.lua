@@ -2366,7 +2366,7 @@ function Stringify(string, mode)
 			end
 		)
 	else
-		return ""
+		return string or ""
 	end
 end
 
