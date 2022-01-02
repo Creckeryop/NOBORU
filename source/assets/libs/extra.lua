@@ -344,11 +344,11 @@ local function pressOption(id)
 					if page.Extract then
 					elseif page.Path then
 						copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
-						local f = getImageFormat("ux0:data/noboru/pictures/" .. unique_name .. ".image")
+						local f = getImageFormat(drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
 						if f ~= nil then
 							rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
+							Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
 						end
-						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
 					elseif page.ParserID then
 						Threads.insertTask(
 							tempTable,
