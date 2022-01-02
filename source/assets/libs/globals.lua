@@ -1,15 +1,18 @@
-local ffi = require("ffi")
-ffi.cdef [[
-    typedef struct Point {
-        float x, y;
-    } Point_t;
-    typedef struct Slider {
-        float Y;
-        float V;
-        float TouchY;
-        int ItemID;
-    } Slider;
-]]
+function CreatePoint(x, y)
+	return {
+		x = x or 0,
+		y = y or 0
+	}
+end
+
+function CreateSlider()
+	return {
+		Y = 0,
+		V = 0,
+		TouchY = 0,
+		ItemID = 0
+	}
+end
 
 TOUCH_MODES = {
 	NONE = 0,
@@ -17,9 +20,6 @@ TOUCH_MODES = {
 	SLIDE = 2,
 	MODE = 0
 }
-
-CreateSlider = ffi.typeof("Slider")
-CreatePoint = ffi.typeof("Point_t")
 
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
 
