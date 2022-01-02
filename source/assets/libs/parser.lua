@@ -4,8 +4,9 @@ Parser = {
 	getPopularManga = nil,
 	getChapters = nil,
 	prepareChapter = nil,
-	loadChapterPage = nil,
-	getMangaUrl = nil
+	loadChapterPage = function(self, link, dt)
+		dt.Link = link
+	end
 }
 
 ---Hash table with all parsers
