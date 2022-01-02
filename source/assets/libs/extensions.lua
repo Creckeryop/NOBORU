@@ -17,13 +17,15 @@ local is_cached = false
 local cachedList = {}
 local sortFunction = function(a, b)
     if a.Type == b.Type then
-        local scoreA = GetLanguagePriority(a.Language)
-        local scoreB = GetLanguagePriority(b.Language)
+        local aLang = type(a.Language) == "table" and "DIF" or a.Language
+        local bLang = type(b.Language) == "table" and "DIF" or b.Language
+        local scoreA = GetLanguagePriority(aLang)
+        local scoreB = GetLanguagePriority(bLang)
         if scoreA == scoreB then
-            if a.Language == b.Language then
+            if aLang == bLang then
                 return string.upper(a.ID) < string.upper(b.ID)
             else
-                return a.Language < b.Language
+                return aLang < bLang
             end
         else
             return scoreA < scoreB
@@ -39,6 +41,7 @@ end
 
 local function refreshList()
     if not is_cached then
+        updatesCounter = 0
         local t = {}
         local loadedListCopy = table.clone(loadedList)
         table.sort(loadedListCopy, sortFunction)
@@ -68,7 +71,9 @@ local function refreshList()
                 if v.Type == "Parsers" then
                     t[id].LatestChanges = v.LatestChanges
                     t[id].Language = v.Language
+                    t[id].Link = v.Link
                 end
+                updatesCounter = updatesCounter + 1
             end
         end
         cachedList = t
@@ -96,7 +101,6 @@ function Extensions.UpdateList()
                             if ok then
                                 local uk = {}
                                 networkList = {}
-                                updatesCounter = 0
                                 local temp = ok() or {}
                                 for id, ext in pairs(temp) do
                                     if not uk[id] then
@@ -114,13 +118,6 @@ function Extensions.UpdateList()
                                                 }
                                                 networkList[#networkList + 1] = extInfo
                                                 networkList[id] = extInfo
-                                                local loaded = loadedList[id]
-                                                if loaded then
-                                                    Console.write("Found " .. id .. " v" .. extInfo.Version .. " extension in extensions (v" .. loaded.Version .. " is installed)")
-                                                    if ext.Version ~= loaded.Version then
-                                                        updatesCounter = updatesCounter + 1
-                                                    end
-                                                end
                                                 uk[id] = true
                                             else
                                                 Console.error('Extension "' .. id .. '" : Important parameters not found')

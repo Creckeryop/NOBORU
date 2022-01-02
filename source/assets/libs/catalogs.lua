@@ -833,7 +833,12 @@ function Catalogs.draw()
 				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
 			end
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, text), y - 65, text, color)
-			local link_text = extension.Link .. "/"
+			local link_text = ""
+			if type(extension.Link) == "table" then
+				link_text = table.concat(extension.Link, ", ")
+			elseif type(extension.Link) == "string" then
+				link_text = extension.Link
+			end
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
 			y = y + 75
 		end

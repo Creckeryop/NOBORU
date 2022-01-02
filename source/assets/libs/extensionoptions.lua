@@ -37,6 +37,7 @@ local langsWordList = {}
 
 local is_downloading = false
 local was_downloading = false
+local linkCount = 0
 
 local isCJK = IsCJK
 
@@ -121,6 +122,15 @@ function ExtensionOptions.load(id)
 			buttons = {"INSTALL"}
 		else
 			buttons = {}
+		end
+		if extension.Type and extension.Type == "Parsers" then
+			if type(extension.Link) == "table" then
+				linkCount = #extension.Link
+			elseif type(extension.Link) == "string" then
+				linkCount = 1
+			else
+				linkCount = 0
+			end
 		end
 		is_downloading = false
 		was_downloading = false
@@ -291,12 +301,15 @@ function ExtensionOptions.draw()
 		Font.print(BONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT30, Name) / 2, 4, Name, COLOR_WHITE)
 		height = height + Font.getTextHeight(BONT30, Name) + 6
 		if extension.Link then
-			local link = extension.Link
-			if link:match("^http") then
-				link = link .. "/"
+			if type(extension.Link) == "table" then
+				for i = 1, #extension.Link do
+					Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, extension.Link[i]) / 2, 4 + height, extension.Link[i], COLOR_GRAY)
+					height = height + Font.getTextHeight(FONT16, extension.Link[i]) + 5
+				end
+			elseif type(extension.Link) == "string" then
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, extension.Link) / 2, 4 + height, extension.Link, COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, extension.Link) + 5
 			end
-			Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, link) / 2, 4 + height, link, COLOR_GRAY)
-			height = height + Font.getTextHeight(FONT16, link) + 5
 		end
 		if extension.Version then
 			if extStatus ~= "Available" then
