@@ -63,11 +63,11 @@ SCE_RIGHT_STICK_SENSITIVITY = 1
 SCE_CTRL_REAL_CROSS = SCE_CTRL_CROSS
 SCE_CTRL_REAL_CIRCLE = SCE_CTRL_CIRCLE
 
-FONT16 = Font.load("app0:roboto.ttf")
-FONT20 = Font.load("app0:roboto.ttf")
-FONT26 = Font.load("app0:roboto.ttf")
-BONT16 = Font.load("app0:robboto.ttf")
-BONT30 = Font.load("app0:robboto.ttf")
+FONT16 = Font.load("app0:assets/fonts/roboto_regular.ttf")
+FONT20 = Font.load("app0:assets/fonts/roboto_regular.ttf")
+FONT26 = Font.load("app0:assets/fonts/roboto_regular.ttf")
+BONT16 = Font.load("app0:assets/fonts/roboto_bold.ttf")
+BONT30 = Font.load("app0:assets/fonts/roboto_bold.ttf")
 
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT26, 26)
