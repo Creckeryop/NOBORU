@@ -43,6 +43,26 @@ function GetParserByID(ID)
 	return parserTable[ID]
 end
 
+local sortFunction = function(a, b)
+	if a.Type == b.Type then
+		local aLang = type(a.Language) == "table" and "DIF" or a.Language
+		local bLang = type(b.Language) == "table" and "DIF" or b.Language
+		local scoreA = GetLanguagePriority(aLang)
+		local scoreB = GetLanguagePriority(bLang)
+		if scoreA == scoreB then
+			if aLang == bLang then
+				return string.upper(a.ID) < string.upper(b.ID)
+			else
+				return aLang < bLang
+			end
+		else
+			return scoreA < scoreB
+		end
+	else
+		return a.Type < b.Type
+	end
+end
+
 ---@return table
 ---Gives Parser List
 function GetParserList()
@@ -57,12 +77,7 @@ function GetParserList()
 		end
 	end
 	cachedList = list
-	table.sort(
-		list,
-		function(a, b)
-			return string.upper(a.ID) < string.upper(b.ID)
-		end
-	)
+	table.sort(list, sortFunction)
 	return list
 end
 
