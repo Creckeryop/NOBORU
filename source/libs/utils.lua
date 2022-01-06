@@ -2330,7 +2330,7 @@ end
 ---@param str string
 ---@return table
 ---Breaks text into lines
-function ToLines(str)
+function StringToLines(str)
 	if str:sub(-1) ~= "\n" then
 		str = str .. "\n"
 	end
@@ -2378,11 +2378,11 @@ function DownloadContent(link)
 			Type = "StringRequest",
 			Link = link,
 			Table = f,
-			Index = "text"
+			Index = "data"
 		}
 	)
 	while Threads.check(f) do
 		coroutine.yield(false)
 	end
-	return f.text or ""
+	return f.data or ""
 end

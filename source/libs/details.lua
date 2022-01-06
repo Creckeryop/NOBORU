@@ -38,12 +38,12 @@ local fadeTimer = Timer.new()
 local mangaNameTickerTimer = Timer.new()
 local chapterNameTickerTimer = Timer.new()
 
-local is_notification_showed = false
-local is_description_expanded = false
-local is_chapter_list_loaded_offline = false
-local is_chapter_list_ready = false
+local isNotified = false
+local isDescriptionExpanded = false
+local isChapterListLoadedOffline = false
+local isChapterListReady = false
 
-local chaptersList = {}
+local chapterList = {}
 local continueChapterNumber
 local detailsSelector =
 	Selector:new(
@@ -70,8 +70,8 @@ local function updateScrolling()
 	if slider.Y < -15 then
 		slider.Y = -15
 		slider.V = 0
-	elseif slider.Y > (#chaptersList * 80 - 464 + chaptersMaxHeightOffset) then
-		slider.Y = math.max(-15, #chaptersList * 80 - 464 + chaptersMaxHeightOffset)
+	elseif slider.Y > (#chapterList * 80 - 464 + chaptersMaxHeightOffset) then
+		slider.Y = math.max(-15, #chapterList * 80 - 464 + chaptersMaxHeightOffset)
 		slider.V = 0
 	end
 end
@@ -94,7 +94,7 @@ local function updateAnimations()
 	if Timer.getTime(chapterNameTickerTimer) > 3500 + maxChapterNameTickerTimeMs then
 		Timer.reset(chapterNameTickerTimer)
 	end
-	if ParserManager.check(chaptersList) then
+	if ParserManager.check(chapterList) then
 		Loading.setStatus("WHITE", 580, 250)
 	else
 		Loading.setStatus("NONE")
@@ -104,12 +104,12 @@ end
 ---Updates `chaptersMaxHeightOffset` depending on if description is expanded
 local function updateMangaDescriptionMaxHeight()
 	if #descriptionWordList > 0 then
-		local linesCount = is_description_expanded and #descriptionWordList or math.min(2, #descriptionWordList)
+		local linesCount = isDescriptionExpanded and #descriptionWordList or math.min(2, #descriptionWordList)
 		local finalOffset = linesCount * LINE_HEIGHT + LINE_HEIGHT + 10
 		if linesCount ~= #descriptionWordList or linesCount > 2 then
 			finalOffset = finalOffset + LINE_HEIGHT
 			chaptersMaxHeightOffset = math.max(LINE_HEIGHT * 4 + 10, math.min(chaptersMaxHeightOffset + (math.min(LINE_HEIGHT * (linesCount + 2) + 10, 544 - 95) - chaptersMaxHeightOffset) / 8, math.min(LINE_HEIGHT * (#descriptionWordList + 2) + 10, 544 - 95)))
-			if not is_description_expanded then
+			if not isDescriptionExpanded then
 				descriptionMaxHeightOffset = descriptionMaxHeightOffset - descriptionMaxHeightOffset / 8
 			end
 		else
@@ -122,7 +122,7 @@ end
 
 ---@param newDescription string
 ---Updates `descriptionString` and `descriptionWordList`
----This function analizing `newDescription` and creates data to make something like `align-text:justify` on css
+---This function analyzing `newDescription` and creates data to make something like `align-text:justify` on css
 local function updateMangaDescription(newDescription)
 	descriptionString = (newDescription or ""):gsub("^%s+", ""):gsub("%s+$", "")
 	local wordList = {}
@@ -184,17 +184,17 @@ end
 
 ---Updates `chaptersList` when it's ready
 local function updateChaptersList()
-	if not is_chapter_list_loaded_offline and not ParserManager.check(chaptersList) then
-		if #chaptersList > 0 then
-			if Cache.isCached(chaptersList[1].Manga) then
-				is_chapter_list_loaded_offline = true
-				Cache.saveChapters(chaptersList[1].Manga, chaptersList)
+	if not isChapterListLoadedOffline and not ParserManager.check(chapterList) then
+		if #chapterList > 0 then
+			if Cache.isCached(chapterList[1].Manga) then
+				isChapterListLoadedOffline = true
+				Cache.saveChapters(chapterList[1].Manga, chapterList)
 			end
-			local manga = chaptersList[1].Manga
+			local manga = chapterList[1].Manga
 			if manga.NewImageLink and not CustomCovers.hasCustomCover(manga) and manga.NewImageLink ~= selectedManga.ImageLink then
-				local cover_path = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/cover.image"
-				if doesFileExist(cover_path) then
-					deleteFile(cover_path)
+				local coverPath = "ux0:data/noboru/cache/" .. Cache.getMangaHash(selectedManga) .. "/cover.image"
+				if doesFileExist(coverPath) then
+					deleteFile(coverPath)
 				end
 				selectedManga.ImageLink = manga.NewImageLink
 				selectedManga.ImageDownload = nil
@@ -202,10 +202,10 @@ local function updateChaptersList()
 			end
 		end
 	end
-	if not is_chapter_list_ready and not ParserManager.check(chaptersList) then
-		is_chapter_list_ready = true
+	if not isChapterListReady and not ParserManager.check(chapterList) then
+		isChapterListReady = true
 		if Settings.LoadSummary then
-			updateMangaDescription(chaptersList.Description or "")
+			updateMangaDescription(chapterList.Description or "")
 		else
 			updateMangaDescription("")
 		end
@@ -214,30 +214,30 @@ end
 
 ---Sets Continue button to latest read chapter in given `Manga`
 local function updateContinueChapterNumber()
-	if AppMode == MENU and not continueChapterNumber and not ParserManager.check(chaptersList) then
+	if AppMode == MENU and not continueChapterNumber and not ParserManager.check(chapterList) then
 		continueChapterNumber = 0
-		if #chaptersList > 0 then
-			chaptersList[1].Manga.Counter = #chaptersList
+		if #chapterList > 0 then
+			chapterList[1].Manga.Counter = #chapterList
 			local latestChapter = Cache.getLatestBookmark(selectedManga)
-			for i = 1, #chaptersList do
-				local key = chaptersList[i].Link:gsub("%p", "")
+			for i = 1, #chapterList do
+				local key = chapterList[i].Link:gsub("%p", "")
 				if latestChapter == key then
-					local bookmark = Cache.getBookmark(chaptersList[i])
+					local bookmark = Cache.getBookmark(chapterList[i])
 					if bookmark == true then
 						continueChapterNumber = i + 1
-						if not chaptersList[continueChapterNumber] then
+						if not chapterList[continueChapterNumber] then
 							continueChapterNumber = i
 						end
-						chaptersList[1].Manga.Counter = #chaptersList - i
+						chapterList[1].Manga.Counter = #chapterList - i
 					else
 						continueChapterNumber = i
-						chaptersList[1].Manga.Counter = #chaptersList - i + 1
+						chapterList[1].Manga.Counter = #chapterList - i + 1
 					end
 					break
 				end
 			end
 			if continueChapterNumber > 0 then
-				local continueChapterName = chaptersList[continueChapterNumber].Name or ("Chapter " .. continueChapterNumber)
+				local continueChapterName = chapterList[continueChapterNumber].Name or ("Chapter " .. continueChapterNumber)
 				maxChapterNameTickerTimeMs = 25 * string.len(continueChapterName)
 				maxChapterNameOffset = math.max(Font.getTextWidth(FONT16, continueChapterName) - 220, 0)
 				Timer.reset(chapterNameTickerTimer)
@@ -259,29 +259,29 @@ function Details.setManga(manga)
 		slider.Y = -50
 
 		maxMangaNameTickerTimeMs = 50 * string.len(manga.Name)
-		maxMangaNameOffset = math.max(Font.getTextWidth(BONT30, manga.Name) - 960 + 88 + 88 + 88, 0)
+		maxMangaNameOffset = math.max(Font.getTextWidth(BOLD_FONT30, manga.Name) - 960 + 88 + 88 + 88, 0)
 
-		chaptersList = {}
+		chapterList = {}
 		detailsSelector:resetSelected()
 
-		if Cache.isCached(selectedManga) and not Cache.BookmarksLoaded(selectedManga) then
+		if Cache.isCached(selectedManga) and not Cache.isBookmarkExist(selectedManga) then
 			Cache.loadBookmarks(selectedManga)
 		elseif Database.check(selectedManga) then
-			Cache.addManga(selectedManga, chaptersList)
+			Cache.addManga(selectedManga, chapterList)
 		end
 
 		continueChapterNumber = nil
 
 		if Threads.netActionUnSafe(Network.isWifiEnabled) and GetParserByID(manga.ParserID) then
-			ParserManager.getChaptersAsync(manga, chaptersList)
-			is_chapter_list_loaded_offline = false
+			ParserManager.getChaptersAsync(manga, chapterList)
+			isChapterListLoadedOffline = false
 		else
-			chaptersList = Cache.loadChapters(manga)
-			is_chapter_list_loaded_offline = true
+			chapterList = Cache.loadMangaChapters(manga)
+			isChapterListLoadedOffline = true
 		end
-		is_chapter_list_ready = false
-		is_notification_showed = false
-		is_description_expanded = false
+		isChapterListReady = false
+		isNotified = false
+		isDescriptionExpanded = false
 
 		descriptionWordList = {}
 		descriptionMaxHeightOffset = 0
@@ -306,15 +306,15 @@ end
 ---@param item integer
 ---Download / Stop Download / Delete `chapterList[item]` Chapter
 local function downloadChapter(item)
-	local is_wifi_enabled = Threads.netActionUnSafe(Network.isWifiEnabled)
-	item = chaptersList[item]
+	local isWifiEnabled = Threads.netActionUnSafe(Network.isWifiEnabled)
+	item = chapterList[item]
 	if item then
-		Cache.addManga(selectedManga, chaptersList)
+		Cache.addManga(selectedManga, chapterList)
 		Cache.makeHistory(selectedManga)
 		if not ChapterSaver.check(item) then
-			if ChapterSaver.is_downloading(item) then
+			if ChapterSaver.isChapterDownloading(item) then
 				ChapterSaver.stop(item)
-			elseif is_wifi_enabled then
+			elseif isWifiEnabled then
 				ChapterSaver.downloadChapter(item)
 			else
 				Notifications.pushUnique(Language[Settings.Language].SETTINGS.NoConnection)
@@ -328,11 +328,11 @@ end
 ---@param item integer
 ---Opens Reader and loads `chapterList` and `item` chapter in
 local function readChapter(item)
-	if chaptersList[item] then
+	if chapterList[item] then
 		Catalogs.shrink()
-		Cache.addManga(selectedManga, chaptersList)
+		Cache.addManga(selectedManga, chapterList)
 		Cache.makeHistory(selectedManga)
-		Reader.load(chaptersList, item)
+		Reader.load(chapterList, item)
 		AppMode = READER
 		continueChapterNumber = nil
 	end
@@ -354,7 +354,7 @@ function Details.input(oldPad, pad, oldTouch, touch)
 				if oldTouch.x > 320 and oldTouch.x < 955 and oldTouch.y > 90 + chaptersMaxHeightOffset then
 					local id = math.floor((slider.Y + oldTouch.y - 20 - chaptersMaxHeightOffset) / 80)
 					if Settings.ChapterSorting == "N->1" then
-						id = #chaptersList - id + 1
+						id = #chapterList - id + 1
 					end
 					if oldTouch.x < 866 or selectedManga.ParserID == "IMPORTED" then
 						readChapter(id)
@@ -362,14 +362,14 @@ function Details.input(oldPad, pad, oldTouch, touch)
 						downloadChapter(id)
 					end
 				elseif oldTouch.x > 270 and oldTouch.x < 960 and oldTouch.y > 90 and oldTouch.y <= 90 + chaptersMaxHeightOffset then
-					is_description_expanded = not is_description_expanded
+					isDescriptionExpanded = not isDescriptionExpanded
 				end
 			end
 			TOUCH_MODES.MODE = TOUCH_MODES.NONE
 		end
-		local is_description_scrollable = not (is_description_expanded and #descriptionWordList >= 13)
-		if is_description_scrollable then
-			detailsSelector:input(#chaptersList, oldPad, pad, touch.x)
+		local isDescriptionScrollable = not (isDescriptionExpanded and #descriptionWordList >= 13)
+		if isDescriptionScrollable then
+			detailsSelector:input(#chapterList, oldPad, pad, touch.x)
 		else
 			if Controls.check(pad, SCE_CTRL_UP) then
 				descriptionMaxHeightOffset = math.max(descriptionMaxHeightOffset - 3, 0)
@@ -384,43 +384,43 @@ function Details.input(oldPad, pad, oldTouch, touch)
 				if continueChapterNumber then
 					readChapter(continueChapterNumber > 0 and continueChapterNumber or 1)
 				end
-			elseif oldTouch.x > 960 - 88 and oldTouch.y < 90 and is_chapter_list_ready and oldTouchMode == TOUCH_MODES.READ then
-				Extra.setChapters(selectedManga, chaptersList)
+			elseif oldTouch.x > 960 - 88 and oldTouch.y < 90 and isChapterListReady and oldTouchMode == TOUCH_MODES.READ then
+				Extra.setChapters(selectedManga, chapterList)
 			elseif oldTouch.x > 960 - 88 - 88 and oldTouch.y < 90 and oldTouchMode == TOUCH_MODES.READ then
 				SettingsFunctions.ChapterSorting()
 				Settings.save()
 			end
 		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldPad, SCE_CTRL_TRIANGLE) then
 			addToLibrary()
-		elseif is_description_scrollable and Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldPad, SCE_CTRL_CROSS) then
+		elseif isDescriptionScrollable and Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldPad, SCE_CTRL_CROSS) then
 			local id = detailsSelector.getSelected()
 			if Settings.ChapterSorting == "N->1" then
-				id = #chaptersList - id + 1
+				id = #chapterList - id + 1
 			end
 			readChapter(id)
 		elseif Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) or (touch.x and not oldTouch.x and touch.x < 88 and touch.y < 90) then
 			status = "WAIT"
 			Loading.setStatus("NONE")
-			ParserManager.remove(chaptersList)
+			ParserManager.remove(chapterList)
 			Timer.reset(fadeTimer)
 			oldFade = fade
-		elseif is_description_scrollable and Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) and selectedManga.ParserID ~= "IMPORTED" then
+		elseif isDescriptionScrollable and Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) and selectedManga.ParserID ~= "IMPORTED" then
 			local id = detailsSelector.getSelected()
 			if Settings.ChapterSorting == "N->1" then
-				id = #chaptersList - id + 1
+				id = #chapterList - id + 1
 			end
 			downloadChapter(id)
 		elseif Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldPad, SCE_CTRL_SELECT) then
 			if continueChapterNumber then
 				readChapter(continueChapterNumber > 0 and continueChapterNumber or 1)
 			end
-		elseif Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldPad, SCE_CTRL_START) and is_chapter_list_ready then
-			Extra.setChapters(selectedManga, chaptersList)
-		elseif Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldPad, SCE_CTRL_RTRIGGER) and is_chapter_list_ready then
+		elseif Controls.check(pad, SCE_CTRL_START) and not Controls.check(oldPad, SCE_CTRL_START) and isChapterListReady then
+			Extra.setChapters(selectedManga, chapterList)
+		elseif Controls.check(pad, SCE_CTRL_RTRIGGER) and not Controls.check(oldPad, SCE_CTRL_RTRIGGER) and isChapterListReady then
 			SettingsFunctions.ChapterSorting()
 			Settings.save()
-		elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldPad, SCE_CTRL_LTRIGGER) and is_chapter_list_ready then
-			is_description_expanded = not is_description_expanded
+		elseif Controls.check(pad, SCE_CTRL_LTRIGGER) and not Controls.check(oldPad, SCE_CTRL_LTRIGGER) and isChapterListReady then
+			isDescriptionExpanded = not isDescriptionExpanded
 		end
 		local newItemID = 0
 		if TOUCH_MODES.MODE == TOUCH_MODES.READ then
@@ -430,9 +430,9 @@ function Details.input(oldPad, pad, oldTouch, touch)
 				if oldTouch.x > 320 and oldTouch.x < 900 and oldTouch.y > 90 + chaptersMaxHeightOffset then
 					local id = math.floor((slider.Y - 20 + oldTouch.y - chaptersMaxHeightOffset) / 80)
 					if Settings.ChapterSorting == "N->1" then
-						id = #chaptersList - id + 1
+						id = #chapterList - id + 1
 					end
-					if chaptersList[id] then
+					if chapterList[id] then
 						newItemID = id
 					end
 				end
@@ -487,15 +487,15 @@ function Details.draw()
 		Graphics.fillRect(20, 260, shift + 416, shift + 475, color)
 		Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, shift + 444 - Font.getTextHeight(FONT20, text) / 2, text, textColor)
 		if continueChapterNumber then
-			if #chaptersList > 0 then
+			if #chapterList > 0 then
 				Graphics.fillRect(30, 250, shift + 480, shift + 539, continueButtonColor)
 				local continueButtonText = Language[Settings.Language].DETAILS.START
 				local chapterName
 				local dy = 0
-				if continueChapterNumber > 0 and chaptersList[continueChapterNumber] and (continueChapterNumber == 1 and Cache.getBookmark(chaptersList[continueChapterNumber]) or continueChapterNumber ~= 1) then
+				if continueChapterNumber > 0 and chapterList[continueChapterNumber] and (continueChapterNumber == 1 and Cache.getBookmark(chapterList[continueChapterNumber]) or continueChapterNumber ~= 1) then
 					continueButtonText = Language[Settings.Language].DETAILS.CONTINUE
 					dy = -10
-					chapterName = chaptersList[continueChapterNumber].Name or ("Chapter " .. continueChapterNumber)
+					chapterName = chapterList[continueChapterNumber].Name or ("Chapter " .. continueChapterNumber)
 				end
 				local continueButtonTextWidth = Font.getTextWidth(FONT20, continueButtonText)
 				local continueButtonTextHeight = Font.getTextHeight(FONT20, continueButtonText)
@@ -510,26 +510,26 @@ function Details.draw()
 			end
 		end
 		Graphics.fillRect(0, 20, 90, 544, backgroundColor)
-		if continueChapterNumber and #chaptersList > 0 then
+		if continueChapterNumber and #chapterList > 0 then
 			Graphics.drawImage(0, shift + 472, ButtonsIcons.Select.e)
 		end
 		Graphics.drawImageExtended(20, shift + 420, ButtonsIcons.Triangle.e, 0, 0, 16, 16, 0, 1, 1)
 		DrawDetailsManga(MANGA_COVER_CENTER_POINT.x, MANGA_COVER_CENTER_POINT.y + 544 * (1 - M), selectedManga, 326 / MANGA_HEIGHT)
 		Graphics.fillRect(260, 890 - 18, 90, 95, backgroundColor)
 		Graphics.fillRect(260, 890 - 18, 95 + chaptersMaxHeightOffset, 544, backgroundColor)
-		local listCount = #chaptersList
+		local listCount = #chapterList
 		for n = start, math.min(listCount, start + 8) do
 			if y + 80 > 95 + chaptersMaxHeightOffset then
 				local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
-				local bookmark = Cache.getBookmark(chaptersList[i])
+				local bookmark = Cache.getBookmark(chapterList[i])
 				if bookmark ~= nil and bookmark ~= true then
 					Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, textColor)
-					Font.print(BONT16, 290, y + 14, chaptersList[i].Name or ("Chapter " .. i), textColor)
+					Font.print(BOLD_FONT16, 290, y + 14, chapterList[i].Name or ("Chapter " .. i), textColor)
 				elseif bookmark == true then
 					Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.DONE, secondTextColor)
-					Font.print(BONT16, 290, y + 14, chaptersList[i].Name or ("Chapter " .. i), secondTextColor)
+					Font.print(BOLD_FONT16, 290, y + 14, chapterList[i].Name or ("Chapter " .. i), secondTextColor)
 				else
-					Font.print(BONT16, 290, y + 28, chaptersList[i].Name or ("Chapter " .. i), textColor)
+					Font.print(BOLD_FONT16, 290, y + 28, chapterList[i].Name or ("Chapter " .. i), textColor)
 				end
 			end
 			y = y + 80
@@ -544,10 +544,10 @@ function Details.draw()
 			if y + 80 > 95 + chaptersMaxHeightOffset then
 				local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
 				if selectedManga.ParserID ~= "IMPORTED" then
-					if ChapterSaver.check(chaptersList[i]) then
+					if ChapterSaver.check(chapterList[i]) then
 						Graphics.drawImage(920 - 14 - 18, y + 40 - 12, RemoveIcon.e)
 					else
-						local chapterDownloadInfo = ChapterSaver.is_downloading(chaptersList[i])
+						local chapterDownloadInfo = ChapterSaver.isChapterDownloading(chapterList[i])
 						if chapterDownloadInfo then
 							local downloadProgressPercentageText = "0%"
 							if chapterDownloadInfo.page_count and chapterDownloadInfo.page_count > 0 then
@@ -566,8 +566,8 @@ function Details.draw()
 			end
 			y = y + 80
 		end
-		if status == "START" and #chaptersList == 0 and not ParserManager.check(chaptersList) and not is_notification_showed then
-			is_notification_showed = true
+		if status == "START" and #chapterList == 0 and not ParserManager.check(chapterList) and not isNotified then
+			isNotified = true
 			Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
 		end
 		local item = detailsSelector.getSelected()
@@ -586,14 +586,14 @@ function Details.draw()
 			end
 		end
 		if #descriptionWordList > 0 and chaptersMaxHeightOffset > 0 then
-			local descriptionLinesCount = is_description_expanded and #descriptionWordList or math.min(2, #descriptionWordList)
+			local descriptionLinesCount = isDescriptionExpanded and #descriptionWordList or math.min(2, #descriptionWordList)
 			if descriptionLinesCount ~= #descriptionWordList or descriptionLinesCount > 2 then
 				Graphics.fillRect(260, 955, 95, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, backgroundColor)
 			else
 				Graphics.fillRect(260, 955, 95, 95 + chaptersMaxHeightOffset, backgroundColor)
 			end
 			local descriptionYOffset = 95 - descriptionMaxHeightOffset
-			Font.print(BONT16, (270 + 940) / 2 - Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.SUMMARY) / 2, descriptionYOffset, Language[Settings.Language].DETAILS.SUMMARY, textColor)
+			Font.print(BOLD_FONT16, (270 + 940) / 2 - Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.SUMMARY) / 2, descriptionYOffset, Language[Settings.Language].DETAILS.SUMMARY, textColor)
 			descriptionYOffset = descriptionYOffset + LINE_HEIGHT
 			for i = 1, #descriptionWordList do
 				if descriptionYOffset + LINE_HEIGHT >= 95 then
@@ -614,17 +614,17 @@ function Details.draw()
 			if descriptionLinesCount ~= #descriptionWordList or descriptionLinesCount > 2 then
 				Graphics.fillRect(260, 955, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, 95 + chaptersMaxHeightOffset, backgroundColor)
 				if descriptionLinesCount ~= #descriptionWordList then
-					Font.print(BONT16, (270 + 940) / 2 - (Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.EXPAND) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Language[Settings.Language].DETAILS.EXPAND, textColor)
-					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.EXPAND) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
+					Font.print(BOLD_FONT16, (270 + 940) / 2 - (Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.EXPAND) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Language[Settings.Language].DETAILS.EXPAND, textColor)
+					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.EXPAND) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
 				elseif descriptionLinesCount > 2 then
-					Font.print(BONT16, (270 + 940) / 2 - (Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.SHRINK) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Language[Settings.Language].DETAILS.SHRINK, textColor)
-					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BONT16, Language[Settings.Language].DETAILS.SHRINK) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
+					Font.print(BOLD_FONT16, (270 + 940) / 2 - (Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.SHRINK) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Language[Settings.Language].DETAILS.SHRINK, textColor)
+					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.SHRINK) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
 				end
 			end
 		end
 		Graphics.fillRect(88, 960 - 88 - 88, 0, 90, backgroundColor)
 		local mangaNameTickerX = maxMangaNameOffset * math.min(math.max(0, Timer.getTime(mangaNameTickerTimer) - 1500), maxMangaNameTickerTimeMs) / maxMangaNameTickerTimeMs
-		Font.print(BONT30, 88 - mangaNameTickerX, 70 * M - 63, selectedManga.Name, textColor)
+		Font.print(BOLD_FONT30, 88 - mangaNameTickerX, 70 * M - 63, selectedManga.Name, textColor)
 		Font.print(FONT16, 88, 70 * M - 22, selectedManga.RawLink, secondTextColor)
 		Graphics.fillRect(0, 88, 0, 90, backgroundColor)
 		Graphics.drawImage(32, 90 * M - 50 - 12, BackIcon.e, COLOR_WHITE)
@@ -633,13 +633,13 @@ function Details.draw()
 			Graphics.drawImage(960 - 88 - 32 - 24, 33, sortIcons[Settings.ChapterSorting].e, textColor)
 			Graphics.drawImage(960 - 88 - 32 - 24, 5 - (1 - M) * 32, ButtonsIcons.R.e)
 		end
-		if is_chapter_list_ready then
+		if isChapterListReady then
 			Graphics.drawImage(960 - 32 - 24, 33, menuIcon.e, textColor)
 			Graphics.drawImage(960 - 32 - 24 - 20, 5 - (1 - M) * 32, ButtonsIcons.Start.e)
 		end
 		Graphics.fillRect(955, 960, 90, 544, backgroundColor)
-		if status == "START" and #chaptersList > 5 then
-			local h = #chaptersList * 80 / 454
+		if status == "START" and #chapterList > 5 then
+			local h = #chapterList * 80 / 454
 			Graphics.fillRect(955, 960, 90 + (slider.Y + 20) / h, 90 + (slider.Y + 464) / h, COLOR_GRAY)
 		end
 	end

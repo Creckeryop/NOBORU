@@ -35,8 +35,8 @@ local LINE_HEIGHT = 22
 local changesWordList = {}
 local langsWordList = {}
 
-local is_downloading = false
-local was_downloading = false
+local isDownloading = false
+local wasDownloading = false
 local linkCount = 0
 
 local isCJK = IsCJK
@@ -132,8 +132,8 @@ function ExtensionOptions.load(id)
 				linkCount = 0
 			end
 		end
-		is_downloading = false
-		was_downloading = false
+		isDownloading = false
+		wasDownloading = false
 		changesWordList = {}
 		langsWordList = {}
 		if extension.LatestChanges then
@@ -250,12 +250,12 @@ function ExtensionOptions.update()
 	if status ~= "END" then
 		animationUpdate()
 		if extension then
-			is_downloading = Threads.check(extension.ID .. "_INSTALL")
-			if is_downloading then
-				was_downloading = true
-			elseif was_downloading then
+			isDownloading = Threads.check(extension.ID .. "_INSTALL")
+			if isDownloading then
+				wasDownloading = true
+			elseif wasDownloading then
 				ExtensionOptions.load(extension.ID)
-				was_downloading = false
+				wasDownloading = false
 			end
 		end
 	end
@@ -268,7 +268,7 @@ function ExtensionOptions.draw()
 		Graphics.fillRect(960 - M * 350, 960, 0, 544, Color.new(0, 0, 0))
 		for i, v in ipairs(buttons) do
 			if v == "UPDATE" then
-				if extStatus == "New version" and not is_downloading then
+				if extStatus == "New version" and not isDownloading then
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, Color.new(136, 0, 255))
 				else
 					Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, COLOR_GRAY)
@@ -276,13 +276,13 @@ function ExtensionOptions.draw()
 			elseif v == "REMOVE" then
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, RemoveIcon.e, Color.new(255, 74, 58))
 			elseif v == "INSTALL" then
-				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, is_downloading and COLOR_GRAY or COLOR_ROYAL_BLUE)
+				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, isDownloading and COLOR_GRAY or COLOR_ROYAL_BLUE)
 			end
 			local text = Language[Settings.Language].EXTENSIONS[buttons[i]] or buttons[i] or ""
-			if (extStatus == "New version" and v == "UPDATE" or v ~= "UPDATE") and not (is_downloading and (v == "UPDATE" or v == "INSTALL")) then
+			if (extStatus == "New version" and v == "UPDATE" or v ~= "UPDATE") and not (isDownloading and (v == "UPDATE" or v == "INSTALL")) then
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_WHITE)
 			else
-				if is_downloading and (v == "UPDATE" or v == "INSTALL") then
+				if isDownloading and (v == "UPDATE" or v == "INSTALL") then
 					text = Language[Settings.Language].EXTENSIONS.DOWNLOADING or "Downloading..." or ""
 				end
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_GRAY)
@@ -298,8 +298,8 @@ function ExtensionOptions.draw()
 			end
 		end
 		local height = 0
-		Font.print(BONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT30, Name) / 2, 4, Name, COLOR_WHITE)
-		height = height + Font.getTextHeight(BONT30, Name) + 6
+		Font.print(BOLD_FONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT30, Name) / 2, 4, Name, COLOR_WHITE)
+		height = height + Font.getTextHeight(BOLD_FONT30, Name) + 6
 		if extension.Link then
 			if type(extension.Link) == "table" then
 				for i = 1, #extension.Link do
@@ -323,23 +323,23 @@ function ExtensionOptions.draw()
 				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion, extStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
 				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) + 5
 			end
-			local lang_name = ""
+			local languageName = ""
 			if type(extension.Language) == "table" then
-				lang_name = Language[Settings.Language].PARSERS["DIF"] or "DIF"
+				languageName = Language[Settings.Language].PARSERS["DIF"] or "DIF"
 			else
-				lang_name = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+				languageName = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
 			end
 			if extension.NSFW then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. lang_name) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
-				Font.print(FONT16, 960 - (M - 0.5) * 350 + Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. lang_name) / 2, 4 + height, " | " .. lang_name, COLOR_GRAY)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. languageName) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 + Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. languageName) / 2, 4 + height, " | " .. languageName, COLOR_GRAY)
 			else
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "SFW") / 2 - Font.getTextWidth(FONT16, " | " .. lang_name) / 2, 4 + height, "SFW | " .. lang_name, COLOR_GRAY)
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "SFW") / 2 - Font.getTextWidth(FONT16, " | " .. languageName) / 2, 4 + height, "SFW | " .. languageName, COLOR_GRAY)
 			end
 		end
 		local y = 17 + 25 + (#buttons + 2) * 50
 		if #langsWordList > 0 then
-			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) / 2, y, Language[Settings.Language].EXTENSIONS.LANGUAGES, COLOR_WHITE)
-			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) + 10
+			Font.print(BOLD_FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) / 2, y, Language[Settings.Language].EXTENSIONS.LANGUAGES, COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) + 10
 			local clr = 0
 			for i = 1, #langsWordList do
 				local line = langsWordList[i]
@@ -355,8 +355,8 @@ function ExtensionOptions.draw()
 			y = y + 20
 		end
 		if #changesWordList > 0 then
-			Font.print(BONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) / 2, y, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES, COLOR_WHITE)
-			local descriptionYOffset = y + Font.getTextHeight(BONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) + 10
+			Font.print(BOLD_FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) / 2, y, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES, COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) + 10
 			for i = 1, #changesWordList do
 				local line = changesWordList[i]
 				local x = 960 - M * 350 + 14

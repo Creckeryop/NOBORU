@@ -13,7 +13,7 @@ local loadedList = {}
 local INI_SAVE_PATH = "ux0:data/noboru/temp/extensions.ini"
 local updatesCounter = 0
 
-local is_cached = false
+local isListCached = false
 local cachedList = {}
 local sortFunction = function(a, b)
     if a.Type == b.Type then
@@ -36,11 +36,11 @@ local sortFunction = function(a, b)
 end
 
 local function resetList()
-    is_cached = false
+    isListCached = false
 end
 
 local function refreshList()
-    if not is_cached then
+    if not isListCached then
         updatesCounter = 0
         local t = {}
         local loadedListCopy = table.clone(loadedList)
@@ -77,7 +77,7 @@ local function refreshList()
             end
         end
         cachedList = t
-        is_cached = true
+        isListCached = true
     end
 end
 

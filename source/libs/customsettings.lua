@@ -26,10 +26,10 @@ local function save(manga, key)
 		if doesFileExist("ux0:data/noboru/cusettings/" .. key .. ".ini") then
 			deleteFile("ux0:data/noboru/cusettings/" .. key .. ".ini")
 		end
-		local file = openFile("ux0:data/noboru/cusettings/" .. key .. ".ini", FCREATE)
-		local saveData = table.serialize(customSettings[key])
-		writeFile(file, saveData, #saveData)
-		closeFile(file)
+		local fh = openFile("ux0:data/noboru/cusettings/" .. key .. ".ini", FCREATE)
+		local serializedData = table.serialize(customSettings[key])
+		writeFile(fh, serializedData, #serializedData)
+		closeFile(fh)
 	end
 end
 
@@ -59,19 +59,19 @@ function CuSettings.load(manga)
 		return customSettings[key]
 	end
 	if doesFileExist("ux0:data/noboru/cusettings/" .. key .. ".ini") then
-		local file = openFile("ux0:data/noboru/cusettings/" .. key .. ".ini", FREAD)
-		local loadSettingsFunction = load("return " .. readFile(file, sizeFile(file)))
-		closeFile(file)
+		local fh = openFile("ux0:data/noboru/cusettings/" .. key .. ".ini", FREAD)
+		local loadSettingsFunction = load("return " .. readFile(fh, sizeFile(fh)))
+		closeFile(fh)
 		if loadSettingsFunction then
-			local settings =
+			local loadedCustomSettings =
 				loadSettingsFunction() or
 				{
 					Orientation = "Default",
 					ReaderDirection = "Default",
 					ZoomReader = "Default"
 				}
-			customSettings[key] = settings
-			return settings
+			customSettings[key] = loadedCustomSettings
+			return loadedCustomSettings
 		end
 	end
 	customSettings[key] = {

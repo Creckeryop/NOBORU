@@ -18,17 +18,17 @@ local function save()
 	if doesFileExist("ux0:data/noboru/cusettings/_covers.ini") then
 		deleteFile("ux0:data/noboru/cusettings/_covers.ini")
 	end
-	local file = openFile("ux0:data/noboru/cusettings/_covers.ini", FCREATE)
-	local saveData = table.serialize(covers)
-	writeFile(file, saveData, #saveData)
-	closeFile(file)
+	local fh = openFile("ux0:data/noboru/cusettings/_covers.ini", FCREATE)
+	local serializedData = table.serialize(covers)
+	writeFile(fh, serializedData, #serializedData)
+	closeFile(fh)
 end
 
 function CustomCovers.load()
 	if doesFileExist("ux0:data/noboru/cusettings/_covers.ini") then
-		local file = openFile("ux0:data/noboru/cusettings/_covers.ini", FREAD)
-		local loadCoversFunction = load("return " .. readFile(file, sizeFile(file)))
-		closeFile(file)
+		local fh = openFile("ux0:data/noboru/cusettings/_covers.ini", FREAD)
+		local loadCoversFunction = load("return " .. readFile(fh, sizeFile(fh)))
+		closeFile(fh)
 		if loadCoversFunction then
 			covers = loadCoversFunction()
 		end

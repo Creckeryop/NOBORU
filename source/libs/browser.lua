@@ -11,15 +11,12 @@ local getVersion = System.getVersion
 
 ---@param line string|table
 ---@return table
----Creates cookie by `line`
-local function makeCookie(line)
+---Parses cookie string and returns table
+local function parseCookieString(line)
 	local args = {}
-	line:gsub(
-		"[\t]?(.-)[\t\n]",
-		function(a)
-			args[#args + 1] = a
-		end
-	)
+	for a in line:gmatch("[\t]?(.-)[\t\n]") do
+		args[#args + 1] = a
+	end
 	if #args == 7 then
 		return {
 			HttpOnly = args[1]:find("#HttpOnly_") and true,
@@ -38,30 +35,33 @@ end
 
 ---@param domain string
 ---@return table
----Gives cookies for given `domain`
----Gives List of `cookie` = {[1] = {Key, Value, Expires, Path, Secure, SubDomains, Domain, HttpOnly} [2] = ..}
----Also `cookie['@'] = "key1=value1; key2=value2; "`
----Also `cookie[Key1] = Value1`
-function Browser.getCookies(domain)
+---Returns cookie table for given `domain`
+---
+---{[1] = {Key, Value, Expires, Path, Secure, SubDomains, Domain, HttpOnly} [2] = ..}
+---
+---`cookie['@'] = "key1=value1; key2=value2; "`
+---
+---`cookie[key1] = value1`
+function Browser.getCookie(domain)
 	local cookieLine = ""
-	local cookies = {}
+	local cookieList = {}
 	if doesFileExist("ur0:user/00/savedata/NPXS10083/Cookie.jar.txt") then
 		local fh = openFile("ur0:user/00/savedata/NPXS10083/Cookie.jar.txt", FREAD)
 		local content = readFile(fh, sizeFile(fh)) .. "\n"
 		closeFile(fh)
 		for line in content:gmatch("(.-\n)") do
 			if line:find(domain) then
-				local cookie = makeCookie(line)
+				local cookie = parseCookieString(line)
 				if cookie then
-					cookies[#cookies + 1] = cookie
-					cookies[cookie.Key] = cookie.Value
+					cookieList[#cookieList + 1] = cookie
+					cookieList[cookie.Key] = cookie.Value
 					cookieLine = cookieLine .. cookie.Key .. "=" .. cookie.Value .. "; "
 				end
 			end
 		end
 	end
-	cookies["@"] = cookieLine
-	return cookies
+	cookieList["@"] = cookieLine
+	return cookieList
 end
 
 ---@param link string

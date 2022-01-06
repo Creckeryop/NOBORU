@@ -5,7 +5,7 @@ Panel = {}
 local hints = {}
 local status = "HIDE"
 
----Textures for PS Buttons
+---Button icons set
 ButtonsIcons = {
 	Cross = Image:new(Graphics.loadImage("app0:assets/images/cross_button.png")),
 	Triangle = Image:new(Graphics.loadImage("app0:assets/images/triangle_button.png")),

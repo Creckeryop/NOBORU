@@ -3,8 +3,8 @@ Console = {
 	Lines = {}
 }
 
-local CONSOLE_COLOR = Color.new(0, 0, 0, 128)
-local ERROR_COLOR = Color.new(255, 0, 0)
+local COLOR_CONSOLE_BG = Color.new(0, 0, 0, 128)
+local COLOR_FONT_ERROR = Color.new(255, 0, 0)
 
 ---@param message string
 ---@param color number
@@ -27,7 +27,7 @@ end
 ---@param message string
 ---Prints error line in console output
 function Console.error(message, mode)
-	Console.write(message, ERROR_COLOR, mode)
+	Console.write(message, COLOR_FONT_ERROR, mode)
 end
 
 ---Clears console
@@ -43,7 +43,7 @@ function Console.draw(mode)
 		local y = 40
 		for i = 1, #Console.Lines[mode] do
 			local line = Console.Lines[mode][i]
-			Graphics.fillRect(0, 960, y, y + 20, CONSOLE_COLOR)
+			Graphics.fillRect(0, 960, y, y + 20, COLOR_CONSOLE_BG)
 			Font.print(FONT16, 0, y, line.Text, line.Color)
 			y = y + 20
 		end

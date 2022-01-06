@@ -254,16 +254,16 @@ local function setMode(id)
 	end
 end
 
-function CatalogModes.input(pad, oldpad, touch, oldtouch)
+function CatalogModes.input(pad, oldPad, touch, oldTouch)
 	if status == "START" then
-		if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldtouch.x and touch.x and touch.x > 240 then
+		if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldTouch.x and touch.x and touch.x > 240 then
 			TOUCH_MODES.MODE = TOUCH_MODES.READ
 			slider.TouchY = touch.y
 		elseif TOUCH_MODES.MODE ~= TOUCH_MODES.NONE and not touch.x then
-			if TOUCH_MODES.MODE == TOUCH_MODES.READ and oldtouch.x then
-				if oldtouch.x > 960 - 350 * fade * oldFade then
-					if oldtouch.y > 40 + 8 + 50 * #modes then
-						local id = math.floor((slider.Y + oldtouch.y - (40 + 8 + 50 * #modes)) / 50) + 1
+			if TOUCH_MODES.MODE == TOUCH_MODES.READ and oldTouch.x then
+				if oldTouch.x > 960 - 350 * fade * oldFade then
+					if oldTouch.y > 40 + 8 + 50 * #modes then
+						local id = math.floor((slider.Y + oldTouch.y - (40 + 8 + 50 * #modes)) / 50) + 1
 						if id > 0 then
 							for i = 1, #currentFilters do
 								local f = currentFilters[i]
@@ -296,7 +296,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
 							end
 						end
 					else
-						local id = math.floor((oldtouch.y - 40) / 50) + 1
+						local id = math.floor((oldTouch.y - 40) / 50) + 1
 						if id > 0 and id <= #modes then
 							setMode(id)
 						end
@@ -311,11 +311,11 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
 				oldFade = fade
 			end
 		end
-		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) or Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) or Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) then
 			status = "WAIT"
 			Timer.reset(animationTimer)
 			oldFade = fade
-		elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldpad, SCE_CTRL_CROSS) then
+		elseif Controls.check(pad, SCE_CTRL_CROSS) and not Controls.check(oldPad, SCE_CTRL_CROSS) then
 			if selectedIndex > 0 then
 				if selectedIndex <= #modes then
 					setMode(selectedIndex)
@@ -358,7 +358,7 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
 		if touch.x then
 			selectedIndex = 0
 			controlInterval = 400
-		elseif Timer.getTime(controlTimer) > controlInterval or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldpad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldpad, SCE_CTRL_UP) or ((modes[selectedIndex] == "ByLetter" or modes[selectedIndex] == "ByTag") and (Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldpad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldpad, SCE_CTRL_RIGHT)))) then
+		elseif Timer.getTime(controlTimer) > controlInterval or (Controls.check(pad, SCE_CTRL_DOWN) and not Controls.check(oldPad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP) and not Controls.check(oldPad, SCE_CTRL_UP) or ((modes[selectedIndex] == "ByLetter" or modes[selectedIndex] == "ByTag") and (Controls.check(pad, SCE_CTRL_LEFT) and not Controls.check(oldPad, SCE_CTRL_LEFT) or Controls.check(pad, SCE_CTRL_RIGHT) and not Controls.check(oldPad, SCE_CTRL_RIGHT)))) then
 			if Controls.check(pad, SCE_CTRL_DOWN + SCE_CTRL_UP + SCE_CTRL_LEFT + SCE_CTRL_RIGHT) then
 				if Controls.check(pad, SCE_CTRL_UP) then
 					if selectedIndex == 0 then
@@ -410,8 +410,8 @@ function CatalogModes.input(pad, oldpad, touch, oldtouch)
 				TOUCH_MODES.MODE = TOUCH_MODES.SLIDE
 			end
 		elseif TOUCH_MODES.MODE == TOUCH_MODES.SLIDE then
-			if touch.x and oldtouch.x then
-				slider.V = oldtouch.y - touch.y
+			if touch.x and oldTouch.x then
+				slider.V = oldTouch.y - touch.y
 			end
 		end
 	end
@@ -570,7 +570,7 @@ function CatalogModes.draw()
 			local h = getFiltersHeight() / (544 - 40 - 8 - 50 * #modes)
 			Graphics.fillRect(960 - (M - 1) * 350 - 5, 960, 40 + 8 + 50 * #modes + (slider.Y) / h, 8 + 8 + 50 * #modes + (slider.Y + (544 - 8 - 8 - 50 * #modes)) / h, COLOR_WHITE)
 		end
-		Font.print(BONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BONT30, Name) / 2, 4, Name, COLOR_WHITE)
+		Font.print(BOLD_FONT30, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT30, Name) / 2, 4, Name, COLOR_WHITE)
 	end
 end
 

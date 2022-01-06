@@ -23,7 +23,7 @@ TOUCH_MODES = {
 
 LUA_GRADIENT = Image:new(Graphics.loadImage("app0:assets/images/gradient.png"))
 
-USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
 
 COLOR_WHITE = Color.new(255, 255, 255)
 COLOR_BLACK = Color.new(0, 0, 0)
@@ -35,7 +35,7 @@ COLOR_CRIMSON = Color.new(137, 30, 43)
 
 COLOR_COVER = Color.new(101, 115, 146)
 COLOR_FONT = COLOR_WHITE
-COLOR_SUBFONT = COLOR_GRAY
+COLOR_SUB_FONT = COLOR_GRAY
 COLOR_BACK = COLOR_WHITE
 COLOR_SELECTED = COLOR_WHITE
 COLOR_ICON_EXTRACT = COLOR_WHITE
@@ -66,12 +66,12 @@ SCE_CTRL_REAL_CIRCLE = SCE_CTRL_CIRCLE
 FONT16 = Font.load("app0:assets/fonts/roboto_regular.ttf")
 FONT20 = Font.load("app0:assets/fonts/roboto_regular.ttf")
 FONT26 = Font.load("app0:assets/fonts/roboto_regular.ttf")
-BONT16 = Font.load("app0:assets/fonts/roboto_bold.ttf")
-BONT30 = Font.load("app0:assets/fonts/roboto_bold.ttf")
+BOLD_FONT16 = Font.load("app0:assets/fonts/roboto_bold.ttf")
+BOLD_FONT30 = Font.load("app0:assets/fonts/roboto_bold.ttf")
 
 Font.setPixelSizes(FONT20, 20)
 Font.setPixelSizes(FONT26, 26)
-Font.setPixelSizes(BONT30, 30)
+Font.setPixelSizes(BOLD_FONT30, 30)
 
 local doesDirExist = System.doesDirExist
 local createDirectory = System.createDirectory
@@ -153,12 +153,12 @@ local openFile, closeFile, readFile, sizeFile, writeFile = System.openFile, Syst
 ---Example:
 ---`copyFile("ux0:data/noboru/cache.image","ux0:cover.jpeg") -> cover.jpeg appeared in ux0:`
 local function copyFile(sourcePath, destPath)
-	local fh1 = openFile(sourcePath, FREAD)
-	local fh2 = openFile(destPath, FCREATE)
-	local contentFh1 = readFile(fh1, sizeFile(fh1))
-	writeFile(fh2, contentFh1, #contentFh1)
-	closeFile(fh1)
-	closeFile(fh2)
+	local fileSrc = openFile(sourcePath, FREAD)
+	local fileDest = openFile(destPath, FCREATE)
+	local srcContent = readFile(fileSrc, sizeFile(fileSrc))
+	writeFile(fileDest, srcContent, #srcContent)
+	closeFile(fileSrc)
+	closeFile(fileDest)
 end
 
 CopyFile = copyFile
@@ -221,6 +221,7 @@ local CJK = {
 	{"𫠠", "𬺯"}
 }
 
+---Checks if letter is chinese, japanese or korean
 function IsCJK(letter)
 	for i = 1, #CJK do
 		if letter >= CJK[i][1] and letter <= CJK[i][2] then
@@ -287,17 +288,17 @@ function DrawManga(x, y, Manga)
 	if Manga.Image and Manga.Image.e then
 		Graphics.fillRect(x - MANGA_WIDTH / 2, x + MANGA_WIDTH / 2, y - MANGA_HEIGHT / 2, y + MANGA_HEIGHT / 2, Color.new(0, 0, 0))
 		local width, height = Manga.Image.Width, Manga.Image.Height
-		local was_drawn = false
+		local isDrawn = false
 		if width < height then
 			local scale = MANGA_WIDTH / width
 			local h = MANGA_HEIGHT / scale
 			local s_y = (height - h) / 2
 			if s_y >= 0 then
 				Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale, scale)
-				was_drawn = true
+				isDrawn = true
 			end
 		end
-		if not was_drawn then
+		if not isDrawn then
 			local scale = MANGA_HEIGHT / height
 			local w = MANGA_WIDTH / scale
 			local s_x = (width - w) / 2
@@ -313,11 +314,11 @@ function DrawManga(x, y, Manga)
 		else
 			if Manga.PrintName.f then
 				if y + MANGA_HEIGHT / 2 - 47 < 544 and y + MANGA_HEIGHT / 2 - 47 > -16 then
-					Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 47, Manga.PrintName.f, COLOR_WHITE)
+					Font.print(BOLD_FONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 47, Manga.PrintName.f, COLOR_WHITE)
 				end
 			end
 			if y + MANGA_HEIGHT / 2 - 27 < 544 and y + MANGA_HEIGHT / 2 - 27 > -16 then
-				Font.print(BONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 27, Manga.PrintName.s, COLOR_WHITE)
+				Font.print(BOLD_FONT16, x - MANGA_WIDTH / 2 + 8, y + MANGA_HEIGHT / 2 - 27, Manga.PrintName.s, COLOR_WHITE)
 			end
 		end
 	end
@@ -328,17 +329,17 @@ function DrawDetailsManga(x, y, Manga, M)
 	if Manga.Image and Manga.Image.e then
 		Graphics.fillRect(x - MANGA_WIDTH * M / 2, x + MANGA_WIDTH * M / 2, y - MANGA_HEIGHT * M / 2, y + MANGA_HEIGHT * M / 2, Color.new(0, 0, 0))
 		local width, height = Manga.Image.Width, Manga.Image.Height
-		local was_drawn = false
+		local isDrawn = false
 		if width < height then
 			local scale = MANGA_WIDTH / width
 			local h = MANGA_HEIGHT / scale
 			local s_y = (height - h) / 2
 			if s_y >= 0 then
 				Graphics.drawImageExtended(x, y, Manga.Image.e, 0, s_y, width, h, 0, scale * M, scale * M)
-				was_drawn = true
+				isDrawn = true
 			end
 		end
-		if not was_drawn then
+		if not isDrawn then
 			local scale = MANGA_HEIGHT / height
 			local w = MANGA_WIDTH / scale
 			local s_x = (width - w) / 2

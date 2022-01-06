@@ -33,7 +33,7 @@ local sure_clear_library
 local sure_clear_chapters
 local sure_clear_all_cache
 local sure_clear_cache
-local manga_load_status = 0
+local mangaLoadStatus = 0
 
 local smilesList = {"ಥ_ಥ", "ಠ_ಠ", "ヽ(`Д´)ﾉ", "ఠ౬ఠ", "°Д°", "(ó﹏ò｡)", "(╥﹏╥)", "(⊙_⊙)", "(✖╭╮✖)", "ʘ‿ʘ", "(￣ω￣)", "(´• ω •`) ♡", "(⌒_⌒;)", "( ╥ω╥ )", "(✧∀✧)/", "	╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ"}
 local smile = nil
@@ -106,7 +106,7 @@ local extensionSelector =
 
 local function freeMangaImage(manga)
 	if manga and manga.ImageDownload then
-		Threads.remove(manga)
+		Threads.removeTask(manga)
 		if manga.Image and manga.Image.free then
 			manga.Image:free()
 		end
@@ -116,7 +116,7 @@ end
 
 local function loadMangaImage(manga)
 	if CustomCovers.hasCustomCover(manga) then
-		local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getKey(manga) .. "/custom_cover.image"
+		local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getMangaHash(manga) .. "/custom_cover.image"
 		if doesFileExist(customCoverPath) and System.getPictureResolution(customCoverPath) or -1 > 0 then
 			Threads.addTask(
 				manga,
@@ -139,7 +139,7 @@ local function loadMangaImage(manga)
 				Cache.addManga(manga)
 			end
 			local cover = CustomCovers.getCustomCover(manga)
-			local cacheKey = Cache.getKey(manga)
+			local cacheKey = Cache.getMangaHash(manga)
 			local t = {}
 			if cover.Path then
 				copyFile(cover.Path:find("^...?0:") and cover.Path or ("ux0:data/noboru/" .. cover.Path), "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image")
@@ -230,7 +230,7 @@ local function loadMangaImage(manga)
 			end
 		end
 	else
-		local path = manga.Path or ("cache/" .. Cache.getKey(manga) .. "/cover.image")
+		local path = manga.Path or ("cache/" .. Cache.getMangaHash(manga) .. "/cover.image")
 		if path and doesFileExist("ux0:data/noboru/" .. path) and System.getPictureResolution("ux0:data/noboru/" .. path) or -1 > 0 then
 			Threads.addTask(
 				manga,
@@ -273,7 +273,7 @@ local function loadMangaImage(manga)
 	end
 end
 
-local function UpdateMangas()
+local function UpdateManga()
 	if slider.V == 0 and Timer.getTime(touchTimer) > 200 then
 		local start = max(1, floor(slider.Y / (MANGA_HEIGHT + 6)) * 4 + 1)
 		if #downloadedImages > 12 then
@@ -300,7 +300,7 @@ local function UpdateMangas()
 		for _, i in ipairs(downloadedImages) do
 			local manga = currentMangaList[i]
 			if Threads.check(manga) and (Details.getFade() == 0 or manga ~= Details.getManga()) then
-				Threads.remove(manga)
+				Threads.removeTask(manga)
 				manga.ImageDownload = nil
 			else
 				newTable[#newTable + 1] = i
@@ -398,36 +398,36 @@ local function selectImport(index)
 	end
 end
 
-mangaSelector:xaction(selectManga)
-parserSelector:xaction(selectParser)
-downloadSelector:xaction(
+mangaSelector:xAction(selectManga)
+parserSelector:xAction(selectParser)
+downloadSelector:xAction(
 	function(item)
 		ChapterSaver.stopByListItem(ChapterSaver.getDownloadingList()[item])
 	end
 )
-settingSelector:xaction(selectSetting)
-importSelector:xaction(selectImport)
-extensionSelector:xaction(selectExtension)
+settingSelector:xAction(selectSetting)
+importSelector:xAction(selectImport)
+extensionSelector:xAction(selectExtension)
 
-function Catalogs.input(oldpad, pad, oldtouch, touch)
+function Catalogs.input(oldPad, pad, oldTouch, touch)
 	if status == "MANGA" then
-		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
+		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) then
 			status = "CATALOGS"
 			Catalogs.terminate()
-		elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+		elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) then
 			CatalogModes.show()
-		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldPad, SCE_CTRL_TRIANGLE) then
 			Keyboard.show(Language[Settings.Language].SETTINGS.InputValue, 1, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
 			keyboardMode = "JUMP_PAGE"
 		end
 	elseif status == "CATALOGS" then
-		if Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldpad, SCE_CTRL_SELECT) and Debug.getStatus() == 2 then
+		if Controls.check(pad, SCE_CTRL_SELECT) and not Controls.check(oldPad, SCE_CTRL_SELECT) and Debug.getStatus() == 2 then
 			local item = parsersList[parserSelector:getSelected()]
 			if item then
 				ParserChecker.addCheck(item)
 			end
 		end
-		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldPad, SCE_CTRL_TRIANGLE) then
 			local item = parsersList[parserSelector:getSelected()]
 			if item and item.ExtID then
 				ExtensionOptions.load(item.ExtID)
@@ -436,24 +436,24 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 		end
 	elseif status == "EXTENSIONS" then
 		if not Threads.check("EXTENSIONSPARSERSCHECK") then
-			if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+			if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldPad, SCE_CTRL_TRIANGLE) then
 				Extensions.UpdateList()
 				extensionSelector:resetSelected()
 			end
 		end
 	elseif status == "HISTORY" then
-		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) then
 			local item = currentMangaList[mangaSelector:getSelected()]
 			if item then
 				Cache.removeHistory(item)
 			end
 		end
 	elseif status == "SETTINGS" then
-		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
+		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) then
 			Settings.back()
 			settingSelector:resetSelected()
 		end
-		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) and Settings.getTab() == "AdvancedChaptersDeletion" then
+		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) and Settings.getTab() == "AdvancedChaptersDeletion" then
 			local id = settingSelector:getSelected()
 			local item = Settings.list()[id]
 			if item then
@@ -461,11 +461,11 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 			end
 		end
 	elseif status == "IMPORT" then
-		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldpad, SCE_CTRL_CIRCLE) then
+		if Controls.check(pad, SCE_CTRL_CIRCLE) and not Controls.check(oldPad, SCE_CTRL_CIRCLE) then
 			Import.back()
 			importSelector:resetSelected()
 		end
-		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldpad, SCE_CTRL_SQUARE) then
+		if Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) then
 			local item = Import.listDir()[importSelector:getSelected()]
 			if item and item.active and item.name ~= "..." then
 				ChapterSaver.importManga(Import.getPath(item))
@@ -473,7 +473,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 			end
 		end
 	elseif status == "LIBRARY" then
-		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldpad, SCE_CTRL_TRIANGLE) then
+		if Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldPad, SCE_CTRL_TRIANGLE) then
 			ParserManager.updateCounters()
 		end
 	end
@@ -481,38 +481,38 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 		Timer.reset(touchTimer)
 	end
 	if status == "MANGA" or status == "LIBRARY" or status == "HISTORY" then
-		mangaSelector:input(#currentMangaList, oldpad, pad, touch.x)
+		mangaSelector:input(#currentMangaList, oldPad, pad, touch.x)
 	elseif status == "CATALOGS" then
-		parserSelector:input(#parsersList, oldpad, pad, touch.x)
+		parserSelector:input(#parsersList, oldPad, pad, touch.x)
 	elseif status == "DOWNLOAD" then
-		downloadSelector:input(#ChapterSaver.getDownloadingList(), oldpad, pad, touch.x)
+		downloadSelector:input(#ChapterSaver.getDownloadingList(), oldPad, pad, touch.x)
 	elseif status == "SETTINGS" then
-		settingSelector:input(#Settings.list(), oldpad, pad, touch.x)
+		settingSelector:input(#Settings.list(), oldPad, pad, touch.x)
 	elseif status == "IMPORT" then
-		importSelector:input(#Import.listDir(), oldpad, pad, touch.x)
+		importSelector:input(#Import.listDir(), oldPad, pad, touch.x)
 	elseif status == "EXTENSIONS" then
 		if not Threads.check("EXTENSIONSPARSERSCHECK") then
-			extensionSelector:input(#Extensions.GetList(), oldpad, pad, touch.x)
+			extensionSelector:input(#Extensions.GetList(), oldPad, pad, touch.x)
 		end
 	end
-	if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldtouch.x and touch.x and touch.x > 240 then
+	if TOUCH_MODES.MODE == TOUCH_MODES.NONE and oldTouch.x and touch.x and touch.x > 240 then
 		TOUCH_MODES.MODE = TOUCH_MODES.READ
 		slider.TouchY = touch.y
 	elseif TOUCH_MODES.MODE ~= TOUCH_MODES.NONE and not touch.x then
-		if oldtouch.x then
+		if oldTouch.x then
 			if TOUCH_MODES.MODE == TOUCH_MODES.READ then
 				if status == "MANGA" or status == "LIBRARY" or status == "HISTORY" then
 					local start = max(1, floor((slider.Y - 20) / (MANGA_HEIGHT + 6)) * 4 + 1)
 					for i = start, min(#currentMangaList, start + 11) do
 						local lx = ((i - 1) % 4 - 2) * (MANGA_WIDTH + 6) + 610
 						local uy = floor((i - 1) / 4) * (MANGA_HEIGHT + 6) - slider.Y + 6
-						if oldtouch.x > lx and oldtouch.x < lx + MANGA_WIDTH and oldtouch.y > uy and oldtouch.y < uy + MANGA_HEIGHT then
+						if oldTouch.x > lx and oldTouch.x < lx + MANGA_WIDTH and oldTouch.y > uy and oldTouch.y < uy + MANGA_HEIGHT then
 							selectManga(i)
 							break
 						end
 					end
-				elseif oldtouch.x > 205 and oldtouch.x < 955 then
-					local id = floor((slider.Y - 10 + oldtouch.y) / 75) + 1
+				elseif oldTouch.x > 205 and oldTouch.x < 955 then
+					local id = floor((slider.Y - 10 + oldTouch.y) / 75) + 1
 					if status == "CATALOGS" then
 						selectParser(id)
 					elseif status == "EXTENSIONS" then
@@ -528,7 +528,7 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 							selectSetting(id)
 						end
 					elseif status == "IMPORT" then
-						if oldtouch.x < 850 then
+						if oldTouch.x < 850 then
 							local list = Import.listDir()
 							if list[id] then
 								selectImport(id)
@@ -550,8 +550,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	if TOUCH_MODES.MODE == TOUCH_MODES.READ then
 		if abs(slider.V) > 0.1 or abs(slider.TouchY - touch.y) > 10 then
 			TOUCH_MODES.MODE = TOUCH_MODES.SLIDE
-		elseif oldtouch.x > 205 and oldtouch.x < 945 then
-			local id = floor((slider.Y - 10 + oldtouch.y) / 75) + 1
+		elseif oldTouch.x > 205 and oldTouch.x < 945 then
+			local id = floor((slider.Y - 10 + oldTouch.y) / 75) + 1
 			if status == "CATALOGS" and GetParserList()[id] then
 				newItemID = id
 			elseif status == "DOWNLOAD" and ChapterSaver.getDownloadingList()[id] then
@@ -570,8 +570,8 @@ function Catalogs.input(oldpad, pad, oldtouch, touch)
 	else
 		slider.ItemID = newItemID
 	end
-	if TOUCH_MODES.MODE == TOUCH_MODES.SLIDE and oldtouch.x and touch.x and touch.x > 205 then
-		slider.V = oldtouch.y - touch.y
+	if TOUCH_MODES.MODE == TOUCH_MODES.SLIDE and oldTouch.x and touch.x and touch.x > 205 then
+		slider.V = oldTouch.y - touch.y
 	end
 end
 
@@ -667,9 +667,9 @@ function Catalogs.update()
 		slider.V = slider.V / 1.12
 	end
 	if status == "MANGA" or status == "LIBRARY" or status == "HISTORY" then
-		UpdateMangas()
+		UpdateManga()
 		if ParserManager.check(currentMangaList) then
-			manga_load_status = 1
+			mangaLoadStatus = 1
 			Loading.setStatus(COLOR_FONT == COLOR_BLACK and "BLACK" or "WHITE", 580, 272)
 		elseif Details.getStatus() == "END" then
 			Loading.setStatus("NONE")
@@ -804,13 +804,13 @@ function Catalogs.draw()
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT26, 225, y - 70, extension.Name, COLOR_FONT)
-			local lang_text = ""
+			local languageText = ""
 			if type(extension.Language) == "table" then
-				lang_text = Language[Settings.Language].PARSERS["DIF"] or "DIF"
+				languageText = Language[Settings.Language].PARSERS["DIF"] or "DIF"
 			else
-				lang_text = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+				languageText = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
 			end
-			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
+			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, languageText), y - 15 - Font.getTextHeight(FONT16, languageText), languageText, COLOR_SUB_FONT)
 			local width = Font.getTextWidth(FONT26, extension.Name)
 			local text = ""
 			local color = COLOR_GRAY
@@ -833,13 +833,13 @@ function Catalogs.draw()
 				width = width + Font.getTextWidth(FONT16, "NSFW") + 5
 			end
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, text), y - 65, text, color)
-			local link_text = ""
+			local linkText = ""
 			if type(extension.Link) == "table" then
-				link_text = table.concat(extension.Link, ", ")
+				linkText = table.concat(extension.Link, ", ")
 			elseif type(extension.Link) == "string" then
-				link_text = extension.Link
+				linkText = extension.Link
 			end
-			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
+			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, linkText), linkText, COLOR_SUB_FONT)
 			y = y + 75
 		end
 		local elementsCount = #extensionsList
@@ -860,8 +860,8 @@ function Catalogs.draw()
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
-			local lang_text = Language[Settings.Language].PARSERS[parser.Language] or parser.Language or ""
-			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, lang_text), y - 15 - Font.getTextHeight(FONT16, lang_text), lang_text, COLOR_SUBFONT)
+			local languageText = Language[Settings.Language].PARSERS[parser.Language] or parser.Language or ""
+			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, languageText), y - 15 - Font.getTextHeight(FONT16, languageText), languageText, COLOR_SUB_FONT)
 			local width = Font.getTextWidth(FONT26, parser.Name)
 			if parser.NSFW then
 				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "NSFW"), "NSFW", COLOR_ROYAL_BLUE)
@@ -872,9 +872,9 @@ function Catalogs.draw()
 			elseif parser.isUpdated then
 				Font.print(FONT16, 230 + width, y - 70 + Font.getTextHeight(FONT26, parser.Name) - Font.getTextHeight(FONT16, "Updated"), "Updated", COLOR_CRIMSON)
 			end
-			--Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUBFONT)
-			local link_text = parser.Link .. "/"
-			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, link_text), link_text, COLOR_SUBFONT)
+			--Font.print(FONT16, 935 - Font.getTextWidth(FONT16, "v" .. parser.Version), y - 65, "v" .. parser.Version, COLOR_SUB_FONT)
+			local linkText = parser.Link .. "/"
+			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, linkText), linkText, COLOR_SUB_FONT)
 			y = y + 75
 		end
 		local elementsCount = #parsersList
@@ -896,7 +896,7 @@ function Catalogs.draw()
 			elseif object.directory then
 				Font.print(FONT26, 225, y - 70, "*" .. Language[Settings.Language].IMPORT.EXTERNAL_MEMORY .. "*", COLOR_ROYAL_BLUE)
 			else
-				Font.print(FONT26, 225, y - 70, object.name, COLOR_SUBFONT)
+				Font.print(FONT26, 225, y - 70, object.name, COLOR_SUB_FONT)
 			end
 			Graphics.fillRect(945, 955, y - 75, y - 1, COLOR_BACK)
 			if object.active and object.name ~= "..." then
@@ -907,7 +907,7 @@ function Catalogs.draw()
 				end
 			end
 			local textDis = object.name == "..." and Language[Settings.Language].IMPORT.GOBACK or object.directory and (object.active and Language[Settings.Language].IMPORT.FOLDER or Language[Settings.Language].IMPORT.DRIVE .. ' "' .. object.name .. '"') or object.active and Language[Settings.Language].IMPORT.FILE or Language[Settings.Language].IMPORT.UNSUPFILE
-			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, textDis), textDis, COLOR_SUBFONT)
+			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, textDis), textDis, COLOR_SUB_FONT)
 			if object.active and object.name ~= "..." then
 				Graphics.drawImage(925 - 16 - 12, y - 38 - 14, ImportIcon.e, COLOR_ICON_EXTRACT)
 			end
@@ -972,7 +972,7 @@ function Catalogs.draw()
 				else
 					Font.print(FONT20, 225, y - 70, task.name, COLOR_FONT)
 					if task.type == "savedChapter" then
-						Font.print(FONT16, 225, y - 44, task.info, COLOR_SUBFONT)
+						Font.print(FONT16, 225, y - 44, task.info, COLOR_SUB_FONT)
 					end
 				end
 			else
@@ -984,7 +984,7 @@ function Catalogs.draw()
 				else
 					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
 					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
-						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUBFONT)
+						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUB_FONT)
 					end
 				end
 				if task == "Language" then
@@ -1007,12 +1007,12 @@ function Catalogs.draw()
 							getDirectorySize("uma0:data/noboru/chapters")
 						end
 					end
-					Font.print(FONT16, 225, y - 44, BytesToStr(chaptersFolderSize), COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, BytesToStr(chaptersFolderSize), COLOR_SUB_FONT)
 					if sure_clear_chapters > 0 then
 						Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ReaderOrientation" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_SUB_FONT)
 				elseif task == "ShowNSFW" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
 				elseif task == "HideInOffline" then
@@ -1020,7 +1020,7 @@ function Catalogs.draw()
 				elseif task == "SkipFontLoading" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SkipFontLoad], COLOR_ROYAL_BLUE)
 				elseif task == "ZoomReader" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_SUB_FONT)
 				elseif task == "DoubleTapReader" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.DoubleTapReader], COLOR_ROYAL_BLUE)
 				elseif task == "RefreshLibAtStart" then
@@ -1028,19 +1028,19 @@ function Catalogs.draw()
 				elseif task == "SilentDownloads" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SilentDownloads], COLOR_ROYAL_BLUE)
 				elseif task == "ChangeUI" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].THEME[Settings.Theme] or Settings.Theme, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].THEME[Settings.Theme] or Settings.Theme, COLOR_SUB_FONT)
 				elseif task == "LibrarySorting" then
-					Font.print(FONT16, 225, y - 44, Settings.LibrarySorting, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.LibrarySorting, COLOR_SUB_FONT)
 				elseif task == "ChapterSorting" then
-					Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_SUB_FONT)
 				elseif task == "ConnectionTime" then
 					Font.print(FONT16, 225, y - 44, Settings.ConnectionTime, COLOR_ROYAL_BLUE)
 				elseif task == "UseProxy" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxy], COLOR_ROYAL_BLUE)
 				elseif task == "ProxyIP" then
-					Font.print(FONT16, 225, y - 44, Settings.ProxyIP, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.ProxyIP, COLOR_SUB_FONT)
 				elseif task == "ProxyPort" then
-					Font.print(FONT16, 225, y - 44, Settings.ProxyPort, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.ProxyPort, COLOR_SUB_FONT)
 				elseif task == "UseProxyAuth" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
 				elseif task == "SkipCacheChapterChecking" then
@@ -1048,35 +1048,35 @@ function Catalogs.draw()
 				elseif task == "PressEdgesToChangePage" then
 					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.PressEdgesToChangePage], COLOR_ROYAL_BLUE)
 				elseif task == "ProxyAuth" then
-					Font.print(FONT16, 225, y - 44, Settings.ProxyAuth, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.ProxyAuth, COLOR_SUB_FONT)
 				elseif task == "ChapterSorting" then
-					Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.ChapterSorting, COLOR_SUB_FONT)
 				elseif task == "LeftStickDeadZone" then
 					local x = 0
 					for n = 1, #DeadZoneValues do
-						Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.LeftStickDeadZone and COLOR_CRIMSON or COLOR_SUBFONT)
+						Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.LeftStickDeadZone and COLOR_CRIMSON or COLOR_SUB_FONT)
 						x = x + Font.getTextWidth(FONT16, DeadZoneValues[n]) + 5
 					end
 				elseif task == "LeftStickSensitivity" then
 					local x = 0
 					for n = 1, #SensitivityValues do
-						Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.LeftStickSensitivity and COLOR_CRIMSON or COLOR_SUBFONT)
+						Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.LeftStickSensitivity and COLOR_CRIMSON or COLOR_SUB_FONT)
 						x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
 					end
 				elseif task == "RightStickDeadZone" then
 					local x = 0
 					for n = 1, #DeadZoneValues do
-						Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.RightStickDeadZone and COLOR_CRIMSON or COLOR_SUBFONT)
+						Font.print(FONT16, 225 + x, y - 44, DeadZoneValues[n], DeadZoneValues[n] == Settings.RightStickDeadZone and COLOR_CRIMSON or COLOR_SUB_FONT)
 						x = x + Font.getTextWidth(FONT16, DeadZoneValues[n]) + 5
 					end
 				elseif task == "RightStickSensitivity" then
 					local x = 0
 					for n = 1, #SensitivityValues do
-						Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.RightStickSensitivity and COLOR_CRIMSON or COLOR_SUBFONT)
+						Font.print(FONT16, 225 + x, y - 44, SensitivityValues[n], SensitivityValues[n] == Settings.RightStickSensitivity and COLOR_CRIMSON or COLOR_SUB_FONT)
 						x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
 					end
 				elseif task == "ChangingPageButtons" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_SUB_FONT)
 				elseif task == "Translators" then
 					Font.print(
 						FONT16,
@@ -1114,29 +1114,29 @@ function Catalogs.draw()
 						end
 						getDirectorySize("ux0:data/noboru/cache")
 					end
-					Font.print(FONT16, 225, y - 44, BytesToStr(cacheFolderSize), COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, BytesToStr(cacheFolderSize), COLOR_SUB_FONT)
 					if sure_clear_all_cache > 0 then
 						Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ShowAuthor" then
-					Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_SUB_FONT)
 					Font.print(FONT16, 225, y - 24, "Email: didager@ya.ru", COLOR_ROYAL_BLUE)
 				elseif task == "SupportDev" then
-					Font.print(FONT16, 225, y - 44, "https://paypal.me/creckeryop", COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, "https://paypal.me/creckeryop", COLOR_SUB_FONT)
 				elseif task == "ShowVersion" then
-					Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_SUB_FONT)
 				elseif task == "ReaderDirection" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ReaderDirection], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ReaderDirection], COLOR_SUB_FONT)
 				elseif task == "SwapXO" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_SUB_FONT)
 				elseif task == "CheckUpdate" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_SUB_FONT)
 				elseif task == "SaveDataPath" then
-					Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_SUB_FONT)
 				elseif task == "AnimatedGif" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.AnimatedGif], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.AnimatedGif], COLOR_SUB_FONT)
 				elseif task == "LoadSummary" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.LoadSummary], COLOR_SUBFONT)
+					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.LoadSummary], COLOR_SUB_FONT)
 				end
 			end
 			y = y + 75
@@ -1157,8 +1157,8 @@ function Catalogs.draw()
 				if status == "LIBRARY" and currentMangaList[i].Counter then
 					local c = currentMangaList[i].Counter
 					if c > 0 then
-						Graphics.fillRect(x, x + Font.getTextWidth(BONT16, c) + 11, y, y + 24, Themes[Settings.Theme].COLOR_LABEL)
-						Font.print(BONT16, x + 5, y + 2, tostring(c), COLOR_WHITE)
+						Graphics.fillRect(x, x + Font.getTextWidth(BOLD_FONT16, c) + 11, y, y + 24, Themes[Settings.Theme].COLOR_LABEL)
+						Font.print(BOLD_FONT16, x + 5, y + 2, tostring(c), COLOR_WHITE)
 					end
 				end
 			end
@@ -1180,7 +1180,7 @@ function Catalogs.draw()
 			if status == "LIBRARY" then
 				centerScreenMessage = Language[Settings.Language].MESSAGE.NO_LIBRARY_MANGA
 			elseif status == "MANGA" then
-				if not ParserManager.check(currentMangaList) and manga_load_status == 1 then
+				if not ParserManager.check(currentMangaList) and mangaLoadStatus == 1 then
 					centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOG_MANGA
 				end
 			elseif status == "HISTORY" then
@@ -1189,7 +1189,7 @@ function Catalogs.draw()
 		end
 	end
 	if centerScreenMessage then
-		local lines = ToLines(centerScreenMessage)
+		local lines = StringToLines(centerScreenMessage)
 		local height = 0
 		for i, line in ipairs(lines) do
 			local newLine = {}
@@ -1201,11 +1201,11 @@ function Catalogs.draw()
 		end
 		local dy = 0
 		for _, line in ipairs(lines) do
-			Font.print(FONT16, 582 - math.floor(line.Width / 2), 272 - math.floor(height / 2) + dy, line.Text, Themes[Settings.Theme].COLOR_SUBFONT)
+			Font.print(FONT16, 582 - math.floor(line.Width / 2), 272 - math.floor(height / 2) + dy, line.Text, Themes[Settings.Theme].COLOR_SUB_FONT)
 			dy = dy + line.Height + 4
 		end
 		if smile then
-			Font.print(FONT26, 582 - math.floor(Font.getTextWidth(FONT26, smile) / 2), 272 - math.floor(height / 2) + dy + 6, smile, Themes[Settings.Theme].COLOR_SUBFONT)
+			Font.print(FONT26, 582 - math.floor(Font.getTextWidth(FONT26, smile) / 2), 272 - math.floor(height / 2) + dy + 6, smile, Themes[Settings.Theme].COLOR_SUB_FONT)
 		end
 	end
 	if item and item ~= 0 then
@@ -1257,7 +1257,7 @@ function Catalogs.setStatus(newStatus)
 	sure_clear_library = 0
 	sure_clear_chapters = 0
 	sure_clear_cache = 0
-	manga_load_status = 0
+	mangaLoadStatus = 0
 	sure_clear_all_cache = 0
 	local smileIdx = math.random(1, #smilesList)
 	if smilesList[smileIdx] then

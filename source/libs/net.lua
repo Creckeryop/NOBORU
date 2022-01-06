@@ -6,9 +6,10 @@ local orderList = {}
 local currentTask = nil
 
 MAX_VRAM_MEMORY = 88 * 1024 * 1024
-local TRASH = {
+
+local trash = {
 	Type = nil,
-	Garbadge = nil
+	Garbage = nil
 }
 
 local bytes = 0
@@ -27,31 +28,31 @@ local function img2bytes(width, height, dScale)
 	return bit32.band(width + 7, bit32.bnot(7)) * height * 4 / (dScale * dScale) + 1024
 end
 
-local is_net_inited = false
+local isNetworkInitiated = false
 
 ---Updates threads tasks
 function Threads.update()
-	if is_net_inited and not currentTask and #orderList == 0 then
+	if isNetworkInitiated and not currentTask and #orderList == 0 then
 		Network.term()
-		is_net_inited = false
+		isNetworkInitiated = false
 	end
-	if not is_net_inited and (#orderList ~= 0 or currentTask) then
+	if not isNetworkInitiated and (#orderList ~= 0 or currentTask) then
 		Network.init()
-		is_net_inited = true
+		isNetworkInitiated = true
 	end
 	if (#orderList == 0 and not currentTask) or System.getAsyncState() == 0 then
 		return
 	end
 	if not currentTask then
-		local new_order = {}
+		local newOrderList = {}
 		for i = 1, #orderList do
 			if orderList[i].Type == "Skip" then
 				Console.write("NET: Skip", Color.new(255, 255, 0))
 			else
-				new_order[#new_order + 1] = orderList[i]
+				newOrderList[#newOrderList + 1] = orderList[i]
 			end
 		end
-		orderList = new_order
+		orderList = newOrderList
 		if #orderList == 0 then
 			return
 		end
@@ -59,7 +60,7 @@ function Threads.update()
 		currentTask.Final = true
 		if currentTask.Type == "StringRequest" then
 			if currentTask.Link then
-				Network.requestStringAsync(currentTask.Link, USERAGENT, currentTask.HttpMethod, currentTask.PostData, currentTask.ContentType, currentTask.Cookie, currentTask.Header1, currentTask.Header2, currentTask.Header3, currentTask.Header4, currentTask.Proxy, currentTask.ProxyAuth)
+				Network.requestStringAsync(currentTask.Link, DEFAULT_USER_AGENT, currentTask.HttpMethod, currentTask.PostData, currentTask.ContentType, currentTask.Cookie, currentTask.Header1, currentTask.Header2, currentTask.Header3, currentTask.Header4, currentTask.Proxy, currentTask.ProxyAuth)
 			else
 				Console.error("No Link given or internet connection problem")
 				uniques[currentTask.UniqueKey] = nil
@@ -71,7 +72,7 @@ function Threads.update()
 			end
 			if currentTask.Link then
 				if currentTask.Path then
-					Network.downloadFileAsync(currentTask.Link, currentTask.Path, USERAGENT, currentTask.HttpMethod, currentTask.PostData, currentTask.ContentType, currentTask.Cookie, currentTask.Header1, currentTask.Header2, currentTask.Header3, currentTask.Header4, currentTask.Proxy, currentTask.ProxyAuth)
+					Network.downloadFileAsync(currentTask.Link, currentTask.Path, DEFAULT_USER_AGENT, currentTask.HttpMethod, currentTask.PostData, currentTask.ContentType, currentTask.Cookie, currentTask.Header1, currentTask.Header2, currentTask.Header3, currentTask.Header4, currentTask.Proxy, currentTask.ProxyAuth)
 					if currentTask.Type == "ImageDownload" then
 						currentTask.Type = "Image"
 						currentTask.Final = false
@@ -128,8 +129,8 @@ function Threads.update()
 	else
 		Console.write("(" .. currentTask.Type .. ")" .. (currentTask.Link or currentTask.Path or currentTask.UniqueKey), Color.new(0, 255, 0))
 		local saveFunction = function()
-			TRASH.Type = currentTask.Type
-			TRASH.Link = currentTask.Link
+			trash.Type = currentTask.Type
+			trash.Link = currentTask.Link
 			if currentTask.Type == "StringRequest" then
 				currentTask.Table[currentTask.Index] = getAsyncResult() or ""
 				local len = #currentTask.Table[currentTask.Index]
@@ -145,9 +146,9 @@ function Threads.update()
 					if not Width or Width < 0 then
 						currentTask.Type = currentTask.Link and "ImageDownload" or currentTask.Type
 						if currentTask.Type == "ImageDownload" then
-							error("Redownloading file")
+							error("Retrying to download the file")
 						elseif currentTask.Type == "Image" then
-							Console.error("File you loading isn't picture")
+							Console.error("Loaded file isn't picture")
 							uniques[currentTask.UniqueKey] = nil
 							currentTask = nil
 							return
@@ -278,9 +279,9 @@ function Threads.update()
 					end
 				elseif currentTask.Image.i < currentTask.Image.Parts then
 					currentTask.Image.i = currentTask.Image.i + 1
-					if currentTask.Table[currentTask.Index] == TRASH.Garbadge then
-						TRASH.Garbadge = Image:new(getAsyncResult())
-						TRASH.Type = "ImageLoadTable2"
+					if currentTask.Table[currentTask.Index] == trash.Garbage then
+						trash.Garbage = Image:new(getAsyncResult())
+						trash.Type = "ImageLoadTable2"
 						return
 					end
 					currentTask.Table[currentTask.Index][currentTask.Image.i] = Image:new(getAsyncResult(), FILTER_LINEAR)
@@ -337,7 +338,7 @@ function Threads.update()
 		elseif currentTask ~= nil then
 			Console.error("NET: " .. err)
 			currentTask.Retry = currentTask.Retry - 1
-			if currentTask.Retry > 0 and currentTask.Table ~= TRASH then
+			if currentTask.Retry > 0 and currentTask.Table ~= trash then
 				table.insert(orderList, currentTask)
 			else
 				uniques[currentTask.UniqueKey] = nil
@@ -345,19 +346,19 @@ function Threads.update()
 			currentTask = nil
 		end
 	end
-	if TRASH.Garbadge then
-		if TRASH.Type == "ImageLoad" then
+	if trash.Garbage then
+		if trash.Type == "ImageLoad" then
 			Console.write("NET:(Freeing Image)", Color.new(255, 0, 255))
-			if TRASH.Garbadge and TRASH.Garbadge.free then
-				TRASH.Garbadge:free()
+			if trash.Garbage and trash.Garbage.free then
+				trash.Garbage:free()
 			end
-		elseif TRASH.Type == "ImageLoadTable2" then
+		elseif trash.Type == "ImageLoadTable2" then
 			Console.write("NET:(Freeing Table Image)", Color.new(255, 0, 255))
-			if TRASH.Garbadge and TRASH.Garbadge.free then
-				TRASH.Garbadge:free()
+			if trash.Garbage and trash.Garbage.free then
+				trash.Garbage:free()
 			end
 		end
-		TRASH.Garbadge = nil
+		trash.Garbage = nil
 	end
 end
 
@@ -366,8 +367,8 @@ function Threads.clear()
 	orderList = {}
 	uniques = {}
 	if currentTask ~= nil then
-		currentTask.Table = TRASH
-		currentTask.Index = "Garbadge"
+		currentTask.Table = trash
+		currentTask.Index = "Garbage"
 		Network.stopCurrentDownload()
 	end
 end
@@ -379,7 +380,7 @@ end
 
 ---You can use Network function in here if you sure that your function is safe
 function Threads.netActionUnSafe(foo)
-	if not is_net_inited then
+	if not isNetworkInitiated then
 		Network.init()
 		local result = foo()
 		Network.term()
@@ -397,7 +398,7 @@ function Threads.netActionSafe(foo)
 end
 
 ---Checks if given parameters is enough to execute task
-local function taskcheck(t)
+local function checkTaskParameters(t)
 	local task = t
 	if task.Type == "FileDownload" then
 		if task.Link and task.Path then
@@ -410,48 +411,48 @@ local function taskcheck(t)
 end
 
 ---@param uniqueKey any
----@param t table of parameters
+---@param params table of parameters
 ---@param foo function
 ---Adds task to order with given `t` parameters
-local function taskete(uniqueKey, t, foo)
-	if uniqueKey and uniques[uniqueKey] and taskcheck(t) or not uniqueKey then
+local function addTaskInOrder(uniqueKey, params, foo)
+	if uniqueKey and uniques[uniqueKey] and checkTaskParameters(params) or not uniqueKey then
 		return false
 	end
 	local newTask = {
-		Type = t.Type,
-		Link = t.Link,
-		Table = t.Table,
-		Index = t.Index,
-		DestPath = t.DestPath,
-		Header1 = t.Header1 or "",
-		Header2 = t.Header2 or "",
-		Header3 = t.Header3 or "",
-		Header4 = t.Header4 or "",
-		MaxHeight = t.MaxHeight,
-		MaxWidth = t.MaxWidth,
-		Animated = t.Animated,
-		OnComplete = t.OnComplete,
-		OnFinalComplete = t.OnFinalComplete,
-		Extract = t.Extract,
-		Path = t.Path and (t.Path:find("^...?0:") and t.Path or ("ux0:data/noboru/" .. t.Path)) or IMAGE_CACHE_PATH,
+		Type = params.Type,
+		Link = params.Link,
+		Table = params.Table,
+		Index = params.Index,
+		DestPath = params.DestPath,
+		Header1 = params.Header1 or "",
+		Header2 = params.Header2 or "",
+		Header3 = params.Header3 or "",
+		Header4 = params.Header4 or "",
+		MaxHeight = params.MaxHeight,
+		MaxWidth = params.MaxWidth,
+		Animated = params.Animated,
+		OnComplete = params.OnComplete,
+		OnFinalComplete = params.OnFinalComplete,
+		Extract = params.Extract,
+		Path = params.Path and (params.Path:find("^...?0:") and params.Path or ("ux0:data/noboru/" .. params.Path)) or IMAGE_CACHE_PATH,
 		Retry = 3,
-		HttpMethod = t.HttpMethod or GET_METHOD,
-		PostData = t.PostData or "",
-		ContentType = t.ContentType or XWWW,
-		Cookie = t.Cookie or "",
+		HttpMethod = params.HttpMethod or GET_METHOD,
+		PostData = params.PostData or "",
+		ContentType = params.ContentType or XWWW,
+		Cookie = params.Cookie or "",
 		UniqueKey = uniqueKey
 	}
 	if type(newTask.Link) == "table" then
-		local t = newTask.Link
-		newTask.Link = t.Link
-		newTask.Header1 = t.Header1 or newTask.Header1 or ""
-		newTask.Header2 = t.Header2 or newTask.Header2 or ""
-		newTask.Header3 = t.Header3 or newTask.Header3 or ""
-		newTask.Header4 = t.Header4 or newTask.Header4 or ""
-		newTask.HttpMethod = t.HttpMethod or newTask.HttpMethod or GET_METHOD
-		newTask.PostData = t.PostData or newTask.PostData or ""
-		newTask.ContentType = t.ContentType or newTask.ContentType or XWWW
-		newTask.Cookie = t.Cookie or newTask.Cookie or ""
+		local newParams = newTask.Link
+		newTask.Link = newParams.Link
+		newTask.Header1 = newParams.Header1 or newTask.Header1 or ""
+		newTask.Header2 = newParams.Header2 or newTask.Header2 or ""
+		newTask.Header3 = newParams.Header3 or newTask.Header3 or ""
+		newTask.Header4 = newParams.Header4 or newTask.Header4 or ""
+		newTask.HttpMethod = newParams.HttpMethod or newTask.HttpMethod or GET_METHOD
+		newTask.PostData = newParams.PostData or newTask.PostData or ""
+		newTask.ContentType = newParams.ContentType or newTask.ContentType or XWWW
+		newTask.Cookie = newParams.Cookie or newTask.Cookie or ""
 	end
 	if type(newTask.Link) == "string" then
 		newTask.Link = newTask.Link:match("^(.-)%s*$") or ""
@@ -464,7 +465,7 @@ local function taskete(uniqueKey, t, foo)
 	return true
 end
 
-local function taskinsert(task)
+local function insertTask(task)
 	table.insert(orderList, 1, task)
 end
 
@@ -473,10 +474,10 @@ end
 ---@return boolean
 ---Inserts task to threads
 function Threads.insertTask(uniqueKey, t)
-	return taskete(uniqueKey, t, taskinsert)
+	return addTaskInOrder(uniqueKey, t, insertTask)
 end
 
-local function task_add(task)
+local function addTask(task)
 	orderList[#orderList + 1] = task
 end
 
@@ -485,18 +486,18 @@ end
 ---@return boolean
 ---Adds task to threads
 function Threads.addTask(uniqueKey, t)
-	return taskete(uniqueKey, t, task_add)
+	return addTaskInOrder(uniqueKey, t, addTask)
 end
 
 ---Terminates Threads functions and net features
 function Threads.terminate()
-	if is_net_inited then
+	if isNetworkInitiated then
 		Threads.clear()
 		while currentTask do
 			Threads.update()
 		end
 		Network.term()
-		is_net_inited = false
+		isNetworkInitiated = false
 	end
 end
 
@@ -517,11 +518,11 @@ function Threads.getProgress(uniqueKey)
 end
 
 ---@param uniqueKey string
----Removes task by `UniqueKey`
-function Threads.remove(uniqueKey)
+---Removes task by given `UniqueKey`
+function Threads.removeTask(uniqueKey)
 	if uniques[uniqueKey] then
 		if currentTask == uniques[uniqueKey] then
-			currentTask.Table, currentTask.Index = TRASH, "Garbadge"
+			currentTask.Table, currentTask.Index = trash, "Garbage"
 			Network.stopCurrentDownload()
 		else
 			uniques[uniqueKey].Type = "Skip"
@@ -542,18 +543,20 @@ function Threads.getMemoryDownloaded()
 	return bytes
 end
 
----@return integer number of tasks
----Returns quantity of tasks in order
-function Threads.getTasksNum()
+---@return integer
+---Returns count of all tasks
+function Threads.getCountOfTasks()
 	return #orderList + (currentTask and 1 or 0)
 end
 
-function Threads.getNonSkipTasksNum()
-	local c = 0
+---@return integer
+---Returns count of not skipped tasks
+function Threads.getCountOfActiveTasks()
+	local counter = 0
 	for i = 1, #orderList do
 		if orderList[i].Type ~= "Skip" then
-			c = c + 1
+			counter = counter + 1
 		end
 	end
-	return c + (currentTask and currentTask.Type ~= "Skip" and 1 or 0)
+	return counter + (currentTask and currentTask.Type ~= "Skip" and 1 or 0)
 end

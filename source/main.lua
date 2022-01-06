@@ -65,8 +65,8 @@ if doesDirExist("ux0:data/noboru/ext/") then
 	for i = 1, #files do
 		local file = files[i]
 		if not file.directory then
-			local ext_name = file.name:match("^(.-)%.lua$")
-			Extensions.Load(ext_name)
+			local extensionName = file.name:match("^(.-)%.lua$")
+			Extensions.Load(extensionName)
 		end
 	end
 else
@@ -77,8 +77,8 @@ local fonts = {
 	FONT16,
 	FONT20,
 	FONT26,
-	BONT30,
-	BONT16
+	BOLD_FONT30,
+	BOLD_FONT16
 }
 
 local function preloadData()
@@ -150,7 +150,7 @@ MENU = 0
 READER = 1
 AppMode = MENU
 
-local is_touch_locked = false
+local isTouchScreenLocked = false
 
 local LoadingTimer = Timer.new()
 
@@ -206,22 +206,22 @@ local function input()
 			oldPad = Changes.close(pad) or 0
 		end
 		pad = oldPad
-		is_touch_locked = true
+		isTouchScreenLocked = true
 	elseif ConnectMessage.isActive() then
 		if touch.x or pad ~= 0 then
 			oldPad = ConnectMessage.input(pad) or 0
 		end
 		pad = oldPad
-		is_touch_locked = true
+		isTouchScreenLocked = true
 	end
 
 	if touch2.x and AppMode ~= READER then
-		is_touch_locked = true
+		isTouchScreenLocked = true
 	elseif not touch.x then
-		is_touch_locked = false
+		isTouchScreenLocked = false
 	end
 
-	if is_touch_locked then
+	if isTouchScreenLocked then
 		touch.x = nil
 		touch.y = nil
 		oldTouch.x = nil

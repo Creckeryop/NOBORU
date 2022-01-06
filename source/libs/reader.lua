@@ -32,9 +32,9 @@ local touchTemp = CreatePoint(0, 0)
 
 local startPage
 
-local orientation
-local is_down
-local autozoom
+local screenOrientation
+local isUpDownRead
+local autozoomMode
 
 local hideCounterTimer = Timer.new()
 
@@ -61,7 +61,7 @@ local rightArrowIcon = Image:new(Graphics.loadImage("app0:assets/icons/right.png
 
 local readDirection = Settings.ReaderDirection
 
-local function gesture_touch_input(touch, oldtouch, page)
+local function gesture_touch_input(touch, oldTouch, page)
 	if Settings.DoubleTapReader then
 		if gestureZoom then
 			touchMode = TOUCH_IDLE
@@ -69,11 +69,11 @@ local function gesture_touch_input(touch, oldtouch, page)
 		if not page or not page.Zoom then
 			return
 		end
-		if touch.x == nil and oldtouch.x ~= nil and (not ContextMenu or (oldtouch.y >= 80 and oldtouch.y <= 544 - 80)) and not gestureZoom and touchMode == TOUCH_READ then
+		if touch.x == nil and oldTouch.x ~= nil and (not ContextMenu or (oldTouch.y >= 80 and oldTouch.y <= 544 - 80)) and not gestureZoom and touchMode == TOUCH_READ then
 			gestureZoom = false
 			local update_last = true
 			if Timer.getTime(doubleClickTimer) < 300 then
-				local len = math.sqrt((lastClickPoint.x - oldtouch.x) * (lastClickPoint.x - oldtouch.x) + (lastClickPoint.y - oldtouch.y) * (lastClickPoint.y - oldtouch.y))
+				local len = math.sqrt((lastClickPoint.x - oldTouch.x) * (lastClickPoint.x - oldTouch.x) + (lastClickPoint.y - oldTouch.y) * (lastClickPoint.y - oldTouch.y))
 				if len < 80 then
 					toggleContextMenu = false
 					if page.Zoom >= maxZoom - (maxZoom - page.min_Zoom) / 2 then
@@ -85,8 +85,8 @@ local function gesture_touch_input(touch, oldtouch, page)
 					else
 						gestureZoom = {
 							Zoom = math.min(maxZoom, maxZoom - (maxZoom - page.min_Zoom) / 2),
-							x = oldtouch.x,
-							y = oldtouch.y
+							x = oldTouch.x,
+							y = oldTouch.y
 						}
 					end
 					touchMode = TOUCH_LOCK
@@ -98,7 +98,7 @@ local function gesture_touch_input(touch, oldtouch, page)
 			end
 			Timer.reset(doubleClickTimer)
 			if update_last then
-				lastClickPoint = {x = oldtouch.x, y = oldtouch.y}
+				lastClickPoint = {x = oldTouch.x, y = oldTouch.y}
 			end
 		end
 	end
@@ -160,7 +160,7 @@ end
 local function deletePageImage(page)
 	if allPages[page].Image then
 		if type(allPages[page].Image.e or allPages[page].Image) == "table" then
-			Threads.remove(allPages[page])
+			Threads.removeTask(allPages[page])
 			ParserManager.remove(allPages[page])
 			if allPages[page].Image.Parts then
 				for i = 1, allPages[page].Image.Parts do
@@ -184,7 +184,7 @@ local function deletePageImage(page)
 		Console.write("Removed " .. tostring(page))
 	else
 		ParserManager.remove(allPages[page])
-		Threads.remove(allPages[page])
+		Threads.removeTask(allPages[page])
 	end
 end
 
@@ -263,14 +263,14 @@ local function changePage(page)
 			local OldOne = allPages[i][1]
 			local OldLink = allPages[i].Link
 			local OldPath = allPages[i].Path
-			local OldExtr = allPages[i].Extract
+			local OldExtract = allPages[i].Extract
 			for k, _ in pairs(allPages[i]) do
 				allPages[i][k] = nil
 			end
 			allPages[i][1] = OldOne
 			allPages[i].Link = OldLink
 			allPages[i].Path = OldPath
-			allPages[i].Extract = OldExtr
+			allPages[i].Extract = OldExtract
 			allPages[i].x = 0
 			allPages[i].y = 0
 		end
@@ -279,7 +279,7 @@ local function changePage(page)
 end
 
 local function changeOrientation()
-	orientation = table.next(orientation, {"Horizontal", "Vertical"})
+	screenOrientation = table.next(screenOrientation, {"Horizontal", "Vertical"})
 	updateMeasurements()
 end
 
@@ -289,9 +289,9 @@ local buttonTimeSpace = 800
 ---@param direction string | '"LEFT"' | '"RIGHT"'
 ---Turns the page according to the `direction`
 local function swipe(direction)
-	if orientation == "Horizontal" then
+	if screenOrientation == "Horizontal" then
 		if direction == "LEFT" then
-			if is_down then
+			if isUpDownRead then
 				if allPages.Page ~= #allPages and changePage(allPages.Page + 1) then
 					currentPageOffset.y = 544 + currentPageOffset.y
 					local page = allPages[allPages.Page - 1]
@@ -317,7 +317,7 @@ local function swipe(direction)
 				end
 			end
 		elseif direction == "RIGHT" then
-			if is_down then
+			if isUpDownRead then
 				if allPages[allPages.Page - 1] and changePage(allPages.Page - 1) then
 					currentPageOffset.y = -544 + currentPageOffset.y
 					local page = allPages[allPages.Page + 1]
@@ -343,9 +343,9 @@ local function swipe(direction)
 				end
 			end
 		end
-	elseif orientation == "Vertical" then
+	elseif screenOrientation == "Vertical" then
 		if direction == "LEFT" then
-			if is_down then
+			if isUpDownRead then
 				if allPages.Page ~= #allPages and changePage(allPages.Page + 1) then
 					currentPageOffset.x = -960 + currentPageOffset.x
 					local page = allPages[allPages.Page - 1]
@@ -371,7 +371,7 @@ local function swipe(direction)
 				end
 			end
 		elseif direction == "RIGHT" then
-			if is_down then
+			if isUpDownRead then
 				if allPages[allPages.Page - 1] and changePage(allPages.Page - 1) then
 					currentPageOffset.x = 960 + currentPageOffset.x
 					local page = allPages[allPages.Page + 1]
@@ -485,8 +485,8 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 				if not (Controls.check(pad, SCE_CTRL_RIGHTPAGE) or Controls.check(pad, SCE_CTRL_LEFTPAGE) or (Settings.ChangingPageButtons == "DPAD" and (Controls.check(pad, SCE_CTRL_DOWN) or Controls.check(pad, SCE_CTRL_UP)))) then
 					buttonTimeSpace = 800
 				end
-				local right_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_DOWN or SCE_CTRL_RIGHT) or (orientation == "Vertical" and (is_down and SCE_CTRL_LEFT or SCE_CTRL_DOWN))) or SCE_CTRL_RIGHTPAGE
-				local left_page_button = Settings.ChangingPageButtons == "DPAD" and (orientation == "Horizontal" and (is_down and SCE_CTRL_UP or SCE_CTRL_LEFT) or (orientation == "Vertical" and (is_down and SCE_CTRL_RIGHT or SCE_CTRL_UP))) or SCE_CTRL_LEFTPAGE
+				local right_page_button = Settings.ChangingPageButtons == "DPAD" and (screenOrientation == "Horizontal" and (isUpDownRead and SCE_CTRL_DOWN or SCE_CTRL_RIGHT) or (screenOrientation == "Vertical" and (isUpDownRead and SCE_CTRL_LEFT or SCE_CTRL_DOWN))) or SCE_CTRL_RIGHTPAGE
+				local left_page_button = Settings.ChangingPageButtons == "DPAD" and (screenOrientation == "Horizontal" and (isUpDownRead and SCE_CTRL_UP or SCE_CTRL_LEFT) or (screenOrientation == "Vertical" and (isUpDownRead and SCE_CTRL_RIGHT or SCE_CTRL_UP))) or SCE_CTRL_LEFTPAGE
 				if Controls.check(pad, right_page_button) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldPad, right_page_button)) then
 					swipe("LEFT")
 					buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
@@ -504,13 +504,13 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 				end
 			end
 			local x, y = Controls.readRightAnalog()
-			if orientation == "Horizontal" then
+			if screenOrientation == "Horizontal" then
 				y = y - 127
 				if math.abs(y) > SCE_RIGHT_STICK_DEADZONE then
 					y = (y - SCE_RIGHT_STICK_DEADZONE * math.sign(y)) / (128 - SCE_RIGHT_STICK_DEADZONE)
 					scale(1 - SCE_LEFT_STICK_SENSITIVITY * y * 0.05, page)
 				end
-			elseif orientation == "Vertical" then
+			elseif screenOrientation == "Vertical" then
 				x = x - 127
 				if math.abs(x) > SCE_RIGHT_STICK_DEADZONE then
 					x = (x - SCE_RIGHT_STICK_DEADZONE * math.sign(x)) / (128 - SCE_RIGHT_STICK_DEADZONE)
@@ -547,13 +547,13 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 		else
 			if touchMode == TOUCH_SWIPE then
 				if currentPageOffset.x > 90 or currentPageOffset.y > 90 then
-					if orientation == "Vertical" and is_down then
+					if screenOrientation == "Vertical" and isUpDownRead then
 						swipe("LEFT")
 					else
 						swipe("RIGHT")
 					end
 				elseif currentPageOffset.x < -90 or currentPageOffset.y < -90 then
-					if orientation == "Vertical" and is_down then
+					if screenOrientation == "Vertical" and isUpDownRead then
 						swipe("RIGHT")
 					else
 						swipe("LEFT")
@@ -567,8 +567,8 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 				if touchMode == TOUCH_READ then
 					if Settings.PressEdgesToChangePage then
 						if touchMode == TOUCH_READ and not touch.x and oldTouch.x then
-							if orientation == "Vertical" then
-								if is_down then
+							if screenOrientation == "Vertical" then
+								if isUpDownRead then
 									if oldTouch.x > 480 + 180 then
 										swipe("RIGHT")
 									elseif oldTouch.x < 480 - 180 then
@@ -587,8 +587,8 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 										Timer.reset(ToggleContextMenuTimer)
 									end
 								end
-							elseif orientation == "Horizontal" then
-								if is_down then
+							elseif screenOrientation == "Horizontal" then
+								if isUpDownRead then
 									if oldTouch.y > 272 + 120 then
 										swipe("LEFT")
 									elseif oldTouch.y < 272 - 120 then
@@ -620,8 +620,8 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 		if touchMode == TOUCH_READ and touchTemp.x and touch.x then
 			local len = math.sqrt((touchTemp.x - touch.x) * (touchTemp.x - touch.x) + (touchTemp.y - touch.y) * (touchTemp.y - touch.y))
 			if len > 10 then
-				if orientation == "Horizontal" then
-					if is_down then
+				if screenOrientation == "Horizontal" then
+					if isUpDownRead then
 						if not page.Zoom or (page.Width * page.Zoom < 961 or math.abs(touch.y - touchTemp.y) > math.abs(touch.x - touchTemp.x) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.y > touch.y) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.y < touch.y)) then
 							touchMode = TOUCH_SWIPE
 						else
@@ -634,8 +634,8 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 							touchMode = TOUCH_MOVE
 						end
 					end
-				elseif orientation == "Vertical" then
-					if is_down then
+				elseif screenOrientation == "Vertical" then
+					if isUpDownRead then
 						if not page.Zoom or (page.Width * page.Zoom < 545 or math.abs(touch.x - touchTemp.x) > math.abs(touch.y - touchTemp.y) * 1.5) and ((bit32.band(pageMode, PAGE_RIGHT) ~= 0 and touchTemp.x > touch.x) or (bit32.band(pageMode, PAGE_LEFT) ~= 0 and touchTemp.x < touch.x)) then
 							touchMode = TOUCH_SWIPE
 						else
@@ -661,7 +661,7 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 		if (touch.y and touch.y >= 544 - 80 or oldTouch.y and oldTouch.y >= 544 - 80) and (touchMode == TOUCH_IDLE or touchMode == TOUCH_READ) then
 			if touch.x and touch.x > 180 and touch.x < 780 and allPages.Count and allPages.Count > 1 then
 				local newPage = math.min(math.max(1, math.floor((touch.x - 200) / (560 / (allPages.Count - 1)) + 1)), allPages.Count)
-				if is_down and orientation == "Vertical" then
+				if isUpDownRead and screenOrientation == "Vertical" then
 					newPage = allPages.Count - newPage + 1
 				end
 				if newPage < allPages.Page then
@@ -684,7 +684,7 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 					end
 				end
 			elseif not oldTouch.x and touch.x then
-				if readDirection == "LEFT" or is_down and orientation == "Vertical" then
+				if readDirection == "LEFT" or isUpDownRead and screenOrientation == "Vertical" then
 					if touch.x < 88 and currentChapterNumber < #Chapters then
 						if Cache.isCached(Chapters[currentChapterNumber].Manga) then
 							Cache.setBookmark(Chapters[currentChapterNumber], true)
@@ -761,8 +761,8 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 						if not (Controls.check(pad, SCE_CTRL_RIGHT) or Controls.check(pad, SCE_CTRL_LEFT)) then
 							buttonTimeSpace = 400
 						end
-						local left = is_down and orientation == "Vertical" and SCE_CTRL_RIGHT or SCE_CTRL_LEFT
-						local right = is_down and orientation == "Vertical" and SCE_CTRL_LEFT or SCE_CTRL_RIGHT
+						local left = isUpDownRead and screenOrientation == "Vertical" and SCE_CTRL_RIGHT or SCE_CTRL_LEFT
+						local right = isUpDownRead and screenOrientation == "Vertical" and SCE_CTRL_LEFT or SCE_CTRL_RIGHT
 						if allPages.Page < allPages.Count and Controls.check(pad, right) and (buttonTimeSpace < Timer.getTime(buttonTimer) or not Controls.check(oldPad, right)) then
 							swipe("LEFT")
 							buttonTimeSpace = math.max(buttonTimeSpace / 2, 10)
@@ -801,7 +801,7 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 								Extra.setChapters(Chapters[currentChapterNumber].Manga, Chapters[currentChapterNumber], allPages[allPages.Page])
 							end
 						else
-							if readDirection == "LEFT" or is_down and orientation == "Vertical" then
+							if readDirection == "LEFT" or isUpDownRead and screenOrientation == "Vertical" then
 								if CursorIndex == 3 and currentChapterNumber < #Chapters then
 									if Cache.isCached(Chapters[currentChapterNumber].Manga) then
 										Cache.setBookmark(Chapters[currentChapterNumber], true)
@@ -836,7 +836,7 @@ function Reader.input(oldPad, pad, oldTouch, touch, oldTouch2, touch2)
 					end
 					if readDirection == "LEFT" then
 						CursorDestination = CreatePoint(200 + point, 544 - 40)
-					elseif orientation == "Vertical" and is_down then
+					elseif screenOrientation == "Vertical" and isUpDownRead then
 						if allPages.Count == 1 then
 							point = 560
 						else
@@ -888,7 +888,7 @@ function Reader.update()
 			currentState = STATE_READING
 			local chapter = Chapters[currentChapterNumber]
 			allPages.Count = #chapter.Pages
-			if readDirection == "RIGHT" or is_down then
+			if readDirection == "RIGHT" or isUpDownRead then
 				for i = 1, #chapter.Pages do
 					allPages[#allPages + 1] = {
 						chapter.Pages[i],
@@ -909,7 +909,7 @@ function Reader.update()
 					}
 				end
 			end
-			if readDirection == "RIGHT" or is_down then
+			if readDirection == "RIGHT" or isUpDownRead then
 				startPage = startPage and startPage > 0 and startPage <= allPages.Count and startPage or startPage == false and -1 or nil
 				if startPage == -1 then
 					startPage = false
@@ -977,7 +977,7 @@ function Reader.update()
 			return
 		end
 		gesture_touch_update()
-		if allPages.PrevPage and allPages.PrevPage ~= allPages.Page and (((is_down and currentPageOffset.y or currentPageOffset.x) >= 0 and allPages.PrevPage > allPages.Page or (is_down and currentPageOffset.y or currentPageOffset.x) <= 0 and allPages.PrevPage < allPages.Page) and orientation == "Horizontal" or ((is_down and -currentPageOffset.x or currentPageOffset.y) >= 0 and allPages.PrevPage > allPages.Page or (is_down and -currentPageOffset.x or currentPageOffset.y) <= 0 and allPages.PrevPage < allPages.Page) and orientation == "Vertical") then
+		if allPages.PrevPage and allPages.PrevPage ~= allPages.Page and (((isUpDownRead and currentPageOffset.y or currentPageOffset.x) >= 0 and allPages.PrevPage > allPages.Page or (isUpDownRead and currentPageOffset.y or currentPageOffset.x) <= 0 and allPages.PrevPage < allPages.Page) and screenOrientation == "Horizontal" or ((isUpDownRead and -currentPageOffset.x or currentPageOffset.y) >= 0 and allPages.PrevPage > allPages.Page or (isUpDownRead and -currentPageOffset.x or currentPageOffset.y) <= 0 and allPages.PrevPage < allPages.Page) and screenOrientation == "Vertical") then
 			if allPages.PrevPage > 0 and allPages.PrevPage <= #allPages then
 				deletePageImage(allPages.PrevPage)
 			end
@@ -1041,19 +1041,19 @@ function Reader.update()
 			local page = allPages[allPages.Page + i]
 			if page and not page.Zoom and page.Image then
 				local Image = page.Image
-				if orientation == "Horizontal" then
-					if is_down then
+				if screenOrientation == "Horizontal" then
+					if isUpDownRead then
 						page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
 						Console.write("Added " .. allPages.Page + i)
-						if autozoom == "Smart" then
+						if autozoomMode == "Smart" then
 							if page.Width < page.Height then
 								page.Zoom = 960 / page.Width
 							else
 								page.Zoom = 544 / page.Height
 							end
-						elseif autozoom == "Width" then
+						elseif autozoomMode == "Width" then
 							page.Zoom = 960 / page.Width
-						elseif autozoom == "Height" then
+						elseif autozoomMode == "Height" then
 							page.Zoom = 544 / page.Height
 						else
 							page.Zoom = 960 / page.Width
@@ -1077,15 +1077,15 @@ function Reader.update()
 					else
 						page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 + i * 960, 272
 						Console.write("Added " .. allPages.Page + i)
-						if autozoom == "Smart" then
+						if autozoomMode == "Smart" then
 							if page.Width > page.Height then
 								page.Zoom = 544 / page.Height
 							else
 								page.Zoom = 960 / page.Width
 							end
-						elseif autozoom == "Width" then
+						elseif autozoomMode == "Width" then
 							page.Zoom = 960 / page.Width
-						elseif autozoom == "Height" then
+						elseif autozoomMode == "Height" then
 							page.Zoom = 544 / page.Height
 						end
 						if page.Width * page.Zoom >= 960 then
@@ -1105,19 +1105,19 @@ function Reader.update()
 						end
 						page.start_Zoom = page.Zoom
 					end
-				elseif orientation == "Vertical" then
-					if is_down then
+				elseif screenOrientation == "Vertical" then
+					if isUpDownRead then
 						page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480 - i * 960, 272
 						Console.write("Added " .. allPages.Page + i)
-						if autozoom == "Smart" then
+						if autozoomMode == "Smart" then
 							if page.Width > page.Height then
 								page.Zoom = 960 / page.Height
 							else
 								page.Zoom = 544 / page.Width
 							end
-						elseif autozoom == "Width" then
+						elseif autozoomMode == "Width" then
 							page.Zoom = 544 / page.Width
-						elseif autozoom == "Height" then
+						elseif autozoomMode == "Height" then
 							page.Zoom = 960 / page.Height
 						else
 							page.Zoom = 544 / page.Width
@@ -1141,15 +1141,15 @@ function Reader.update()
 					else
 						page.Width, page.Height, page.x, page.y = Image.Width, Image.Height, 480, 272 + i * 544
 						Console.write("Added " .. allPages.Page + i)
-						if autozoom == "Smart" then
+						if autozoomMode == "Smart" then
 							if page.Width > page.Height then
 								page.Zoom = 960 / page.Height
 							else
 								page.Zoom = 544 / page.Width
 							end
-						elseif autozoom == "Width" then
+						elseif autozoomMode == "Width" then
 							page.Zoom = 544 / page.Width
-						elseif autozoom == "Height" then
+						elseif autozoomMode == "Height" then
 							page.Zoom = 960 / page.Height
 						end
 						if page.Width * page.Zoom >= 544 then
@@ -1183,8 +1183,8 @@ function Reader.update()
 				velX = velX * 0.9
 			end
 		elseif touchMode == TOUCH_SWIPE then
-			if (orientation == "Horizontal" and not is_down) or (orientation == "Vertical" and is_down) then
-				if orientation == "Vertical" then
+			if (screenOrientation == "Horizontal" and not isUpDownRead) or (screenOrientation == "Vertical" and isUpDownRead) then
+				if screenOrientation == "Vertical" then
 					currentPageOffset.x = currentPageOffset.x + velX
 					if currentPageOffset.x < 0 and not allPages[allPages.Page - 1] then
 						currentPageOffset.x = 0
@@ -1210,7 +1210,7 @@ function Reader.update()
 		end
 		if touchMode ~= TOUCH_SWIPE then
 			local dir = "x"
-			if orientation == "Vertical" and not is_down or orientation == "Horizontal" and is_down then
+			if screenOrientation == "Vertical" and not isUpDownRead or screenOrientation == "Horizontal" and isUpDownRead then
 				dir = "y"
 			end
 			currentPageOffset[dir] = currentPageOffset[dir] / 1.3
@@ -1230,8 +1230,8 @@ function Reader.update()
 			end
 		end
 		local page = allPages[allPages.Page]
-		if orientation == "Horizontal" then
-			if is_down then
+		if screenOrientation == "Horizontal" then
+			if isUpDownRead then
 				if page.Zoom then
 					if page.Width * page.Zoom < 960 then
 						page.x = 480
@@ -1300,8 +1300,8 @@ function Reader.update()
 					pageMode = PAGE_LEFT + PAGE_RIGHT
 				end
 			end
-		elseif orientation == "Vertical" then
-			if is_down then
+		elseif screenOrientation == "Vertical" then
+			if isUpDownRead then
 				if page.Zoom then
 					if page.Width * page.Zoom < 544 then
 						page.y = 272
@@ -1397,10 +1397,10 @@ function Reader.draw()
 		local manga_name = Chapters[currentChapterNumber].Manga.Name
 		local prepare_message = Language[Settings.Language].READER.PREPARING_PAGES .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 		local chapter_name = Chapters[currentChapterNumber].Name
-		if Font.getTextWidth(BONT30, manga_name) > 960 then
+		if Font.getTextWidth(BOLD_FONT30, manga_name) > 960 then
 			Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
 		else
-			Font.print(BONT30, 480 - Font.getTextWidth(BONT30, manga_name) / 2, 232, manga_name, COLOR_FONT)
+			Font.print(BOLD_FONT30, 480 - Font.getTextWidth(BOLD_FONT30, manga_name) / 2, 232, manga_name, COLOR_FONT)
 		end
 		Font.print(FONT16, 480 - Font.getTextWidth(FONT16, chapter_name) / 2, 264, chapter_name, COLOR_FONT)
 		Font.print(FONT16, 480 - Font.getTextWidth(FONT16, prepare_message) / 2, 284, prepare_message, COLOR_FONT)
@@ -1414,21 +1414,21 @@ function Reader.draw()
 					for k = 1, page.Image.Parts do
 						if page.Image[k] and page.Image[k].e then
 							local Height = Graphics.getImageHeight(page.Image[k].e)
-							if orientation == "Horizontal" then
+							if screenOrientation == "Horizontal" then
 								local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4, currentPageOffset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + page.Image.SliceHeight / 2 * page.Zoom
 								Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - Height / 2 * page.Zoom, y + Height / 2 * page.Zoom, COLOR_BLACK)
 								Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, 0, page.Zoom, page.Zoom)
-							elseif orientation == "Vertical" then
+							elseif screenOrientation == "Vertical" then
 								local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4 - (k - 1) * page.Image.SliceHeight * page.Zoom + page.Height / 2 * page.Zoom - page.Image.SliceHeight / 2 * page.Zoom, currentPageOffset.y + page.y
 								Graphics.fillRect(x - Height / 2 * page.Zoom, x + Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
 								Graphics.drawImageExtended(x, y, page.Image[k].e, 0, 0, page.Width, Height, PI / 2, page.Zoom, page.Zoom)
 							end
 						else
-							if orientation == "Horizontal" then
+							if screenOrientation == "Horizontal" then
 								local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 								local Width = Font.getTextWidth(FONT16, loading)
 								Font.print(FONT16, currentPageOffset.x + 960 * i + 480 - Width / 2, currentPageOffset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_FONT)
-							elseif orientation == "Vertical" then
+							elseif screenOrientation == "Vertical" then
 								local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 								local Width = Font.getTextWidth(FONT16, loading)
 								Font.print(FONT16, currentPageOffset.x - Width + page.x - ((k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom), currentPageOffset.y + 272 + 544 * i, loading, COLOR_FONT)
@@ -1453,37 +1453,37 @@ function Reader.draw()
 						end
 						if page.Image[frame] and page.Image[frame].Image and page.Image[frame].Image.e then
 							local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4, math.ceil((currentPageOffset.y + page.y) * 4) / 4
-							if orientation == "Horizontal" then
+							if screenOrientation == "Horizontal" then
 								Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom, y + page.Height / 2 * page.Zoom, COLOR_BLACK)
 								Graphics.drawImageExtended(x, y, page.Image[frame].Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
-							elseif orientation == "Vertical" then
+							elseif screenOrientation == "Vertical" then
 								Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
 								Graphics.drawImageExtended(x, y, page.Image[frame].Image.e, 0, 0, page.Width, page.Height, PI / 2, page.Zoom, page.Zoom)
 							end
 						end
 					else
 						local x, y = math.ceil((currentPageOffset.x + page.x) * 4) / 4, math.ceil((currentPageOffset.y + page.y) * 4) / 4
-						if orientation == "Horizontal" then
+						if screenOrientation == "Horizontal" then
 							Graphics.fillRect(x - page.Width / 2 * page.Zoom, x + page.Width / 2 * page.Zoom, y - page.Height / 2 * page.Zoom, y + page.Height / 2 * page.Zoom, COLOR_BLACK)
 							Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, 0, page.Zoom, page.Zoom)
-						elseif orientation == "Vertical" then
+						elseif screenOrientation == "Vertical" then
 							Graphics.fillRect(x - page.Height / 2 * page.Zoom, x + page.Height / 2 * page.Zoom, y - page.Width / 2 * page.Zoom, y + page.Width / 2 * page.Zoom, COLOR_BLACK)
 							Graphics.drawImageExtended(x, y, page.Image.e, 0, 0, page.Width, page.Height, PI / 2, page.Zoom, page.Zoom)
 						end
 					end
 				end
 			elseif page then
-				local precentage = Threads.getProgress(page)
+				local percentage = Threads.getProgress(page)
 				local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 				local Width = Font.getTextWidth(FONT16, loading)
-				if orientation == "Horizontal" then
-					Font.print(FONT16, currentPageOffset.x + 960 * (is_down and 0 or i) + 480 - Width / 2, 272 + currentPageOffset.y + 544 * (is_down and i or 0) - 10, loading, COLOR_FONT)
-					Graphics.fillEmptyRect(currentPageOffset.x + 960 * (is_down and 0 or i) + 480 - 52, currentPageOffset.x + 960 * (is_down and 0 or i) + 480 + 53, 272 + currentPageOffset.y + 544 * (is_down and i or 0) + 20, 272 + currentPageOffset.y + 544 * (is_down and i or 0) + 32, COLOR_FONT)
-					Graphics.fillRect(currentPageOffset.x + 960 * (is_down and 0 or i) + 480 - 50, currentPageOffset.x + 960 * (is_down and 0 or i) + 480 - 50 + 100 * precentage, 272 + currentPageOffset.y + 544 * (is_down and i or 0) + 22, 272 + currentPageOffset.y + 544 * (is_down and i or 0) + 29, COLOR_FONT)
-				elseif orientation == "Vertical" then
-					Font.print(FONT16, 960 / 2 - Width / 2 + currentPageOffset.x + 960 * (is_down and i or 0), 272 + currentPageOffset.y + 544 * (is_down and 0 or i) - 10, loading, COLOR_FONT)
-					Graphics.fillEmptyRect(currentPageOffset.x + 960 * (is_down and i or 0) + 480 - 52, currentPageOffset.x + 960 * (is_down and i or 0) + 480 + 53, 272 + currentPageOffset.y + 544 * (is_down and 0 or i) + 20, 272 + currentPageOffset.y + 544 * (is_down and 0 or i) + 32, COLOR_FONT)
-					Graphics.fillRect(currentPageOffset.x + 960 * (is_down and i or 0) + 480 - 50, currentPageOffset.x + 960 * (is_down and i or 0) + 480 - 50 + 100 * precentage, 272 + currentPageOffset.y + 544 * (is_down and 0 or i) + 22, 272 + currentPageOffset.y + 544 * (is_down and 0 or i) + 29, COLOR_FONT)
+				if screenOrientation == "Horizontal" then
+					Font.print(FONT16, currentPageOffset.x + 960 * (isUpDownRead and 0 or i) + 480 - Width / 2, 272 + currentPageOffset.y + 544 * (isUpDownRead and i or 0) - 10, loading, COLOR_FONT)
+					Graphics.fillEmptyRect(currentPageOffset.x + 960 * (isUpDownRead and 0 or i) + 480 - 52, currentPageOffset.x + 960 * (isUpDownRead and 0 or i) + 480 + 53, 272 + currentPageOffset.y + 544 * (isUpDownRead and i or 0) + 20, 272 + currentPageOffset.y + 544 * (isUpDownRead and i or 0) + 32, COLOR_FONT)
+					Graphics.fillRect(currentPageOffset.x + 960 * (isUpDownRead and 0 or i) + 480 - 50, currentPageOffset.x + 960 * (isUpDownRead and 0 or i) + 480 - 50 + 100 * percentage, 272 + currentPageOffset.y + 544 * (isUpDownRead and i or 0) + 22, 272 + currentPageOffset.y + 544 * (isUpDownRead and i or 0) + 29, COLOR_FONT)
+				elseif screenOrientation == "Vertical" then
+					Font.print(FONT16, 960 / 2 - Width / 2 + currentPageOffset.x + 960 * (isUpDownRead and i or 0), 272 + currentPageOffset.y + 544 * (isUpDownRead and 0 or i) - 10, loading, COLOR_FONT)
+					Graphics.fillEmptyRect(currentPageOffset.x + 960 * (isUpDownRead and i or 0) + 480 - 52, currentPageOffset.x + 960 * (isUpDownRead and i or 0) + 480 + 53, 272 + currentPageOffset.y + 544 * (isUpDownRead and 0 or i) + 20, 272 + currentPageOffset.y + 544 * (isUpDownRead and 0 or i) + 32, COLOR_FONT)
+					Graphics.fillRect(currentPageOffset.x + 960 * (isUpDownRead and i or 0) + 480 - 50, currentPageOffset.x + 960 * (isUpDownRead and i or 0) + 480 - 50 + 100 * percentage, 272 + currentPageOffset.y + 544 * (isUpDownRead and 0 or i) + 22, 272 + currentPageOffset.y + 544 * (isUpDownRead and 0 or i) + 29, COLOR_FONT)
 				end
 			end
 		end
@@ -1520,7 +1520,7 @@ function Reader.draw()
 				current_page = math.max(1, math.min(current_page, allPages.Count))
 				Font.print(FONT26, 180 - Font.getTextWidth(FONT26, allPages.Count), 544 - 80 * MenuFade + 23, allPages.Count, COLOR_WHITE)
 				Font.print(FONT26, 780, 544 - 80 * MenuFade + 23, current_page, COLOR_WHITE)
-			elseif orientation == "Vertical" and is_down then
+			elseif screenOrientation == "Vertical" and isUpDownRead then
 				if allPages.Count == 1 then
 					point = 560
 				else
@@ -1539,12 +1539,12 @@ function Reader.draw()
 				Font.print(FONT26, 780, 544 - 80 * MenuFade + 23, allPages.Count, COLOR_WHITE)
 			end
 		end
-		if currentChapterNumber > 1 and not (orientation == "Vertical" and is_down or readDirection == "LEFT") or currentChapterNumber < #Chapters and (orientation == "Vertical" and is_down or readDirection == "LEFT") then
+		if currentChapterNumber > 1 and not (screenOrientation == "Vertical" and isUpDownRead or readDirection == "LEFT") or currentChapterNumber < #Chapters and (screenOrientation == "Vertical" and isUpDownRead or readDirection == "LEFT") then
 			Graphics.drawImage(32, 544 - 80 * MenuFade + 40 - 12, leftArrowIcon.e, COLOR_WHITE)
 		else
 			Graphics.drawImage(32, 544 - 80 * MenuFade + 40 - 12, leftArrowIcon.e, COLOR_GRAY)
 		end
-		if currentChapterNumber < #Chapters and not (orientation == "Vertical" and is_down or readDirection == "LEFT") or currentChapterNumber > 1 and (orientation == "Vertical" and is_down or readDirection == "LEFT") then
+		if currentChapterNumber < #Chapters and not (screenOrientation == "Vertical" and isUpDownRead or readDirection == "LEFT") or currentChapterNumber > 1 and (screenOrientation == "Vertical" and isUpDownRead or readDirection == "LEFT") then
 			Graphics.drawImage(960 - 32 - 24, 544 - 80 * MenuFade + 40 - 12, rightArrowIcon.e, COLOR_WHITE)
 		else
 			Graphics.drawImage(960 - 32 - 24, 544 - 80 * MenuFade + 40 - 12, rightArrowIcon.e, COLOR_GRAY)
@@ -1552,13 +1552,13 @@ function Reader.draw()
 		if Chapters[currentChapterNumber] then
 			local manga_name = Chapters[currentChapterNumber].Manga.Name
 			local chapter_name = Chapters[currentChapterNumber].Name
-			local dif = math.max(Font.getTextWidth(BONT30, manga_name) - 960 + 88 + 32 + 24 + 32 + 24 + 32 + 32, 0)
+			local dif = math.max(Font.getTextWidth(BOLD_FONT30, manga_name) - 960 + 88 + 32 + 24 + 32 + 24 + 32 + 32, 0)
 			local dif_ch = math.max(Font.getTextWidth(FONT16, chapter_name) - 960 + 88 + 32 + 24 + 32 + 24 + 32 + 32, 0)
 			local ms = 50 * string.len(manga_name)
 			local ms_ch = 50 * string.len(chapter_name)
 			local t = math.min(math.max(0, Timer.getTime(mangaNameTickerTimer) - 1500), ms)
 			local t_ch = math.min(math.max(0, Timer.getTime(chapterNameTickerTimer) - 1500), ms_ch)
-			Font.print(BONT30, 88 - dif * t / ms, 80 * MenuFade - 73, manga_name, COLOR_WHITE)
+			Font.print(BOLD_FONT30, 88 - dif * t / ms, 80 * MenuFade - 73, manga_name, COLOR_WHITE)
 			Font.print(FONT16, 88 - dif_ch * t_ch / ms_ch, 80 * MenuFade - 32, chapter_name, COLOR_WHITE)
 			Graphics.fillRect(0, 88, 0, 80 * MenuFade, BACK_COLOR)
 			Graphics.drawImage(32, 80 * MenuFade - 40 - 12, BackIcon.e, COLOR_WHITE)
@@ -1622,14 +1622,14 @@ end
 
 function Reader.updateSettings()
 	local settings = CuSettings.load(Chapters[1].Manga)
-	local old_read_dir = readDirection
+	local oldReadDirection = readDirection
 	if settings then
 		readDirection = settings.ReaderDirection == "Default" and Settings.ReaderDirection or settings.ReaderDirection
-		is_down = readDirection == "DOWN"
-		orientation = settings.Orientation == "Default" and Settings.Orientation or settings.Orientation
-		autozoom = settings.ZoomReader == "Default" and Settings.ZoomReader or settings.ZoomReader
+		isUpDownRead = readDirection == "DOWN"
+		screenOrientation = settings.Orientation == "Default" and Settings.Orientation or settings.Orientation
+		autozoomMode = settings.ZoomReader == "Default" and Settings.ZoomReader or settings.ZoomReader
 	end
-	if old_read_dir == "LEFT" and readDirection ~= old_read_dir or (old_read_dir == "RIGHT" or old_read_dir == "DOWN") and readDirection == "LEFT" then
+	if oldReadDirection == "LEFT" and readDirection ~= oldReadDirection or (oldReadDirection == "RIGHT" or oldReadDirection == "DOWN") and readDirection == "LEFT" then
 		if allPages and allPages.Count and allPages.Page and allPages.PrevPage then
 			local i, j = 1, allPages.Count
 			while i < j do
@@ -1664,9 +1664,9 @@ function Reader.load(chapters, num)
 	local settings = CuSettings.load(chapters[1].Manga)
 	if settings then
 		readDirection = settings.ReaderDirection == "Default" and Settings.ReaderDirection or settings.ReaderDirection
-		is_down = readDirection == "DOWN"
-		orientation = settings.Orientation == "Default" and Settings.Orientation or settings.Orientation
-		autozoom = settings.ZoomReader == "Default" and Settings.ZoomReader or settings.ZoomReader
+		isUpDownRead = readDirection == "DOWN"
+		screenOrientation = settings.Orientation == "Default" and Settings.Orientation or settings.Orientation
+		autozoomMode = settings.ZoomReader == "Default" and Settings.ZoomReader or settings.ZoomReader
 	end
 	Chapters = chapters
 	startPage = Cache.getBookmark(chapters[num])

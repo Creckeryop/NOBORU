@@ -150,7 +150,7 @@ function Menu.draw()
 	Font.print(FONT16, (1 - buttonsAlpha["EXTENSIONS"]) * 5 + 52, 257, Language[Settings.Language].APP.EXTENSIONS, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["EXTENSIONS"])))
 	Graphics.drawImage((1 - buttonsAlpha["IMPORT"]) * 5 + 14, 376, ImportIcon.e, COLOR_GRADIENT(Color.new(255, 74, 58), Color.new(255, 255, 255, 128), buttonsAlpha["IMPORT"]))
 	Font.print(FONT16, (1 - buttonsAlpha["IMPORT"]) * 5 + 52, 378, Language[Settings.Language].APP.IMPORT, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["IMPORT"])))
-	if ChapterSaver.is_download_running() then
+	if ChapterSaver.isDownloadRunning() then
 		downloadIndicatorValue = math.min(downloadIndicatorValue + 0.1, 1)
 	else
 		downloadIndicatorValue = math.max(downloadIndicatorValue - 0.1, 0)

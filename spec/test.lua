@@ -95,9 +95,9 @@ test(
 		for name, Lang in pairs(Language) do
 			for _, v in pairs(list) do
 				if (type(v) == "table") then
-					for _, sub_v in pairs(v) do
-						if Lang.SETTINGS[sub_v] == nil then
-							print("Setting '" .. sub_v .. "' is not translated to " .. name .. "")
+					for _, subV in pairs(v) do
+						if Lang.SETTINGS[subV] == nil then
+							print("Setting '" .. subV .. "' is not translated to " .. name .. "")
 							success = false
 						end
 					end

@@ -12,7 +12,8 @@ local directoryList
 ---Table elements: {`name`: string, `directory`: boolean, `active`: boolean, `size`: number}
 function Import.listDir()
 	if directoryList == nil then
-		local list = listDirectory(currentPath:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/")) or {}
+		local currentImportPath = currentPath:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/")
+		local list = listDirectory(currentImportPath) or {}
 		local newList = {}
 		for i = 1, #list do
 			local file = list[i]
@@ -87,7 +88,7 @@ end
 
 ---@param item table
 ---@return string
----Returns fullpath of given item
+---Returns full filepath of given item
 function Import.getPath(item)
 	return item and currentPath:gsub("^ux0:data/noboru/import/uma0:data/noboru/import/", "uma0:data/noboru/import/") .. item.name
 end

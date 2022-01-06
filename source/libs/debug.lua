@@ -22,7 +22,7 @@ local getRAM = System.getFreeRamMemory
 function Debug.draw()
 	if status == 1 then
 		Graphics.fillRect(0, 960, 0, 40, Color.new(0, 0, 0, 128))
-		Font.print(FONT16, 0, 0, "TASKS " .. Threads.getNonSkipTasksNum(), COLOR_WHITE)
+		Font.print(FONT16, 0, 0, "TASKS " .. Threads.getCountOfActiveTasks(), COLOR_WHITE)
 		Font.print(FONT16, 930, 0, System.getAsyncState(), COLOR_WHITE)
 		local netMemoryUsed = "NET: " .. BytesToStr(Threads.getMemoryDownloaded())
 		Font.print(FONT16, 720 - Font.getTextWidth(FONT16, netMemoryUsed) / 2, 0, netMemoryUsed, Color.new(0, 255, 0))

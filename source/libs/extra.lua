@@ -33,7 +33,7 @@ local extraMenuYDrawStart = 0
 
 local fadeAnimationTimer = Timer.new()
 
-local was_bookmarks_updated = false
+local wasBookmarksUpdated = false
 
 local extraSelector =
 	Selector:new(
@@ -89,7 +89,7 @@ function Extra.setChapters(manga, chapters, page)
 		chaptersList = chapters
 		status = "START"
 		oldFade = 1
-		was_bookmarks_updated = false
+		wasBookmarksUpdated = false
 
 		slider.Y = -50
 		if page then
@@ -114,7 +114,7 @@ function Extra.setChapters(manga, chapters, page)
 		extraMenuYDrawStart = 272 - #selectedExtraMenu * 80 / 2
 		maxExtraMenuWidth = DEFAULT_MAX_EXTRA_MENU_WIDTH
 		for i = 1, #selectedExtraMenu do
-			local extraOptionTextWidth = Font.getTextWidth(BONT16, Language[Settings.Language].EXTRA[selectedExtraMenu[i]] or selectedExtraMenu[i]) + 40
+			local extraOptionTextWidth = Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].EXTRA[selectedExtraMenu[i]] or selectedExtraMenu[i]) + 40
 			if extraOptionTextWidth > maxExtraMenuWidth then
 				maxExtraMenuWidth = extraOptionTextWidth
 			end
@@ -165,7 +165,7 @@ local getTime = System.getTime
 local getDate = System.getDate
 local getImageFormat = System.getImageFormat
 local rename = System.rename
-local last_unique = nil
+local lastUnique = nil
 
 local function pressOption(id)
 	if mode == "setChapters" then
@@ -174,7 +174,7 @@ local function pressOption(id)
 			Cache.makeHistory(selectedManga)
 			for i = 1, #chaptersList do
 				local chapter = chaptersList[i]
-				if not ChapterSaver.is_downloading(chapter) and not ChapterSaver.check(chapter) then
+				if not ChapterSaver.isChapterDownloading(chapter) and not ChapterSaver.check(chapter) then
 					ChapterSaver.downloadChapter(chapter, true)
 				end
 			end
@@ -187,7 +187,7 @@ local function pressOption(id)
 			ChapterSaver.stopList(chaptersList, true)
 		elseif selectedExtraMenu[id] == "ClearBookmarks" then
 			Cache.clearBookmarks(selectedManga)
-			was_bookmarks_updated = true
+			wasBookmarksUpdated = true
 		elseif selectedExtraMenu[id] == "OpenInBrowser" then
 			if doesFileExist("ux0:data/noboru/temp/image.html") then
 				deleteFile("ux0:data/noboru/temp/image.html")
@@ -243,11 +243,11 @@ local function pressOption(id)
 			callUri("webmodal: " .. selectedManga.BrowserLink)
 		elseif selectedExtraMenu[id] == "ResetCover" then
 			if selectedManga and selectedManga.ParserID ~= "IMPORTED" then
-				local coverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/cover.image"
+				local coverPath = "ux0:data/noboru/cache/" .. Cache.getMangaHash(selectedManga) .. "/cover.image"
 				if doesFileExist(coverPath) then
 					deleteFile(coverPath)
 				end
-				local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getKey(selectedManga) .. "/custom_cover.image"
+				local customCoverPath = "ux0:data/noboru/cache/" .. Cache.getMangaHash(selectedManga) .. "/custom_cover.image"
 				if doesFileExist(customCoverPath) then
 					deleteFile(customCoverPath)
 				end
@@ -259,10 +259,10 @@ local function pressOption(id)
 		elseif selectedExtraMenu[id] == "SetPageAsCover" then
 			local page = Reader.getCurrentPageImageLink()
 			if page then
-				local cacheKey = Cache.getKey(selectedManga)
+				local cacheKey = Cache.getMangaHash(selectedManga)
 				if cacheKey == nil then
 					Cache.addManga(selectedManga)
-					cacheKey = Cache.getKey(selectedManga)
+					cacheKey = Cache.getMangaHash(selectedManga)
 					if cacheKey == nil then
 						return
 					end
@@ -338,16 +338,16 @@ local function pressOption(id)
 				if #tostring(s) == 1 then
 					s = "0" .. tostring(s)
 				end
-				local unique_name = y .. "." .. mo .. "." .. d .. "-" .. h .. "." .. mn .. "." .. s
-				if unique_name ~= last_unique then
-					last_unique = unique_name
+				local uniqueName = y .. "." .. mo .. "." .. d .. "-" .. h .. "." .. mn .. "." .. s
+				if uniqueName ~= lastUnique then
+					lastUnique = uniqueName
 					if page.Extract then
 					elseif page.Path then
-						copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
-						local f = getImageFormat(drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
+						copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), drive .. ":data/noboru/pictures/" .. uniqueName .. ".image")
+						local f = getImageFormat(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image")
 						if f ~= nil then
-							rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
-							Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+							rename(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f)
+							Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
 						end
 					elseif page.ParserID then
 						Threads.insertTask(
@@ -364,14 +364,14 @@ local function pressOption(id)
 										{
 											Type = "FileDownload",
 											Link = tempTable.Link,
-											Path = drive .. ":data/noboru/pictures/" .. unique_name .. ".image",
+											Path = drive .. ":data/noboru/pictures/" .. uniqueName .. ".image",
 											OnComplete = function()
-												if doesFileExist(drive .. ":data/noboru/pictures/" .. unique_name .. ".image") then
-													local f = getImageFormat(drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
+												if doesFileExist(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image") then
+													local f = getImageFormat(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image")
 													if f ~= nil then
-														rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
+														rename(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f)
 													end
-													Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+													Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
 												end
 											end
 										}
@@ -385,14 +385,14 @@ local function pressOption(id)
 							{
 								Type = "FileDownload",
 								Link = page.Link,
-								Path = drive .. ":data/noboru/pictures/" .. unique_name .. ".image",
+								Path = drive .. ":data/noboru/pictures/" .. uniqueName .. ".image",
 								OnComplete = function()
-									if doesFileExist(drive .. ":data/noboru/pictures/" .. unique_name .. ".image") then
-										local f = getImageFormat(drive .. ":data/noboru/pictures/" .. unique_name .. ".image")
+									if doesFileExist(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image") then
+										local f = getImageFormat(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image")
 										if f ~= nil then
-											rename(drive .. ":data/noboru/pictures/" .. unique_name .. ".image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f)
+											rename(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f)
 										end
-										Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. unique_name .. "." .. f), 1000)
+										Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
 									end
 								end
 							}
@@ -413,8 +413,8 @@ local function pressOption(id)
 end
 
 function Extra.doesBookmarksUpdate()
-	local a = was_bookmarks_updated
-	was_bookmarks_updated = false
+	local a = wasBookmarksUpdated
+	wasBookmarksUpdated = false
 	return a
 end
 
@@ -511,7 +511,7 @@ function Extra.draw()
 			elseif selectedExtraMenu[i] == "ZoomReader" then
 				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.ZoomReader]
 			end
-			Font.print(BONT16, 480 - Font.getTextWidth(BONT16, optionText) / 2, y + 28 - 79, optionText, blackColor)
+			Font.print(BOLD_FONT16, 480 - Font.getTextWidth(BOLD_FONT16, optionText) / 2, y + 28 - 79, optionText, blackColor)
 			if i == slider.ItemID then
 				Graphics.fillRect(480 - maxExtraMenuWidth / 2, 480 + maxExtraMenuWidth / 2, y - 79, y, Color.new(0, 0, 0, 24 * M))
 			end

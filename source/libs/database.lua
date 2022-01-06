@@ -1,8 +1,8 @@
 Database = {}
 
 ---@type table
----Local table that stores all mangas that is in database
-local database = {}
+---Local table that stores all manga that is in database
+local mangaList = {}
 
 local writeFile = System.writeFile
 local closeFile = System.closeFile
@@ -13,49 +13,49 @@ local sizeFile = System.sizeFile
 local doesFileExist = System.doesFileExist
 local doesDirExist = System.doesDirExist
 
----@param Manga table
+---@param manga table
 ---@return string
----Gives key for a given `manga`
-local function getKey(Manga)
-	return (Manga.ParserID .. Manga.Link):gsub("%p", "")
+---Returns `manga` hash
+local function getMangaHash(manga)
+	return (manga.ParserID .. manga.Link):gsub("%p", "")
 end
 
 ---@return table
 ---Gets Library manga list
 function Database.getMangaList()
-	local mangaList = {}
-	local uma0_flag = doesDirExist("uma0:data/noboru")
-	for i = 1, #database do
-		local m = database[i]
-		if m.Location ~= "uma0" or uma0_flag then
-			mangaList[#mangaList + 1] = m
+	local tempMangaList = {}
+	local isUma0Exists = doesDirExist("uma0:data/noboru")
+	for i = 1, #mangaList do
+		local manga = mangaList[i]
+		if manga.Location ~= "uma0" or isUma0Exists then
+			tempMangaList[#tempMangaList + 1] = manga
 		end
 	end
 	if Settings.LibrarySorting == "A-Z" then
 		table.sort(
-			mangaList,
+			tempMangaList,
 			function(a, b)
 				return a.Name < b.Name
 			end
 		)
 	elseif Settings.LibrarySorting == "Z-A" then
 		table.sort(
-			mangaList,
+			tempMangaList,
 			function(a, b)
 				return a.Name > b.Name
 			end
 		)
 	end
-	return mangaList
+	return tempMangaList
 end
 
 ---@param manga table
 ---Adds `manga` to database
 function Database.addManga(manga)
-	local key = getKey(manga)
-	if not database[key] then
-		database[#database + 1] = manga
-		database[key] = #database
+	local mangaHash = getMangaHash(manga)
+	if not mangaList[mangaHash] then
+		mangaList[#mangaList + 1] = manga
+		mangaList[mangaHash] = #mangaList
 		Database.save()
 	end
 end
@@ -64,26 +64,26 @@ end
 ---@return boolean
 ---Checks if `manga` is in library
 function Database.check(manga)
-	return database[getKey(manga)] ~= nil
+	return mangaList[getMangaHash(manga)] ~= nil
 end
 
----@param key string
+---@param mangaHash string
 ---@return boolean
-function Database.checkByKey(key)
-	return database[key] ~= nil
+function Database.checkByHash(mangaHash)
+	return mangaList[mangaHash] ~= nil
 end
 
 ---@param manga table
 ---Removes `manga` from library
 function Database.removeManga(manga)
-	local key = getKey(manga)
-	if database[key] then
-		local n = database[key]
-		table.remove(database, n)
-		database[key] = nil
-		for i = n, #database do
-			local k = getKey(database[i])
-			database[k] = database[k] - 1
+	local mangaHash = getMangaHash(manga)
+	if mangaList[mangaHash] then
+		local n = mangaList[mangaHash]
+		table.remove(mangaList, n)
+		mangaList[mangaHash] = nil
+		for i = n, #mangaList do
+			local k = getMangaHash(mangaList[i])
+			mangaList[k] = mangaList[k] - 1
 		end
 		Database.save()
 	end
@@ -91,33 +91,33 @@ end
 
 ---Saves library to `ux0:data/noboru/save.dat`
 function Database.save()
-	local mangaTable = {}
-	for k = 1, #database do
-		local m = database[k]
-		local key = getKey(m)
-		mangaTable[k] = CreateManga(m.Name, m.Link, m.ImageLink, m.ParserID, m.RawLink, m.BrowserLink)
-		mangaTable[k].Data = m.Data
-		mangaTable[k].Path = "cache/" .. key .. "/cover.image"
-		mangaTable[k].Location = m.Location or "ux0"
-		mangaTable[key] = k
+	local mangaListSave = {}
+	for k = 1, #mangaList do
+		local manga = mangaList[k]
+		local mangaHash = getMangaHash(manga)
+		mangaListSave[k] = CreateManga(manga.Name, manga.Link, manga.ImageLink, manga.ParserID, manga.RawLink, manga.BrowserLink)
+		mangaListSave[k].Data = manga.Data
+		mangaListSave[k].Path = "cache/" .. mangaHash .. "/cover.image"
+		mangaListSave[k].Location = manga.Location or "ux0"
+		mangaListSave[mangaHash] = k
 	end
-	local save = "return " .. table.serialize(mangaTable, true)
+	local save = "return " .. table.serialize(mangaListSave, true)
 	if doesFileExist("ux0:data/noboru/save.dat") then
 		deleteFile("ux0:data/noboru/save.dat")
 	end
-	local f = openFile("ux0:data/noboru/save.dat", FCREATE)
-	writeFile(f, save, #save)
-	closeFile(f)
+	local fh = openFile("ux0:data/noboru/save.dat", FCREATE)
+	writeFile(fh, save, #save)
+	closeFile(fh)
 end
 
 ---Loads library from `ux0:data/noboru/save.dat`
 function Database.load()
 	if doesFileExist("ux0:data/noboru/save.dat") then
-		local f = openFile("ux0:data/noboru/save.dat", FREAD)
-		local loadDataFunction = load(readFile(f, sizeFile(f)))
-		closeFile(f)
-		if loadDataFunction then
-			database = loadDataFunction() or {}
+		local fh = openFile("ux0:data/noboru/save.dat", FREAD)
+		local loadMangaListFunction = load(readFile(fh, sizeFile(fh)))
+		closeFile(fh)
+		if loadMangaListFunction then
+			mangaList = loadMangaListFunction() or {}
 		end
 	end
 	Database.save()
@@ -125,6 +125,6 @@ end
 
 ---Resets library
 function Database.clear()
-	database = {}
+	mangaList = {}
 	Database.save()
 end

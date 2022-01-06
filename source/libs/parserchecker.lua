@@ -17,7 +17,7 @@ end
 
 local function F(parser)
 	local name = parser.Name
-	local foos = {"getPopularManga", "getLatestManga", "getAZManga", "getLetterManga", "getTagManga", "searchManga", "searchManga", "searchManga"}
+	local methods = {"getPopularManga", "getLatestManga", "getAZManga", "getLetterManga", "getTagManga", "searchManga", "searchManga", "searchManga"}
 	local imageTestChapter = {}
 	local filters = parser.Filters or {}
 	local checked = {}
@@ -104,7 +104,7 @@ local function F(parser)
 	end
 	local search_i = 1
 	local searchWordsList = {"a", "Naruto", "one piece"}
-	for _, v in ipairs(foos) do
+	for _, v in ipairs(methods) do
 		local f = parser[v]
 		if f then
 			local Manga = {}
@@ -157,10 +157,10 @@ local function F(parser)
 				end
 				Console.write("Done got '" .. table.concat(log, ", ") .. "'!", nil, 2)
 				if manga then
-					local chapters_to_check = math.min(3, #chaptersListToCheck)
-					Console.write("Checking " .. chapters_to_check .. " first chapters of " .. manga.Name .. " for having pages", Color.new(0, 255, 0), 2)
+					local numOfChaptersToCheck = math.min(3, #chaptersListToCheck)
+					Console.write("Checking " .. numOfChaptersToCheck .. " first chapters of " .. manga.Name .. " for having pages", Color.new(0, 255, 0), 2)
 					log = {}
-					for i = 1, chapters_to_check do
+					for i = 1, numOfChaptersToCheck do
 						local images = {}
 						parser:prepareChapter(chaptersListToCheck[i], images)
 						while ParserManager.check(images) do
@@ -173,7 +173,7 @@ local function F(parser)
 					end
 					Console.write("Done got '" .. table.concat(log, ", ") .. "' images!", nil, 2)
 				else
-					Console.error("No chapters found for first mangas", 2)
+					Console.error("No chapters found for first manga", 2)
 				end
 			end
 		end

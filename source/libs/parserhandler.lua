@@ -34,14 +34,14 @@ function ParserManager.update()
 			uniques[currentTask.Table] = nil
 			currentTask = nil
 		else
-			local _, isSafeToleave = coroutine.resume(currentTask.Update)
+			local _, isSafeToLeave = coroutine.resume(currentTask.Update)
 			if currentTask.Stop then
 				Network.stopCurrentDownload()
 				uniques[currentTask.Table] = nil
 				currentTask = nil
 			end
 			if not _ then
-				Console.error(isSafeToleave)
+				Console.error(isSafeToLeave)
 			end
 		end
 	end
@@ -52,12 +52,12 @@ end
 ---@param i number
 ---@param Table table
 ---@param data string | nil
----@param tag_data string | table | nil
+---@param tagData string | table | nil
 ---Puts all manga on `i` page in `mode` to `Table`
 ---
 ---`data` is search string works only if `mode` == "Search"
 ---`tag_data` is search string works only if `mode` == "Search"
-function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
+function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tagData)
 	if not parser or uniques[Table] then
 		return
 	end
@@ -100,7 +100,7 @@ function ParserManager.getMangaListAsync(mode, parser, i, Table, data, tag_data)
 				end
 			elseif mode == "Search" then
 				if parser.searchManga then
-					parser:searchManga(data, i, Table, tag_data)
+					parser:searchManga(data, i, Table, tagData)
 				else
 					Console.write(parser.Name .. " doesn't support searchManga function", COLOR_GRAY)
 				end
@@ -227,8 +227,8 @@ function ParserManager.updateCounters()
 		Type = "UpdateCounters",
 		F = function()
 			local list = Database.getMangaList()
-			local is_wifi_enabled = Threads.netActionUnSafe(Network.isWifiEnabled)
-			if is_wifi_enabled then
+			local isWifiEnabled = Threads.netActionUnSafe(Network.isWifiEnabled)
+			if isWifiEnabled then
 				for j = 1, #list do
 					local v = list[j]
 					local oldName = v.Name
@@ -257,7 +257,7 @@ function ParserManager.updateCounters()
 							v.Counter = 0
 						end
 					elseif v.ParserID == "IMPORTED" then
-						local chapters = Cache.loadChapters(v, true)
+						local chapters = Cache.loadMangaChapters(v, true)
 						if #chapters > 0 then
 							Cache.loadBookmarks(v)
 							v.Counter = #chapters
@@ -285,7 +285,7 @@ function ParserManager.updateCounters()
 			else
 				for j = 1, #list do
 					local v = list[j]
-					local chapters = Cache.loadChapters(v, true)
+					local chapters = Cache.loadMangaChapters(v, true)
 					if #chapters > 0 then
 						Cache.loadBookmarks(v)
 						v.Counter = #chapters

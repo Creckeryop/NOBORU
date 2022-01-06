@@ -15,7 +15,7 @@ local parserTable = {}
 local cachedList = {}
 
 ---Local variable used in Parser functions
-local is_parsers_list_updated = false
+local isParsersListUpdated = false
 
 ---@param Name string
 ---@param Link string
@@ -67,10 +67,10 @@ end
 ---@return table
 ---Gives Parser List
 function GetParserList()
-	if not is_parsers_list_updated then
+	if not isParsersListUpdated then
 		return cachedList
 	end
-	is_parsers_list_updated = false
+	isParsersListUpdated = false
 	local list = {}
 	for _, v in pairs(parserTable) do
 		if Settings.NSFW or not v.NSFW then
@@ -94,18 +94,18 @@ end
 
 ---Sets update flag to `true`, for regenerating parsers list
 function ChangeNSFW()
-	is_parsers_list_updated = true
+	isParsersListUpdated = true
 end
 
 function LoadParser(id, parser)
 	Console.write('Parser "' .. parser.Name .. '" ' .. "Loaded!")
 	parserTable[id] = parser
-	is_parsers_list_updated = true
+	isParsersListUpdated = true
 end
 
 function UnloadParser(id)
 	if parserTable[id] then
 		parserTable[id] = nil
-		is_parsers_list_updated = true
+		isParsersListUpdated = true
 	end
 end

@@ -53,7 +53,7 @@ Language = {
 			NoConnection = "Нет соединения",
 			SkipFontLoading = "Пропускать загрузку шрифтов",
 			CurrentVersionIs = "Текущая версия:",
-			UnzipingVPK = "Извлечение установочного файла",
+			UnzippingVPK = "Извлечение установочного файла",
 			ReaderDirection = "Направление чтения манги",
 			HideInOffline = "Показывать только загруженные главы в офлайне",
 			VersionIsUpToDate = "У вас уже стоит последняя версия",
@@ -86,7 +86,7 @@ Language = {
 			UseProxy = "Использовать прокси",
 			ProxyIP = "IP адрес прокси",
 			ProxyPort = "Порт",
-			UseProxyAuth = "Аунтентификация прокси",
+			UseProxyAuth = "Аутентификация прокси",
 			ProxyAuth = "логин:пароль",
 			SkipCacheChapterChecking = "Пропускать проверки целостности кеша при запуске приложения",
 			ConnectionTime = "Время подсоединения к серверу",
@@ -209,7 +209,7 @@ Language = {
 			CANCEL_DOWNLOAD = "%s: %s\nзагрузка прервана!",
 			CHAPTER_REMOVE = 'Кэш-глава "%s" удалена!',
 			NET_PROBLEM = "Возникли проблемы с интернетом!",
-			CHAPTERS_CLEARED = "Сохраненые главы удалены!",
+			CHAPTERS_CLEARED = "Сохраненные главы удалены!",
 			LIBRARY_CLEARED = "Библиотека очищена!",
 			CACHE_CLEARED = "Кэш очищен!",
 			DEVELOPER_THING = "Поставь звезду на Github!",
@@ -301,7 +301,7 @@ Language = {
 			FailedToUpdate = "Failed to update app",
 			NoConnection = "No connection",
 			HideInOffline = "Show only downloaded chapters in offline mode",
-			UnzipingVPK = "Extracting vpk to install",
+			UnzippingVPK = "Extracting vpk to install",
 			CurrentVersionIs = "Current version is:",
 			Space = "Memory used",
 			ReaderDirection = "Manga reading direction",
@@ -429,7 +429,7 @@ Language = {
 			PAGE = "Page : ",
 			CONTINUE = "Continue",
 			START = "Start reading",
-			DONE = "Сompleted!",
+			DONE = "Completed!",
 			SUMMARY = "Summary",
 			SHRINK = "Shrink",
 			EXPAND = "Read more"
@@ -453,7 +453,7 @@ Language = {
 			REMOVED_FROM_LIBRARY = "Removed from library",
 			SEARCHING = 'Searching "%s"',
 			START_DOWNLOAD = "%s: %s\ndownloading started!",
-			END_DOWNLOAD = "%s: %s\nsuccessfuly downloaded!",
+			END_DOWNLOAD = "%s: %s\nsuccessfully downloaded!",
 			CANCEL_DOWNLOAD = "%s: %s\ndownload is canceled!",
 			CHAPTER_REMOVE = "%s deleted!",
 			NET_PROBLEM = "There is problems with connection!",
@@ -549,7 +549,7 @@ Language = {
 			FailedToUpdate = "Uygulamayı Güncelleme Başarısız Oldu",
 			NoConnection = "Bağlantı Yok",
 			HideInOffline = "Çevrimdışında Sadece İndirilmiş Bölümleri Göster",
-			UnzipingVPK = "Vpk Yüklemek İçin Çıkarılıyor",
+			UnzippingVPK = "Vpk Yüklemek İçin Çıkarılıyor",
 			CurrentVersionIs = "Mevcut Sürüm:",
 			Space = "Kullanılan Hafıza",
 			ReaderDirection = "Manga Okuyucu Yönü",
@@ -797,7 +797,7 @@ Language = {
 			FailedToUpdate = "Không thể cập nhật",
 			NoConnection = "Không có kết nối",
 			HideInOffline = "Chỉ hiện thị tập đã tải (offline mode)",
-			UnzipingVPK = "Giải nén tập tin vpk",
+			UnzippingVPK = "Giải nén tập tin vpk",
 			CurrentVersionIs = "Phiên bản hiện tại:",
 			Space = "Bộ nhớ đã dùng",
 			ReaderDirection = "Thứ tự khung truyện",
@@ -1044,7 +1044,7 @@ Language = {
 			PleaseWait = "Espere, por favor",
 			FailedToUpdate = "Fallo la actualización",
 			NoConnection = "No hay conexión",
-			UnzipingVPK = "Extrayendo vpk para instalar",
+			UnzippingVPK = "Extrayendo vpk para instalar",
 			HideInOffline = "Mostrar solo los capítulos descargados en modo offline:",
 			Space = "Memoria usada",
 			ReaderDirection = "Dirección de lectura:",
@@ -1293,7 +1293,7 @@ Language = {
 			FailedToUpdate = "Impossibile aggiornare l'app",
 			NoConnection = "Nessuna connessione",
 			HideInOffline = "Mostra solo i capitoli scaricati offline",
-			UnzipingVPK = "Estrazione del vpk per l' installazione",
+			UnzippingVPK = "Estrazione del vpk per l' installazione",
 			CurrentVersionIs = "La versione attuale è:",
 			Space = "Memoria usata",
 			ReaderDirection = "Direzione di lettura Manga",
@@ -1541,7 +1541,7 @@ Language = {
 			FailedToUpdate = "Impossible de mettre à jour",
 			NoConnection = "Pas de connection",
 			HideInOffline = "Montrer uniquement les chapitres hors ligne",
-			UnzipingVPK = "Extraction du vpk pour l'installation",
+			UnzippingVPK = "Extraction du vpk pour l'installation",
 			CurrentVersionIs = "Version actuelle:",
 			Space = "Mémoire utilisé",
 			ReaderDirection = "Sens de lecture",
@@ -1789,7 +1789,7 @@ Language = {
 			FailedToUpdate = "Falha ao atualizar o aplicativo",
 			NoConnection = "Sem conexão",
 			HideInOffline = "Mostrar apenas capítulos baixados no modo offline",
-			UnzipingVPK = "Extraindo vpk para instalar",
+			UnzippingVPK = "Extraindo vpk para instalar",
 			CurrentVersionIs = "Versão atual:",
 			Space = "Memória usada",
 			ReaderDirection = "Direção de leitura do manga",
@@ -2039,7 +2039,7 @@ Language = {
 			FailedToUpdate = "应用更新失败",
 			NoConnection = "没有网络连接",
 			HideInOffline = "仅在离线模式下显示下载的章节",
-			UnzipingVPK = "解压vpk安装",
+			UnzippingVPK = "解压vpk安装",
 			CurrentVersionIs = "当前版本 : ",
 			Space = "已用内存",
 			ReaderDirection = "阅读方向",
@@ -2287,7 +2287,7 @@ Language = {
 			FailedToUpdate = "應用更新失敗",
 			NoConnection = "沒有網絡連接",
 			HideInOffline = "僅在離線模式下顯示下載的章節",
-			UnzipingVPK = "解壓vpk安裝",
+			UnzippingVPK = "解壓vpk安裝",
 			CurrentVersionIs = "當前版本 : ",
 			Space = "已用內存",
 			ReaderDirection = "閱讀方向",
@@ -2535,7 +2535,7 @@ Language = {
 			FailedToUpdate = "Actualizare eșuată",
 			NoConnection = "Fără conexiune",
 			HideInOffline = "Arată doar capitolele descărcate în modull offline",
-			UnzipingVPK = "Se extrage din vpk",
+			UnzippingVPK = "Se extrage din vpk",
 			CurrentVersionIs = "Versiunea curentă este:",
 			Space = "Memorie utilizată",
 			ReaderDirection = "Ordine de citire pentru manga",
@@ -2783,7 +2783,7 @@ Language = {
 			FailedToUpdate = "Aktualizacja zakończona niepowodzeniem",
 			NoConnection = "Brak połączenia",
 			HideInOffline = "Pokazuj tylko pobrane rozdziały w trybie offline",
-			UnzipingVPK = "Wypakowywanie pliku VPK",
+			UnzippingVPK = "Wypakowywanie pliku VPK",
 			CurrentVersionIs = "Aktualna wersja to:",
 			Space = "Zużycie pamięci",
 			ReaderDirection = "Kierunek czytania mangi",
@@ -3031,7 +3031,7 @@ Language = {
 			FailedToUpdate = "Aktualisierung der Anwendung Fehlgeschlagen",
 			NoConnection = "Verbindung Fehlgeschlagen",
 			HideInOffline = "Zeige nur die heruntergeladene Kapitel in Offline Modus",
-			UnzipingVPK = "Die VPK wird für die Installation ausgepackt",
+			UnzippingVPK = "Die VPK wird für die Installation ausgepackt",
 			CurrentVersionIs = "Aktuelle Version der Anwendung:",
 			Space = "Speicher Belegt",
 			ReaderDirection = "Manga-Leserichtung",
@@ -3448,45 +3448,47 @@ LanguageNames = {
 	},
 }
 
-local language_now = System.getLanguage()
-if language_now == 8 then
+local currentLanguage = System.getLanguage()
+if currentLanguage == 8 then
 	Language.Default = Language.Russian
 	LanguageNames.Default = LanguageNames.Russian
-elseif language_now == 3 then
+elseif currentLanguage == 3 then
 	Language.Default = Language.Spanish
 	LanguageNames.Default = LanguageNames.Spanish
-elseif language_now == 19 then
+elseif currentLanguage == 19 then
 	Language.Default = Language.Turkish
 	LanguageNames.Default = LanguageNames.Turkish
-elseif language_now == 5 then
+elseif currentLanguage == 5 then
 	Language.Default = Language.Italian
 	LanguageNames.Default = LanguageNames.Italian
-elseif language_now == 2 then
+elseif currentLanguage == 2 then
 	Language.Default = Language.French
 	LanguageNames.Default = LanguageNames.French
-elseif language_now == 17 then
+elseif currentLanguage == 17 then
 	Language.Default = Language.PortugueseBR
 	LanguageNames.Default = LanguageNames.PortugueseBR
-elseif language_now == 11 then
+elseif currentLanguage == 11 then
 	Language.Default = Language.SimplifiedChinese
 	LanguageNames.Default = LanguageNames.SimplifiedChinese
-elseif language_now == 10 then
+elseif currentLanguage == 10 then
 	Language.Default = Language.TraditionalChinese
 	LanguageNames.Default = LanguageNames.TraditionalChinese
-elseif language_now == 16 then
+elseif currentLanguage == 16 then
 	Language.Default = Language.Polish
 	LanguageNames.Default = LanguageNames.Polish
-elseif language_now == 4 then
+elseif currentLanguage == 4 then
 	Language.Default = Language.German
 	LanguageNames.Default = LanguageNames.German
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
 end
-local langs = {}
+
+local languageList = {}
 for k, _ in pairs(Language) do
-	langs[#langs + 1] = k
+	languageList[#languageList + 1] = k
 end
+
 function GetLanguages()
-	return langs
+	return languageList
 end

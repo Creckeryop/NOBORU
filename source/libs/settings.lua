@@ -58,12 +58,12 @@ local installApp = System.installApp
 local launchApp = System.launchApp
 local removeDirectory = RemoveDirectory
 
-local is_app_updating = false
+local isAppUpdating = false
 
 ---@return boolean
 ---Gives true if app is updating
 function settings.isAppUpdating()
-	return is_app_updating
+	return isAppUpdating
 end
 
 local copyFile = CopyFile
@@ -87,14 +87,14 @@ local function UpdateApp()
 			deleteFile("ux0:data/noboru/NOBORU.vpk")
 			if notify then
 				Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
-				is_app_updating = false
+				isAppUpdating = false
 			end
 			return
 		end
 		closeFile(fh)
 		removeDirectory("ux0:data/noboru/NOBORU")
 		if notify then
-			Notifications.push(Language[settings.Language].SETTINGS.UnzipingVPK)
+			Notifications.push(Language[settings.Language].SETTINGS.UnzippingVPK)
 			Notifications.push(Language[settings.Language].SETTINGS.PleaseWait, 60000)
 		end
 		Threads.insertTask(
@@ -113,14 +113,14 @@ local function UpdateApp()
 					installApp("ux0:data/noboru/pkg")
 					removeDirectory("ux0:data/noboru/pkg")
 					launchApp("NOBORUPDT")
-					is_app_updating = false
+					isAppUpdating = false
 				end
 			}
 		)
 	end
 	if notify and not Threads.check("ExtractingApp") then
 		Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
-		is_app_updating = false
+		isAppUpdating = false
 	end
 end
 
@@ -372,7 +372,7 @@ function settings.setTab(mode)
 				local possibilities = {}
 				local cachedManga = Cache.getManga()
 				for _, manga in pairs(cachedManga) do
-					local chapters = Cache.loadChapters(manga)
+					local chapters = Cache.loadMangaChapters(manga)
 					for _, chapter in ipairs(chapters) do
 						possibilities[ChapterSaver.getKey(chapter)] = chapter
 					end
@@ -415,11 +415,11 @@ function settings.setTab(mode)
 				}
 				if doesFileExist("ux0:data/noboru/donators") then
 					local fh = openFile("ux0:data/noboru/donators", FREAD)
-					local d_list = ToLines(readFile(fh, sizeFile(fh))) or {}
-					for i = 1, #d_list do
-						if d_list[i]:gsub("%s", "") ~= "" then
+					local nameList = StringToLines(readFile(fh, sizeFile(fh))) or {}
+					for i = 1, #nameList do
+						if nameList[i]:gsub("%s", "") ~= "" then
 							t[#t + 1] = {
-								name = d_list[i],
+								name = nameList[i],
 								info = ""
 							}
 						end
@@ -451,7 +451,7 @@ function settings.delTab(mode)
 end
 
 ---@return boolean
----Checks if settings not in main settings menu (subsettings screen)
+---Checks if settings not in main settings menu (sub-settings screen)
 function settings.inTab()
 	return #settingsListCurrentPath > 0
 end
@@ -480,7 +480,7 @@ local changesText
 function settings.updateApp()
 	if Threads.netActionUnSafe(Network.isWifiEnabled) then
 		if lastVpkLink then
-			is_app_updating = true
+			isAppUpdating = true
 			Notifications.push(Language[settings.Language].SETTINGS.PleaseWait)
 			Threads.insertTask(
 				"DownloadAppUpdate",
@@ -704,8 +704,8 @@ SettingsFunctions = {
 			Screen.flip()
 		end
 		if Keyboard.getState() == FINISHED then
-			local new_time = tonumber(Keyboard.getInput())
-			if new_time and new_time > 0 then
+			local newTime = tonumber(Keyboard.getInput())
+			if newTime and newTime > 0 then
 				settings.ConnectionTime = Keyboard.getInput()
 				Network.setConnectionTime(settings.ConnectionTime or 10)
 			end
