@@ -717,7 +717,7 @@ function Catalogs.update()
 			item = downloadSelector:getSelected()
 		elseif status == "SETTINGS" then
 			list = Settings.list()
-			Panels["SETTINGS"].Cirlce = Settings.inTab() and Language[Settings.Language].PANEL.BACK
+			Panels["SETTINGS"].Circle = Settings.inTab() and Language[Settings.Language].PANEL.BACK
 			if Settings.getTab() == "AdvancedChaptersDeletion" then
 				if #list > 0 then
 					Panels["SETTINGS"].Cross = Language[Settings.Language].PANEL.READ
