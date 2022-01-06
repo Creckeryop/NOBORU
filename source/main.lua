@@ -28,7 +28,7 @@ loadlib("loading")
 loadlib("threads")
 loadlib("parserhandler")
 loadlib("settings")
-loadlib("database")
+loadlib("library")
 loadlib("parser")
 loadlib("catalogs")
 loadlib("extra")
@@ -111,7 +111,7 @@ local function preloadData()
 		Console.error(err)
 	end
 	coroutine.yield("Loading library")
-	suc, err = pcall(Database.load)
+	suc, err = pcall(Library.load)
 	if not suc then
 		Console.error(err)
 	end

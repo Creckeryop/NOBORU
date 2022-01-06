@@ -226,7 +226,7 @@ function ParserManager.updateCounters()
 	local T = {
 		Type = "UpdateCounters",
 		F = function()
-			local list = Database.getMangaList()
+			local list = Library.getMangaList()
 			local isWifiEnabled = Threads.netActionUnSafe(Network.isWifiEnabled)
 			if isWifiEnabled then
 				for j = 1, #list do
@@ -281,7 +281,7 @@ function ParserManager.updateCounters()
 						v.PrintName = nil
 					end
 				end
-				Database.save()
+				Library.save()
 			else
 				for j = 1, #list do
 					local v = list[j]

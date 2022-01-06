@@ -1,7 +1,7 @@
-Database = {}
+Library = {}
 
 ---@type table
----Local table that stores all manga that is in database
+---Local table that stores all manga that is in library
 local mangaList = {}
 
 local writeFile = System.writeFile
@@ -22,7 +22,7 @@ end
 
 ---@return table
 ---Gets Library manga list
-function Database.getMangaList()
+function Library.getMangaList()
 	local tempMangaList = {}
 	local isUma0Exists = doesDirExist("uma0:data/noboru")
 	for i = 1, #mangaList do
@@ -50,32 +50,32 @@ function Database.getMangaList()
 end
 
 ---@param manga table
----Adds `manga` to database
-function Database.addManga(manga)
+---Adds `manga` to library
+function Library.addManga(manga)
 	local mangaHash = getMangaHash(manga)
 	if not mangaList[mangaHash] then
 		mangaList[#mangaList + 1] = manga
 		mangaList[mangaHash] = #mangaList
-		Database.save()
+		Library.save()
 	end
 end
 
 ---@param manga table
 ---@return boolean
 ---Checks if `manga` is in library
-function Database.check(manga)
+function Library.check(manga)
 	return mangaList[getMangaHash(manga)] ~= nil
 end
 
 ---@param mangaHash string
 ---@return boolean
-function Database.checkByHash(mangaHash)
+function Library.checkByHash(mangaHash)
 	return mangaList[mangaHash] ~= nil
 end
 
 ---@param manga table
 ---Removes `manga` from library
-function Database.removeManga(manga)
+function Library.removeManga(manga)
 	local mangaHash = getMangaHash(manga)
 	if mangaList[mangaHash] then
 		local n = mangaList[mangaHash]
@@ -85,12 +85,12 @@ function Database.removeManga(manga)
 			local k = getMangaHash(mangaList[i])
 			mangaList[k] = mangaList[k] - 1
 		end
-		Database.save()
+		Library.save()
 	end
 end
 
 ---Saves library to `ux0:data/noboru/save.dat`
-function Database.save()
+function Library.save()
 	local mangaListSave = {}
 	for k = 1, #mangaList do
 		local manga = mangaList[k]
@@ -111,7 +111,7 @@ function Database.save()
 end
 
 ---Loads library from `ux0:data/noboru/save.dat`
-function Database.load()
+function Library.load()
 	if doesFileExist("ux0:data/noboru/save.dat") then
 		local fh = openFile("ux0:data/noboru/save.dat", FREAD)
 		local loadMangaListFunction = load(readFile(fh, sizeFile(fh)))
@@ -120,11 +120,11 @@ function Database.load()
 			mangaList = loadMangaListFunction() or {}
 		end
 	end
-	Database.save()
+	Library.save()
 end
 
 ---Resets library
-function Database.clear()
+function Library.clear()
 	mangaList = {}
-	Database.save()
+	Library.save()
 end

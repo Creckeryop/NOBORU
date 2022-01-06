@@ -397,7 +397,7 @@ function Cache.clear(mode)
 		local cacheDirectory = listDirectory("ux0:data/noboru/cache") or {}
 		for i = 1, #cacheDirectory do
 			local file = cacheDirectory[i]
-			if not Database.checkByHash(file.name) and file.directory then
+			if not Library.checkByHash(file.name) and file.directory then
 				removeDirectory("ux0:data/noboru/cache/" .. file.name)
 				mangaCache[file.name] = nil
 			end
@@ -413,7 +413,7 @@ function Cache.clear(mode)
 		local cacheDirectory = listDirectory("ux0:data/noboru/cache") or {}
 		for i = 1, #cacheDirectory do
 			local file = cacheDirectory[i]
-			if not file.name:find("^IMPORTED") or not Database.checkByHash(file.name) then
+			if not file.name:find("^IMPORTED") or not Library.checkByHash(file.name) then
 				removeDirectory("ux0:data/noboru/cache/" .. file.name)
 				mangaCache[file.name] = nil
 			end

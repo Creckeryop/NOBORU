@@ -533,7 +533,7 @@ SettingsFunctions = {
 		settings.DoubleTapReader = not settings.DoubleTapReader
 	end,
 	ClearLibrary = function()
-		Database.clear()
+		Library.clear()
 		Notifications.push(Language[settings.Language].NOTIFICATIONS.LIBRARY_CLEARED)
 	end,
 	ClearCache = function()

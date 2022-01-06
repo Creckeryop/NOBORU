@@ -347,7 +347,7 @@ function ChapterSaver.importManga(path)
 				end
 				if #Chapters > 0 then
 					Cache.saveChapters(Manga, Chapters)
-					Database.addManga(Manga)
+					Library.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Cache.removeManga(Manga)
@@ -377,7 +377,7 @@ function ChapterSaver.importManga(path)
 					writeFile(fh, imageLinks, #imageLinks)
 					closeFile(fh)
 					allKeys[k] = true
-					Database.addManga(Manga)
+					Library.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Notifications.push(path .. "\nerror: no supported images found")
@@ -430,7 +430,7 @@ function ChapterSaver.importManga(path)
 				end
 				if #Chapters > 0 then
 					Cache.saveChapters(Manga, Chapters)
-					Database.addManga(Manga)
+					Library.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Cache.removeManga(Manga)
@@ -474,7 +474,7 @@ function ChapterSaver.importManga(path)
 					closeFile(fh)
 					allKeys[k] = true
 					Cache.saveChapters(Manga, {Chapter})
-					Database.addManga(Manga)
+					Library.addManga(Manga)
 					ChapterSaver.save()
 				else
 					Cache.removeManga(Manga)

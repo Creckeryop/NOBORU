@@ -249,7 +249,7 @@ local function loadMangaImage(manga)
 				}
 			)
 		else
-			if Database.check(manga) and not Cache.isCached(manga) then
+			if Library.check(manga) and not Cache.isCached(manga) then
 				Cache.addManga(manga)
 			end
 			Threads.addTask(
@@ -699,8 +699,8 @@ function Catalogs.update()
 				end
 			end
 		end
-		if status == "LIBRARY" and #currentMangaList ~= #Database.getMangaList() then
-			currentMangaList = Database.getMangaList()
+		if status == "LIBRARY" and #currentMangaList ~= #Library.getMangaList() then
+			currentMangaList = Library.getMangaList()
 		elseif status == "HISTORY" then
 			currentMangaList = Cache.getHistory()
 		end

@@ -266,7 +266,7 @@ function Details.setManga(manga)
 
 		if Cache.isCached(selectedManga) and not Cache.isBookmarkExist(selectedManga) then
 			Cache.loadBookmarks(selectedManga)
-		elseif Database.check(selectedManga) then
+		elseif Library.check(selectedManga) then
 			Cache.addManga(selectedManga, chapterList)
 		end
 
@@ -293,11 +293,11 @@ end
 
 ---Adds / Removes Manga from library
 local function addToLibrary()
-	if Database.check(selectedManga) then
-		Database.removeManga(selectedManga)
+	if Library.check(selectedManga) then
+		Library.removeManga(selectedManga)
 		Notifications.push(Language[Settings.Language].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
 	else
-		Database.addManga(selectedManga)
+		Library.addManga(selectedManga)
 		Cache.addManga(selectedManga)
 		Notifications.push(Language[Settings.Language].NOTIFICATIONS.ADDED_TO_LIBRARY)
 	end
@@ -480,7 +480,7 @@ function Details.draw()
 		local y = shift - slider.Y + start * 80 + chaptersMaxHeightOffset
 		local color, text = addMangaButtonColor, Language[Settings.Language].DETAILS.ADD_TO_LIBRARY
 
-		if Database.check(selectedManga) then
+		if Library.check(selectedManga) then
 			color = removeMangaButtonColor
 			text = Language[Settings.Language].DETAILS.REMOVE_FROM_LIBRARY
 		end
