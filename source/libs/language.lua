@@ -436,7 +436,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available",
-			NOT_SUPPORTED = "Catalog isn't supported",
+			NOT_SUPPORTED = "Extension isn't supported",
 			INSTALLED = "Installed",
 			NOT_INSTALLED = "Not installed",
 			CURRENT_VERSION = "Current version",
@@ -684,7 +684,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -932,7 +932,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -1180,7 +1180,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -1428,7 +1428,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -1676,7 +1676,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -1924,7 +1924,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -2174,7 +2174,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -2422,7 +2422,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -2670,7 +2670,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -2918,7 +2918,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
@@ -3166,7 +3166,7 @@ Language = {
 		},
 		EXTENSIONS = {
 			NEW_VERSION_AVAILABLE = "New version available", --Translate please
-			NOT_SUPPORTED = "Catalog isn't supported", --Translate please
+			NOT_SUPPORTED = "Extension isn't supported", --Translate please
 			INSTALLED = "Installed", --Translate please
 			NOT_INSTALLED = "Not installed", --Translate please
 			CURRENT_VERSION = "Current version", --Translate please
