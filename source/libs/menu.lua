@@ -138,27 +138,27 @@ function Menu.draw()
 	Graphics.drawImage(0, 0, logoSmall.e)
 	Graphics.fillRect(205, 960, 0, 544, COLOR_BACK)
 	Graphics.drawImage((1 - buttonsAlpha["LIBRARY"]) * 5 + 14, 105, StarIcon.e, COLOR_GRADIENT(Color.new(255, 255, 0), Color.new(255, 255, 255, 128), buttonsAlpha["LIBRARY"]))
-	Font.print(FONT16, (1 - buttonsAlpha["LIBRARY"]) * 5 + 52, 107, Language[Settings.Language].APP.LIBRARY, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["LIBRARY"])))
+	Font.print(FONT16, (1 - buttonsAlpha["LIBRARY"]) * 5 + 52, 107, Str.appLibraryTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["LIBRARY"])))
 	Graphics.drawImage((1 - buttonsAlpha["CATALOGS"]) * 5 + 14, 155, WebIcon.e, COLOR_GRADIENT(Color.new(0, 148, 255), Color.new(255, 255, 255, 128), buttonsAlpha["CATALOGS"]))
-	Font.print(FONT16, (1 - buttonsAlpha["CATALOGS"]) * 5 + 52, 157, Language[Settings.Language].APP.CATALOGS, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["CATALOGS"])))
+	Font.print(FONT16, (1 - buttonsAlpha["CATALOGS"]) * 5 + 52, 157, Str.appCatalogsTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["CATALOGS"])))
 	Graphics.drawImage((1 - buttonsAlpha["HISTORY"]) * 5 + 14, 205, HistoryIcon.e, COLOR_GRADIENT(Color.new(0, 188, 18), Color.new(255, 255, 255, 128), buttonsAlpha["HISTORY"]))
-	Font.print(FONT16, (1 - buttonsAlpha["HISTORY"]) * 5 + 52, 207, Language[Settings.Language].APP.HISTORY, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["HISTORY"])))
+	Font.print(FONT16, (1 - buttonsAlpha["HISTORY"]) * 5 + 52, 207, Str.appHistoryTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["HISTORY"])))
 	Graphics.drawImage((1 - buttonsAlpha["EXTENSIONS"]) * 5 + 14, 255, ExtensionsIcon.e, COLOR_GRADIENT(Color.new(255, 106, 0), Color.new(255, 255, 255, 128), buttonsAlpha["EXTENSIONS"]))
 	if Extensions.GetCounter() > 0 then
 		Graphics.drawImage((1 - buttonsAlpha["EXTENSIONS"]) * 5 + 14 + 18, 255 - 6, CircleIcon.e, Color.new(255, 74, 58))
 	end
-	Font.print(FONT16, (1 - buttonsAlpha["EXTENSIONS"]) * 5 + 52, 257, Language[Settings.Language].APP.EXTENSIONS, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["EXTENSIONS"])))
+	Font.print(FONT16, (1 - buttonsAlpha["EXTENSIONS"]) * 5 + 52, 257, Str.appExtensionsTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["EXTENSIONS"])))
 	Graphics.drawImage((1 - buttonsAlpha["IMPORT"]) * 5 + 14, 376, ImportIcon.e, COLOR_GRADIENT(Color.new(255, 74, 58), Color.new(255, 255, 255, 128), buttonsAlpha["IMPORT"]))
-	Font.print(FONT16, (1 - buttonsAlpha["IMPORT"]) * 5 + 52, 378, Language[Settings.Language].APP.IMPORT, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["IMPORT"])))
+	Font.print(FONT16, (1 - buttonsAlpha["IMPORT"]) * 5 + 52, 378, Str.appImportTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["IMPORT"])))
 	if ChapterSaver.isDownloadRunning() then
 		downloadIndicatorValue = math.min(downloadIndicatorValue + 0.1, 1)
 	else
 		downloadIndicatorValue = math.max(downloadIndicatorValue - 0.1, 0)
 	end
 	Graphics.drawImage((1 - buttonsAlpha["DOWNLOAD"]) * 5 + 14, 426, DownloadIcon.e, COLOR_GRADIENT(COLOR_GRADIENT(COLOR_ROYAL_BLUE, Color.new(255, 255, 255, 128), buttonsAlpha["DOWNLOAD"]), Color.new(178, 0, 255), downloadIndicatorValue * math.abs(math.sin(Timer.getTime(GlobalTimer) / 1000))))
-	Font.print(FONT16, (1 - buttonsAlpha["DOWNLOAD"]) * 5 + 52, 428, Language[Settings.Language].APP.DOWNLOAD, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["DOWNLOAD"])))
+	Font.print(FONT16, (1 - buttonsAlpha["DOWNLOAD"]) * 5 + 52, 428, Str.appDownloadTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["DOWNLOAD"])))
 	Graphics.drawImage((1 - buttonsAlpha["SETTINGS"]) * 5 + 14, 476, OptionsIcon.e, COLOR_GRADIENT(COLOR_WHITE, Color.new(255, 255, 255, 128), buttonsAlpha["SETTINGS"]))
-	Font.print(FONT16, (1 - buttonsAlpha["SETTINGS"]) * 5 + 52, 478, Language[Settings.Language].APP.SETTINGS, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["SETTINGS"])))
+	Font.print(FONT16, (1 - buttonsAlpha["SETTINGS"]) * 5 + 52, 478, Str.appSettingsTab, Color.new(255, 255, 255, 128 + 127 * (1 - buttonsAlpha["SETTINGS"])))
 	if Details.getFade() ~= 1 then
 		Catalogs.draw()
 	end

@@ -417,7 +417,7 @@ function Catalogs.input(oldPad, pad, oldTouch, touch)
 		elseif Controls.check(pad, SCE_CTRL_SQUARE) and not Controls.check(oldPad, SCE_CTRL_SQUARE) then
 			CatalogModes.show()
 		elseif Controls.check(pad, SCE_CTRL_TRIANGLE) and not Controls.check(oldPad, SCE_CTRL_TRIANGLE) then
-			Keyboard.show(Language[Settings.Language].SETTINGS.InputValue, 1, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+			Keyboard.show(Str.labelInputValue, 1, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
 			keyboardMode = "JUMP_PAGE"
 		end
 	elseif status == "CATALOGS" then
@@ -583,12 +583,12 @@ function GenPanels()
 		"Cross",
 		"Circle",
 		"Triangle",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		Square = Language[Settings.Language].PANEL.MODE,
-		Triangle = Language[Settings.Language].PANEL.JUMPTOPAGE,
-		Circle = Language[Settings.Language].PANEL.BACK,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.SELECT
+		["L\\R"] = Str.labelPanelChangeSection,
+		Square = Str.labelPanelMode,
+		Triangle = Str.labelPanelJumpToPage,
+		Circle = Str.labelPanelBack,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelSelect
 	}
 	Panels["IMPORT"] = {
 		"L\\R",
@@ -596,29 +596,29 @@ function GenPanels()
 		"Circle",
 		"Cross",
 		"Square",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.SELECT
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelSelect
 	}
 	Panels["HISTORY"] = {
 		"L\\R",
 		"DPad",
 		"Cross",
 		"Square",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.SELECT,
-		Square = Language[Settings.Language].PANEL.DELETE
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelSelect,
+		Square = Str.labelPanelDelete
 	}
 	Panels["LIBRARY"] = {
 		"L\\R",
 		"DPad",
 		"Triangle",
 		"Cross",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.SELECT,
-		Triangle = Language[Settings.Language].PANEL.UPDATE
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelSelect,
+		Triangle = Str.labelPanelUpdate
 	}
 	Panels["CATALOGS"] = {
 		"L\\R",
@@ -626,17 +626,17 @@ function GenPanels()
 		"Square",
 		"Cross",
 		"Triangle",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.SELECT
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelSelect
 	}
 	Panels["DOWNLOAD"] = {
 		"L\\R",
 		"DPad",
 		"Cross",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.CANCEL
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelCancel
 	}
 	Panels["SETTINGS"] = {
 		"L\\R",
@@ -644,18 +644,18 @@ function GenPanels()
 		"Circle",
 		"Cross",
 		"Square",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Cross = Language[Settings.Language].PANEL.SELECT
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Cross = Str.labelPanelSelect
 	}
 	Panels["EXTENSIONS"] = {
 		"L\\R",
 		"DPad",
 		"Triangle",
 		"Cross",
-		["L\\R"] = Language[Settings.Language].PANEL.CHANGE_SECTION,
-		DPad = Language[Settings.Language].PANEL.CHOOSE,
-		Triangle = Language[Settings.Language].PANEL.UPDATE
+		["L\\R"] = Str.labelPanelChangeSection,
+		DPad = Str.labelPanelChoose,
+		Triangle = Str.labelPanelUpdate
 	}
 end
 
@@ -708,7 +708,7 @@ function Catalogs.update()
 		local list = {}
 		local item = 0
 		if status == "CATALOGS" then
-			--Panels["CATALOGS"].Triangle = list[item] and Language[Settings.Language].PANEL.UPDATE
+			--Panels["CATALOGS"].Triangle = list[item] and Str.labelPanelUpdate
 			parsersList = GetParserList()
 			list = parsersList
 			item = parserSelector:getSelected()
@@ -717,11 +717,11 @@ function Catalogs.update()
 			item = downloadSelector:getSelected()
 		elseif status == "SETTINGS" then
 			list = Settings.list()
-			Panels["SETTINGS"].Circle = Settings.inTab() and Language[Settings.Language].PANEL.BACK
+			Panels["SETTINGS"].Circle = Settings.inTab() and Str.labelPanelBack
 			if Settings.getTab() == "AdvancedChaptersDeletion" then
 				if #list > 0 then
-					Panels["SETTINGS"].Cross = Language[Settings.Language].PANEL.READ
-					Panels["SETTINGS"].Square = Language[Settings.Language].PANEL.DELETE
+					Panels["SETTINGS"].Cross = Str.labelPanelRead
+					Panels["SETTINGS"].Square = Str.labelPanelDelete
 				else
 					Panels["SETTINGS"].Cross = nil
 					Panels["SETTINGS"].Square = nil
@@ -730,20 +730,20 @@ function Catalogs.update()
 				Panels["SETTINGS"].Cross = nil
 				Panels["SETTINGS"].Square = nil
 			else
-				Panels["SETTINGS"].Cross = Language[Settings.Language].PANEL.SELECT
+				Panels["SETTINGS"].Cross = Str.labelPanelSelect
 				Panels["SETTINGS"].Square = nil
 			end
 			item = settingSelector:getSelected()
 		elseif status == "IMPORT" then
 			list = Import.listDir()
 			item = importSelector:getSelected()
-			Panels["IMPORT"].Square = list[item] and Import.canImport(list[item]) and Language[Settings.Language].PANEL.IMPORT
-			Panels["IMPORT"].Circle = Import.canBack() and Language[Settings.Language].PANEL.BACK
+			Panels["IMPORT"].Square = list[item] and Import.canImport(list[item]) and Str.labelPanelImport
+			Panels["IMPORT"].Circle = Import.canBack() and Str.labelPanelBack
 		elseif status == "EXTENSIONS" then
 			list = Extensions.GetList()
 			extensionsList = list
 			item = extensionSelector:getSelected()
-			Panels["EXTENSIONS"].Cross = list[item] and Language[Settings.Language].PANEL.SELECT or nil
+			Panels["EXTENSIONS"].Cross = list[item] and Str.labelPanelSelect or nil
 		end
 		if status == "SETTINGS" then
 			if item ~= 0 then
@@ -793,7 +793,7 @@ function Catalogs.draw()
 	local centerScreenMessage
 	if status == "EXTENSIONS" then
 		if #extensionsList == 0 and not Threads.check("EXTENSIONSPARSERSCHECK") then
-			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
+			centerScreenMessage = Str.labelEmptyCatalog
 		end
 		local first = max(1, floor((slider.Y - 10) / 75))
 		local y = first * 75 - slider.Y
@@ -806,25 +806,25 @@ function Catalogs.draw()
 			Font.print(FONT26, 225, y - 70, extension.Name, COLOR_FONT)
 			local languageText = ""
 			if type(extension.Language) == "table" then
-				languageText = Language[Settings.Language].PARSERS["DIF"] or "DIF"
+				languageText = Str.DIF
 			else
-				languageText = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+				languageText = Str[extension.Language] or extension.Language or ""
 			end
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, languageText), y - 15 - Font.getTextHeight(FONT16, languageText), languageText, COLOR_SUB_FONT)
 			local width = Font.getTextWidth(FONT26, extension.Name)
 			local text = ""
 			local color = COLOR_GRAY
 			if extension.Status == "New version" then
-				text = Language[Settings.Language].EXTENSIONS.NEW_VERSION_AVAILABLE .. " : v" .. extension.Version .. " → v" .. extension.LatestVersion
+				text = Str.labelNewVersionAvailable .. " : v" .. extension.Version .. " → v" .. extension.LatestVersion
 				color = Color.new(136, 0, 255)
 			elseif extension.Status == "Not supported" then
-				text = Language[Settings.Language].EXTENSIONS.NOT_SUPPORTED
+				text = Str.labelNotSupported
 				color = Color.new(255, 74, 58)
 			elseif extension.Status == "Installed" then
-				text = Language[Settings.Language].EXTENSIONS.INSTALLED
+				text = Str.labelInstalled
 				color = COLOR_ROYAL_BLUE
 			else
-				text = Language[Settings.Language].EXTENSIONS.NOT_INSTALLED
+				text = Str.labelNotInstalled
 			end
 			Font.print(FONT16, 230 + width - 4, y - 70 + Font.getTextHeight(FONT26, extension.Name) - Font.getTextHeight(FONT16, "v" .. extension.Version), "v" .. extension.Version, COLOR_BLACK)
 			width = width + Font.getTextWidth(FONT16, "v" .. extension.Version) + 1
@@ -849,7 +849,7 @@ function Catalogs.draw()
 		item = extensionSelector:getSelected()
 	elseif status == "CATALOGS" then
 		if #parsersList == 0 and not ParserManager.check("UpdateParsers") then
-			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOGS
+			centerScreenMessage = Str.labelEmptyCatalog
 		end
 		local first = max(1, floor((slider.Y - 10) / 75))
 		local y = first * 75 - slider.Y
@@ -860,7 +860,7 @@ function Catalogs.draw()
 				Graphics.fillRect(215, 945, y - 75, y - 1, COLOR_SELECTED)
 			end
 			Font.print(FONT26, 225, y - 70, parser.Name, COLOR_FONT)
-			local languageText = Language[Settings.Language].PARSERS[parser.Language] or parser.Language or ""
+			local languageText = Str[parser.Language] or parser.Language or ""
 			Font.print(FONT16, 935 - Font.getTextWidth(FONT16, languageText), y - 15 - Font.getTextHeight(FONT16, languageText), languageText, COLOR_SUB_FONT)
 			local width = Font.getTextWidth(FONT26, parser.Name)
 			if parser.NSFW then
@@ -894,7 +894,7 @@ function Catalogs.draw()
 			if object.active then
 				Font.print(FONT26, 225, y - 70, object.name, COLOR_FONT)
 			elseif object.directory then
-				Font.print(FONT26, 225, y - 70, "*" .. Language[Settings.Language].IMPORT.EXTERNAL_MEMORY .. "*", COLOR_ROYAL_BLUE)
+				Font.print(FONT26, 225, y - 70, "*" .. Str.labelExternalMemory .. "*", COLOR_ROYAL_BLUE)
 			else
 				Font.print(FONT26, 225, y - 70, object.name, COLOR_SUB_FONT)
 			end
@@ -906,7 +906,7 @@ function Catalogs.draw()
 					Graphics.fillRect(925 - 16 - 12 - 34 + 10, 945, y - 75, y - 1, COLOR_BACK)
 				end
 			end
-			local textDis = object.name == "..." and Language[Settings.Language].IMPORT.GOBACK or object.directory and (object.active and Language[Settings.Language].IMPORT.FOLDER or Language[Settings.Language].IMPORT.DRIVE .. ' "' .. object.name .. '"') or object.active and Language[Settings.Language].IMPORT.FILE or Language[Settings.Language].IMPORT.UNSUPFILE
+			local textDis = object.name == "..." and Str.labelGoBack or object.directory and (object.active and Str.labelFolder or Str.labelDrive .. ' "' .. object.name .. '"') or object.active and Str.labelFile or Str.labelUnsupportedFile
 			Font.print(FONT16, 225, y - 23 - Font.getTextHeight(FONT16, textDis), textDis, COLOR_SUB_FONT)
 			if object.active and object.name ~= "..." then
 				Graphics.drawImage(925 - 16 - 12, y - 38 - 14, ImportIcon.e, COLOR_ICON_EXTRACT)
@@ -945,7 +945,7 @@ function Catalogs.draw()
 				y = y + 75
 			end
 		else
-			centerScreenMessage = Language[Settings.Language].MESSAGE.NO_DOWNLOADING_MANGA
+			centerScreenMessage = Str.labelEmptyDownloads
 		end
 		local elementsCount = #list
 		if elementsCount > 7 then
@@ -976,19 +976,22 @@ function Catalogs.draw()
 					end
 				end
 			else
+				
 				if task == "DonatorsList" then
-					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, Color.new(136, 0, 255))
+					Font.print(FONT20, 225, y - 70, Str[SettingsDictionary[task]] or task, Color.new(136, 0, 255))
+					--[[
 					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
 						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_ROYAL_BLUE)
 					end
+					]]
 				else
-					Font.print(FONT20, 225, y - 70, Language[Settings.Language].SETTINGS[task] or task, COLOR_FONT)
-					if Language[Settings.Language].SETTINGS_DESCRIPTION[task] then
-						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS_DESCRIPTION[task], COLOR_SUB_FONT)
+					Font.print(FONT20, 225, y - 70, Str[SettingsDictionary[task]] or task, COLOR_FONT)
+					if SettingsDictionaryDescriptions[task] then
+						Font.print(FONT16, 225, y - 44, Str[SettingsDictionaryDescriptions[task]], COLOR_SUB_FONT)
 					end
 				end
 				if task == "Language" then
-					Font.print(FONT16, 225, y - 44, LanguageNames[Settings.Language][Settings.Language], COLOR_FONT)
+					Font.print(FONT16, 225, y - 44, Str[Settings.Language] or Settings.Language, COLOR_FONT)
 				elseif task == "ClearChapters" then
 					if chaptersFolderSize == nil then
 						chaptersFolderSize = 0
@@ -1009,26 +1012,26 @@ function Catalogs.draw()
 					end
 					Font.print(FONT16, 225, y - 44, BytesToStr(chaptersFolderSize), COLOR_SUB_FONT)
 					if sure_clear_chapters > 0 then
-						Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
+						Font.print(FONT16, 225, y - 24, Str.prefPressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ReaderOrientation" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.Orientation], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Str["label"..Settings.Orientation], COLOR_SUB_FONT)
 				elseif task == "ShowNSFW" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].NSFW[Settings.NSFW], Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.NSFW and Str.labelShowNSFW or Str.labelHideNSFW, Settings.NSFW and COLOR_CRIMSON or COLOR_ROYAL_BLUE)
 				elseif task == "HideInOffline" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.HideInOffline], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.HideInOffline and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "SkipFontLoading" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SkipFontLoad], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.SkipFontLoad and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "ZoomReader" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ZoomReader], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Str["label"..Settings.ZoomReader] or Settings.ZoomReader, COLOR_SUB_FONT)
 				elseif task == "DoubleTapReader" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.DoubleTapReader], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.DoubleTapReader and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "RefreshLibAtStart" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.RefreshLibAtStart], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.RefreshLibAtStart and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "SilentDownloads" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SilentDownloads], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.SilentDownloads and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "ChangeUI" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].THEME[Settings.Theme] or Settings.Theme, COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Settings.Theme, COLOR_SUB_FONT)
 				elseif task == "LibrarySorting" then
 					Font.print(FONT16, 225, y - 44, Settings.LibrarySorting, COLOR_SUB_FONT)
 				elseif task == "ChapterSorting" then
@@ -1036,17 +1039,17 @@ function Catalogs.draw()
 				elseif task == "ConnectionTime" then
 					Font.print(FONT16, 225, y - 44, Settings.ConnectionTime, COLOR_ROYAL_BLUE)
 				elseif task == "UseProxy" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxy], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.UseProxy and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "ProxyIP" then
 					Font.print(FONT16, 225, y - 44, Settings.ProxyIP, COLOR_SUB_FONT)
 				elseif task == "ProxyPort" then
 					Font.print(FONT16, 225, y - 44, Settings.ProxyPort, COLOR_SUB_FONT)
 				elseif task == "UseProxyAuth" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.UseProxyAuth], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.UseProxyAuth and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "SkipCacheChapterChecking" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.SkipCacheChapterChecking], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.SkipCacheChapterChecking and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "PressEdgesToChangePage" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.PressEdgesToChangePage], COLOR_ROYAL_BLUE)
+					Font.print(FONT16, 225, y - 44, Settings.PressEdgesToChangePage and Str.labelYes or Str.labelNo, COLOR_ROYAL_BLUE)
 				elseif task == "ProxyAuth" then
 					Font.print(FONT16, 225, y - 44, Settings.ProxyAuth, COLOR_SUB_FONT)
 				elseif task == "ChapterSorting" then
@@ -1076,8 +1079,9 @@ function Catalogs.draw()
 						x = x + Font.getTextWidth(FONT16, SensitivityValues[n]) + 5
 					end
 				elseif task == "ChangingPageButtons" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].PAGINGCONTROLS[Settings.ChangingPageButtons], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Settings.ChangingPageButtons == "LR" and Str.labelLRTriggers or Settings.ChangingPageButtons == "DPAD" and Str.labelUseDPad or Settings.ChangingPageButtons, COLOR_SUB_FONT)
 				elseif task == "Translators" then
+					
 					Font.print(
 						FONT16,
 						225,
@@ -1085,18 +1089,18 @@ function Catalogs.draw()
 						("@SamuEDL :- Spanish \n@nguyenmao2101 :- Vietnamese \n@theheroGAC :- Italian \n@Cimmerian_Iter :- French \n@kemalsanli :- Turkish \n@rutantan :- PortugueseBR \n@Qingyu510 :- SimplifiedChinese &- TraditionalChinese \n@tmihai20 :- Romanian \n@tof4 :- Polish \n@lukrynka :- German "):gsub(
 							"%- (.-) ",
 							function(a)
-								return " " .. (LanguageNames[Settings.Language][a] or a) .. " "
+								return " " .. (Str[a] or a) .. " "
 							end
 						),
 						COLOR_ROYAL_BLUE
 					)
 				elseif task == "ClearLibrary" then
 					if sure_clear_library > 0 then
-						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
+						Font.print(FONT16, 225, y - 44, Str.prefPressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ClearCache" then
 					if sure_clear_cache > 0 then
-						Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
+						Font.print(FONT16, 225, y - 44, Str.prefPressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ClearAllCache" then
 					if cacheFolderSize == nil then
@@ -1116,7 +1120,7 @@ function Catalogs.draw()
 					end
 					Font.print(FONT16, 225, y - 44, BytesToStr(cacheFolderSize), COLOR_SUB_FONT)
 					if sure_clear_all_cache > 0 then
-						Font.print(FONT16, 225, y - 24, Language[Settings.Language].SETTINGS.PressAgainToAccept, COLOR_CRIMSON)
+						Font.print(FONT16, 225, y - 24, Str.prefPressAgainToAccept, COLOR_CRIMSON)
 					end
 				elseif task == "ShowAuthor" then
 					Font.print(FONT16, 225, y - 44, "@creckeryop", COLOR_SUB_FONT)
@@ -1126,17 +1130,17 @@ function Catalogs.draw()
 				elseif task == "ShowVersion" then
 					Font.print(FONT16, 225, y - 44, Settings.Version, COLOR_SUB_FONT)
 				elseif task == "ReaderDirection" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].READER[Settings.ReaderDirection], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Str["labelDirection"..Settings.ReaderDirection] or Settings.ReaderDirection, COLOR_SUB_FONT)
 				elseif task == "SwapXO" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS[Settings.KeyType], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Settings.KeyType == "JP" and Str.labelControlLayoutJP or Settings.KeyType == "EU" and Str.labelControlLayoutEU or Settings.KeyType, COLOR_SUB_FONT)
 				elseif task == "CheckUpdate" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].SETTINGS.LatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Str.labelLatestVersion .. Settings.LateVersion, tonumber(Settings.LateVersion) > tonumber(Settings.Version) and COLOR_ROYAL_BLUE or COLOR_SUB_FONT)
 				elseif task == "SaveDataPath" then
 					Font.print(FONT16, 225, y - 44, Settings.SaveDataPath, COLOR_SUB_FONT)
 				elseif task == "AnimatedGif" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.AnimatedGif], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Settings.AnimatedGif and Str.labelYes or Str.labelNo, COLOR_SUB_FONT)
 				elseif task == "LoadSummary" then
-					Font.print(FONT16, 225, y - 44, Language[Settings.Language].YORN[Settings.LoadSummary], COLOR_SUB_FONT)
+					Font.print(FONT16, 225, y - 44, Settings.LoadSummary and Str.labelYes or Str.labelNo, COLOR_SUB_FONT)
 				end
 			end
 			y = y + 75
@@ -1178,13 +1182,13 @@ function Catalogs.draw()
 			end
 		else
 			if status == "LIBRARY" then
-				centerScreenMessage = Language[Settings.Language].MESSAGE.NO_LIBRARY_MANGA
+				centerScreenMessage = Str.labelEmptyLibrary
 			elseif status == "MANGA" then
 				if not ParserManager.check(currentMangaList) and mangaLoadStatus == 1 then
-					centerScreenMessage = Language[Settings.Language].MESSAGE.NO_CATALOG_MANGA
+					centerScreenMessage = Str.labelEmptyCatalog
 				end
 			elseif status == "HISTORY" then
-				centerScreenMessage = Language[Settings.Language].MESSAGE.NO_HISTORY_MANGA
+				centerScreenMessage = Str.labelEmptyHistory
 			end
 		end
 	end

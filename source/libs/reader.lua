@@ -1395,7 +1395,7 @@ function Reader.draw()
 	Screen.clear(COLOR_BACK)
 	if currentState == STATE_LOADING then
 		local manga_name = Chapters[currentChapterNumber].Manga.Name
-		local prepare_message = Language[Settings.Language].READER.PREPARING_PAGES .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+		local prepare_message = Str.labelPreparingPages.. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 		local chapter_name = Chapters[currentChapterNumber].Name
 		if Font.getTextWidth(BOLD_FONT30, manga_name) > 960 then
 			Font.print(FONT16, 480 - Font.getTextWidth(FONT16, manga_name) / 2, 242, manga_name, COLOR_FONT)
@@ -1425,11 +1425,11 @@ function Reader.draw()
 							end
 						else
 							if screenOrientation == "Horizontal" then
-								local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+								local loading = Str.labelLoadingSegment .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 								local Width = Font.getTextWidth(FONT16, loading)
 								Font.print(FONT16, currentPageOffset.x + 960 * i + 480 - Width / 2, currentPageOffset.y + page.y + (k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom, loading, COLOR_FONT)
 							elseif screenOrientation == "Vertical" then
-								local loading = Language[Settings.Language].READER.LOADING_SEGMENT .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+								local loading = Str.labelLoadingSegment .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 								local Width = Font.getTextWidth(FONT16, loading)
 								Font.print(FONT16, currentPageOffset.x - Width + page.x - ((k - 1) * page.Image.SliceHeight * page.Zoom - page.Height / 2 * page.Zoom + 10 * page.Zoom), currentPageOffset.y + 272 + 544 * i, loading, COLOR_FONT)
 							end
@@ -1474,7 +1474,7 @@ function Reader.draw()
 				end
 			elseif page then
 				local percentage = Threads.getProgress(page)
-				local loading = Language[Settings.Language].READER.LOADING_PAGE .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
+				local loading = Str.labelLoadingPage .. string.sub("...", 1, math.ceil(Timer.getTime(GlobalTimer) / 250) % 4)
 				local Width = Font.getTextWidth(FONT16, loading)
 				if screenOrientation == "Horizontal" then
 					Font.print(FONT16, currentPageOffset.x + 960 * (isUpDownRead and 0 or i) + 480 - Width / 2, 272 + currentPageOffset.y + 544 * (isUpDownRead and i or 0) - 10, loading, COLOR_FONT)

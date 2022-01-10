@@ -10,7 +10,7 @@ local isActive = false
 local isAppUpdating = false
 
 function Changes.load(string)
-	rawChangesText = string .. "\n\n" .. Language[Settings.Language].MESSAGE.PRESS_TO_UPDATE
+	rawChangesText = string .. "\n\n" .. Str.prefPressAgainToUpdate
 	isActive = true
 	yMax = (544 - (Font.getTextHeight(FONT20, rawChangesText) + 20)) / 2
 	Timer.reset(animationTimer)
@@ -52,7 +52,7 @@ function Changes.draw()
 		if isAppUpdating then
 			formattedChangesText = rawChangesText:match("(.+)\n(.-)\n(.-)$") .. "\n"
 			.. "(" .. BytesToStr(Network.getDownloadedBytes())	.. "/" .. SettingsFunctions.GetLastVpkSize() .. ") "
-			.. Language[Settings.Language].SETTINGS.PleaseWait
+			.. Str.msgPleaseWait
 		end
 		Font.print(FONT20, 80, yOffset + 10, formattedChangesText, COLOR_WHITE)
 	end

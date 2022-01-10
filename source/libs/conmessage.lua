@@ -11,7 +11,7 @@ local connectionTimer = Timer.new()
 local isActive = false
 
 function ConnectMessage.show()
-	message = Language[Settings.Language].MESSAGE.LOST_CONNECTION
+	message = Str.labelLostConnection
 	isActive = true
 	yMax = 544 / 2 - (Font.getTextHeight(FONT20, message) + 20) / 2
 	Timer.reset(animationTimer)

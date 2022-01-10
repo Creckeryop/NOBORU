@@ -51,14 +51,6 @@ require = nil
 RemoveDirectory = nil
 CopyFile = nil
 
-System = {
-	getLanguage = System.getLanguage,
-	extractZipAsync = System.extractZipAsync,
-	getAsyncState = System.getAsyncState,
-	getPictureResolution = System.getPictureResolution,
-	extractFromZipAsync = System.extractFromZipAsync
-}
-
 if doesDirExist("ux0:data/noboru/ext/") then
 	local path = "ux0:data/noboru/ext/"
 	local files = listDirectory(path) or {}
@@ -92,8 +84,8 @@ local function preloadData()
 		if Settings.Language == "Vietnamese" then
 			loadFontString = loadFontString .. "\nĂăÂâĐđÊê\nÔôƠơƯư\nÁáÀàẢảÃãẠạĂăẮắẰằẲẳẴẵẶặÂâẤấẦầẨ\nẩẪẫẬậĐđÉéÈèẺẻẼẽẸẹÊêẾếỀ\nềỂểỄễỆệÍíÌìỈỉĨĩỊịÓóÒò\nỎỏÕõỌọÔôỐốỒồỔổỖỗỘộƠ\nơỚớỜờỞởỠỡỢợÚúÙùỦủ\nŨũỤụƯưỨứỪừỬửỮữỰựÝýỲỳỶỷỸ\nỹỴỵ" --to disable lag for vietnamese (very slow loading)
 		end
-		for langName, _ in pairs(Language) do
-			loadFontString = loadFontString .. (LanguageNames and LanguageNames[langName] and LanguageNames[langName][langName] or "")
+		for _, langName in pairs(LanguageNames) do
+			loadFontString = loadFontString .. (Language.getTranslation(langName, langName) or "")
 		end
 		for k, v in ipairs(fonts) do
 			coroutine.yield("Loading fonts " .. k .. "/" .. #fonts)

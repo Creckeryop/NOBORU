@@ -240,7 +240,7 @@ end
 local function setMode(id)
 	if nowMode ~= id or modes[id] == "Search" or modes[id] == "ByLetter" or modes[id] == "ByTag" then
 		if modes[id] == "Search" then
-			Keyboard.show(Language[Settings.Language].APP.SEARCH, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
+			Keyboard.show(Str.labelSearch, searchData, 128, TYPE_DEFAULT, MODE_TEXT, OPT_NO_AUTOCAP)
 			setFinalTags()
 		else
 			nowMode = id
@@ -454,7 +454,7 @@ function CatalogModes.update()
 				Timer.reset(animationTimer)
 				oldFade = fade
 				if data:gsub("%s", "") ~= "" then
-					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.SEARCHING, data))
+					Notifications.push(string.format(Str.msgSearching, data))
 				end
 			end
 			Keyboard.clear()
@@ -535,7 +535,7 @@ function CatalogModes.draw()
 			elseif v == "Alphabet" then
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 40 + (i - 1) * 50 - 1, AZIcon.e, COLOR_GRADIENT(COLOR_GRAY, COLOR_ROYAL_BLUE, modesFade[v]))
 			end
-			local text = Language[Settings.Language].MODES[modes[i]] or modes[i] or ""
+			local text = Str["parser"..tostring(v)] or tostring(v) or ""
 			if modes[i] == "Search" and searchData:gsub("%s", "") ~= "" then
 				text = text .. " : " .. searchData
 			end

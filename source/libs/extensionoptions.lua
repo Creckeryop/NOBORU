@@ -143,7 +143,7 @@ function ExtensionOptions.load(id)
 			local l = {}
 			for i = 1, #extension.Language do
 				if not l[extension.Language[i]] then
-					l[i] = Language[Settings.Language].PARSERS[extension.Language[i]] or extension.Language[i]
+					l[i] = Str[extension.Language[i]] or extension.Language[i]
 					l[extension.Language[i]] = true
 				end
 			end
@@ -278,12 +278,12 @@ function ExtensionOptions.draw()
 			elseif v == "INSTALL" then
 				Graphics.drawImage(960 - M * 350 + 14, 17 + 25 + (i + 1) * 50 - 1, DownloadIcon.e, isDownloading and COLOR_GRAY or COLOR_ROYAL_BLUE)
 			end
-			local text = Language[Settings.Language].EXTENSIONS[buttons[i]] or buttons[i] or ""
+			local text = --[==[Language[Settings.Language].EXTENSIONS[buttons[i]] or ]==] buttons[i] or ""
 			if (extStatus == "New version" and v == "UPDATE" or v ~= "UPDATE") and not (isDownloading and (v == "UPDATE" or v == "INSTALL")) then
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_WHITE)
 			else
 				if isDownloading and (v == "UPDATE" or v == "INSTALL") then
-					text = Language[Settings.Language].EXTENSIONS.DOWNLOADING or "Downloading..." or ""
+					text = Str.labelDownloading or "Downloading..." or ""
 				end
 				Font.print(FONT16, 960 - M * 350 + 52, 17 + 25 + (i + 1) * 50, text, COLOR_GRAY)
 			end
@@ -313,21 +313,21 @@ function ExtensionOptions.draw()
 		end
 		if extension.Version then
 			if extStatus ~= "Available" then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version, COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.CURRENT_VERSION .. ": v" .. extension.Version) + 5
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Str.labelCurrentVersion .. ": v" .. extension.Version) / 2, 4 + height, Str.labelCurrentVersion .. ": v" .. extension.Version, COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Str.labelCurrentVersion .. ": v" .. extension.Version) + 5
 			else
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED, COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.NOT_INSTALLED) + 5
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Str.labelNotInstalled) / 2, 4 + height, Str.labelNotInstalled, COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Str.labelNotInstalled) + 5
 			end
 			if extension.LatestVersion then
-				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) / 2, 4 + height, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion, extStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
-				height = height + Font.getTextHeight(FONT16, Language[Settings.Language].EXTENSIONS.LATEST_VERSION .. ": v" .. extension.LatestVersion) + 5
+				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, Str.labelLatestVersion .. ": v" .. extension.LatestVersion) / 2, 4 + height, Str.labelLatestVersion .. ": v" .. extension.LatestVersion, extStatus == "New version" and Color.new(136, 0, 255) or COLOR_GRAY)
+				height = height + Font.getTextHeight(FONT16, Str.labelLatestVersion .. ": v" .. extension.LatestVersion) + 5
 			end
 			local languageName = ""
 			if type(extension.Language) == "table" then
-				languageName = Language[Settings.Language].PARSERS["DIF"] or "DIF"
+				languageName = Str.DIF or "DIF"
 			else
-				languageName = Language[Settings.Language].PARSERS[extension.Language] or extension.Language or ""
+				languageName = Str[extension.Language] or extension.Language or ""
 			end
 			if extension.NSFW then
 				Font.print(FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(FONT16, "NSFW") / 2 - Font.getTextWidth(FONT16, " | " .. languageName) / 2, 4 + height, "NSFW", COLOR_ROYAL_BLUE)
@@ -338,8 +338,8 @@ function ExtensionOptions.draw()
 		end
 		local y = 17 + 25 + (#buttons + 2) * 50
 		if #langsWordList > 0 then
-			Font.print(BOLD_FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) / 2, y, Language[Settings.Language].EXTENSIONS.LANGUAGES, COLOR_WHITE)
-			local descriptionYOffset = y + Font.getTextHeight(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LANGUAGES) + 10
+			Font.print(BOLD_FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT16, Str.labelLanguages) / 2, y, Str.labelLanguages, COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BOLD_FONT16, Str.labelLanguages) + 10
 			local clr = 0
 			for i = 1, #langsWordList do
 				local line = langsWordList[i]
@@ -355,8 +355,8 @@ function ExtensionOptions.draw()
 			y = y + 20
 		end
 		if #changesWordList > 0 then
-			Font.print(BOLD_FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) / 2, y, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES, COLOR_WHITE)
-			local descriptionYOffset = y + Font.getTextHeight(BOLD_FONT16, Language[Settings.Language].EXTENSIONS.LATEST_CHANGES) + 10
+			Font.print(BOLD_FONT16, 960 - (M - 0.5) * 350 - Font.getTextWidth(BOLD_FONT16, Str.labelLatestChanges) / 2, y, Str.labelLatestChanges, COLOR_WHITE)
+			local descriptionYOffset = y + Font.getTextHeight(BOLD_FONT16, Str.labelLatestChanges) + 10
 			for i = 1, #changesWordList do
 				local line = changesWordList[i]
 				local x = 960 - M * 350 + 14

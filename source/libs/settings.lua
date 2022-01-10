@@ -86,7 +86,7 @@ local function UpdateApp()
 			closeFile(fh)
 			deleteFile("ux0:data/noboru/NOBORU.vpk")
 			if notify then
-				Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
+				Notifications.push(Str.msgFailedToUpdate)
 				isAppUpdating = false
 			end
 			return
@@ -94,8 +94,8 @@ local function UpdateApp()
 		closeFile(fh)
 		removeDirectory("ux0:data/noboru/NOBORU")
 		if notify then
-			Notifications.push(Language[settings.Language].SETTINGS.UnzippingVPK)
-			Notifications.push(Language[settings.Language].SETTINGS.PleaseWait, 60000)
+			Notifications.push(Str.labelUnzippingVPK)
+			Notifications.push(Str.msgPleaseWait, 60000)
 		end
 		Threads.insertTask(
 			"ExtractingApp",
@@ -119,7 +119,7 @@ local function UpdateApp()
 		)
 	end
 	if notify and not Threads.check("ExtractingApp") then
-		Notifications.push(Language[settings.Language].SETTINGS.FailedToUpdate)
+		Notifications.push(Str.msgFailedToUpdate)
 		isAppUpdating = false
 	end
 end
@@ -204,6 +204,70 @@ local settingsListTree = {
 	}
 }
 
+SettingsDictionary = {
+	["Language"] = "prefCategoryLanguage",
+	["ChangeUI"] = "prefCategoryTheme",
+	["Library"] = "prefCategoryLibrary",
+	["Catalogs"] = "prefCategoryCatalogs",
+	["Reader"] = "prefCategoryReader",
+	["Network"] = "prefCategoryNetwork",
+	["Data"] = "prefCategoryDataSettings",
+	["AdvancedChaptersDeletion"] = "prefCategoryAdvancedChaptersDeletion",
+	["Other"] = "prefCategoryOther",
+	["Controls"] = "prefCategoryControls",
+	["About"] = "prefCategoryAbout",
+	["LibrarySorting"] = "prefLibrarySorting",
+	["RefreshLibAtStart"] = "prefCheckChaptersAtStart",
+	["ShowNSFW"] = "prefShowNSFW",
+	["HideInOffline"] = "prefHideInOffline",
+	["ReaderOrientation"] = "prefReaderOrientation",
+	["ZoomReader"] = "prefReaderScaling",
+	["ReaderDirection"] = "prefReaderDirection",
+	["DoubleTapReader"] = "prefReaderDoubleTap",
+	["PressEdgesToChangePage"] = "prefPressEdgesToChangePage",
+	["AnimatedGif"] = "prefAnimateGif",
+	["ConnectionTime"] = "prefConnectionTime",
+	["UseProxy"] = "prefUseProxy",
+	["ProxyIP"] = "prefProxyIP",
+	["ProxyPort"] = "prefProxyPort",
+	["UseProxyAuth"] = "prefUseProxyAuth",
+	["ProxyAuth"] = "prefProxyAuth",
+	["SaveDataPath"] = "prefSaveDataPath",
+	["ClearLibrary"] = "prefClearLibrary",
+	["ClearCache"] = "prefClearCache",
+	["ClearAllCache"] = "prefClearAllCache",
+	["ClearChapters"] = "prefClearChapters",
+	["ResetAllSettings"] = "prefResetAllSettings",
+	["SkipFontLoading"] = "prefSkipFontLoading",
+	["ChapterSorting"] = "prefChapterSorting",
+	["SilentDownloads"] = "prefSilentDownloads",
+	["SkipCacheChapterChecking"] = "prefSkipCacheChapterChecking",
+	["LoadSummary"] = "prefShowSummary",
+	["ShowVersion"] = "prefAppVersion",
+	["CheckUpdate"] = "prefCheckUpdate",
+	["ShowAuthor"] = "prefShowAuthor",
+	["SupportDev"] = "prefSupportDev",
+	["Translators"] = "prefTranslators",
+	["DonatorsList"] = "prefDonatorList",
+	["SwapXO"] = "prefSwapXO",
+	["ChangingPageButtons"] = "prefChangePageButtons",
+	["LeftStickDeadZone"] = "prefLeftStickDeadZone",
+	["LeftStickSensitivity"] = "prefLeftStickSensitivity",
+	["RightStickDeadZone"] = "prefRightStickDeadZone",
+	["RightStickSensitivity"] = "prefRightStickSensitivity",
+}
+SettingsDictionaryDescriptions = {
+	["Library"] = "prefCategoryLibraryDescription",
+	["Catalogs"] = "prefCategoryCatalogsDescription",
+	["Reader"] = "prefCategoryReaderDescription",
+	["Network"] = "prefCategoryNetworkDescription",
+	["Data"] = "prefCategoryDataSettingsDescription",
+	["AdvancedChaptersDeletion"] = "prefCategoryAdvancedChaptersDeletionDescription",
+	["Other"] = "prefCategoryOtherDescription",
+	["Controls"] = "prefCategoryControlsDescription",
+	["About"] = "prefCategoryAboutDescription",
+	["SupportDev"] = "prefDonatorListDescription",
+}
 ---Table of current options
 local settingsListCurrentNode = settingsListTree
 local settingsListCurrentPath = {}
@@ -250,16 +314,17 @@ function settings.load()
 		if suc then
 			local new = suc()
 			if type(new) == "table" then
-				setSetting(new, "Language", Language)
-				if Language[settings.Language] == nil then
+				setSetting(new, "Language", LanguageNames)
+				Language.set(settings.Language)
+				--[[if Language[settings.Language] == nil then
 					settings.Language = "Default"
-				end
+				end--]]
 				if NSFWLock then
 					setSetting(new, "NSFW", {false})
 					if settingsListTree and settingsListTree.Catalogs and settingsListTree.Catalogs[1] then
 						table.remove(settingsListTree.Catalogs, 1)
 						for k, v in pairs(Language) do
-							Language[k].SETTINGS_DESCRIPTION.Catalogs = nil
+							--Language[k].SETTINGS_DESCRIPTION.Catalogs = nil
 						end
 					end
 				else
@@ -410,7 +475,7 @@ function settings.setTab(mode)
 			elseif mode == "DonatorsList" then
 				local t = {}
 				t[#t + 1] = {
-					name = Language[Settings.Language].MESSAGE.THANK_YOU,
+					name = Str.msgThankYou,
 					info = ""
 				}
 				if doesFileExist("ux0:data/noboru/donators") then
@@ -481,7 +546,7 @@ function settings.updateApp()
 	if Threads.netActionUnSafe(Network.isWifiEnabled) then
 		if lastVpkLink then
 			isAppUpdating = true
-			Notifications.push(Language[settings.Language].SETTINGS.PleaseWait)
+			Notifications.push(Str.msgPleaseWait)
 			Threads.insertTask(
 				"DownloadAppUpdate",
 				{
@@ -495,7 +560,7 @@ function settings.updateApp()
 			)
 		end
 	else
-		Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
+		Notifications.push(Str.msgNoConnection)
 	end
 end
 
@@ -534,15 +599,15 @@ SettingsFunctions = {
 	end,
 	ClearLibrary = function()
 		Library.clear()
-		Notifications.push(Language[settings.Language].NOTIFICATIONS.LIBRARY_CLEARED)
+		Notifications.push(Str.msgLibraryCleared)
 	end,
 	ClearCache = function()
 		Cache.clear()
-		Notifications.push(Language[settings.Language].NOTIFICATIONS.CACHE_CLEARED)
+		Notifications.push(Str.msgCacheCleared)
 	end,
 	ClearAllCache = function()
 		Cache.clear("all")
-		Notifications.push(Language[settings.Language].NOTIFICATIONS.CACHE_CLEARED)
+		Notifications.push(Str.msgCacheCleared)
 	end,
 	ClearChapters = function()
 		ChapterSaver.clear()
@@ -569,14 +634,14 @@ SettingsFunctions = {
 						local body = content:match('markdown%-body">(.-)</div>') or ""
 						changesText = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
 						if settings.LateVersion and settings.Version and tonumber(settings.LateVersion) > tonumber(settings.Version) then
-							Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changesText)
-							Notifications.push(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " " .. settings.LateVersion)
+							Changes.load(Str.msgNewUpdateAvailable .. " : " .. settings.LateVersion .. "\n" .. Str.labelCurrentVersionIs .. settings.Version .. "\n\n" .. changesText)
+							Notifications.push(Str.msgNewUpdateAvailable .. " " .. settings.LateVersion)
 						end
 					end
 				}
 			)
 		else
-			Notifications.push(Language[settings.Language].SETTINGS.NoConnection)
+			Notifications.push(Str.msgNoConnection)
 		end
 	end,
 	CheckDonators = function()
@@ -595,7 +660,7 @@ SettingsFunctions = {
 		return lastVpkSize
 	end,
 	ShowAuthor = function()
-		Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
+		Notifications.push(Str.msgDeveloperThing .. "\nhttps://github.com/Creckeryop/NOBORU")
 	end,
 	SwapXO = function()
 		settings.KeyType = table.next(settings.KeyType, {"JP", "EU"})
@@ -638,7 +703,7 @@ SettingsFunctions = {
 				settings[k] = v
 			end
 		end
-		Notifications.push(Language[Settings.Language].NOTIFICATIONS.SETTINGS_RESET)
+		Notifications.push(Str.msgSettingsReset)
 	end,
 	SilentDownloads = function()
 		settings.SilentDownloads = not settings.SilentDownloads
@@ -647,7 +712,7 @@ SettingsFunctions = {
 		settings.UseProxy = not settings.UseProxy
 	end,
 	ProxyIP = function()
-		Keyboard.show(Language[Settings.Language].SETTINGS.ProxyIP, settings.ProxyIP, 32, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+		Keyboard.show(Str.prefProxyIP, settings.ProxyIP, 32, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
 		while Keyboard.getState() == RUNNING do
 			Graphics.initBlend()
 			Screen.clear()
@@ -661,7 +726,7 @@ SettingsFunctions = {
 		Keyboard.clear()
 	end,
 	ProxyPort = function()
-		Keyboard.show(Language[Settings.Language].SETTINGS.ProxyPort, settings.ProxyPort, 5, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+		Keyboard.show(Str.prefProxyPort, settings.ProxyPort, 5, TYPE_EXT_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
 		while Keyboard.getState() == RUNNING do
 			Graphics.initBlend()
 			Screen.clear()
@@ -678,7 +743,7 @@ SettingsFunctions = {
 		settings.UseProxyAuth = not settings.UseProxyAuth
 	end,
 	ProxyAuth = function()
-		Keyboard.show(Language[Settings.Language].SETTINGS.ProxyAuth, settings.ProxyAuth, 128, TYPE_LATIN, MODE_TEXT, OPT_NO_AUTOCAP)
+		Keyboard.show(Str.prefProxyAuth, settings.ProxyAuth, 128, TYPE_LATIN, MODE_TEXT, OPT_NO_AUTOCAP)
 		while Keyboard.getState() == RUNNING do
 			Graphics.initBlend()
 			Screen.clear()
@@ -695,7 +760,7 @@ SettingsFunctions = {
 		settings.SkipCacheChapterChecking = not settings.SkipCacheChapterChecking
 	end,
 	ConnectionTime = function()
-		Keyboard.show(Language[settings.Language].SETTINGS.InputValue, settings.ConnectionTime, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
+		Keyboard.show(Str.labelInputValue, settings.ConnectionTime, 128, TYPE_NUMBER, MODE_TEXT, OPT_NO_AUTOCAP)
 		while Keyboard.getState() == RUNNING do
 			Graphics.initBlend()
 			Screen.clear()

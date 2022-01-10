@@ -43,7 +43,7 @@ function ChapterSaver.update()
 		isSavedChaptersUpdated = false
 		if currentTask.Type == "Download" and getFreeSpace("ux0:") < 40 * 1024 * 1024 then
 			if not isUserNotified then
-				Notifications.push(Language[Settings.Language].NOTIFICATIONS.NO_SPACE_LEFT)
+				Notifications.push(Str.msgNoSpaceLeft)
 				isUserNotified = true
 			end
 			downloadingList[currentTask.Key] = nil
@@ -57,7 +57,7 @@ function ChapterSaver.update()
 			if _ then
 				if currentTask.Destroy and msg and msg ~= "update_count+false" then
 					if currentTask.Notify and not Settings.SilentDownloads then
-						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, currentTask.MangaName, currentTask.ChapterName))
+						Notifications.push(string.format(Str.msgCancelDownload, currentTask.MangaName, currentTask.ChapterName))
 					end
 					downloadingList[currentTask.Key] = nil
 					isSavedChaptersUpdated = false
@@ -78,9 +78,9 @@ function ChapterSaver.update()
 		else
 			if not currentTask.Fail then
 				if currentTask.Type == "Download" and not Settings.SilentDownloads then
-					Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, currentTask.MangaName, currentTask.ChapterName))
+					Notifications.push(string.format(Str.msgEndDownload, currentTask.MangaName, currentTask.ChapterName))
 				elseif currentTask.Type == "Import" then
-					Notifications.push(Language[Settings.Language].NOTIFICATIONS.IMPORT_COMPLETED)
+					Notifications.push(Str.msgImportCompleted)
 				end
 			end
 			downloadingList[currentTask.Key] = nil
@@ -132,7 +132,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
 				coroutine.yield(true)
 			end
 			if getChaptersRetryCounter == 3 then
-				Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM .. "\nMaybe chapter has 0 pages")
+				Notifications.pushUnique(Str.msgNetProblem .. "\nMaybe chapter has 0 pages")
 				removeDirectory(FolderPath .. k)
 				downloadingList[k].Fail = true
 				downloadingList[k] = nil
@@ -193,7 +193,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
 					coroutine.yield(true)
 				end
 				if retry == 3 then
-					Notifications.pushUnique(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
+					Notifications.pushUnique(Str.msgNetProblem)
 					removeDirectory(FolderPath .. k)
 					downloadingList[k].Fail = true
 					downloadingList[k] = nil
@@ -211,7 +211,7 @@ function ChapterSaver.downloadChapter(chapter, silent)
 	isSavedChaptersUpdated = false
 	taskListOrder[#taskListOrder + 1] = downloadingList[k]
 	if not silent and not Settings.SilentDownloads then
-		Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.START_DOWNLOAD, chapter.Manga.Name, chapter.Name))
+		Notifications.push(string.format(Str.msgStartDownload, chapter.Manga.Name, chapter.Name))
 	end
 end
 
@@ -298,7 +298,7 @@ function ChapterSaver.importManga(path)
 					dir_ = tempDir
 					for _, file in ipairs(dir_) do
 						if (System.getPictureResolution(path .. "/" .. folder.name .. "/" .. file.name) or -1) <= 0 and not file.name:find("%.txt$") and not file.name:find("%.xml$") then
-							Notifications.push(Language[Settings.Language].NOTIFICATIONS.BAD_IMAGE_FOUND)
+							Notifications.push(Str.msgBadImageFound)
 							downloadingList[path].Fail = true
 							downloadingList[path] = nil
 							return
@@ -514,7 +514,7 @@ local function stop(key, silent)
 			for _, v in ipairs(taskListOrder) do
 				if v == downloadingList[key] then
 					if isNotificationsEnabled and silent == nil and not Settings.SilentDownloads then
-						Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CANCEL_DOWNLOAD, v.MangaName, v.ChapterName))
+						Notifications.push(string.format(Str.msgCancelDownload, v.MangaName, v.ChapterName))
 					end
 				else
 					newOrder[#newOrder + 1] = v
@@ -590,7 +590,7 @@ function ChapterSaver.delete(chapter, silent)
 		allKeys[k] = nil
 		ChapterSaver.save()
 		if not silent and not Settings.SilentDownloads then
-			Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.CHAPTER_REMOVE, k))
+			Notifications.push(string.format(Str.msgChapterRemove, k))
 		end
 	end
 end
@@ -857,5 +857,5 @@ function ChapterSaver.clear()
 	end
 	allKeys = {}
 	ChapterSaver.save()
-	Notifications.push(Language[Settings.Language].NOTIFICATIONS.CHAPTERS_CLEARED)
+	Notifications.push(Str.msgChaptersCleared)
 end

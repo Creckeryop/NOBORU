@@ -139,7 +139,7 @@ function Extensions.UpdateList()
     else
         networkList = {}
         updatesCounter = 0
-        Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
+        Notifications.push(Str.msgNetProblem)
         resetList()
     end
 end
@@ -180,7 +180,7 @@ function Extensions.Install(id)
             )
         end
     else
-        Notifications.push(Language[Settings.Language].NOTIFICATIONS.NET_PROBLEM)
+        Notifications.push(Str.msgNetProblem)
         resetList()
     end
 end

@@ -295,11 +295,11 @@ end
 local function addToLibrary()
 	if Library.check(selectedManga) then
 		Library.removeManga(selectedManga)
-		Notifications.push(Language[Settings.Language].NOTIFICATIONS.REMOVED_FROM_LIBRARY)
+		Notifications.push(Str.msgRemovedFromLibrary)
 	else
 		Library.addManga(selectedManga)
 		Cache.addManga(selectedManga)
-		Notifications.push(Language[Settings.Language].NOTIFICATIONS.ADDED_TO_LIBRARY)
+		Notifications.push(Str.msgAddedToLibrary)
 	end
 end
 
@@ -317,7 +317,7 @@ local function downloadChapter(item)
 			elseif isWifiEnabled then
 				ChapterSaver.downloadChapter(item)
 			else
-				Notifications.pushUnique(Language[Settings.Language].SETTINGS.NoConnection)
+				Notifications.pushUnique(Str.msgNoConnection)
 			end
 		else
 			ChapterSaver.delete(item)
@@ -478,22 +478,22 @@ function Details.draw()
 		local start = math.max(1, math.floor(slider.Y / 80) + 1)
 		local shift = (1 - M) * 544
 		local y = shift - slider.Y + start * 80 + chaptersMaxHeightOffset
-		local color, text = addMangaButtonColor, Language[Settings.Language].DETAILS.ADD_TO_LIBRARY
+		local color, text = addMangaButtonColor, Str.labelAddToLibrary
 
 		if Library.check(selectedManga) then
 			color = removeMangaButtonColor
-			text = Language[Settings.Language].DETAILS.REMOVE_FROM_LIBRARY
+			text = Str.labelRemoveFromLibrary
 		end
 		Graphics.fillRect(20, 260, shift + 416, shift + 475, color)
 		Font.print(FONT20, 140 - Font.getTextWidth(FONT20, text) / 2, shift + 444 - Font.getTextHeight(FONT20, text) / 2, text, textColor)
 		if continueChapterNumber then
 			if #chapterList > 0 then
 				Graphics.fillRect(30, 250, shift + 480, shift + 539, continueButtonColor)
-				local continueButtonText = Language[Settings.Language].DETAILS.START
+				local continueButtonText = Str.labelStart
 				local chapterName
 				local dy = 0
 				if continueChapterNumber > 0 and chapterList[continueChapterNumber] and (continueChapterNumber == 1 and Cache.getBookmark(chapterList[continueChapterNumber]) or continueChapterNumber ~= 1) then
-					continueButtonText = Language[Settings.Language].DETAILS.CONTINUE
+					continueButtonText = Str.labelContinue
 					dy = -10
 					chapterName = chapterList[continueChapterNumber].Name or ("Chapter " .. continueChapterNumber)
 				end
@@ -523,10 +523,10 @@ function Details.draw()
 				local i = Settings.ChapterSorting ~= "N->1" and n or listCount - n + 1
 				local bookmark = Cache.getBookmark(chapterList[i])
 				if bookmark ~= nil and bookmark ~= true then
-					Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.PAGE .. bookmark, textColor)
+					Font.print(FONT16, 290, y + 44, Str.labelPage .. bookmark, textColor)
 					Font.print(BOLD_FONT16, 290, y + 14, chapterList[i].Name or ("Chapter " .. i), textColor)
 				elseif bookmark == true then
-					Font.print(FONT16, 290, y + 44, Language[Settings.Language].DETAILS.DONE, secondTextColor)
+					Font.print(FONT16, 290, y + 44, Str.labelDone, secondTextColor)
 					Font.print(BOLD_FONT16, 290, y + 14, chapterList[i].Name or ("Chapter " .. i), secondTextColor)
 				else
 					Font.print(BOLD_FONT16, 290, y + 28, chapterList[i].Name or ("Chapter " .. i), textColor)
@@ -568,7 +568,7 @@ function Details.draw()
 		end
 		if status == "START" and #chapterList == 0 and not ParserManager.check(chapterList) and not isNotified then
 			isNotified = true
-			Notifications.push(Language[Settings.Language].WARNINGS.NO_CHAPTERS)
+			Notifications.push(Str.msgNoChapters)
 		end
 		local item = detailsSelector.getSelected()
 		if item ~= 0 then
@@ -593,7 +593,7 @@ function Details.draw()
 				Graphics.fillRect(260, 955, 95, 95 + chaptersMaxHeightOffset, backgroundColor)
 			end
 			local descriptionYOffset = 95 - descriptionMaxHeightOffset
-			Font.print(BOLD_FONT16, (270 + 940) / 2 - Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.SUMMARY) / 2, descriptionYOffset, Language[Settings.Language].DETAILS.SUMMARY, textColor)
+			Font.print(BOLD_FONT16, (270 + 940) / 2 - Font.getTextWidth(BOLD_FONT16, Str.labelSummary) / 2, descriptionYOffset, Str.labelSummary, textColor)
 			descriptionYOffset = descriptionYOffset + LINE_HEIGHT
 			for i = 1, #descriptionWordList do
 				if descriptionYOffset + LINE_HEIGHT >= 95 then
@@ -614,11 +614,11 @@ function Details.draw()
 			if descriptionLinesCount ~= #descriptionWordList or descriptionLinesCount > 2 then
 				Graphics.fillRect(260, 955, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, 95 + chaptersMaxHeightOffset, backgroundColor)
 				if descriptionLinesCount ~= #descriptionWordList then
-					Font.print(BOLD_FONT16, (270 + 940) / 2 - (Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.EXPAND) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Language[Settings.Language].DETAILS.EXPAND, textColor)
-					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.EXPAND) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
+					Font.print(BOLD_FONT16, (270 + 940) / 2 - (Font.getTextWidth(BOLD_FONT16, Str.labelExpand) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Str.labelExpand, textColor)
+					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BOLD_FONT16, Str.labelExpand) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
 				elseif descriptionLinesCount > 2 then
-					Font.print(BOLD_FONT16, (270 + 940) / 2 - (Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.SHRINK) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Language[Settings.Language].DETAILS.SHRINK, textColor)
-					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].DETAILS.SHRINK) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
+					Font.print(BOLD_FONT16, (270 + 940) / 2 - (Font.getTextWidth(BOLD_FONT16, Str.labelShrink) + 32) / 2, 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, Str.labelShrink, textColor)
+					Graphics.drawImage(math.ceil((270 + 940) / 2 + Font.getTextWidth(BOLD_FONT16, Str.labelShrink) / 2 + 4), 95 + chaptersMaxHeightOffset - LINE_HEIGHT - 10, ButtonsIcons.L.e, textColor)
 				end
 			end
 		end
@@ -658,7 +658,7 @@ function Details.getFade()
 end
 
 ---@return table
----Gives `seletctedManga` loaded in Details menu
+---Gives `selectedManga` loaded in Details menu
 function Details.getManga()
 	return selectedManga
 end

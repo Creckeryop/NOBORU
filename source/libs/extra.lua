@@ -114,7 +114,7 @@ function Extra.setChapters(manga, chapters, page)
 		extraMenuYDrawStart = 272 - #selectedExtraMenu * 80 / 2
 		maxExtraMenuWidth = DEFAULT_MAX_EXTRA_MENU_WIDTH
 		for i = 1, #selectedExtraMenu do
-			local extraOptionTextWidth = Font.getTextWidth(BOLD_FONT16, Language[Settings.Language].EXTRA[selectedExtraMenu[i]] or selectedExtraMenu[i]) + 40
+			local extraOptionTextWidth = Font.getTextWidth(BOLD_FONT16, Str["label"..selectedExtraMenu[i]] or selectedExtraMenu[i]) + 40
 			if extraOptionTextWidth > maxExtraMenuWidth then
 				maxExtraMenuWidth = extraOptionTextWidth
 			end
@@ -128,7 +128,7 @@ local function updateLanguagePick()
 	selectedExtraMenu = {}
 	langToCode = {}
 	local langNames = {}
-	for k, _ in pairs(Language) do
+	for _, k in pairs(LanguageNames) do
 		if k ~= "Default" then
 			langNames[#langNames + 1] = k
 		end
@@ -136,12 +136,12 @@ local function updateLanguagePick()
 	table.sort(langNames)
 	table.insert(langNames, 1, "Default")
 	for _, k in ipairs(langNames) do
-		if LanguageNames.English[k] then
+		if Language.getTranslation(k, "English") then
 			langToCode[#langToCode + 1] = k
 			if k == Settings.Language then
-				selectedExtraMenu[#selectedExtraMenu + 1] = ">> " .. LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ") <<"
+				selectedExtraMenu[#selectedExtraMenu + 1] = ">> " .. Language.getTranslation(k, k) .. " (" .. Language.getTranslation(k, "English") .. ") <<"
 			else
-				selectedExtraMenu[#selectedExtraMenu + 1] = LanguageNames[k][k] .. " (" .. LanguageNames.English[k] .. ")"
+				selectedExtraMenu[#selectedExtraMenu + 1] = Language.getTranslation(k, k) .. " (" .. Language.getTranslation(k, "English") .. ")"
 			end
 		end
 	end
@@ -254,7 +254,7 @@ local function pressOption(id)
 				CustomCovers.setMangaCover(selectedManga, nil)
 				selectedManga.ImageDownload = nil
 				collectgarbage("collect")
-				Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+				Notifications.push(Str.msgCoverSetCompleted)
 			end
 		elseif selectedExtraMenu[id] == "SetPageAsCover" then
 			local page = Reader.getCurrentPageImageLink()
@@ -273,7 +273,7 @@ local function pressOption(id)
 				elseif page.Path then
 					CustomCovers.setMangaCover(selectedManga, page)
 					copyFile(page.Path:find("^...?0:") and page.Path or ("ux0:data/noboru/" .. page.Path), "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image")
-					Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+					Notifications.push(Str.msgCoverSetCompleted)
 				elseif page.ParserID then
 					CustomCovers.setMangaCover(selectedManga, page)
 					Threads.insertTask(
@@ -292,7 +292,7 @@ local function pressOption(id)
 										Link = tempTable.Link,
 										Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 										OnComplete = function()
-											Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+											Notifications.push(Str.msgCoverSetCompleted)
 										end
 									}
 								)
@@ -308,7 +308,7 @@ local function pressOption(id)
 							Link = page.Link,
 							Path = "ux0:data/noboru/cache/" .. cacheKey .. "/custom_cover.image",
 							OnComplete = function()
-								Notifications.push(Language[Settings.Language].NOTIFICATIONS.COVER_SET_COMPLETED)
+								Notifications.push(Str.msgCoverSetCompleted)
 							end
 						}
 					)
@@ -347,7 +347,7 @@ local function pressOption(id)
 						local f = getImageFormat(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image")
 						if f ~= nil then
 							rename(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f)
-							Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
+							Notifications.push(string.format(Str.msgEndDownload, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
 						end
 					elseif page.ParserID then
 						Threads.insertTask(
@@ -371,7 +371,7 @@ local function pressOption(id)
 													if f ~= nil then
 														rename(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f)
 													end
-													Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
+													Notifications.push(string.format(Str.msgEndDownload, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
 												end
 											end
 										}
@@ -392,7 +392,7 @@ local function pressOption(id)
 										if f ~= nil then
 											rename(drive .. ":data/noboru/pictures/" .. uniqueName .. ".image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f)
 										end
-										Notifications.push(string.format(Language[Settings.Language].NOTIFICATIONS.END_DOWNLOAD, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
+										Notifications.push(string.format(Str.msgEndDownload, "image", drive .. ":data/noboru/pictures/" .. uniqueName .. "." .. f), 1000)
 									end
 								end
 							}
@@ -406,6 +406,7 @@ local function pressOption(id)
 	elseif mode == "setLanguage" then
 		if langToCode[id] then
 			Settings.Language = langToCode[id]
+			Language.set(Settings.Language)
 			GenPanels()
 			Settings.save()
 		end
@@ -503,13 +504,13 @@ function Extra.draw()
 		Graphics.fillRect(0, 960, 0, 544, Color.new(0, 0, 0, 150 * M))
 		Graphics.fillRect(480 - maxExtraMenuWidth / 2, 480 + maxExtraMenuWidth / 2, extraMenuYDrawStart + shift, extraMenuYDrawStart + 80 * optionsListCount + shift - 1, whiteColor)
 		for i = start, math.min(optionsListCount, start + 8) do
-			local optionText = Language[Settings.Language].SETTINGS[selectedExtraMenu[i]] or Language[Settings.Language].EXTRA[selectedExtraMenu[i]] or selectedExtraMenu[i]
+			local optionText = SettingsDictionary[selectedExtraMenu[i]] and Str[SettingsDictionary[selectedExtraMenu[i]]] or Str["label"..selectedExtraMenu[i]] or selectedExtraMenu[i]
 			if selectedExtraMenu[i] == "ReaderOrientation" then
-				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.Orientation]
+				optionText = optionText .. ": " .. (Str["label"..customSettings.Orientation] or customSettings.Orientation)
 			elseif selectedExtraMenu[i] == "ReaderDirection" then
-				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.ReaderDirection]
+				optionText = optionText .. ": " .. (Str["labelDirection"..customSettings.ReaderDirection] or customSettings.ReaderDirection)
 			elseif selectedExtraMenu[i] == "ZoomReader" then
-				optionText = optionText .. ": " .. Language[Settings.Language].READER[customSettings.ZoomReader]
+				optionText = optionText .. ": " .. (Str["label"..Settings.ZoomReader] or Settings.ZoomReader)
 			end
 			Font.print(BOLD_FONT16, 480 - Font.getTextWidth(BOLD_FONT16, optionText) / 2, y + 28 - 79, optionText, blackColor)
 			if i == slider.ItemID then

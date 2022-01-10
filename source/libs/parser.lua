@@ -85,7 +85,7 @@ end
 function GetLanguagePriority(code)
 	if code == "DIF" then
 		return 0
-	elseif Language[Settings.Language].Code == code then
+	elseif Str._langCode == code then
 		return 1
 	else
 		return 2
