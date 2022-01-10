@@ -75,10 +75,7 @@ local fonts = {
 
 local function preloadData()
 	coroutine.yield("Loading settings")
-	local suc, err = pcall(Settings.load, Settings)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(Settings.load, Console.error, Settings)
 	if not Settings.SkipFontLoad then
 		local loadFontString = '1234567890AaBbCcDdEeFf\nGgHhIiJjKkLlMmNnOoPpQqRr\nSsTtUuVvWwXxYyZzАаБб\nВвГгДдЕеЁёЖжЗзИиЙйКкЛлМм\nНнОоПпРрСсТтУуФфХхЦцЧчШшЩщ\nЫыЪъЬьЭэЮюЯя!@#$%^&*()\n_+-=[]"\\/.,{}:;\'|? №~<>`\r—'
 		if Settings.Language == "Vietnamese" then
@@ -93,46 +90,22 @@ local function preloadData()
 		end
 	end
 	coroutine.yield("Loading cache, checking existing data")
-	suc, err = pcall(Cache.load)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(Cache.load, Console.error)
 	coroutine.yield("Loading history")
-	suc, err = pcall(Cache.loadHistory)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(Cache.loadHistory, Console.error)
 	coroutine.yield("Loading library")
-	suc, err = pcall(Library.load)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(Library.load, Console.error)
 	coroutine.yield("Checking saved chapters")
-	suc, err = pcall(ChapterSaver.load)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(ChapterSaver.load, Console.error)
 	coroutine.yield("Loading custom covers")
-	suc, err = pcall(CustomCovers.load)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(CustomCovers.load, Console.error)
 	Menu.setMode("LIBRARY")
 	Panel.show()
 	coroutine.yield("Checking for update")
-	suc, err = pcall(SettingsFunctions.CheckUpdate)
-	if not suc then
-		Console.error(err)
-	end
-	suc, err = pcall(SettingsFunctions.CheckDonators)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(SettingsFunctions.CheckUpdate, Console.error)
+	xpcall(SettingsFunctions.CheckDonators, Console.error)
 	coroutine.yield("Checking for extensions")
-	suc, err = pcall(Extensions.UpdateList)
-	if not suc then
-		Console.error(err)
-	end
+	xpcall(Extensions.UpdateList, Console.error)
 end
 
 Screen.flip()
