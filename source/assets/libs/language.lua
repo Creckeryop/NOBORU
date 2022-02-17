@@ -3204,11 +3204,11 @@ Japanese = {
 			EXPAND = "続きを読む"
 		},
 		NOTIFICATIONS = {
-			ADDED_TO_LIBRARY = "Added to library",
-			REMOVED_FROM_LIBRARY = "Removed from library",
-			SEARCHING = 'Searching "%s"',
-			START_DOWNLOAD = "%s: %s\ndownloading started!",
-			END_DOWNLOAD = "%s: %s\nsuccessfuly downloaded!",
+			ADDED_TO_LIBRARY = "ライブラリーに追加",
+			REMOVED_FROM_LIBRARY = "ライブラリーから削除",
+			SEARCHING = '"％sを検索"',
+			START_DOWNLOAD = "%s：%s \ ダウンロードが開始されました！",
+			END_DOWNLOAD = "%s: %s\nsuccessfuly!",
 			CANCEL_DOWNLOAD = "%s: %s\ndownload is canceled!",
 			CHAPTER_REMOVE = "%s deleted!",
 			NET_PROBLEM = "There is problems with connection!",
