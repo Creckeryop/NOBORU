@@ -3127,7 +3127,7 @@ Japanese = {
 			AdvancedChaptersDeletion = "読んで、削除する",
 			DonatorsList = "プロジェクトをサポートした人のリスト",
 			Other = "フォントの読み込み、チャプターの並べ替え、通知",
-			Controls = "キータイプ、ページボタンの変更、設定のスティック",
+			Controls = "キータイプ、ページボタンの変更、スティックの設定",
 			About = "バージョン,、アップデート"
 		},
 		PAGINGCONTROLS = {
