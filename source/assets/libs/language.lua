@@ -8,6 +8,7 @@
 --Romanian translation by tmihai20
 --Polish translation by tofudd
 --German translation by lukrynka
+--Japanese translation by kuragehimekurara1
 Language = {
 	Russian = {
 		APP = {
@@ -3027,8 +3028,7 @@ Language = {
 			UNSUPFILE = "Datei wird nicht unterstützt"
 		}
 	},
-}
-Japanese = {
+	Japanese = {
 		APP = {
 			LIBRARY = "ライブラリー",
 			CATALOGS = "カタログ",
@@ -3039,13 +3039,13 @@ Japanese = {
 			SEARCH = "検索"
 		},
 		MESSAGE = {
-			LOST_CONNECTION = "「接続が失われました\ n \ n接続を待機しています... \ n \ n（アプリケーションを最小化し、Wi-Fi設定に移動して[接続]を押します）\ n \ nXを押してすべてのダウンロードをキャンセルし、閉じます。",
-			PRESS_TO_UPDATE = "Xを押して更新します\ nOを押してキャンセルします。",
-			NO_LIBRARY_MANGA = "漫画/コミックはありません。\ n漫画/コミックを追加するには、[カタログ]メニューで漫画やコミックを見つけて、[ライブラリに追加]を押します。",
-			NO_HISTORY_MANGA = "漫画/コミックはありません。\ nいつかここに表示されます",
-			NO_CATALOG_MANGA = "マンガ/コミックはありません。\ nサーバー、接続、またはパーサーのエラー",
+			LOST_CONNECTION = "「接続が失われました\n\n接続を待機しています... \n \n（アプリケーションを最小化し、Wi-Fi設定に移動して[接続]を押します）\n\nXを押してすべてのダウンロードをキャンセルし、閉じます。",
+			PRESS_TO_UPDATE = "Xを押して更新します\nOを押してキャンセルします。",
+			NO_LIBRARY_MANGA = "漫画/コミックはありません。\n漫画/コミックを追加するには、[カタログ]メニューで漫画やコミックを見つけて、[ライブラリに追加]を押します。",
+			NO_HISTORY_MANGA = "漫画/コミックはありません。\nいつかここに表示されます",
+			NO_CATALOG_MANGA = "マンガ/コミックはありません。\nサーバー、接続、またはパーサーのエラー",
 			NO_DOWNLOADING_MANGA = "マンガ/コミックのダウンロードはありません。",
-			NO_CATALOGS = "カタログがありません。\ n三角形を押して、すべてのカタログが読み込まれるまで待ちます",
+			NO_CATALOGS = "カタログがありません。\n三角形を押して、すべてのカタログが読み込まれるまで待ちます",
 			THANK_YOU = "プロジェクトをサポートしていただきありがとうございます！",
 		},
 			SETTINGS = {
@@ -3100,7 +3100,7 @@ Japanese = {
 			Other = "その他",
 			SilentDownloads = "ダウンロード通知を表示しない",
 			Network = "ネットワーク",
-			UseProxy = ""プロキシを使用,
+			UseProxy = "プロキシを使用",
 			ProxyIP = "IPアドレス",
 			ProxyPort = "ポート",
 			UseProxyAuth = "プロキシ認証を使用",
@@ -3119,7 +3119,7 @@ Japanese = {
 			LoadSummary = "漫画の概要を表示する",
 		},
 	SETTINGS_DESCRIPTION = {
-			Library = "マンガ追跡の設定"
+			Library = "マンガ追跡の設定",
 			Catalogs = "言語、NSFWコンテンツ",
 			Reader = "方向、向き、ズームの設定",
 			Network = "接続タイムアウト、プロキシ",
@@ -3207,9 +3207,9 @@ Japanese = {
 			ADDED_TO_LIBRARY = "ライブラリーに追加",
 			REMOVED_FROM_LIBRARY = "ライブラリーから削除",
 			SEARCHING = '"％sを検索"',
-			START_DOWNLOAD = "%s：%s \ ダウンロードが開始されました！",
-			END_DOWNLOAD = "%s: %s\ダウンロードに成功しました！",
-			CANCEL_DOWNLOAD = "%s: %s\ダウンロードはキャンセルされました！",
+			START_DOWNLOAD = "%s：%s\nダウンロードが開始されました！",
+			END_DOWNLOAD = "%s: %s\nダウンロードに成功しました！",
+			CANCEL_DOWNLOAD = "%s: %s\nダウンロードはキャンセルされました！",
 			CHAPTER_REMOVE = "%s 削除されました！",
 			NET_PROBLEM = "接続に問題があります！",
 			CHAPTERS_CLEARED = "保存されたチャプターはすべてクリアされます！",
@@ -3242,7 +3242,7 @@ Japanese = {
 			JUMPTOPAGE = "ページを変更",
 			SEARCH = "検索",
 			SELECT = "選択",
-　　　　　　　　　　　　　CHOOSE = "選ぶ",
+			CHOOSE = "選ぶ",
 			IMPORT = "インポート",
 			CHANGE_SECTION = "セクションを変更",
 			UPDATE = "更新",
@@ -3260,6 +3260,7 @@ Japanese = {
 			UNSUPFILE = "このファイル形式はサポートされていません。"
 		}
 	},
+}
 LanguageNames = {
 	Russian = {
 		Russian = "Русский",
@@ -3275,6 +3276,7 @@ LanguageNames = {
 		Romanian = "Румынский",
 		Polish = "Польский",
 		German = "Немецкий",
+		Japanese = "Японский",
 		Default = "Системный"
 	},
 	English = {
@@ -3291,6 +3293,7 @@ LanguageNames = {
 		Romanian = "Romanian",
 		Polish = "Polish",
 		German = "German",
+		Japanese = "Japanese",
 		Default = "System"
 	},
 	Turkish = {
@@ -3307,6 +3310,7 @@ LanguageNames = {
 		Romanian = "Romence",
 		Polish = "Lehçe",
 		German = "Alman Dili",
+		Japanese = "Japonca",
 		Default = "Sistem Dili"
 	},
 	Spanish = {
@@ -3323,6 +3327,7 @@ LanguageNames = {
 		Polish = "Polaco",
 		Romanian = "Rumano",
 		German = "Almanca",
+		Japanese = "Japonés",
 		Default = "Sistema"
 	},
 	Vietnamese = {
@@ -3339,6 +3344,7 @@ LanguageNames = {
 		Romanian = "Tiếng Rumani",
 		Polish = "Tiếng ba lan",
 		German = "Tiếng Đức",
+		Japanese = "Tiếng Nhật",
 		Default = "Hệ thống"
 	},
 	Italian = {
@@ -3355,6 +3361,7 @@ LanguageNames = {
 		Romanian = "Rumeno",
 		Polski = "Polacco",
 		German = "Tedesco",
+		Japanese = "Giapponese",
 		Default = "Sistema"
 	},
 	French = {
@@ -3371,6 +3378,7 @@ LanguageNames = {
 		Romanian = "Roumaine",
 		Polski = "Polonaise",
 		German = "Allemand",
+		Japanese = "Japonais",
 		Default = "Système"
 	},
 	PortugueseBR = {
@@ -3387,6 +3395,7 @@ LanguageNames = {
 		Romanian = "Romeno",
 		Polish = "Polonesa",
 		German = "Alemão",
+		Japanese = "Japonês",
 		Default = "Sistema"
 	},
 	SimplifiedChinese = {
@@ -3403,6 +3412,7 @@ LanguageNames = {
 		Romanian = "罗马尼亚",
 		Polish = "波兰语",
 		German = "德语",
+		Japanese = "日本人",
 		Default = "默认"
 	},
 	TraditionalChinese = {
@@ -3419,6 +3429,7 @@ LanguageNames = {
 		Romanian = "羅馬尼亞",
 		Polski = "波蘭語",
 		German = "德語",
+		Japanese = "日本人",
 		Default = "默認"
 	},
 	Romanian = {
@@ -3435,6 +3446,7 @@ LanguageNames = {
 		Romanian = "Română",
 		Polish = "Poloneza",
 		German = "Germana",
+		Japanese = "Japonez",
 		Default = "Limba sistemului"
 	},
 	Polish = {
@@ -3451,6 +3463,7 @@ LanguageNames = {
 		Romanian = "Rumuński",
 		Polish = "Polski",
 		German = "Niemiecki",
+		Japanese = "Język japoński",
 		Default = "Systemowy"
 	},
 	German = {
@@ -3467,25 +3480,27 @@ LanguageNames = {
 		Romanian = "Rumänisch",
 		Polish = "Polnisch",
 		German = "Deutsch",
+		Japanese = "Japanisch",
 		Default = "Systemsprache"
 	},
+	Japanese = {
+			Russian = "ロシア語",
+			English = "英語",
+			Turkish = "トルコ語",
+			Spanish = "スペイン語",
+			Vietnamese = "ベトナム語",
+			French = "フランス語",
+			Italian = "イタリア語",
+			PortugueseBR = "ブラジルポルトガル語",
+			SimplifiedChinese = "中国語(簡体字)",
+			TraditionalChinese = "中国語(繁体字)",
+			Romanian = "ルーマニア語",
+			Polish = "ポーランド語",
+			German = "ドイツ語",
+			Japanese = "日本語",
+			Default = "デフォルト"
+		},
 }
-Japanese = {
-		Russian = "ロシア語",
-		English = "英語",
-		Turkish = "トルコ語",
-		Spanish = "スペイン語",
-		Vietnamese = "ベトナム語",
-		French = "フランス語",
-		Italian = "イタリア語",
-		PortugueseBR = "ブラジルポルトガル語",
-		SimplifiedChinese = "中国語(簡体字)",
-		TraditionalChinese = "中国語(繁体字)",
-		Romanian = "ルーマニア語",
-		Polish = "ポーランド語",
-		German = "ドイツ語",
-		Default = "デフォルト"
-	},
 local language_now = System.getLanguage()
 if language_now == 8 then
 	Language.Default = Language.Russian
@@ -3517,6 +3532,9 @@ elseif language_now == 16 then
 elseif language_now == 4 then
 	Language.Default = Language.German
 	LanguageNames.Default = LanguageNames.German
+elseif language_now == 0 then
+	Language.Default = Language.Japanese
+	LanguageNames.Default = LanguageNames.Japanese
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
