@@ -1,7 +1,7 @@
 Settings = {
 	Language = "Default",
 	Theme = "Light",
-	Version = 0.892,
+	Version = 0.9,
 	NSFW = false,
 	Orientation = "Horizontal",
 	ZoomReader = "Smart",
