@@ -8,6 +8,7 @@
 --Romanian translation by tmihai20
 --Polish translation by tofudd
 --German translation by lukrynka
+--Japanese translation by kuragehimekurara1
 Language = {
 	Russian = {
 		APP = {
@@ -3027,8 +3028,240 @@ Language = {
 			UNSUPFILE = "Datei wird nicht unterstützt"
 		}
 	},
+	Japanese = {
+		APP = {
+			LIBRARY = "ライブラリー",
+			CATALOGS = "カタログ",
+			SETTINGS = "設定",
+			DOWNLOAD = "ダウンロード中の本",
+			IMPORT = "インポート",
+			HISTORY = "履歴",
+			SEARCH = "検索"
+		},
+		MESSAGE = {
+			LOST_CONNECTION = "「接続が失われました\n\n接続を待機しています... \n \n（アプリケーションを最小化し、Wi-Fi設定に移動して[接続]を押します）\n\nXを押してすべてのダウンロードをキャンセルし、閉じます。",
+			PRESS_TO_UPDATE = "Xを押して更新します\nOを押してキャンセルします。",
+			NO_LIBRARY_MANGA = "漫画/コミックはありません。\n漫画/コミックを追加するには、\n[カタログ]メニューで漫画やコミックを見つけて、\n[ライブラリー
+			に追加]を押します。",
+			NO_HISTORY_MANGA = "漫画/コミックはありません。\nいつかここに表示されます",
+			NO_CATALOG_MANGA = "マンガ/コミックはありません。\nサーバー、接続、またはパーサーのエラー",
+			NO_DOWNLOADING_MANGA = "マンガ/コミックのダウンロードはありません。",
+			NO_CATALOGS = "カタログがありません。\n三角形を押して、すべてのカタログが読み込まれるまで待ちます",
+			THANK_YOU = "プロジェクトをサポートしていただきありがとうございます！",
+		},
+			SETTINGS = {
+			Language = "言語",
+			AdvancedChaptersDeletion = "高度な章の削除",
+			DonatorsList = "寄付者リスト",
+			ClearChapters = "保存したチャプターをすべて削除する",
+			ShowNSFW = "NSFWカタログを表示する",
+			ClearLibrary = "ライブラリーを削除",
+			ClearCache = "フォローされていないマンガのキャッシュを削除する",
+			ClearAllCache = "全てのキャッシュを削除する",
+			ReaderOrientation = "デフォルトのリーダーの向き",
+			DoubleTapReader = "ダブルタップでズームを有効にする",
+			ZoomReader = "リーダーのスケーリング",
+			SwapXO = "XボタンとOボタンを入れ替える",
+			ShowAuthor = "開発者",
+			ShowVersion = "現在のバージョン",
+			CheckUpdate = "最新の更新をチェックする",
+			SkipFontLoading = "フォントのロードを無視する",
+			LatestVersion = "最新の更新 : ",
+			PleaseWait = "しばらくお待ちください。",
+			FailedToUpdate = "アプリの更新に失敗しました。もう一度やり直してください。",
+			NoConnection = "接続がありません。",
+			HideInOffline = "ダウンロードしたチャプターのみをオフラインモードで表示する",
+			UnzipingVPK = "インストールするvpkを抽出",
+			CurrentVersionIs = "現在のバージョンは次のとおりです",
+			Space = "使用したメモリ",
+			ReaderDirection = "漫画の読み方",
+			VersionIsUpToDate = "お使いのバージョンは最新です。",
+			EU = "ヨーロッパ",
+			JP = "日本",
+			PressAgainToAccept = "もう一度押すと受け入れます",
+			PressAgainToUpdate = "もう一度押すと更新されます",
+			Reader = "リーダー",
+			Controls = "コントロールのセットアップ",
+			Data = "データの設定",
+			About = "プログラムについて",
+			Catalogs = "カタログ",
+			Library = "ライブラリー",
+			ChangeUI = "テーマ",
+			PreferredCatalogLanguage = "優先する言語",
+			LibrarySorting = "ライブラリの並べ替え",
+			ChapterSorting = "チャプターの並べ替え",
+			RefreshLibAtStart = "起動時にライブラリを更新",
+			Translators = "NOBORUを翻訳してくれた方に感謝します。",
+			ChangingPageButtons = "ページ変更のボタンを変更",
+			LeftStickDeadZone = "左スティックのデッドゾーンを変更",
+			LeftStickSensitivity = "左スティックの感度",
+			RightStickDeadZone = "右スティックのデッドゾーンを変更",
+			RightStickSensitivity = "右スティックの感度",
+			ResetAllSettings = "全ての設定をリセット",
+			Other = "その他",
+			SilentDownloads = "ダウンロード通知を表示しない",
+			Network = "ネットワーク",
+			UseProxy = "プロキシを使用",
+			ProxyIP = "IPアドレス",
+			ProxyPort = "ポート",
+			UseProxyAuth = "プロキシ認証を使用",
+			ProxyAuth = "ログインパスワード",
+			SkipCacheChapterChecking = "ロード中にキャッシュと保存されたチャプターのチェックをスキップ",
+			ConnectionTime = "サーバーの接続時間",
+			InputValue = "入力値",
+			OpenInBrowser = "ブラウザーを開く",
+			SaveDataPath = "データパスを保存",
+			SetPageAsCover = "ページを表紙に設定",
+			ResetCover = "表紙をリセット",
+			SupportDev = "開発者をサポートする(Paypalでサポート出来ます!)",
+			PressEdgesToChangePage = "ページの端を押してページを変更",
+			DownloadImageToMemory = "画像をダウンロード",
+			AnimatedGif = "アニメーションGIF（実験的）",
+			LoadSummary = "漫画の概要を表示する",
+		},
+	SETTINGS_DESCRIPTION = {
+			Library = "マンガ追跡の設定",
+			Catalogs = "言語、NSFWコンテンツ",
+			Reader = "方向、向き、ズームの設定",
+			Network = "接続タイムアウト、プロキシ",
+			Data = "保存、キャッシュの設定",
+			AdvancedChaptersDeletion = "読んで、削除する",
+			DonatorsList = "プロジェクトをサポートした人のリスト",
+			Other = "フォントの読み込み、チャプターの並べ替え、通知",
+			Controls = "キータイプ、ページボタンの変更、スティックの設定",
+			About = "バージョン,、アップデート"
+		},
+		PAGINGCONTROLS = {
+			["LR"] = "LおよびRトリガー",
+			["DPAD"] = "DPadの使用"
+		},
+		EXTRA = {
+			["DownloadAll"] = "全てのチャプターをダウンロード",
+			["RemoveAll"] = "全てのチャプターを削除",
+			["CancelAll"] = "ダウンロード中のチャプターをキャンセル",
+			["ClearBookmarks"] = "ブックマークを削除",
+			["OpenMangaInBrowser"] = "ブラウザーで漫画を開く"
+		},
+		THEME = {
+			Dark = "ダークテーマ",
+			Light = "ライトテーマ",
+			Blue = "ブルーテーマ",
+			Crimson = "真紅テーマ"
+		},
+		NSFW = {
+			[true] = "表示する",
+			[false] = "表示しない"
+		},
+		YORN = {
+			[true] = "はい",
+			[false] = "いいえ"
+		},
+		PARSERS = {
+			RUS = "ロシア語",
+			ENG = "英語",
+			ESP = "スペイン語",
+			PRT = "ポルトガル語",
+			FRA = "フランス語",
+			JAP = "日本語",
+			DIF = "異なった",
+			TUR = "トルコ語",
+			ITA = "イタリア語",
+			VIE = "ベトナム語",
+			DEU = "ドイツ語",
+			BRA = "ブラジル語",
+			POL = "ポーランド語",
+			IDN = "インドネシア語",
+			CHN = "中国語",
+			ROU = "ルーマニア語",
+			KOR = "韓国語",
+			RAW = "未翻訳漫画"
+		},
+		WARNINGS = {
+			NO_CHAPTERS = "チャプターはありません"
+		},
+		READER = {
+			PREPARING_PAGES = "ページの準備",
+			LOADING_PAGE = "ページをロード中...",
+			LOADING_SEGMENT = "セグメントの読み込み",
+			Horizontal = "水平",
+			Vertical = "垂直",
+			Smart = "スマート",
+			Height = "高さ",
+			Width = "横幅",
+			LEFT = "右から左",
+			RIGHT = "左から右",
+			DOWN = "上から下",
+			Default = "デフォルト"
+		},
+		DETAILS = {
+			ADD_TO_LIBRARY = "ライブラリーに追加",
+			REMOVE_FROM_LIBRARY = "ライブラリーから削除",
+			PAGE = "ページ : ",
+			CONTINUE = "途中",
+			START = "読書中",
+			DONE = "完了!",
+			SUMMARY = "概要",
+			SHRINK = "縮める",
+			EXPAND = "続きを読む"
+		},
+		NOTIFICATIONS = {
+			ADDED_TO_LIBRARY = "ライブラリーに追加",
+			REMOVED_FROM_LIBRARY = "ライブラリーから削除",
+			SEARCHING = '"％sを検索"',
+			START_DOWNLOAD = "%s：%s\nダウンロードが開始されました！",
+			END_DOWNLOAD = "%s: %s\nダウンロードに成功しました！",
+			CANCEL_DOWNLOAD = "%s: %s\nダウンロードはキャンセルされました！",
+			CHAPTER_REMOVE = "%s 削除されました！",
+			NET_PROBLEM = "接続に問題があります！",
+			CHAPTERS_CLEARED = "保存されたチャプターはすべてクリアされます！",
+			LIBRARY_CLEARED = "ライブラリーがクリアされました！",
+			CACHE_CLEARED = "キャッシュがクリアされました！",
+			DEVELOPER_THING = "Githubのスターアプリ！",
+			NEW_UPDATE_AVAILABLE = "新しいアップデートが利用可能です！",
+			NO_SPACE_LEFT = "スペースが残っていません",
+			REFRESH_COMPLETED = "更新が完了しました！",
+			IMPORT_COMPLETED = "インポートが完了しました！",
+			SETTINGS_RESET = "設定がリセットされました",
+			BAD_IMAGE_FOUND = "悪い画像が見つかりました！",
+			COVER_SET_COMPLETED = "表紙を更新しました！"
+		},
+		MODES = {
+			Popular = "人気順",
+			Latest = "最新",
+			Search = "検索",
+			Alphabet = "アルファベット順",
+			ByLetter = "手紙で",
+			ByTag = "タグ別"
+		},
+		PANEL = {
+			BACK = "戻る",
+			MODE = "モード",
+			READ = "読む",
+			--MODE_POPULAR = "モード：人気",
+			--MODE_LATEST = "モード：最新",
+			--MODE_SEARCHING = "モード：「％s」を検索"',
+			JUMPTOPAGE = "ページを変更",
+			SEARCH = "検索",
+			SELECT = "選択",
+			CHOOSE = "選ぶ",
+			IMPORT = "インポート",
+			CHANGE_SECTION = "セクションを変更",
+			UPDATE = "更新",
+			CANCEL = "キャンセル",
+			DELETE = "削除",
+			FOLLOW = "フォロー",
+			UNFOLLOW = "フォロー解除"
+		},
+		IMPORT = {
+			EXTERNAL_MEMORY = "外部メモリー",
+			DRIVE = "ドライブ",
+			FOLDER = "フォルダー",
+			GOBACK = "戻る",
+			FILE = "ファイル",
+			UNSUPFILE = "このファイル形式はサポートされていません。"
+		}
+	},
 }
-
 LanguageNames = {
 	Russian = {
 		Russian = "Русский",
@@ -3044,6 +3277,7 @@ LanguageNames = {
 		Romanian = "Румынский",
 		Polish = "Польский",
 		German = "Немецкий",
+		Japanese = "Японский",
 		Default = "Системный"
 	},
 	English = {
@@ -3060,6 +3294,7 @@ LanguageNames = {
 		Romanian = "Romanian",
 		Polish = "Polish",
 		German = "German",
+		Japanese = "Japanese",
 		Default = "System"
 	},
 	Turkish = {
@@ -3076,6 +3311,7 @@ LanguageNames = {
 		Romanian = "Romence",
 		Polish = "Lehçe",
 		German = "Alman Dili",
+		Japanese = "Japonca",
 		Default = "Sistem Dili"
 	},
 	Spanish = {
@@ -3092,6 +3328,7 @@ LanguageNames = {
 		Polish = "Polaco",
 		Romanian = "Rumano",
 		German = "Almanca",
+		Japanese = "Japonés",
 		Default = "Sistema"
 	},
 	Vietnamese = {
@@ -3108,6 +3345,7 @@ LanguageNames = {
 		Romanian = "Tiếng Rumani",
 		Polish = "Tiếng ba lan",
 		German = "Tiếng Đức",
+		Japanese = "Tiếng Nhật",
 		Default = "Hệ thống"
 	},
 	Italian = {
@@ -3124,6 +3362,7 @@ LanguageNames = {
 		Romanian = "Rumeno",
 		Polski = "Polacco",
 		German = "Tedesco",
+		Japanese = "Giapponese",
 		Default = "Sistema"
 	},
 	French = {
@@ -3140,6 +3379,7 @@ LanguageNames = {
 		Romanian = "Roumaine",
 		Polski = "Polonaise",
 		German = "Allemand",
+		Japanese = "Japonais",
 		Default = "Système"
 	},
 	PortugueseBR = {
@@ -3156,6 +3396,7 @@ LanguageNames = {
 		Romanian = "Romeno",
 		Polish = "Polonesa",
 		German = "Alemão",
+		Japanese = "Japonês",
 		Default = "Sistema"
 	},
 	SimplifiedChinese = {
@@ -3172,6 +3413,7 @@ LanguageNames = {
 		Romanian = "罗马尼亚",
 		Polish = "波兰语",
 		German = "德语",
+		Japanese = "日本人",
 		Default = "默认"
 	},
 	TraditionalChinese = {
@@ -3188,6 +3430,7 @@ LanguageNames = {
 		Romanian = "羅馬尼亞",
 		Polski = "波蘭語",
 		German = "德語",
+		Japanese = "日本人",
 		Default = "默認"
 	},
 	Romanian = {
@@ -3204,6 +3447,7 @@ LanguageNames = {
 		Romanian = "Română",
 		Polish = "Poloneza",
 		German = "Germana",
+		Japanese = "Japonez",
 		Default = "Limba sistemului"
 	},
 	Polish = {
@@ -3220,6 +3464,7 @@ LanguageNames = {
 		Romanian = "Rumuński",
 		Polish = "Polski",
 		German = "Niemiecki",
+		Japanese = "Język japoński",
 		Default = "Systemowy"
 	},
 	German = {
@@ -3236,10 +3481,27 @@ LanguageNames = {
 		Romanian = "Rumänisch",
 		Polish = "Polnisch",
 		German = "Deutsch",
+		Japanese = "Japanisch",
 		Default = "Systemsprache"
 	},
+	Japanese = {
+			Russian = "ロシア語",
+			English = "英語",
+			Turkish = "トルコ語",
+			Spanish = "スペイン語",
+			Vietnamese = "ベトナム語",
+			French = "フランス語",
+			Italian = "イタリア語",
+			PortugueseBR = "ブラジルポルトガル語",
+			SimplifiedChinese = "中国語(簡体字)",
+			TraditionalChinese = "中国語(繁体字)",
+			Romanian = "ルーマニア語",
+			Polish = "ポーランド語",
+			German = "ドイツ語",
+			Japanese = "日本語",
+			Default = "デフォルト"
+		},
 }
-
 local language_now = System.getLanguage()
 if language_now == 8 then
 	Language.Default = Language.Russian
@@ -3271,6 +3533,9 @@ elseif language_now == 16 then
 elseif language_now == 4 then
 	Language.Default = Language.German
 	LanguageNames.Default = LanguageNames.German
+elseif language_now == 0 then
+	Language.Default = Language.Japanese
+	LanguageNames.Default = LanguageNames.Japanese
 else
 	Language.Default = Language.English
 	LanguageNames.Default = LanguageNames.English
