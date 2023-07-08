@@ -1,7 +1,7 @@
 Settings = {
 	Language = "Default",
 	Theme = "Light",
-	Version = 0.91,
+	Version = 0.911,
 	NSFW = false,
 	Orientation = "Horizontal",
 	ZoomReader = "Smart",
@@ -38,8 +38,8 @@ NSFWLock = System.doesFileExist("ux0:data/noboru/.lock")
 
 local settingsDefaults = table.clone(Settings)
 
-DeadZoneValues = {20, 30, 40, 50, 90}
-SensitivityValues = {0.25, 0.50, 0.75, 1, 1.25, 1.5, 1.75}
+DeadZoneValues = { 20, 30, 40, 50, 90 }
+SensitivityValues = { 0.25, 0.50, 0.75, 1, 1.25, 1.5, 1.75 }
 
 local settings = Settings
 
@@ -265,7 +265,7 @@ function settings.load()
 					settings.Language = "Default"
 				end
 				if NSFWLock then
-					setSetting(new, "NSFW", {false})
+					setSetting(new, "NSFW", { false })
 					if settingsListTree and settingsListTree.Catalogs and settingsListTree.Catalogs[1] then
 						table.remove(settingsListTree.Catalogs, 1)
 						for k, v in pairs(Language) do
@@ -273,38 +273,38 @@ function settings.load()
 						end
 					end
 				else
-					setSetting(new, "NSFW", {true, false})
+					setSetting(new, "NSFW", { true, false })
 				end
-				setSetting(new, "SkipFontLoad", {true, false})
-				setSetting(new, "Orientation", {"Horizontal", "Vertical"})
-				setSetting(new, "ZoomReader", {"Width", "Height", "Smart"})
-				setSetting(new, "ReaderDirection", {"LEFT", "RIGHT", "DOWN"})
-				setSetting(new, "KeyType", {"JP", "EU"})
-				setSetting(new, "HideInOffline", {true, false})
-				setSetting(new, "DoubleTapReader", {true, false})
+				setSetting(new, "SkipFontLoad", { true, false })
+				setSetting(new, "Orientation", { "Horizontal", "Vertical" })
+				setSetting(new, "ZoomReader", { "Width", "Height", "Smart" })
+				setSetting(new, "ReaderDirection", { "LEFT", "RIGHT", "DOWN" })
+				setSetting(new, "KeyType", { "JP", "EU" })
+				setSetting(new, "HideInOffline", { true, false })
+				setSetting(new, "DoubleTapReader", { true, false })
 				setSetting(new, "Theme", Themes)
 				setSetting(new, "ParserLanguage", GetParserLanguages())
-				setSetting(new, "LibrarySorting", {"Date added", "A-Z", "Z-A"})
-				setSetting(new, "ChapterSorting", {"1->N", "N->1"})
-				setSetting(new, "RefreshLibAtStart", {true, false})
-				setSetting(new, "ChangingPageButtons", {"DPAD", "LR"})
+				setSetting(new, "LibrarySorting", { "Date added", "A-Z", "Z-A" })
+				setSetting(new, "ChapterSorting", { "1->N", "N->1" })
+				setSetting(new, "RefreshLibAtStart", { true, false })
+				setSetting(new, "ChangingPageButtons", { "DPAD", "LR" })
 				setSetting(new, "LeftStickDeadZone", DeadZoneValues)
 				setSetting(new, "LeftStickSensitivity", SensitivityValues)
 				setSetting(new, "RightStickDeadZone", DeadZoneValues)
 				setSetting(new, "RightStickSensitivity", SensitivityValues)
-				setSetting(new, "SilentDownloads", {true, false})
-				setSetting(new, "UseProxy", {true, false})
+				setSetting(new, "SilentDownloads", { true, false })
+				setSetting(new, "UseProxy", { true, false })
 				setSetting(new, "ProxyIP", {})
 				setSetting(new, "ProxyPort", {})
-				setSetting(new, "UseProxyAuth", {true, false})
+				setSetting(new, "UseProxyAuth", { true, false })
 				setSetting(new, "ProxyAuth", {})
-				setSetting(new, "SkipCacheChapterChecking", {true, false})
+				setSetting(new, "SkipCacheChapterChecking", { true, false })
 				setSetting(new, "ConnectionTime", {})
 				setSetting(new, "FavouriteParsers", {})
-				setSetting(new, "SaveDataPath", {"ux0", "uma0"})
-				setSetting(new, "PressEdgesToChangePage", {true, false})
-				setSetting(new, "AnimatedGif", {true, false})
-				setSetting(new, "LoadSummary", {true, false})
+				setSetting(new, "SaveDataPath", { "ux0", "uma0" })
+				setSetting(new, "PressEdgesToChangePage", { true, false })
+				setSetting(new, "AnimatedGif", { true, false })
+				setSetting(new, "LoadSummary", { true, false })
 			end
 		end
 		closeFile(fh)
@@ -390,7 +390,7 @@ function settings.setTab(mode)
 						possibilities[ChapterSaver.getKey(chapter)] = chapter
 					end
 				end
-				local drives = {"ux0:", "uma0"}
+				local drives = { "ux0:", "uma0" }
 				local t = {}
 				for _, drive in ipairs(drives) do
 					if doesDirExist(drive) then
@@ -534,13 +534,13 @@ SettingsFunctions = {
 		settings.HideInOffline = not settings.HideInOffline
 	end,
 	ReaderOrientation = function()
-		settings.Orientation = table.next(settings.Orientation, {"Horizontal", "Vertical"})
+		settings.Orientation = table.next(settings.Orientation, { "Horizontal", "Vertical" })
 	end,
 	ZoomReader = function()
-		settings.ZoomReader = table.next(settings.ZoomReader, {"Width", "Height", "Smart"})
+		settings.ZoomReader = table.next(settings.ZoomReader, { "Width", "Height", "Smart" })
 	end,
 	ReaderDirection = function()
-		settings.ReaderDirection = table.next(settings.ReaderDirection, {"LEFT", "RIGHT", "DOWN"})
+		settings.ReaderDirection = table.next(settings.ReaderDirection, { "LEFT", "RIGHT", "DOWN" })
 	end,
 	DoubleTapReader = function()
 		settings.DoubleTapReader = not settings.DoubleTapReader
@@ -572,21 +572,43 @@ SettingsFunctions = {
 					Index = "string",
 					OnComplete = function()
 						local content = file.string or ""
-						local link = content:match('href="([^"]-%.vpk)"')
-						if link then
-							local late = link:match("/([^/]-)/[^/]-%.vpk")
-							if late then
-								lastVpkLink = link
-								lastVpkSize = content:match("size%-label[^>]->([^<]-)<") or "NaN"
-								settings.LateVersion = late or settings.LateVersion
-								local body = content:match('markdown%-body[^>]-">(.-)</div>') or ""
-								changesText = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""
-								if settings.LateVersion and settings.Version and tonumber(settings.LateVersion) > tonumber(settings.Version) then
-									Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changesText)
-									Notifications.push(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " " .. settings.LateVersion)
-								end
-							end
+						local tag = content:match("releases/tag/([0-9.]+)")
+
+						if tag == nil then
+							return
 						end
+
+						local latestVersion = tonumber(tag)
+						if latestVersion == nil then
+							return
+						end
+
+						local assetsFile = {}
+						Threads.insertTask(
+							"LoadAssetsData",
+							{
+								Type = "StringRequest",
+								Link = "https://github.com/Creckeryop/NOBORU/releases/expanded_assets/" .. tag,
+								Table = assetsFile,
+								Index = "string",
+								OnComplete = function ()
+									local assetsContent = assetsFile.string or ""
+									local link = assetsContent:match('href="([^"]-%.vpk)"') or ""
+									local late = link:match("/([^/]-)/[^/]-%.vpk")
+									if late then
+										lastVpkLink = link
+										lastVpkSize = assetsContent:match(">([0-9.]* MB)<") or "NaN"
+										settings.LateVersion = latestVersion or settings.LateVersion
+										local body = content:match('markdown%-body[^>]-">(.-)</div>') or ""
+										changesText = body:gsub("\n+%s-(%S)", "\n%1"):gsub("<li>", " * "):gsub("<[^>]->", ""):gsub("\n\n", "\n"):gsub("^\n", ""):gsub("%s+$", "") or ""				
+										if settings.LateVersion and settings.Version and tonumber(settings.LateVersion) > tonumber(settings.Version) then
+											Changes.load(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " : " .. settings.LateVersion .. "\n" .. Language[settings.Language].SETTINGS.CurrentVersionIs .. settings.Version .. "\n\n" .. changesText)
+											Notifications.push(Language[settings.Language].NOTIFICATIONS.NEW_UPDATE_AVAILABLE .. " " .. settings.LateVersion)
+										end
+									end
+								end
+							}
+						)
 					end
 				}
 			)
@@ -613,7 +635,7 @@ SettingsFunctions = {
 		Notifications.push(Language[Settings.Language].NOTIFICATIONS.DEVELOPER_THING .. "\nhttps://github.com/Creckeryop/NOBORU")
 	end,
 	SwapXO = function()
-		settings.KeyType = table.next(settings.KeyType, {"JP", "EU"})
+		settings.KeyType = table.next(settings.KeyType, { "JP", "EU" })
 		SCE_CTRL_CROSS = settings.KeyType == "JP" and circle or cross
 		SCE_CTRL_CIRCLE = settings.KeyType == "JP" and cross or circle
 	end,
@@ -622,16 +644,16 @@ SettingsFunctions = {
 		ChangeNSFW()
 	end,
 	LibrarySorting = function()
-		settings.LibrarySorting = table.next(settings.LibrarySorting, {"Date added", "A-Z", "Z-A"})
+		settings.LibrarySorting = table.next(settings.LibrarySorting, { "Date added", "A-Z", "Z-A" })
 	end,
 	ChapterSorting = function()
-		settings.ChapterSorting = table.next(settings.ChapterSorting, {"1->N", "N->1"})
+		settings.ChapterSorting = table.next(settings.ChapterSorting, { "1->N", "N->1" })
 	end,
 	RefreshLibAtStart = function()
-		settings.RefreshLibAtStart = table.next(settings.RefreshLibAtStart, {true, false})
+		settings.RefreshLibAtStart = table.next(settings.RefreshLibAtStart, { true, false })
 	end,
 	ChangingPageButtons = function()
-		settings.ChangingPageButtons = table.next(settings.ChangingPageButtons, {"DPAD", "LR"})
+		settings.ChangingPageButtons = table.next(settings.ChangingPageButtons, { "DPAD", "LR" })
 		SCE_CTRL_RIGHTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_RIGHT or SCE_CTRL_RTRIGGER
 		SCE_CTRL_LEFTPAGE = settings.ChangingPageButtons == "DPAD" and SCE_CTRL_LEFT or SCE_CTRL_LTRIGGER
 	end,
@@ -735,7 +757,7 @@ SettingsFunctions = {
 		settings.PressEdgesToChangePage = not settings.PressEdgesToChangePage
 	end,
 	SaveDataPath = function()
-		settings.SaveDataPath = table.next(settings.SaveDataPath, {"ux0", "uma0"})
+		settings.SaveDataPath = table.next(settings.SaveDataPath, { "ux0", "uma0" })
 	end,
 	AnimatedGif = function()
 		settings.AnimatedGif = not settings.AnimatedGif
